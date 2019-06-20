@@ -7,7 +7,7 @@
 ``` bash
 
 # Clone project
-git clone git@47.99.186.37:CPP-Groups/vue-web.git
+git clone git@47.99.186.37:XTBG-Groups/XTBG-WEB.git
 
 # Install dependencies
 npm install
