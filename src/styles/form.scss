@@ -1,0 +1,118 @@
+.form-panel {
+    min-height: 100%;
+    background: #fff;
+    .flex-panel {
+        margin: 0 -10px;
+        align-items: flex-start;
+        .el-form-item {
+            width: calc(20% - 20px);
+            margin-left: 10px;
+            margin-right: 10px;
+            margin-bottom: 16px;
+            &.small {
+                width: calc(40% - 20px);
+            }
+            &.big {
+                width: calc(100% - 20px);
+            }
+        }
+        &.box4 {
+            .el-form-item {
+                width: calc(25% - 20px);
+                &.small {
+                    width: calc(50% - 20px);
+                }
+            }
+        }
+        @media screen and (max-width:800px) {
+            .el-form-item {
+                width: 100%;
+                &.small {
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    .el-table th.required>div::after {
+        content: '*';
+        color: #f56c6c;
+        margin-left: 4px;
+        font-size: 14px
+    }
+    .el-table th.required>div::before {
+        display: none;
+    }
+    .el-form-item.is-required .el-form-item__label:before {
+        float: right;
+        margin-left: 4px;
+    }
+    .float-btn {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        padding: 8px 15px;
+        border: 0;
+    }
+    .left-row {
+        justify-content: flex-start;
+        width: 100%;
+        margin: 0;
+        padding-bottom: 20px;
+        padding-left: 20px;
+        button {
+            padding: 9px 12px;
+        }
+    }
+}
+.detail-panel {
+    background: #fff;
+    min-height: 100%;
+    padding-bottom: 1px;
+    .detail-box{
+        border: 1px solid #eee;
+        align-items: stretch;
+        margin: 0;
+        .detail-item {
+            width: 33.333%;
+            display: flex;
+            min-height: 40px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: -1px;
+            margin-left: -1px;
+            &.small {
+                width: 66.66%;
+            }
+            &.half {
+                width: 50%;
+            }
+            &.big {
+                width: 100%;
+            }
+            label,.input-group {
+                display: inline-flex;
+                align-items: center;
+                padding: 8px 15px;
+                border-left: 1px solid #eee;
+            }
+            label {
+                width: 200px;
+                color: #888;
+            }
+            .input-group {
+                word-break: break-word;
+                width: calc(100% - 135px);
+            }
+            img {
+                width: 500px;
+                max-height: 300px;
+                max-width: 90%;
+                display: block;
+                margin: auto;
+            }
+
+        }
+    }
+}
+
+

@@ -1,0 +1,225 @@
+.list-panel {
+    background: #fff;
+    min-height: calc(100vh - 120px);
+    padding: 0;
+    .division-line {
+        margin:0 20px;
+        height: 1px;
+        background-color: #d1d1d1;
+    }
+    .el-button--primary {
+        background-color: #4781fe;
+        border-color: #4781fe;
+    }
+    .el-button--text {
+        color: #4781fe;
+    }
+}
+.list-panel .opertion-box {
+    width: calc(100% - 40px);
+    margin:0 20px;
+    padding: 20px 0 10px;
+    .zy_input {
+        width: 180px;
+        margin-right:10px;
+        font-size: 12px;
+    }
+}
+.list-panel .search-box {
+    display: flex;
+    align-items: flex-start;
+    width: calc(100% - 40px);
+    padding: 10px 5px 0 5px;
+    // padding-top:10px;
+    background: rgb(230, 247, 255);
+    margin:0 20px 10px;
+    border-radius: 5px;
+    &.hide-search {
+        padding-bottom: 10px;
+    }
+}
+.list-panel .search-box .el-date-editor.el-input__inner {
+    width: 100%;
+}
+.list-panel .form-box {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    transition: all 0.5s ease;
+    max-height: 240px;
+    overflow: hidden;
+}
+
+.list-panel .search-box .form-group {
+    display: inline-flex;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    width: calc(25% - 10px);
+    justify-content: flex-end;
+}
+
+.list-panel .search-box .form-group:nth-child(4n) {
+    display: inline-flex;
+    margin-bottom: 10px;
+    margin-right: 0;
+    width: 25%;
+    justify-content: flex-end;
+}
+
+.list-panel .search-box .control-label {
+    margin-right: 10px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+}
+.list-panel .search-box .input-group {
+    width: calc(100% - 70px);
+}
+.el-dialog .list-panel .search-box .form-group {
+    width: calc(33.33% - 20px);
+}
+.el-dialog .list-panel .search-box .input-group {
+    width: calc(100% - 50px);
+}
+.list-panel .el-range-separator,
+.list-panel .search-box .control-label,
+.list-panel .el-range-separator,
+.list-panel .search-box input {
+    font-size: 12px;
+}
+// @media screen and (max-width: 1500px) {
+//     .list-panel .search-box .input-group {
+//         width: calc(100% - 100px);
+//     }
+// }
+// @media screen and (max-width: 1400px) {
+//     .list-panel .search-box .input-group {
+//         width: calc(100% - 85px);
+//     }
+// }
+
+.list-panel .search-box.hide-search .form-box {
+    max-height: 40px;
+}
+
+.list-panel .search-btn-list {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+    // margin-right: 20px;
+}
+
+.list-panel .search-btn-list .btn {
+    margin-left: 10px;
+}
+
+.list-panel .search-btn-list .el-icon-d-arrow-right {
+    // position: absolute;
+    // left: 10px;
+    // top: 6px;
+    transform: rotate(-90deg);
+    // font-size: 20px;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.list-panel .hide-search .search-btn-list .el-icon-d-arrow-right {
+    transform: rotate(90deg);
+}
+
+.list-panel .search-box.min {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+.list-panel .search-box.min .form-box {
+    width: auto;
+}
+
+.list-panel .search-box.min .form-group {
+    width: auto;
+    margin-bottom: 0;
+    justify-content: flex-start;
+}
+
+.list-panel .search-box.min .input-group {
+    width: 200px;
+}
+
+.list-panel .search-box.min .search-btn-list {
+    justify-content: flex-start;
+    margin-left: 50px;
+}
+
+.list-panel .tool-box {
+    width: 100%;
+    display: flex;
+    padding: 15px 20px 0;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+}
+
+.list-panel .tool-box .btn {
+    margin-left: 10px;
+    padding: 5px 9px;
+}
+
+.list-panel .list-info {
+    line-height: 36px;
+    position: absolute;
+    left: 0;
+}
+
+.list-panel.new .list-info {
+    padding-left: 20px;
+}
+
+.list-panel .list-info span {
+    padding-right: 40px;
+}
+
+.list-panel .table-box {
+    padding: 0 20px;
+    margin-top: 15px;
+}
+.list-panel .table-box .el-dropdown {
+    color: #409EFF;
+    font-size: 13px;
+}
+.list-panel .table-box a {
+    color: #409EFF;
+    font-size: 13px;
+}
+
+.el-dialog__body {
+    .list-panel {
+        height: auto;
+        min-height: initial;
+    }
+    .list-panel .table-box {
+        margin-top: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .list-panel .search-box {
+        padding-left: 0;
+        padding-right: 0;
+        background: transparent;
+    }
+}
+
+.import-box {
+
+    .info-text {
+        line-height: 25px;
+        a {
+            color: #409EFF;
+        }
+    }
+    .el-form {
+        margin-top: 10px;
+    }
+    .el-form-item {
+        margin-bottom: 0;
+    }
+}
