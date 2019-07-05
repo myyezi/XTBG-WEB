@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import IMChat from '@/views/im/index.vue';
+import IMChat from '@/views/im/index2.vue';
 export default {
   name: 'AppMain',
   components: { IMChat },

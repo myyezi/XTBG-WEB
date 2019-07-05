@@ -10,6 +10,7 @@ const getters = {
     authRouters: state => state.auth.authRouters,
     menu: state => state.auth.menu,
     auth: state => state.auth.auth,
-    roles: state => state.user.roles
+    roles: state => state.user.roles,
+    websocket: state => state.im.websocket,
 }
 export default getters

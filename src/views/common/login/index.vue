@@ -52,6 +52,7 @@
     import '@/styles/login.scss'
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
+    import {getToken} from '@/utils/cookie' // 验权
 
     export default {
         name: 'login',
@@ -122,23 +123,23 @@
                     this.message = res.message;
                     this.loading = false;
                 });
-            },
+            }
         }
     }
 
     // css rem 设置
-    !function (n) {
-        var e = n.document,
-            t = e.documentElement,
-            i = 1920,// 设计稿宽度
-            d = i / 100,// 比例
-            o = "orientationchange" in n ? "orientationchange" : "resize",
-            a = function () {
-                var n = t.clientWidth || 320;
-                n > 1920 && (n = 1920);
-                t.style.fontSize = n / d + "px"
-            };
-        window.setTimeout(a, 1);
-        e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
-    }(window);
+    // !function (n) {
+    //     var e = n.document,
+    //         t = e.documentElement,
+    //         i = 1920,// 设计稿宽度
+    //         d = i / 100,// 比例
+    //         o = "orientationchange" in n ? "orientationchange" : "resize",
+    //         a = function () {
+    //             var n = t.clientWidth || 320;
+    //             n > 1920 && (n = 1920);
+    //             t.style.fontSize = n / d + "px"
+    //         };
+    //     window.setTimeout(a, 1);
+    //     e.addEventListener && (n.addEventListener(o, a, !1), e.addEventListener("DOMContentLoaded", a, !1))
+    // }(window);
 </script>

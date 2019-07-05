@@ -5,6 +5,7 @@ import user from './modules/user'
 import auth from './modules/auth'
 import getters from './getters'
 import tagsView from './modules/tagsView'
+import im from './modules/im'
 
 Vue.use(Vuex)
 
@@ -13,7 +14,8 @@ const store = new Vuex.Store({
     auth,
     app,
     tagsView,
-    user
+    user,
+    im
   },
   getters
 })

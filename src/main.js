@@ -17,6 +17,9 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import VueQuillEditor from 'vue-quill-editor'
+import { dateStr, formatDateTime } from '@/utils/imUtils/ChatUtils.js';
+Vue.prototype.formatDateTime = formatDateTime;
+Vue.prototype.dateStr = dateStr;
 
 Vue.use(VueQuillEditor);
 
