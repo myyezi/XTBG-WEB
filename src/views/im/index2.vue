@@ -12,11 +12,11 @@
                          <i class="el-icon-chat-round left-bar_icon" :class="{'left-bar_icon_active':isChatBox}" ></i>
                       </li>
                       <li @click="isUserBox=true;isChatBox=false;isChatGroupBox=false">
-                         <i class="el-icon-user left-bar_icon" :class="{'left-bar_icon_active':isUserBox}"></i>
+                         <i class="icon-tongxunlu left-bar_icon" :class="{'left-bar_icon_active':isUserBox}"></i>
                       </li>
-                      <li @click="isChatGroupBox=true;isUserBox=false;isChatBox=false">
+                      <!-- <li @click="isChatGroupBox=true;isUserBox=false;isChatBox=false">
                          <i class="icon-qun left-bar_icon" :class="{'left-bar_icon_active':isChatGroupBox}"></i>
-                      </li>
+                      </li> -->
                   </ul>
               </div>
               <user-Box v-show="isUserBox" class="content"></user-Box>
@@ -79,7 +79,7 @@
 @import '../../styles/imCss/v-im.scss';
 .chat-wrapper {
   position: fixed;
-  z-index: 999;
+  z-index: 9999;
   bottom: 20px;
   right: 20px;
 }
