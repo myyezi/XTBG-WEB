@@ -27,56 +27,63 @@
   </div>
 </template>
 <script>
-  import UserBox from './layout/userBox.vue';
-  import ChatBox from './layout/chatBox.vue';
-  import ChatGroupBox from './layout/chatGroupBox.vue';
-  import {getToken} from '@/utils/cookie' 
-  import Bus from "@/utils/eventBus.js";
+import { mapGetters } from 'vuex'
+import UserBox from './layout/userBox.vue';
+import ChatBox from './layout/chatBox.vue';
+import ChatGroupBox from './layout/chatGroupBox.vue';
+import { getToken } from '@/utils/cookie'
+import Bus from "@/utils/eventBus.js";
 
-  export default {
-  components:{UserBox,ChatBox,ChatGroupBox},
+export default {
+  components: { UserBox, ChatBox, ChatGroupBox },
+  computed: {
+    ...mapGetters([
+      'user',
+    ]),
+  },
   data() {
     return {
       modal: false,
       chatDialogVisible: false,
       isFullscreen: false,
-      isUserBox:true,
-      isChatBox:false,
-      isChatGroupBox:false,
+      isUserBox: true,
+      isChatBox: false,
+      isChatGroupBox: false,
     };
   },
   methods: {
     handleOpen() {
-        this.chatDialogVisible = !this.chatDialogVisible
-        if(this.chatDialogVisible) {
-            if (!this.$store.state.im.websocket.clientId) {
-                this.$store.dispatch('getWebsocket',{
-                    ip:'192.168.10.134',
-                    port:'8080',
-                    token:getToken()
-                })
-            }
+      this.chatDialogVisible = !this.chatDialogVisible
+      if (this.chatDialogVisible) {
+        if (!this.$store.state.im.websocket.clientId) {
+          this.$store.dispatch('getWebsocket', {
+            ip: '192.168.10.134',
+            port: '8085',
+            token: getToken(),
+            username: this.user.userId
+          })
         }
-    },
-    handleClose() {
-        this.chatDialogVisible = false;
       }
     },
-    created: function() {
-    },
-    mounted: function() {
-        Bus.$on("close", data => {
-          this.handleClose()
-        });
-        Bus.$on("max", data => {
-          this.isFullscreen = !this.isFullscreen
-        });
+    handleClose() {
+      this.chatDialogVisible = false;
     }
+  },
+  created: function () {
+  },
+  mounted: function () {
+    Bus.$on("close", data => {
+      this.handleClose()
+    });
+    Bus.$on("max", data => {
+      this.isFullscreen = !this.isFullscreen
+    });
+  }
 };
 </script>
 <style lang="scss">
-@import '../../styles/imCss/theme.scss';
-@import '../../styles/imCss/v-im.scss';
+@import "../../styles/imCss/theme.scss";
+@import "../../styles/imCss/v-im.scss";
 .chat-wrapper {
   position: fixed;
   z-index: 9999;
@@ -84,15 +91,15 @@
   right: 20px;
 }
 .chat-dialog {
-    .el-dialog {
-        .el-dialog__header {
-            display: none;
-        }
-        .el-dialog__body {
-            height:100%;
-            padding:0;
-        }
+  .el-dialog {
+    .el-dialog__header {
+      display: none;
     }
+    .el-dialog__body {
+      height: 100%;
+      padding: 0;
+    }
+  }
 }
 .v-im {
   flex-direction: row;
