@@ -29,7 +29,9 @@
         </ul>
       </div>
       <div class="chat-main-footer">
-        <div class="chat-footer-tool">sss</div>
+        <div class="chat-footer-tool">
+          <el-button size="mini" icon="el-icon-edit"></el-button>
+        </div>
         <el-input type="textarea" rows="3" placeholder="请输入内容" resize="none" v-model="messageContent" maxlength="2000" show-word-limit @keyup.enter="mineSend()">
         </el-input>
         <div class="chat-send">
