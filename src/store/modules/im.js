@@ -65,6 +65,10 @@ const im = {
           message.content = transform(message.content);
           state.messageList.push(message);
           state.messageListMap[message.id] = state.messageList;
+          localStorage.setItem(message.fromid, JSON.stringify(state.messageListMap));
+        },
+        setmessageListMap: function(state, message) {
+          state.messageListMap = message
         },
         // 在用户姓名下展示收到的最后一条信息
         setLastMessage: function(state, message) {
@@ -122,7 +126,7 @@ const im = {
               return chat;
             });
             // 放入缓存
-            ChatListUtils.setChatList(state.user.id, tempChatList);
+            ChatListUtils.setChatList(currentChat.fromid, tempChatList);
           }
         },
         setChatList: function(state, chatList) {

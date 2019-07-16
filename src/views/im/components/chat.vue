@@ -186,7 +186,7 @@
               username: this.user.name,
               timestamp: time,
               content: self.messageContent,
-              // fromid: currentUser.id,
+              fromid: this.user.userId,
               id: self.chat.id,
               // type: self.chat.type
             };
@@ -209,22 +209,35 @@
       getHistoryMessage(pageNo) {
         let self = this;
         self.showHistory = true;
+      },
+      getCurrentMessageList() {
+          let self = this;
+          self.messageList = [];
+          // 从内存中取聊天信息
+          let cacheMessages = self.$store.state.im.messageListMap[self.chat.id];
+          if(!cacheMessages||cacheMessages.length===0) {
+            self.$store.commit('setmessageListMap', JSON.parse(localStorage.getItem(this.user.userId)));
+            // 从缓存中取聊天信息
+            cacheMessages = JSON.parse(localStorage.getItem(this.user.userId))[self.chat.id];
+          }
+          if (cacheMessages) {
+            self.messageList = cacheMessages;
+          }
+          // 每次滚动到最底部
+          this.$nextTick(() => {
+            imageLoad('message-box');
+          });
       }
     },
     watch: {
       // 监听每次 user 的变化
-      chat: function() {
-        let self = this;
-        self.messageList = [];
-        // 从内存中取聊天信息
-        let cacheMessages = self.$store.state.im.messageListMap[self.chat.id];
-        if (cacheMessages) {
-          self.messageList = cacheMessages;
-        }
-        // 每次滚动到最底部
-        this.$nextTick(() => {
-          imageLoad('message-box');
-        });
+      chat: function(newvalue,oldvalue) {
+          this.getCurrentMessageList()
+      }
+    },
+    created: function() {
+      if(this.chat&&this.chat.id) {
+          this.getCurrentMessageList()
       }
     },
     mounted: function() {
