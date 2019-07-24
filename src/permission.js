@@ -18,6 +18,7 @@ router.beforeEach((to, from, next) => {
                     // store.dispatch('getAuth');
                     store.dispatch('GetInfo');
                     store.dispatch('getAuth').then(_=>{
+                        store.commit('setCurrentUser', store.getters.user);
                         store.dispatch('getMenu').then(res =>{
                             console.log(store.getters.authRouters);
                             router.addRoutes(store.getters.authRouters)

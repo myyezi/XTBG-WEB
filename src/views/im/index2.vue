@@ -1,17 +1,28 @@
 <template>
-  <div class="chat-wrapper">
+  <div class="chat-wrapper" :class="{'isShow_chat':isFullscreen}">
       <el-button type="success" icon="el-icon-s-promotion" circle @click="handleOpen"></el-button>
-      <el-dialog :visible.sync="chatDialogVisible" :fullscreen="isFullscreen" class="chat-dialog" width="70%"  :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body :modal="false">
-          <div class="v-im" :style="{height:isFullscreen?'100%':'600px',width:'100%'}">
+      <el-dialog :visible.sync="chatDialogVisible" :fullscreen="isFullscreen" class="chat-dialog" width="900px"  top="calc((100vh - 600px)/2)" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false" :append-to-body="true" :modal="false">
+          <div class="v-im" :style="{height:isFullscreen?'100%':'600px',width:'100%'}" @click="closeVisibleBox">
               <div class="left-bar" style="-webkit-app-region: drag">
                   <ul>
-                      <li class="userPhoto" @click="modal = true">
-                          <img src="http://101.200.151.183:8080/img/user (3).png"/>
-                      </li>
+                    <li class="userPhoto">
+                      <el-popover
+                        style="height:300px"
+                        placement="right"
+                        width="200"
+                        trigger="click"
+                        >
+                        <div class="clearfix detail_popover">
+                            <div class="detail_name">{{user.name}}</div>
+                            <img :src="user.portrait?user.portrait:defaultPic">
+                        </div>
+                        <img :src="user.portrait?user.portrait:defaultPic" slot="reference"/>
+                      </el-popover>
+                    </li>
                       <li @click="isChatBox=true;isUserBox=false;isChatGroupBox=false">
                          <i class="el-icon-chat-round left-bar_icon" :class="{'left-bar_icon_active':isChatBox}" ></i>
                       </li>
-                      <li @click="isUserBox=true;isChatBox=false;isChatGroupBox=false">
+                      <li @click="isUserBox=true;isChatBox=false;isChatGroupBox=false;">
                          <i class="icon-tongxunlu left-bar_icon" :class="{'left-bar_icon_active':isUserBox}"></i>
                       </li>
                       <!-- <li @click="isChatGroupBox=true;isUserBox=false;isChatBox=false">
@@ -20,7 +31,7 @@
                   </ul>
               </div>
               <user-Box v-show="isUserBox" class="content"></user-Box>
-              <chat-Box v-show="isChatBox" class="content"></chat-Box>
+              <chat-Box v-show="isChatBox" class="content" ref="chatBox" :isChatBox="isChatBox"></chat-Box>
               <chat-GroupBox v-show="isChatGroupBox" class="content"></chat-GroupBox>
           </div>
       </el-dialog>
@@ -33,6 +44,7 @@ import ChatBox from './layout/chatBox.vue';
 import ChatGroupBox from './layout/chatGroupBox.vue';
 import { getToken } from '@/utils/cookie'
 import Bus from "@/utils/eventBus.js";
+import { ChatListUtils, imageLoad } from '@/utils/imUtils/ChatUtils';
 
 export default {
   components: { UserBox, ChatBox, ChatGroupBox },
@@ -43,15 +55,20 @@ export default {
   },
   data() {
     return {
+      defaultPic:require('@/styles/img/morentx.png'),
       modal: false,
       chatDialogVisible: false,
       isFullscreen: false,
-      isUserBox: true,
-      isChatBox: false,
+      isUserBox: false,
+      isChatBox: true,
       isChatGroupBox: false,
+      chat:{}
     };
   },
   methods: {
+    closeVisibleBox() {
+        this.$refs.chatBox.rightEvent(1)
+    },
     handleOpen() {
       this.chatDialogVisible = !this.chatDialogVisible
       if (this.chatDialogVisible) {
@@ -67,6 +84,27 @@ export default {
     },
     handleClose() {
       this.chatDialogVisible = false;
+    },
+    getSessionList(data) {
+      let self = this;
+      let cacheSession = []
+      self.sessionList = [];
+      // 从内存中获取会话记录
+      cacheSession = self.$store.state.im.sessionList;
+      if(!cacheSession||cacheSession.length === 0) {
+        // 从缓存中取会话记录
+        cacheSession = ChatListUtils.getSessionList(this.user.userId)
+        if(cacheSession&&cacheSession.length>0) {
+            self.$store.commit('setSessionList', cacheSession);
+        }
+      }
+      if(cacheSession&&cacheSession.length>0) {
+          cacheSession.forEach((item)=>{
+              if(data.targetId == item.targetId) {
+                  this.chat = item
+              }
+          })
+      }
     }
   },
   created: function () {
@@ -77,6 +115,13 @@ export default {
     });
     Bus.$on("max", data => {
       this.isFullscreen = !this.isFullscreen
+    });
+    Bus.$on("sessione-updata", data => {
+        this.isChatBox=true;
+        this.isUserBox=false;
+        this.getSessionList(data)
+        this.$refs.chatBox.getSessionList();
+        this.$refs.chatBox.showChat(this.chat);
     });
   }
 };
@@ -89,6 +134,9 @@ export default {
   z-index: 9999;
   bottom: 20px;
   right: 20px;
+}
+.isShow_chat {
+  display:none
 }
 .chat-dialog {
   .el-dialog {
@@ -143,6 +191,17 @@ export default {
   .content {
     flex: 1;
   }
+}
+.detail_popover {
+    .detail_name {
+        float:left;
+        line-height: 3.6rem;
+    }
+    img {
+        float:right;
+        width: 3.6rem;
+        height: 3.6rem;
+    }
 }
 </style>
 

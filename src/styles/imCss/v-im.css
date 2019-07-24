@@ -18,10 +18,6 @@ body {
   overflow: hidden;
 }
 
-body > div {
-  height: 100%;
-}
-
 .v-im {
   width: 100%;
   height: 100%;
@@ -52,7 +48,6 @@ body > div {
 }
 ::-webkit-scrollbar-track-piece {
   background: transparent;
-  border-left: 1px solid #eee;
 }
 
 /*# sourceMappingURL=v-im.cssss.map */

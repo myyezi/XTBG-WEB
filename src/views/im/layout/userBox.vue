@@ -1,99 +1,70 @@
 <template>
     <div class="user-box">
         <div class="user-box-list">
-            <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" @on-focus="showSearch()" class="search-box"></el-input>
+            <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
             <div class="group-box">
                 <el-tree 
-                    :data="userFriendList" 
+                    :data="organizationList" 
                     :props="defaultProps" 
                     @node-click="handleNodeClick" 
                     :filter-node-method="filterNode"
                     ref="tree"
-                    class="user_tree">
+                    class="organization_tree">
+                    <span class="custom-tree-node clearfix" slot-scope="{ node, data }">
+                        <!-- <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start"> -->
+                            <img :src="data.portrait?data.portrait:defaultPic" alt="头像" >
+                            <span>{{ node.label }}</span>
+                        <!-- </el-tooltip> -->
+                    </span>
                 </el-tree>
+                <!-- <div class="group-list">
+                    <ul>
+                        <li v-for="(item,index) in groupList" :key="index" class="clearfix">
+                            <img :src="item.portrait?item.portrait:defaultPic" alt="头像">
+                            <span>{{item.name}}</span>
+                        </li>
+                    </ul>
+                </div> -->
             </div>
         </div>
         <div class="chat-box">
             <Top></Top>
-            <Welcome v-if="!showChat"></Welcome>
-            <UserChat :chat="currentChat" v-else></UserChat>
+            <Welcome :chat="currentChat" ref="welcomeDedail"></Welcome>
         </div>
     </div>
 </template>
 <script>
+  import {mapGetters} from 'vuex'
   import Top from '../components/top.vue';
   import Welcome from '../components/welcome.vue';
-  import UserChat from '../components/chat.vue';
-  import conf from '../conf';
-
+  import ajax from '@/utils/request'
+  import Bus from "@/utils/eventBus.js";
   const { ChatListUtils } = require('../../../utils/imUtils/ChatUtils.js');
 
   export default {
     components: {
         Top,
         Welcome,
-        UserChat
     },
     computed: {
+      ...mapGetters([
+          'user',
+      ])
     },
     data() {
         return {
+            defaultPic:require('@/styles/img/morentx.png'),
+            companyPortrait:require('@/styles/img/icon_company.png'),
+            groupPortrait:require('@/styles/img/icon_group.png'),
             currentChat:{},
             showChat:false,
             filterText: '',
-            userFriendList: [
-                {
-                    label: '研发部',
-                    children: [
-                        {
-                            id:1,
-                            label: '王一',
-                            name:'王一'
-                        },
-                        {
-                            id:2,
-                            label: '王二',
-                            name:'王二'
-                        },
-                        {
-                            id:3,
-                            label: '王三',
-                            name:'王三'
-                        },
-                    ]
-                }, {
-                    label: '测试部',
-                    children: [
-                        {
-                            id:4,
-                            label: '李一',
-                            name:'李一'
-                        },
-                        {
-                            id:5,
-                            label: '李二',
-                            name:'李二'
-                        }
-                    ]
-                }, {
-                    label: '产品部',
-                    children: [
-                        {
-                            id:6,
-                            label: '刘一',
-                            name:'刘一'
-                        },
-                        {
-                            id:7,
-                            label: '刘二',
-                            name:'刘二'
-                        },
-                    ]
-                }],
-                defaultProps: {
-                    children: 'children',
-                    label: 'label'
-                }
+            organizationList: [],
+            defaultProps: {
+                children: 'children',
+                label: 'name'
+            },
+            groupList:[]
         };
     },
     watch: {
@@ -101,22 +72,80 @@
             this.$refs.tree.filter(val);
         }
     },
+    destroyed() {
+        Bus.$off("sessione-updata")
+    },
+    created() {
+        this.getOrganization()
+    },
     methods: {
         handleNodeClick(data) {
-            if(!data.children) {
-                this.showChat = true
-                this.currentChat = data
-                console.log(data);
+            if(data.owner) {
+                let currentSession = {
+                portrait: data.portrait, // 接收人头像
+                targetId: data.targetId, //接收人id
+                targetName:data.name, //接收人名称
+                type: 2, //消息类别 1、单聊 2、群聊
+                owner:data.owner,
+                content: {
+                    type:0, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                    content:'' // 发送消息内容
+                },
+                };
+                this.$store.commit('addSession', currentSession);
+                Bus.$emit("sessione-updata",{targetId:data.targetId}); 
+            } else {
+                if(!data.children || data.children.length==0) {
+                    this.showChat = true
+                    this.currentChat = data
+                    this.$refs.welcomeDedail.back()
+                }
             }
         },
         filterNode(value, data) {
             if (!value) return true;
-            return data.label.indexOf(value) !== -1;
+            return data.name.indexOf(value) !== -1;
+        },
+        getOrganization() {
+            ajax.get('/upms/organization/companyTree').then(rs => {
+                if(rs.status === 0) {
+                    this.organizationList = rs.data
+                    this.organizationList[0].portrait = this.companyPortrait
+                    this.getGroupList()
+                }
+            });
+        },
+        // 得到群组列表
+        getGroupList() {
+            let self = this;
+            let cacheSession = []
+            self.groupList = [];
+            // 从内存中获取群组列表记录
+            cacheSession = self.$store.state.im.chatGroupList;
+            if(!cacheSession||cacheSession.length === 0) {
+                // 从缓存中取群组列表记录
+                cacheSession = ChatListUtils.getGroupList(this.user.userId)
+                if(cacheSession&&cacheSession.length>0) {
+                    self.$store.commit('setChatGroupList', {
+                        chatGroupList : {
+                            infoList:cacheSession
+                        },
+                        flag:true
+                    });
+                }
+            }
+            self.groupList = cacheSession
+            this.organizationList.push({
+                name:'我的群组',
+                children:self.groupList,
+                portrait:self.groupPortrait
+            })
+            console.log(this.organizationList)
         }
     }
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
     @import '../../../styles/imCss/theme';
 
     .ivu-tabs-content {
@@ -145,100 +174,66 @@
             flex-direction: column;
 
             .search-box {
-                margin: 1.5rem;
-                width: 19rem;
+                margin: 24px 8px;
+                width: calc(100% - 16px);
             }
-            .user_tree {
+            .organization_tree {
                 background: #eeeeee;
-                margin-left: 1.5rem;
-            }
-            .group-box {
-                overflow-y: scroll;
-                flex: 1;
-
-                .group-list {
-                    margin: 0 1rem;
-
-                    .count {
-                        color: #aaaaaa;
+                .el-tree-node__content {
+                    height:60px;
+                    border-top: 1px solid #cccccc;
+                }
+                .custom-tree-node {
+                    img {
+                        float:left;
+                        width:36px;
+                        height:36px;
                     }
-
-                    li {
-                        list-style: none;
-                        position: relative;
-                        font-size: 1.2rem;
-                        cursor: pointer;
-                        font-weight: 200;
-
-                        h5 {
-                            padding: 0.5rem 0;
-                            cursor: pointer;
-                            font-size: 1.3rem;
-                            font-weight: 200;
-
-                            i {
-                                vertical-align: baseline;
-                            }
-                        }
-
+                    span {
+                        float:left;
+                        margin: 10px;
+                    }
+                }
+                .el-tree-node__children {
+                    .el-tree-node__content {
+                        height:36px;
+                        border-top: 0;
+                        padding: 5px 0;
+                    }
+                    .custom-tree-node {
                         img {
-                            width: 4.4rem;
-                            height: 4.4rem;
-                            border-radius: 50%;
-                            position: absolute;
-                            top: 0.4rem;
-                            left: 2.5rem;
+                            float:left;
+                                width: 26px;
+                                height: 26px;
+                                margin-right: 5px;
                         }
-
-                        .outline {
-                            filter: grayscale(100%);
-                        }
-
-                        b {
-                            position: absolute;
-                            font-size: 1.3rem;
-                            left: 7.5rem;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            font-weight: 600;
-                            top: 0.6rem;
-                        }
-
-                        p {
-                            position: absolute;
-                            left: 7.5rem;
-                            bottom: 0.4rem;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-                            width: 75%;
-                            font-size: 1.1rem;
-                            color: #aaaaaa;
+                        span {
+                            float:left;
+                            margin: 5px;
+                            width: 170px;
+                            white-space:nowrap;
+                            overflow:hidden;
+                            text-overflow:ellipsis;
                         }
                     }
-
-                    .user {
-                        padding-left: 1.3rem;
-                        height: 5.2rem;
-
-                        a {
-                            display: block;
-                            width: 100%;
-                            height: 100%;
-                            color: $color-default;
+                }
+            }
+            .group-list {
+                ul {
+                    margin-left: 16px;
+                    li {
+                        height: 36px;
+                        line-height: 36px;
+                        margin-bottom: 5px;
+                        cursor: pointer;
+                        img {
+                            float:left;
+                            width:36px;
+                            height:36px;
                         }
-                    }
-
-                    > li:hover {
-                        /*background-color: #efefef;*/
-                    }
-
-                    > li > ul {
-                        /*background-color: #ffffff;*/
-                    }
-
-                    li.user:hover {
-                        /*background-color: #efefef;*/
+                        span {
+                            float:left;
+                        }
                     }
                 }
             }

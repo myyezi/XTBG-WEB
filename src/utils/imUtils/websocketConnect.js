@@ -1,35 +1,34 @@
+import store from '@/store'
 let client;
 let timer;
 let objData;
+let flag = false;
 const reconnectTimeout = 2000;
-const subTopic = "MS";
 
 const IMTopic = {
-    SendMessageTopic: "MS",
-    RecallMessageTopic: "MR"
+    SendMessageTopic: "MS",//获取群组成员
+    RecallMessageTopic: "MR",//获取群组成员
+    CreateGroupTopic: "GC",//创建群组
+    GetGroupInfoTopic: "GGI",//获取群组
+    GetGroupMemberTopic: "GGM",//获取群组成员
+    AddGroupMemberTopic: "GAM",// 添加群成员
 };
 
 const websocketConnect = {
     connect: function(data) {
         objData = data;
-        client = new Paho.MQTT.Client(
-            data.ip,
-            Number(data.port),
-            "/mqtt",
-            data.token
-        );
+        client = new Paho.MQTT.Client(data.ip,Number(data.port),"/mqtt",data.token);
         client.onConnectionLost = this.onConnectionLost;
         client.onMessageArrived = this.onMessageArrived;
         client.onMessageDelivered = this.onMessageDelivered;
         client.pubMessage = this.pubMessage;
-        console.log(data);
         client.connect({
             userName: data.username,
             password: data.token,
             onSuccess: this.onConnect,
             onFailure: function(message) {
                 timer = setTimeout(() => {
-                    this.connect(objData);
+                    client.connect(objData);
                 }, reconnectTimeout);
             }
         });
@@ -44,19 +43,66 @@ const websocketConnect = {
             console.log("subscribeTopic:", IMTopic[v]);
             client.subscribe(IMTopic[v], { qos: 1 });
         });
+        flag = true // flag为true查所有群组
+        let obj = JSON.stringify({
+            requestList: [{
+                target:objData.username,
+                type:2,
+                updateTime:0
+            }]
+        });
+        client.pubMessage(obj,"GGI")
         console.log("connect success.");
     },
     //连接丢失
     onConnectionLost: function(responseObject) {
         if (responseObject.errorCode !== 0) {
-            this.connect(objData);
+            client.connect(objData);
             console.log("onConnectionLost:" + responseObject.errorMessage);
         }
     },
     // 接受消息
     onMessageArrived: function(message) {
         let msg = JSON.parse(message.payloadString);
-        console.log(message.destinationName, msg);
+        console.log(message.destinationName)
+        if (message.destinationName == "MN") {
+            console.log(msg)
+            let obj = JSON.stringify({
+                id: msg.head,
+                type: msg.type
+            });
+            if(msg.type==1) {
+                let obj = JSON.stringify({
+                    requestList: [{
+                        target:msg.head,
+                        type:1,
+                        updateTime:0
+                    }]
+                });
+                client.pubMessage(obj,"GGI")
+            }
+            client.pubMessage(obj,"MP")
+        } else if (message.destinationName == "MP") {
+            msg;
+        } else if (message.destinationName == "GC") {
+            flag = false // flag为false为新创建群组
+        } else if (message.destinationName == "GGI") {
+            let objArr = {
+                chatGroupList:msg,
+                flag:flag
+            }
+            store.commit('setChatGroupList', objArr);
+            if(!flag) {
+                this.$message({
+                    message: '创建成功',
+                    type: 'success'
+                });
+            }
+        } else if (message.destinationName == "GGM") {
+            store.commit('setChatGroupListMap', msg);
+            console.log(msg);
+        } else if (message.destinationName == "GAM") { 
+        }
         // $(".recMessage").append(txt);
     },
     // 发送消息成功后回调
@@ -65,10 +111,14 @@ const websocketConnect = {
         // alert("pub message success,message: " + message.payloadString);
     },
     // 发送消息
-    pubMessage(message) {
+    pubMessage(message,subTopic) {
+        if(!subTopic) {
+            subTopic='MS'
+        }
         var message = new Paho.MQTT.Message(message);
         message.destinationName = subTopic;
         message.qos = 1;
+        console.log(message)
         client.send(message);
     }
 };

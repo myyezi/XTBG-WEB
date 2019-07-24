@@ -3,14 +3,14 @@ import { Chat, ChatListUtils, MessageInfoType, MessageTargetType, transform } fr
 import conf from '@/views/im/conf';
 const im = { 
     state: {
-        token: {},
         // 当前的用户
         user: {},
         websocket: {},
-        //内存中的聊天记录
-        messageListMap: new Map(),
-        //聊天群的映射 id->chat
-        chatMap: new Map(),
+        //内存中所有的聊天记录
+        messageListMap: {},
+        //内存中的会话记录
+        sessionList: [],
+        // 单个聊天记录
         messageList: [],
         // 当前聊天窗口
         currentChat: {},
@@ -18,26 +18,43 @@ const im = {
         chatList: [],
         //好友列表
         userFriendList: [],
-        //刷新token 定时器
-        flushTokenTimerId: null,
         //群组列表
-        chatGroupList: []
+        chatGroupList: [],
+        //所有的群组成员列表
+        chatGroupListMap: {}
       },
       mutations: {
-        setFlushTokenTimerId: function(state, flushTokenTimerId) {
-          state.flushTokenTimerId = flushTokenTimerId;
-        },
-        clearFlushTokenTimerId: function(state) {
-          clearTimeout(state.flushTokenTimerId);
-        },
-        setUser: function(state, user) {
+        setCurrentUser: function(state, user) {
+          user.id = user.userId
           state.user = user;
         },
         setUserFriendList: function(state, userFriendList) {
           state.userFriendList = userFriendList;
         },
-        setChatGroupList: function(state, chatGroupList) {
-          state.chatGroupList = chatGroupList;
+        // 更新群列表
+        setChatGroupList: function(state, chatGroupObj) {
+          let chatGroupList = chatGroupObj.chatGroupList.infoList
+          if(chatGroupObj.flag) {
+            state.chatGroupList = chatGroupList;
+          } else {
+            state.chatGroupList.push(chatGroupList);
+          }
+          // 放入缓存
+          ChatListUtils.setGroupList(state.user.id, state.chatGroupList);
+          if(chatGroupList&&chatGroupList.length>0) {
+            chatGroupList.forEach((item)=>{
+              state.websocket.pubMessage(JSON.stringify({
+                target:item.targetId,
+                head:0
+              }),'GGM');
+            })
+          }
+        },
+        // 更新所有群列表成员
+        setChatGroupListMap: function(state, chatGroupObj) {
+          state.chatGroupListMap[chatGroupObj.groupId] = chatGroupObj.groupMembers;
+          // 放入缓存
+          ChatListUtils.setChatGroupListMap(state.user.id, state.chatGroupListMap);
         },
         setChatMap: function(state, chatMap) {
           state.chatMap = chatMap;
@@ -47,11 +64,7 @@ const im = {
         },
         // 发送给服务器
         sendMessage: function(state, message) {
-          let msg = {
-            // code: MessageInfoType.MSG_MESSAGE,
-            message: message
-          };
-          state.websocket.pubMessage(JSON.stringify(msg));
+          state.websocket.pubMessage(JSON.stringify(message.obj),message.subTopic);
         },
         resetUnRead: function(state) {
           console.log('state.currentChat', state.currentChat);
@@ -60,30 +73,44 @@ const im = {
           }
           state.currentChat['unReadCount'] = 0;
         },
-        // 保存到内存
+        // 保存聊天信息到内存
         addMessage: function(state, message) {
-          message.content = transform(message.content);
+          console.log(message)
+          message.content.content = transform(message.content.content);
           state.messageList.push(message);
-          state.messageListMap[message.id] = state.messageList;
-          localStorage.setItem(message.fromid, JSON.stringify(state.messageListMap));
-        },
-        setmessageListMap: function(state, message) {
-          state.messageListMap = message
-        },
-        // 在用户姓名下展示收到的最后一条信息
-        setLastMessage: function(state, message) {
-          let list = ChatListUtils.getChatList(state.user.id);
-          let tempChatList = list.map(function(chat) {
-            if (String(chat.id) === String(message.fromid) && message.type === '0') {
-              chat.sign = message.content;
-            } else if (String(chat.id) === String(message.id) && message.type === '1') {
-              chat.sign = message.content;
-            }
-            return chat;
-          });
+          state.messageListMap[message.conversation.targetId] = state.messageList;
           // 放入缓存
-          ChatListUtils.setChatList(state.user.id, tempChatList);
-          state.chatList = tempChatList;
+          ChatListUtils.setChatList(state.user.id, state.messageListMap);
+        },
+        // 保存会话记录到内存
+        addSession: function(state, session) {
+          let flag = false;
+          let indexs = null;
+          if(state.sessionList&&state.sessionList.length>0) {
+            state.sessionList.forEach((item,index)=>{
+                if(item.targetId == session.targetId) {
+                  flag = true
+                  indexs = index
+                  if(session.content&&JSON.stringify(session.content) !== '{}') {
+                    if(session.content.content) {
+                      item.content.content = transform(session.content.content);
+                    }
+                  }
+                  if(session.timestamp) {
+                    item.timestamp = session.timestamp
+                  }
+                }
+            })
+          }
+          if(!flag) {
+            state.sessionList.unshift(session)
+          } else {
+            let obj = state.sessionList[indexs]
+            state.sessionList.splice(indexs,1)
+            state.sessionList.unshift(obj)
+          }
+          // 放入缓存
+          ChatListUtils.setSessionList(state.user.id, state.sessionList);
         },
         setMessageList: function(state, messageList) {
           state.messageList = messageList;
@@ -91,49 +118,21 @@ const im = {
         setMessageListMap: function(state, messageListMap) {
           state.messageListMap = messageListMap;
         },
-        addUnreadMessage: function(state, message) {
-          message.content = transform(message.content);
-          if (message.type === MessageTargetType.FRIEND) {
-            // 从内存中取聊天信息
-            let cacheMessages = state.messageListMap[message.fromid];
-            if (cacheMessages) {
-              cacheMessages.push(message);
-            } else {
-              cacheMessages = [];
-              cacheMessages.push(message);
-              state.messageListMap[message.fromid] = cacheMessages;
-            }
-          } else {
-            // 从内存中取聊天信息
-            let cacheMessages = state.messageListMap[message.id];
-            if (cacheMessages) {
-              cacheMessages.push(message);
-            } else {
-              cacheMessages = [];
-              cacheMessages.push(message);
-              state.messageListMap[message.id] = cacheMessages;
-            }
-          }
+        setSessionList: function(state, sessionList) {
+          state.sessionList = sessionList;
         },
-        setCurrentChat: function(state, currentChat) {
-          if (typeof currentChat != 'string') {
-            state.currentChat = currentChat;
-            state.currentChat['unReadCount'] = 0;
-            let tempChatList = state.chatList.map(function(chat) {
-              if (String(chat.id) === String(currentChat.id)) {
-                chat['unReadCount'] = 0;
-              }
-              return chat;
-            });
-            // 放入缓存
-            ChatListUtils.setChatList(currentChat.fromid, tempChatList);
-          }
+        chatGroupListMap: function(state, chatGroupListMap) {
+          state.chatGroupListMap = chatGroupListMap;
         },
         setChatList: function(state, chatList) {
           state.chatList = chatList;
         },
-        delChat: function(state, chat) {
-          state.chatList = ChatListUtils.delChat(state.user.id, chat);
+        delSession: function(state, chat) {
+          state.sessionList = ChatListUtils.delSession(state.user.id, chat);
+          state.messageListMap = ChatListUtils.delChat(state.user.id, chat);
+        },
+        delAllSession : function(state, chat) {
+          state.sessionList = ChatListUtils.delAllSession(state.user.id);
         },
         /**
          * 设置未读消息条数
@@ -159,7 +158,7 @@ const im = {
                 chat['unReadCount'] = 0;
               }
               chat['unReadCount'] = chat['unReadCount'] + 1;
-              chat.avatar = conf.getHostUrl() + state.chatMap[message.id].avatar;
+              chat.portrait = conf.getHostUrl() + state.chatMap[message.id].portrait;
               tempChat = chat;
             } else {
               tempChatList.push(chat);
@@ -167,10 +166,10 @@ const im = {
           }
           // 聊天列表没有此人的chat
           if (!tempChat.id && message.type === MessageTargetType.FRIEND) {
-            tempChat = new Chat(message.fromid, message.username, message.avatar, 1, message.content, state.user.mobile, state.user.email, MessageTargetType.FRIEND);
+            tempChat = new Chat(message.fromid, message.username, message.portrait, 1, message.content, state.user.mobile, state.user.email, MessageTargetType.FRIEND);
           } else if (!tempChat.id && message.type === MessageTargetType.CHAT_GROUP) {
             let groupChat = state.chatMap[message.id];
-            tempChat = new Chat(message.id, groupChat.name, conf.getHostUrl() + groupChat.avatar, 1, message.content, state.user.mobile, state.user.email, MessageTargetType.CHAT_GROUP);
+            tempChat = new Chat(message.id, groupChat.name, conf.getHostUrl() + groupChat.portrait, 1, message.content, state.user.mobile, state.user.email, MessageTargetType.CHAT_GROUP);
           }
           // 添加到聊天室列表的第一个
           tempChatList.unshift(tempChat);
@@ -185,11 +184,11 @@ const im = {
           let client = websocketConnect.connect(data)
           console.log(client)
           commit('setWebsocket', client);
-          setTimeout(function () {
-            state.websocket.pubMessage(JSON.stringify({
-              'heart': true
-            }))
-          }, 3000)
+          // setInterval(function () {
+          //   state.websocket.pubMessage(JSON.stringify({
+          //     'heart': true
+          //   }))
+          // }, 3000)
       
         }
       }

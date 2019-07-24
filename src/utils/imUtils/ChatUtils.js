@@ -23,30 +23,37 @@ export function formatDateTime(date) {
 export function dateStr(date) {
   // 获取js 时间戳
   let time = new Date().getTime();
+  let dates = new Date(parseInt(date));
   // 去掉 js 时间戳后三位
-  time = parseInt((time - date * 1000) / 1000);
-
+  time = parseInt((time - date) / 1000);
   // 存储转换值
   let s;
   if (time < 60 * 10) {
     // 十分钟内
-    return '刚刚';
+    // return '刚刚';
+    return dates.getHours() + ':' + dates.getMinutes();
   } else if (time < 60 * 60 && time >= 60 * 10) {
     // 超过十分钟少于1小时
     s = Math.floor(time / 60);
-    return s + '分钟前';
+    // return s + '分钟前';
+    return dates.getHours() + ':' + dates.getMinutes();
   } else if (time < 60 * 60 * 24 && time >= 60 * 60) {
     // 超过1小时少于24小时
     s = Math.floor(time / 60 / 60);
-    return s + '小时前';
+    // return s + '小时前';
+    return dates.getHours() + ':' + dates.getMinutes();
   } else if (time < 60 * 60 * 24 * 3 && time >= 60 * 60 * 24) {
     // 超过1天少于3天内
     s = Math.floor(time / 60 / 60 / 24);
-    return s + '天前';
+    // return s + '天前';
+    if(s == 1) {
+      return '昨天'
+    } else {
+      return '前天'
+    }
   } else {
     // 超过3天
-    let date = new Date(parseInt(date) * 1000);
-    return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+    return dates.getFullYear() + '/' + (dates.getMonth() + 1) + '/' + dates.getDate();
   }
 }
 
@@ -54,10 +61,10 @@ export function dateStr(date) {
  * 聊天会话
  */
 export class Chat {
-  constructor(id, name, avatar, unReadCount, lastMessage, mobile, email, type) {
+  constructor(id, name, portrait, unReadCount, lastMessage, mobile, email, type) {
     this.id = id;
     this.name = name;
-    this.avatar = avatar;
+    this.portrait = portrait;
     this.unReadCount = unReadCount;
     this.lastMessage = lastMessage;
     this.mobile = mobile;
@@ -267,50 +274,87 @@ export function transform(content) {
 }
 
 export const ChatListUtils = {
-  listKey: '_chatList',
+  // 缓存所有聊天记录
   setChatList: function(userId, chatList) {
-    localStorage.setItem(userId + this.listKey, JSON.stringify(chatList));
+    localStorage.setItem(userId+'chat', JSON.stringify(chatList));
+  },
+  // 缓存所有会话记录
+  setSessionList: function(userId, sessionList) {
+    localStorage.setItem(userId+'session', JSON.stringify(sessionList));
+  },
+  // 缓存所有群信息
+  setGroupList: function(userId, groupList) {
+    localStorage.setItem(userId+'group', JSON.stringify(groupList));
+  },
+  // 缓存所有群成员信息
+  setChatGroupListMap: function(userId, groupList) {
+    console.log(groupList)
+    localStorage.setItem(userId+'group_user', JSON.stringify(groupList));
+  },
+  //从缓存中获取已经保存的聊天记录
+  getChatList: function(userId) {
+    let str = localStorage.getItem(userId+'chat');
+    if (!str) {
+      return {};
+    }
+    return JSON.parse(str);
   },
   //从缓存中获取已经保存的会话
-  getChatList: function(userId) {
-    let str = localStorage.getItem(userId + this.listKey);
+  getSessionList: function(userId) {
+    let str = localStorage.getItem(userId+'session');
     if (!str) {
       return [];
     }
     return JSON.parse(str);
   },
-  //删除聊天会话框
-  delChat: function(userId, chat) {
-    let tempChatList = [];
-    for (let item of this.getChatList(userId)) {
-      if (String(item.id) !== String(chat.id)) {
-        tempChatList.push(item);
-      }
+  //从缓存中获取已经保存的群信息
+  getGroupList: function(userId) {
+    let str = localStorage.getItem(userId+'group');
+    if (!str) {
+      return [];
     }
+    return JSON.parse(str);
+  },
+  //从缓存中获取已经保存的群成员信息
+  getChatGroupListMap: function(userId) {
+    let str = localStorage.getItem(userId+'group_user');
+    if (!str) {
+      return {};
+    }
+    return JSON.parse(str);
+  },
+  //删除聊天记录
+  delChat: function(userId, chat) {
+    let tempChatList = {};
+    let obj = this.getChatList(userId)
+    if(obj&&JSON.stringify(obj) !== '{}'&&obj[chat.targetId]) {
+      delete obj[chat.targetId]
+      tempChatList = obj
+    }
+
     // 放入缓存
     this.setChatList(userId, tempChatList);
     return tempChatList;
   },
-  /**
-   * 刷新会话列表
-   * @param self 当前对象
-   * @param user 用户
-   * @param host 主机名
-   * @returns {Chat} 当前会话
-   */
-  resetChatList: function(self, user, host) {
-    let chatList = this.getChatList(self.$store.state.user.id);
-    // 删除当前用户已经有的会话
-    let newChatList = chatList.filter(function(element) {
-      return String(element.id) !== String(user.id);
-    });
-    // 重新添加会话，放到第一个
-    let chat = new Chat(user.id, user.name, host + user.avatar, 0, '', user.mobile, user.email, MessageTargetType.FRIEND);
-    newChatList.unshift(chat);
-    // 存储到localStorage 的 chatList
-    this.setChatList(self.$store.state.user.id, chatList);
-    self.$store.commit('setChatList', newChatList);
-    return chat;
+  //删除聊天会话框
+  delSession: function(userId, chat) {
+    let tempSessionList = [];
+    for (let item of this.getSessionList(userId)) {
+      if (item.targetId!=chat.targetId) {
+        tempSessionList.push(item);
+      }
+    } 
+    // 放入缓存
+    this.setSessionList(userId, tempSessionList);
+    return tempSessionList;
+  },
+  //删除所有聊天会话框
+  delAllSession: function(userId) {
+    let tempAllSessionList = [];
+  
+    // 放入缓存
+    this.setChatList(userId, tempAllSessionList);
+    return tempAllSessionList;
   }
 };
 //信息的类型 MSG_PING 心跳 、MSG_READY 链接就绪  MSG_MESSAGE 消息

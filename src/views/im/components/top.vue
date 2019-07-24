@@ -41,7 +41,7 @@
     $color-online: #d1ffe9;
 
     .im-top {
-        height: $top-height;
+        height: 50px;
         padding: 0.5rem;
         position: absolute;
         z-index: 2;

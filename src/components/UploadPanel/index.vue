@@ -1,7 +1,7 @@
 <template>
     <div class="upload-panel">
         <file-detail v-if="!showImg" v-for="(file, i) in fileList" :key="i" :file-name="file.name"
-                           :file-url="file.path" :show-download="true"
+                           :file-url="file.path" :show-download="showDownload"
                            :show-del="!disabled" @del="delFile(i)"></file-detail>
         <div class="img-list" v-if="showImg">
             <div class="img-box" v-for="(file, i) in fileList" :key="i">
@@ -50,6 +50,10 @@
             fileList: {
                 type: Array,
                 default: []
+            },
+            showDownload: {
+                type: Boolean,
+                default: true
             },
             size: Number
         },

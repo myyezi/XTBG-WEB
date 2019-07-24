@@ -1,85 +1,153 @@
 <template>
   <div class="chat-panel">
     <div class="chat-box-list">
-      <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
+      <div class="search-box-content clearfix">
+          <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
+          <i class="el-icon-circle-plus-outline" @click="addGroup"></i>
+      </div>
       <div class="group-box">
         <ul class="user-list">
-          <li class="user" v-for="chat in chatList">
-            <a href="javascript:" @click="showChat(chat)" :class="currentChat&&currentChat.id===chat.id?'active':''">
+          <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionList" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
+            <a href="javascript:" :class="currentChat&&currentChat.targetId===chat.targetId?'active':''">
               <i v-if="chat.unReadCount>0">{{ chat.unReadCount }}</i>
-              <img :src="chat.avatar" alt="头像">
-              <b>{{ chat.name }}</b>
-              <p>{{ chat.sign }}</p>
+              <img :src="chat.portrait?chat.portrait:defaultPic">
+              <b>{{ chat.targetName?chat.targetName:'test' }}</b>
+              <span>{{ chat.timestamp?dateStr(chat.timestamp):''}}</span>
+              <p v-html="chat.content.content?chat.content.content:''"></p>
             </a>
-            <Icon type="md-close" @click="delChat(chat)"></Icon>
           </li>
         </ul>
       </div>
     </div>
     <div class="chat-box">
       <Top></Top>
-      <UserChat :chat="currentChat" @showChat="showChat"></UserChat>
+      <UserChat :chat="currentChat"></UserChat>
     </div>
+    <ul v-show="visibleBox" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+        <li @click.stop="deleteCurrent">删除当前</li>
+        <li @click.stop="deleteAll">删除全部</li>
+    </ul>
+    <el-dialog :visible.sync="showAddGroup" width="620px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_group">
+        <div slot="title" class="im_chat_record_title clearfix">
+          <span > 创建群组 </span>
+        </div>
+        <add-group @close-add-group="closeAddGroup"></add-group>
+    </el-dialog>
   </div>
 </template>
 <script>
+import {mapGetters} from 'vuex'
 import Top from '../components/top.vue';
 import UserChat from '../components/chat.vue';
-import { ChatListUtils, imageLoad } from '../../../utils/imUtils/ChatUtils';
+import addGroup from '../components/addGroup.vue';
+import { ChatListUtils, imageLoad } from '@/utils/imUtils/ChatUtils';
 
 export default {
   components: {
     Top,
-    UserChat
+    UserChat,
+    addGroup
   },
+  props:['isChatBox'],
   data() {
     return {
-      filterText: ''
+      visibleBox:false,
+      showAddGroup:false,
+      filterText: '',
+      sessionList:[],
+      currentChat:{},
+      rightSeleteChat:[],
+      top: 0,
+      left: 0,
+      defaultPic:require('@/styles/img/morentx.png'),
     };
   },
+  watch:{
+      'isChatBox':function(newvalue,oldvalue) {
+          
+      }
+  },
   computed: {
-    currentChat: {
-      get: function () {
-        return this.$store.state.currentChat;
-      },
-      set: function (currentChat) {
-        this.$store.commit('setCurrentChat', JSON.parse(JSON.stringify(currentChat)));
-      }
-    },
-    chatList: {
-      get: function () {
-        return this.$store.state.chatList;
-      },
-      set: function (chatList) {
-        this.$store.commit('setChatList', chatList);
-      }
-    }
+    ...mapGetters([
+        'user',
+    ])
   },
   methods: {
-    showChat(chat) {
-      this.$store.commit('resetUnRead');
-      this.currentChat = chat;
-      // 每次滚动到最底部
-      this.$nextTick(() => {
-        imageLoad('message-box');
-      });
+    closeAddGroup() {
+        this.showAddGroup = false
     },
-    delChat(chat) {
-      this.$store.commit('delChat', chat);
+    // 添加群组
+    addGroup() {
+        this.showAddGroup = true
+    },
+    // 会话鼠标右键事件
+    rightEvent(chat,e) {
+      this.sessionList.forEach(items => {
+        this.$set(items,'active',false);
+      });
+      if(chat === 1) {
+          this.visibleBox = false
+      } else {
+          const offsetLeft = this.$el.getBoundingClientRect().left
+          const offsetTop = this.$el.getBoundingClientRect().top
+          this.visibleBox = true
+          this.rightSeleteChat = chat // 右键选中的会话
+          this.$set(chat,'active',true);
+          this.left = e.clientX - offsetLeft + 50
+          this.top = e.clientY - offsetTop
+      }
+    },
+    showChat(chat) {
+      console.log(chat)
+      this.currentChat = chat;
+    },
+    // 删除当前会话
+    deleteCurrent() {
+      this.$store.commit('delSession', this.rightSeleteChat);
+      this.visibleBox = false
+      this.getSessionList()
+    },
+    // 删除所有会话
+    deleteAll() {
+      this.$store.commit('delAllSession');
+      this.visibleBox = false
+      this.getSessionList()
+    },
+    // 得到会话列表
+    getSessionList() {
+      let self = this;
+      let cacheSession = []
+      self.sessionList = [];
+      // 从内存中获取会话记录
+      cacheSession = self.$store.state.im.sessionList;
+      if(!cacheSession||cacheSession.length === 0) {
+        // 从缓存中取会话记录
+        cacheSession = ChatListUtils.getSessionList(this.user.userId)
+        if(cacheSession&&cacheSession.length>0) {
+            self.$store.commit('setSessionList', cacheSession);
+        }
+      }
+      self.sessionList = cacheSession
+      if(self.sessionList&&self.sessionList.length>0) {
+          let flag = false
+          if(self.currentChat&&JSON.stringify(self.currentChat) !== '{}') {
+              self.sessionList.forEach((item)=>{
+                  if(item.targetId == this.currentChat.targetId) {
+                      flag = true
+                      self.currentChat = item
+                  }
+              })
+          }
+          if(!flag) {
+              self.currentChat = self.sessionList[0]
+          }
+      } else {
+        self.currentChat = {}
+      }
     }
   },
-  activated: function () {
-    let self = this;
-    // 当前聊天室
-    if (self.$route.query.chat) {
-      self.$store.commit('setCurrentChat', JSON.parse(JSON.stringify(self.$route.query.chat)));
-    }
-    // 重新设置chatList
-    self.$store.commit('setChatList', ChatListUtils.getChatList(self.$store.state.user.id));
-    // 每次滚动到最底部
-    self.$nextTick(() => {
-      imageLoad('message-box');
-    });
+  created: function () {
+      this.getSessionList()
   },
   mounted: function () {
   }
@@ -112,14 +180,43 @@ export default {
     width: 22rem;
     display: flex;
     flex-direction: column;
-
+    .search-box-content {
+      padding: 1.5rem 8px;
+      width: 100%;
+      .el-icon-circle-plus-outline {
+          float:right;
+          font-size: 2.5rem;
+          margin: 3.5px 0 0 0;
+          cursor: pointer;
+      }
+    }
     .search-box {
-      margin: 1.5rem;
-      width: 19rem;
+      width: calc(19rem - 16px);
+      float:left;
     }
   }
 }
-
+.contextmenu {
+    margin: 0;
+    background: #fff;
+    z-index: 100;
+    position: absolute;
+    list-style-type: none;
+    padding: 5px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #333;
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+    li {
+        margin: 0;
+        padding: 7px 16px;
+        cursor: pointer;
+        &:hover {
+            background: #eee;
+        }
+    }
+}
 .group-box {
   height: 100%;
   overflow-y: scroll;
@@ -127,7 +224,9 @@ export default {
   .count {
     color: #aaaaaa;
   }
-
+  .user-list {
+    width:22rem;
+  }
   li {
     list-style: none;
     position: relative;
@@ -152,7 +251,7 @@ export default {
       height: 4.4rem;
       position: absolute;
       top: 0.4rem;
-      left: 2rem;
+      left: 1.5rem;
     }
 
     b {
@@ -164,7 +263,16 @@ export default {
       font-weight: 600;
       top: 0.6rem;
     }
-
+    span {
+      position: absolute;
+      font-size: 1.3rem;
+      right: 1.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+      top: 0.6rem;
+      color:#333;
+    }
     p {
       position: absolute;
       left: 7.5rem;
@@ -174,11 +282,12 @@ export default {
       white-space: nowrap;
       width: 75%;
       font-size: 1.1rem;
-      color: #aaaaaa;
+      color: #333;
     }
   }
 
   .user {
+    margin: 0 8px;
     height: 5.2rem;
     position: relative;
 
@@ -211,6 +320,7 @@ export default {
 
     &:hover {
       background-color: $color-gray !important;
+      border-radius: 5px;
 
       & > i {
         color: $color-default;
@@ -220,6 +330,7 @@ export default {
 
     .active {
       background-color: $color-gray !important;
+      border-radius: 5px;
     }
 
     & > i {
@@ -238,5 +349,9 @@ export default {
       }
     }
   }
+}
+.user_active {
+  border: 1px solid #a7a2a2;
+  border-radius: 5px;
 }
 </style>

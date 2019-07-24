@@ -6,7 +6,7 @@
                 <ul class="user-list">
                     <li class="user" v-for="(chatGroup,index) in chatGroupList" :key="index">
                         <a href="javascript:" @click="showChat(chatGroup)">
-                            <img :src="chatGroup.avatar">
+                            <img :src="chatGroup.portrait">
                             <b>{{ chatGroup.name }}</b>
                             <p>{{ chatGroup.name }}</p>
                         </a>
@@ -39,7 +39,7 @@
       get: function() {
         // return this.$store.state.chatGroupList;
         return [{
-            avatar:"http://101.200.151.183:8080/img/group-img.png",
+            portrait:"http://101.200.151.183:8080/img/group-img.png",
             name:'群1'
         }]
       },
@@ -64,7 +64,7 @@
         return String(element.id) !== String(chatGroup.id);
       });
       // 重新添加会话，放到第一个
-      let chat = new Chat(chatGroup.id, chatGroup.name, conf.getHostUrl() + chatGroup.avatar, 0, '', '', '', MessageTargetType.CHAT_GROUP);
+      let chat = new Chat(chatGroup.id, chatGroup.name, conf.getHostUrl() + chatGroup.portrait, 0, '', '', '', MessageTargetType.CHAT_GROUP);
       newChatList.unshift(chat);
       // 存储到localStorage 的 chatList
       ChatListUtils.setChatList(self.$store.state.user.id, chatList);

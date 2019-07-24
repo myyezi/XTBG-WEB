@@ -93,7 +93,6 @@ input[type="number"]{
 
 ::-webkit-scrollbar-track-piece {
     background: #fff;
-    border-left: 1px solid #eee;
 }
 
 //main-container全局样式
@@ -144,33 +143,33 @@ input[type="number"]{
     max-width: 90%;
 }
 
-.dialog_animation_in {
-    height:100%;
-    animation:dialog-fade-in 0.5s ease-in-out;
-}
-.dialog_animation_out {
-    animation:dialog-fade-out 0.5s ease-in-out;
-}
-@keyframes dialog-fade-in {
-    0% {
-        transform: translate3d(100%, 0, 0);
-        opacity: 0;
-    }
-    100% {
-        transform: translate3d(0, 0, 0);
-        opacity: 1;
-    }
+// .dialog_animation_in {
+//     height:100%;
+//     animation:dialog-fade-in 0.5s ease-in-out;
+// }
+// .dialog_animation_out {
+//     animation:dialog-fade-out 0.5s ease-in-out;
+// }
+// @keyframes dialog-fade-in {
+//     0% {
+//         transform: translate3d(100%, 0, 0);
+//         opacity: 0;
+//     }
+//     100% {
+//         transform: translate3d(0, 0, 0);
+//         opacity: 1;
+//     }
 
-}
-@keyframes dialog-fade-out {
-    0% {
-        transform: translate3d(0, 0, 0);
-        opacity: 1;
-    }
-    100% {
-        transform: translate3d(100%, 0, 0);
-        opacity: 0;
-    }
-}
+// }
+// @keyframes dialog-fade-out {
+//     0% {
+//         transform: translate3d(0, 0, 0);
+//         opacity: 1;
+//     }
+//     100% {
+//         transform: translate3d(100%, 0, 0);
+//         opacity: 0;
+//     }
+// }
 
 @import './list.scss';

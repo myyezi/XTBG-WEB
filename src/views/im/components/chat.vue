@@ -1,20 +1,22 @@
 <template>
-    <div class="im-chat" v-if="chat">
+    <div class="im-chat" v-if="chat&&JSON.stringify(chat) !== '{}'">
         <div class="im-chat-top" v-if="chat">
-            <span>{{ chat.name }}</span>
+            <span>{{ chat.targetName }}</span>
+            <i class="el-icon-setting" v-if="chat.type === 2" @click="setting()"></i>
         </div>
         <div class="im-chat-main">
             <div class="im-chat-main-left">
                 <div class="im-chat-main-box messages" id="message-box">
                     <ul>
-                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.mine}" :key="index">
+                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index">
                             <div class="im-chat-user">
-                                <img :src="item.avatar" alt="头像">
-                                <cite v-if="item.mine"><i>{{ item.timestamp }}</i>{{ item.username }}</cite>
-                                <cite v-else>{{ item.username }}<i>{{ item.timestamp }}</i></cite>
+                                <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
+                                <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
+                                <cite v-if="item.fromUserId == user.userId"><i>{{ item.timestamp }}</i>{{ user.name }}</cite>
+                                <cite v-else>{{ chat.name }}<i>{{ item.timestamp }}</i></cite>
                             </div>
                             <div class="im-chat-text">
-                                <pre v-html="item.content" v-on:click="openImageProxy($event)"></pre>
+                                <pre v-html="item.content.content" v-on:click="openImageProxy($event)"></pre>
                             </div>
                         </li>
                     </ul>
@@ -44,6 +46,15 @@
                 </div>
             </div>
         </div>
+        <el-dialog :visible.sync="showHistory" width="550px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_record_dialog">
+              <div slot="title" class="im_chat_record_title clearfix">
+                <img :src="chat.portrait?chat.portrait:defaultPic" alt="头像" v-show="!isSetting">
+                <span v-show="!isSetting"> {{ chat.targetName }}</span>
+                <span v-show="isSetting"> 群设置</span>
+              </div>
+              <setting :chat="chat" :groupUserList="groupUserList"  v-if="showHistory&&isSetting"></setting>
+              <chat-history :messageList="messageList" v-if="showHistory&&!isSetting"></chat-history>
+        </el-dialog>
     </div>
 </template>
 
@@ -51,12 +62,16 @@
   import {mapGetters} from 'vuex'
   import conf from '../conf';
   import Faces from './faces.vue';
+  import Setting from './setting.vue';
   import {getToken} from '@/utils/cookie' 
+  import chatHistory from './chatHistory.vue';
   const { imageLoad, transform, ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
 
   export default {
     components: {
       Faces,
+      chatHistory,
+      Setting
       // Button
     },
     name: 'userChat',
@@ -75,17 +90,19 @@
     },
     data() {
       return {
+        defaultPic:require('@/styles/img/morentx.png'),
         host: conf.getHostUrl(),
         count: 0,
         pageSize: 20,
         modal: false,
         showHistory: false,
-        hisMessageList: [],
+        isSetting:false,
         // 保存各个聊天记录的map
-        messageListMap: new Map(),
+        messageListMap: {},
+        chatGroupListMap:{},
         messageContent: '',
         showFace: false,
-        userList: [],
+        groupUserList:[],
         imgFormat: "jpg, jpeg, png, gif",
         fileFormat: "doc', docx, jpg, jpeg, png, gif, xls, xlsx, pdf, exe, msi, swf, sql, apk, psd",
         tokenImg: {
@@ -127,6 +144,7 @@
       showFaceBox() {
         this.showFace = !this.showFace;
       },
+      // 发送表情
       insertFace(item) {
         this.messageContent = this.messageContent + 'face' + item;
         this.showFace = false;
@@ -172,8 +190,6 @@
       // 本人发送信息
       mineSend() {
         let self = this;
-        console.log(this.$store.state)
-        // let currentUser = self.$store.state.user;
         let time = new Date().getTime();
         let content = self.messageContent;
         if (content !== '' && content !== '\n') {
@@ -181,62 +197,118 @@
             self.openMessage('不能超过2000个字符');
           } else {
             let currentMessage = {
-              mine: true,
-              avatar: 'http://101.200.151.183:8080/img/user (3).png',
-              username: this.user.name,
-              timestamp: time,
-              content: self.messageContent,
-              fromid: this.user.userId,
-              id: self.chat.id,
-              // type: self.chat.type
+              fromUserId:self.user.userId, //发送人id
+              timestamp: time, // 发送时间
+              // 发送消息的内容属性
+              content: {
+                  type:1, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                  content:content // 发送消息内容
+              },
+              // 发送消息的会话属性
+              conversation: {
+                  targetId: self.chat.targetId, //接收人id
+                  type: self.chat.type,//消息类别 1、单聊 2、群聊
+              }
             };
-            self.send(currentMessage);
+            let currentSession = {
+              portrait: self.chat.portrait, // 接收人头像
+              timestamp: time, // 发送时间
+              targetId: self.chat.targetId, //接收人id
+              targetName:self.chat.name, //接收人名称
+              type: self.chat.type, //消息类别 1、单聊 2、群聊
+              // 发送消息的内容属性
+              content: {
+                  type:1, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                  content:content // 发送消息内容
+              },
+            };
+            self.send(currentMessage,currentSession);
           }
         }
       },
       // 发送消息的基础方法
-      send(message) {
+      send(message,session) {
         let self = this;
-        self.$store.commit('sendMessage', message);
+        let objArr = {
+            obj:message,
+            subTopic:'MS'
+        }
+        self.$store.commit('sendMessage', objArr);
         message.timestamp = self.formatDateTime(new Date(message.timestamp));
         self.$store.commit('addMessage', message);
+        self.$store.commit('addSession', session);
         self.messageContent = '';
         // 每次滚动到最底部
         self.$nextTick(() => {
           imageLoad('message-box');
         });
       },
-      getHistoryMessage(pageNo) {
-        let self = this;
-        self.showHistory = true;
+      getHistoryMessage() {
+        this.isSetting = false
+        this.showHistory = true
       },
+      // 得到当前点击会话框的聊天信息
       getCurrentMessageList() {
           let self = this;
+          let cacheMessagesObj = {}
+          let cacheMessages = []
           self.messageList = [];
           // 从内存中取聊天信息
-          let cacheMessages = self.$store.state.im.messageListMap[self.chat.id];
+          cacheMessagesObj = self.$store.state.im.messageListMap
+          if(JSON.stringify(cacheMessagesObj) !== '{}' && cacheMessagesObj[self.chat.targetId]) {
+              cacheMessages = cacheMessagesObj[self.chat.targetId]
+          }
           if(!cacheMessages||cacheMessages.length===0) {
-            self.$store.commit('setmessageListMap', JSON.parse(localStorage.getItem(this.user.userId)));
             // 从缓存中取聊天信息
-            cacheMessages = JSON.parse(localStorage.getItem(this.user.userId))[self.chat.id];
+            cacheMessagesObj = ChatListUtils.getChatList(this.user.userId)
+            if(JSON.stringify(cacheMessagesObj) !== '{}') {
+                self.$store.commit('setMessageListMap', cacheMessagesObj);
+                cacheMessages = cacheMessagesObj[self.chat.targetId];
+            }
           }
           if (cacheMessages) {
             self.messageList = cacheMessages;
           }
           // 每次滚动到最底部
-          this.$nextTick(() => {
+          self.$nextTick(() => {
             imageLoad('message-box');
           });
+      },
+      // 得到当前点击群会话的群成员信息
+      setting() {
+          let self = this;
+          let cacheMessagesObj = {}
+          let cacheGroupUser = []
+          self.chatGroupListMap = [];
+          // 从内存中取群成员
+          cacheMessagesObj = self.$store.state.im.chatGroupListMap
+          if(JSON.stringify(cacheMessagesObj) !== '{}' && cacheMessagesObj[self.chat.targetId]) {
+              cacheGroupUser = cacheMessagesObj[self.chat.targetId]
+          }
+          if(!cacheGroupUser||cacheGroupUser.length===0) {
+            // 从缓存中取群成员
+            cacheMessagesObj = ChatListUtils.getChatGroupListMap(this.user.userId)
+            if(JSON.stringify(cacheMessagesObj) !== '{}') {
+                self.$store.commit('setChatGroupListMap', cacheMessagesObj);
+                cacheGroupUser = cacheMessagesObj[self.chat.targetId];
+            }
+          }
+          if (cacheGroupUser) {
+            self.groupUserList = cacheGroupUser;
+            // self.groupUserList = self.groupUserList.concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser)
+            console.log(self.groupUserList)
+          }
+          self.isSetting = true
+          self.showHistory = true
       }
     },
     watch: {
-      // 监听每次 user 的变化
       chat: function(newvalue,oldvalue) {
           this.getCurrentMessageList()
       }
     },
     created: function() {
-      if(this.chat&&this.chat.id) {
+      if(this.chat&&this.chat.targetId) {
           this.getCurrentMessageList()
       }
     },
@@ -263,7 +335,7 @@
     .im-chat-top {
         border-bottom: 1px solid #cccccc;
         color: $color-default;
-        padding: 0 0 0.2rem 1rem;
+        padding: 0 0 0 10px;
         font-size: 1.6rem;
         font-weight: bold;
         height: 40px;
@@ -271,6 +343,12 @@
             color: $color-default;
             display: inline-block;
             padding: 0 10px;
+        }
+        i {
+          float:right;
+          font-size: 24px;
+          margin-right:10px;
+          cursor: pointer;
         }
     }
 
@@ -343,7 +421,8 @@
                     margin-bottom: 10px;
                     padding-left: 60px;
                     min-height: 68px;
-
+                    padding-right: 10px;
+                    margin-bottom: 12px;
                     .im-chat-text {
                         position: relative;
                         line-height: 22px;
@@ -416,7 +495,7 @@
 
             .im-chat-mine {
                 text-align: right;
-                padding-left: 0;
+                padding-left: 10px;
                 padding-right: 60px;
 
                 .im-chat-text {
