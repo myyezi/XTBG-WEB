@@ -19,6 +19,14 @@ router.beforeEach((to, from, next) => {
                     store.dispatch('GetInfo');
                     store.dispatch('getAuth').then(_=>{
                         store.commit('setCurrentUser', store.getters.user);
+                        if (!store.state.im.websocket.clientId) {
+                            store.dispatch('getWebsocket', {
+                                ip: '192.168.10.134',
+                                port: '8085',
+                                token: getToken(),
+                                username: store.state.user.user.userId
+                            })
+                        }
                         store.dispatch('getMenu').then(res =>{
                             console.log(store.getters.authRouters);
                             router.addRoutes(store.getters.authRouters)

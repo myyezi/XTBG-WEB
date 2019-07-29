@@ -12,7 +12,7 @@
               <i v-if="chat.unReadCount>0">{{ chat.unReadCount }}</i>
               <img :src="chat.portrait?chat.portrait:defaultPic">
               <b>{{ chat.targetName?chat.targetName:'test' }}</b>
-              <span>{{ chat.timestamp?dateStr(chat.timestamp):''}}</span>
+              <span>{{ chat.serverTimestamp?dateStr(chat.serverTimestamp):''}}</span>
               <p v-html="chat.content.content?chat.content.content:''"></p>
             </a>
           </li>
@@ -40,6 +40,7 @@ import {mapGetters} from 'vuex'
 import Top from '../components/top.vue';
 import UserChat from '../components/chat.vue';
 import addGroup from '../components/addGroup.vue';
+import Bus from "@/utils/eventBus.js";
 import { ChatListUtils, imageLoad } from '@/utils/imUtils/ChatUtils';
 
 export default {
@@ -150,6 +151,10 @@ export default {
       this.getSessionList()
   },
   mounted: function () {
+    Bus.$on("update-session", data => {
+      console.log("susususuussu")
+      this.getSessionList()
+    });
   }
 };
 </script>
@@ -247,10 +252,10 @@ export default {
     }
 
     img {
-      width: 4.4rem;
-      height: 4.4rem;
+      width: 4.5rem;
+      height: 4.5rem;
       position: absolute;
-      top: 0.4rem;
+      top: 0.5rem;
       left: 1.5rem;
     }
 
@@ -288,7 +293,7 @@ export default {
 
   .user {
     margin: 0 8px;
-    height: 5.2rem;
+    height: 5.5rem;
     position: relative;
 
     a {

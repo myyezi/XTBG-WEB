@@ -19,8 +19,8 @@
           <li v-for="item in messageList" :class="{'chat-mine': item.mine}" :key="item.id">
             <div class="chat-user">
               <img :src="item.avatar" alt="头像">
-              <cite v-if="item.mine"><i>{{ item.timestamp }}</i>{{ item.username }}</cite>
-              <cite v-if="!item.mine">{{ item.username }}<i>{{ item.timestamp }}</i></cite>
+              <cite v-if="item.mine"><i>{{ item.serverTimestamp }}</i>{{ item.username }}</cite>
+              <cite v-if="!item.mine">{{ item.username }}<i>{{ item.serverTimestamp }}</i></cite>
             </div>
             <div class="chat-text">
               <pre v-html="item.content"></pre>
@@ -72,7 +72,7 @@ export default {
           id: "1",
           avatar: "",
           mine: true,
-          timestamp: '2019-07-02 17:00',
+          serverTimestamp: '2019-07-02 17:00',
           username: "xxx",
           content: "ssssssssssssss"
         },
@@ -80,7 +80,7 @@ export default {
           id: "2",
           avatar: "",
           mine: false,
-          timestamp: '2019-07-02 17:10',
+          serverTimestamp: '2019-07-02 17:10',
           username: "aaaa",
           content: "ssssssssssssss"
         }

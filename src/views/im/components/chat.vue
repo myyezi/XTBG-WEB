@@ -2,7 +2,7 @@
     <div class="im-chat" v-if="chat&&JSON.stringify(chat) !== '{}'">
         <div class="im-chat-top" v-if="chat">
             <span>{{ chat.targetName }}</span>
-            <i class="el-icon-setting" v-if="chat.type === 2" @click="setting()"></i>
+            <i class="el-icon-setting" v-if="chat.type === 1" @click="setting()"></i>
         </div>
         <div class="im-chat-main">
             <div class="im-chat-main-left">
@@ -12,11 +12,11 @@
                             <div class="im-chat-user">
                                 <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
                                 <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
-                                <cite v-if="item.fromUserId == user.userId"><i>{{ item.timestamp }}</i>{{ user.name }}</cite>
-                                <cite v-else>{{ chat.name }}<i>{{ item.timestamp }}</i></cite>
+                                <cite v-if="item.fromUserId == user.userId"><i>{{ item.serverTimestamp }}</i>{{ user.name }}</cite>
+                                <cite v-else>{{ chat.name }}<i>{{ item.serverTimestamp }}</i></cite>
                             </div>
                             <div class="im-chat-text">
-                                <pre v-html="item.content.content" v-on:click="openImageProxy($event)"></pre>
+                                <pre v-html="item.content.content" v-on:click="openImageProxy($event)" class="clearfix"></pre>
                             </div>
                         </li>
                     </ul>
@@ -24,13 +24,11 @@
                 <div class="im-chat-footer">
                     <div class="im-chat-tool">
                         <i class="icon-biaoqing" @click="showFaceBox()"></i>
-                        <el-upload :action="action" name="file"
+                        <el-upload 
+                                :action="uploadUrl"
+                                :headers="headers" 
                                 class="im-upload"
-                                :accept="fileFormat"
-                                :data="tokenFile"
                                 :show-file-list="false"
-                                :headers="headers"
-                                :with-credentials="true"
                                 :before-upload="beforeUpload"
                                 :on-success="handleSuccess"
                                 :on-error="handleError">
@@ -41,7 +39,7 @@
                     </div>
                     <textarea v-model="messageContent" class="textarea" @keyup.enter="mineSend()"></textarea>
                     <div class="im-chat-send">
-                        <el-button size="mini" @click="mineSend()">发送</el-button>
+                        <el-button size="mini" @click="mineSend(1)">发送</el-button>
                     </div>
                 </div>
             </div>
@@ -65,6 +63,7 @@
   import Setting from './setting.vue';
   import {getToken} from '@/utils/cookie' 
   import chatHistory from './chatHistory.vue';
+  import Bus from "@/utils/eventBus.js";
   const { imageLoad, transform, ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
 
   export default {
@@ -91,10 +90,10 @@
     data() {
       return {
         defaultPic:require('@/styles/img/morentx.png'),
-        host: conf.getHostUrl(),
-        count: 0,
-        pageSize: 20,
-        modal: false,
+        uploadUrl: process.env.BASE_API + "file/upload/multipart",
+        headers:{
+            "Authorization": 'Bearer ' + this.$store.getters.token
+        },
         showHistory: false,
         isSetting:false,
         // 保存各个聊天记录的map
@@ -105,36 +104,12 @@
         groupUserList:[],
         imgFormat: "jpg, jpeg, png, gif",
         fileFormat: "doc', docx, jpg, jpeg, png, gif, xls, xlsx, pdf, exe, msi, swf, sql, apk, psd",
-        tokenImg: {
-          access_token: getToken(),
-          type: 'image'
-        },
-        tokenFile: {
-          access_token: getToken(),
-          type: 'file'
-        },
-        action: conf.getHostUrl() + '/api/upload',
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        }
       };
     },
     props: ['chat'],
     methods: {
       beforeUpload() {
-        this.tokenImg = {
-          access_token: getToken(),
-          type: 'image'
-        };
-        this.tokenFile = {
-          access_token: getToken(),
-          type: 'file'
-        };
-        return new Promise(resolve => {
-          this.$nextTick(function() {
-            resolve(true);
-          });
-        });
+        
       },
 
       // 错误提示
@@ -157,19 +132,23 @@
       },
       handleSuccess(res, file) {
         let self = this;
-        if (res.msg === 'success') {
-          let path = res.filePath;
-          let fileName = file.name;
+        let type = null
+        if (res.status == 0) {
+          let path = res.data.filedomain + res.data.path;
+          let fileName = res.data.name;
           // 文件后缀
-          let suffix = fileName.substring(fileName.lastIndexOf('.') + 1, fileName.length);
+          let suffix = res.data.suffix;
           // 文件
           if (self.imgFormat.indexOf(suffix) === -1) {
             this.messageContent = this.messageContent + 'file(' + path + ')[' + fileName + ']';
+            type = 5
           }
           // 图片
           else {
             this.messageContent = this.messageContent + 'img[' + path + ']';
+            type = 3
           }
+          this.mineSend(type)
         } else {
           this.$Message.error('文件上传错误，请重试');
         }
@@ -188,7 +167,7 @@
         }
       },
       // 本人发送信息
-      mineSend() {
+      mineSend(type) {
         let self = this;
         let time = new Date().getTime();
         let content = self.messageContent;
@@ -198,28 +177,28 @@
           } else {
             let currentMessage = {
               fromUserId:self.user.userId, //发送人id
-              timestamp: time, // 发送时间
+              serverTimestamp: time, // 发送时间
               // 发送消息的内容属性
               content: {
-                  type:1, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                  type:type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
                   content:content // 发送消息内容
               },
               // 发送消息的会话属性
               conversation: {
                   targetId: self.chat.targetId, //接收人id
-                  type: self.chat.type,//消息类别 1、单聊 2、群聊
+                  type: self.chat.type,//消息类别 0、单聊 1、群聊
               }
             };
             let currentSession = {
               portrait: self.chat.portrait, // 接收人头像
-              timestamp: time, // 发送时间
+              serverTimestamp: time, // 发送时间
               targetId: self.chat.targetId, //接收人id
               targetName:self.chat.name, //接收人名称
-              type: self.chat.type, //消息类别 1、单聊 2、群聊
+              type: self.chat.type, //消息类别 0、单聊 1、群聊
               // 发送消息的内容属性
               content: {
-                  type:1, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
-                  content:content // 发送消息内容
+                  type:type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                  content:type==1?content:type==3?'图片':'文件'// 发送消息内容
               },
             };
             self.send(currentMessage,currentSession);
@@ -234,7 +213,7 @@
             subTopic:'MS'
         }
         self.$store.commit('sendMessage', objArr);
-        message.timestamp = self.formatDateTime(new Date(message.timestamp));
+        message.serverTimestamp = self.formatDateTime(new Date(message.serverTimestamp));
         self.$store.commit('addMessage', message);
         self.$store.commit('addSession', session);
         self.messageContent = '';
@@ -302,10 +281,19 @@
           self.showHistory = true
       }
     },
+    destroyed() {
+        Bus.$off("update-session")
+    },
     watch: {
       chat: function(newvalue,oldvalue) {
           this.getCurrentMessageList()
-      }
+      },
+      showHistory:function(newvalue,oldvalue) { 
+          if(!newvalue) {
+              console.log("sucheng")
+              Bus.$emit("update-session");
+          }
+      },
     },
     created: function() {
       if(this.chat&&this.chat.targetId) {
@@ -313,6 +301,10 @@
       }
     },
     mounted: function() {
+      Bus.$on("close-show", data => {
+        console.log(111777)
+        this.showHistory = false
+      });
       // 每次滚动到最底部
       this.$nextTick(() => {
         imageLoad('message-box');
@@ -453,6 +445,19 @@
                             width: 100%;
                             white-space: pre-wrap;
                             word-break: break-all;
+                            .el-icon-document {
+                                float: left;
+                                font-size:36px;
+                            }
+                            span {
+                              float: left;
+                              margin:7px 10px 0 5px;
+                            }
+                            .el-icon-download {
+                                float: left;
+                                font-size:20px;
+                                margin-top:8px;
+                            }
                         }
                     }
                 }

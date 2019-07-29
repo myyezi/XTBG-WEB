@@ -90,12 +90,6 @@
         this.getAllOrganization()
     },
     methods: {
-        handleAvatarSuccess(res, file) {
-          this.loading = false;
-          if(res.status == 0){
-              this.imageUrl = res.data.filedomain + res.data.path
-          }
-        },
         beforeAvatarUpload(file) {
           // 限制20M
           if(this.accept && this.accept.toLowerCase().indexOf(file.name.toLowerCase().split(".")[(file.name.toLowerCase().split(".").length - 1)]) == -1) {
@@ -107,6 +101,12 @@
           }  else {
               this.loading = true;
               return true;
+          }
+        },
+        handleAvatarSuccess(res, file) {
+          this.loading = false;
+          if(res.status == 0){
+              this.imageUrl = res.data.filedomain + res.data.path
           }
         },
         handleCheckChange(data, checked, indeterminate) {
@@ -125,7 +125,7 @@
                   name: this.groupForm.name,
                   portrait:this.imageUrl,
                   owner:this.user.userId,
-                  type:1
+                  type:0
               }
               let groupMembers = [{memberId:this.user.userId,type:2,alias:this.user.name}]
               this.seleteUserList.forEach((item)=>{

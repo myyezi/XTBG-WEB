@@ -9,7 +9,7 @@
                       <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
                     </div>
                     <div class="im_chat_record_user">
-                        <p>{{ user.name }}<i>{{ item.timestamp }}</i></p>
+                        <p>{{ user.name }}<i>{{ item.serverTimestamp }}</i></p>
                         <div class="im_chat_record_text">
                           <pre v-html="item.content.content" v-on:click="openImageProxy($event)"></pre>
                         </div>

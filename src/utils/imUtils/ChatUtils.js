@@ -249,7 +249,7 @@ export function transform(content) {
         let href = (str.match(/file\(([\s\S]+?)\)\[/) || [])[1];
         let text = (str.match(/\)\[([\s\S]*?)]/) || [])[1];
         if (!href) return str;
-        return '<a class="message-file" href="' + href + '"><i class="ivu-icon ivu-icon-md-arrow-down"></i>' + (text || href) + '</a>';
+        return '<a class="message-file" href="' + href + '"><i class="el-icon-document"></i><span>' + (text || href) + '</span><i class="el-icon-download"></i></a>';
       })
       .replace(/audio\[([^\s]+?)]/g, function(audio) {
         // 转义音频
@@ -305,6 +305,7 @@ export const ChatListUtils = {
     if (!str) {
       return [];
     }
+    console.log(str)
     return JSON.parse(str);
   },
   //从缓存中获取已经保存的群信息

@@ -4,7 +4,7 @@
             <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
             <div class="group-box">
                 <el-tree 
-                    :data="organizationList" 
+                    :data="organizationTreeList" 
                     :props="defaultProps" 
                     @node-click="handleNodeClick" 
                     :filter-node-method="filterNode"
@@ -60,6 +60,7 @@
             showChat:false,
             filterText: '',
             organizationList: [],
+            organizationTreeList:[],
             defaultProps: {
                 children: 'children',
                 label: 'name'
@@ -85,7 +86,7 @@
                 portrait: data.portrait, // 接收人头像
                 targetId: data.targetId, //接收人id
                 targetName:data.name, //接收人名称
-                type: 2, //消息类别 1、单聊 2、群聊
+                type: 1, //消息类别 0、单聊 1、群聊
                 owner:data.owner,
                 content: {
                     type:0, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
@@ -119,6 +120,7 @@
         getGroupList() {
             let self = this;
             let cacheSession = []
+            let myGroupList =[]
             self.groupList = [];
             // 从内存中获取群组列表记录
             cacheSession = self.$store.state.im.chatGroupList;
@@ -135,11 +137,12 @@
                 }
             }
             self.groupList = cacheSession
-            this.organizationList.push({
+            myGroupList.push({
                 name:'我的群组',
                 children:self.groupList,
                 portrait:self.groupPortrait
             })
+            this.organizationTreeList = this.organizationList.concat(myGroupList)
             console.log(this.organizationList)
         }
     }
@@ -210,7 +213,7 @@
                         span {
                             float:left;
                             margin: 5px;
-                            width: 170px;
+                            width: 13rem;
                             white-space:nowrap;
                             overflow:hidden;
                             text-overflow:ellipsis;

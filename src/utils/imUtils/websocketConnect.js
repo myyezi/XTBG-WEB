@@ -1,17 +1,20 @@
 import store from '@/store'
 let client;
-let timer;
 let objData;
-let flag = false;
-const reconnectTimeout = 2000;
 
 const IMTopic = {
-    SendMessageTopic: "MS",//获取群组成员
-    RecallMessageTopic: "MR",//获取群组成员
+    SendMessageTopic: "MS",//发送消息
+    NotifyMessageTopic:'MN',//接收通知
+    RecallMessageTopic: "MR",//
     CreateGroupTopic: "GC",//创建群组
     GetGroupInfoTopic: "GGI",//获取群组
     GetGroupMemberTopic: "GGM",//获取群组成员
     AddGroupMemberTopic: "GAM",// 添加群成员
+    KickoffGroupMemberTopic: "GKM",// 移除群成员
+    ModifyGroupInfoTopic : "GMI",// 修改群信息
+    TransferGroupTopic : "GTG",// 转移群
+    DismissGroupTopic : "GD",// 解散群
+    QuitGroupTopic : "GQ",// 退出群
 };
 
 const websocketConnect = {
@@ -27,23 +30,17 @@ const websocketConnect = {
             password: data.token,
             onSuccess: this.onConnect,
             onFailure: function(message) {
-                timer = setTimeout(() => {
-                    client.connect(objData);
-                }, reconnectTimeout);
+                client.connect(objData);
             }
         });
         return client;
     },
     // 返回链接成功没
     onConnect: function() {
-        if (timer) {
-            clearTimeout(timer);
-        }
         Object.keys(IMTopic).map(v => {
             console.log("subscribeTopic:", IMTopic[v]);
             client.subscribe(IMTopic[v], { qos: 1 });
         });
-        flag = true // flag为true查所有群组
         let obj = JSON.stringify({
             requestList: [{
                 target:objData.username,
@@ -57,7 +54,7 @@ const websocketConnect = {
     //连接丢失
     onConnectionLost: function(responseObject) {
         if (responseObject.errorCode !== 0) {
-            client.connect(objData);
+            // client.connect(objData);
             console.log("onConnectionLost:" + responseObject.errorMessage);
         }
     },
@@ -68,40 +65,50 @@ const websocketConnect = {
         if (message.destinationName == "MN") {
             console.log(msg)
             let obj = JSON.stringify({
-                id: msg.head,
+                id: msg.head+'',
                 type: msg.type
             });
-            if(msg.type==1) {
-                let obj = JSON.stringify({
-                    requestList: [{
-                        target:msg.head,
-                        type:1,
-                        updateTime:0
-                    }]
-                });
-                client.pubMessage(obj,"GGI")
-            }
             client.pubMessage(obj,"MP")
         } else if (message.destinationName == "MP") {
-            msg;
+            console.log(msg)
+            if(msg.messages.length>0) {
+                msg.messages.forEach((item,index)=> {
+                    if(item.conversation.type==1) {
+                        if(index == 0) {
+                            let obj = JSON.stringify({
+                                requestList: [{
+                                    target:objData.username,
+                                    type:2,
+                                    updateTime:0
+                                }]
+                            });
+                            client.pubMessage(obj,"GGI")
+                        }
+                    } else {
+
+                    }
+                }) 
+            }
         } else if (message.destinationName == "GC") {
-            flag = false // flag为false为新创建群组
+            // this.$message({
+            //     message: '创建成功',
+            //     type: 'success'
+            // });
         } else if (message.destinationName == "GGI") {
-            let objArr = {
-                chatGroupList:msg,
-                flag:flag
-            }
-            store.commit('setChatGroupList', objArr);
-            if(!flag) {
-                this.$message({
-                    message: '创建成功',
-                    type: 'success'
-                });
-            }
+            console.log(msg)
+            store.commit('setChatGroupList', msg.infoList);
         } else if (message.destinationName == "GGM") {
             store.commit('setChatGroupListMap', msg);
             console.log(msg);
         } else if (message.destinationName == "GAM") { 
+        } else if (message.destinationName == "GMI") {
+            console.log(msg)
+        } else if (message.destinationName == "GD") { 
+        } else if (message.destinationName == "GTG") {
+            
+        } else if (message.destinationName == "GQ") { 
+            console.log(msg)
+        } else if (message.destinationName == "GKM") { 
         }
         // $(".recMessage").append(txt);
     },

@@ -32,23 +32,31 @@ const im = {
           state.userFriendList = userFriendList;
         },
         // 更新群列表
-        setChatGroupList: function(state, chatGroupObj) {
-          let chatGroupList = chatGroupObj.chatGroupList.infoList
-          if(chatGroupObj.flag) {
-            state.chatGroupList = chatGroupList;
-          } else {
-            state.chatGroupList.push(chatGroupList);
-          }
-          // 放入缓存
-          ChatListUtils.setGroupList(state.user.id, state.chatGroupList);
+        setChatGroupList: function(state, chatGroupList) {
           if(chatGroupList&&chatGroupList.length>0) {
-            chatGroupList.forEach((item)=>{
+            let sessionList = ChatListUtils.getSessionList(state.user.id)
+            let sessionListArr = []
+            state.chatGroupList = chatGroupList //更新状态管理数据
+            // 所有群聊放入缓存
+            ChatListUtils.setGroupList(state.user.id, state.chatGroupList);
+            chatGroupList.forEach((items)=>{
               state.websocket.pubMessage(JSON.stringify({
-                target:item.targetId,
+                target:items.targetId,
                 head:0
               }),'GGM');
+              sessionList.forEach((item)=>{
+                  if(item.targetId == items.targetId) {
+                    item.portrait = items.portrait
+                    item.targetName = items.name
+                    item.owner = items.owner
+                    sessionListArr.push(item)
+                  }
+              })
             })
-          }
+            state.sessionList = sessionListArr //更新状态管理数据
+            // 所有会话放入缓存
+            ChatListUtils.setSessionList(state.user.id, state.sessionList);
+          }  
         },
         // 更新所有群列表成员
         setChatGroupListMap: function(state, chatGroupObj) {
@@ -96,8 +104,8 @@ const im = {
                       item.content.content = transform(session.content.content);
                     }
                   }
-                  if(session.timestamp) {
-                    item.timestamp = session.timestamp
+                  if(session.serverTimestamp) {
+                    item.serverTimestamp = session.serverTimestamp
                   }
                 }
             })

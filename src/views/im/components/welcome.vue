@@ -102,7 +102,7 @@ export default {
           portrait: this.chatObj.portrait, // 接收人头像
           targetId: this.chatObj.id, //接收人id
           targetName:this.chatObj.name, //接收人名称
-          type: 1, //消息类别 1、单聊 2、群聊
+          type: 0, //消息类别 0、单聊 1、群聊
           content: {
             type:0, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
             content:'' // 发送消息内容

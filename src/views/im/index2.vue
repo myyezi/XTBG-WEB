@@ -30,7 +30,7 @@
                       </li> -->
                   </ul>
               </div>
-              <user-Box v-show="isUserBox" class="content"></user-Box>
+              <user-Box v-show="isUserBox" class="content" ref="userBox"></user-Box>
               <chat-Box v-show="isChatBox" class="content" ref="chatBox" :isChatBox="isChatBox"></chat-Box>
               <chat-GroupBox v-show="isChatGroupBox" class="content"></chat-GroupBox>
           </div>
@@ -65,22 +65,19 @@ export default {
       chat:{}
     };
   },
+  watch: {
+      isUserBox:function(newvalue,oldvalue) { 
+          if(newvalue) {
+              this.$refs.userBox.getGroupList();
+          }
+      }
+  },
   methods: {
     closeVisibleBox() {
         this.$refs.chatBox.rightEvent(1)
     },
     handleOpen() {
       this.chatDialogVisible = !this.chatDialogVisible
-      if (this.chatDialogVisible) {
-        if (!this.$store.state.im.websocket.clientId) {
-          this.$store.dispatch('getWebsocket', {
-            ip: '192.168.10.134',
-            port: '8085',
-            token: getToken(),
-            username: this.user.userId
-          })
-        }
-      }
     },
     handleClose() {
       this.chatDialogVisible = false;
