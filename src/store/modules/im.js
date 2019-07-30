@@ -56,7 +56,13 @@ const im = {
             state.sessionList = sessionListArr //更新状态管理数据
             // 所有会话放入缓存
             ChatListUtils.setSessionList(state.user.id, state.sessionList);
-          }  
+          }  else {
+            state.chatGroupList = []
+            state.chatGroupListMap = {}
+            state.sessionList = []
+            ChatListUtils.setGroupList(state.user.id, state.chatGroupList);
+            ChatListUtils.setSessionList(state.user.id, state.sessionList);
+          }
         },
         // 更新所有群列表成员
         setChatGroupListMap: function(state, chatGroupObj) {

@@ -275,7 +275,6 @@
           if (cacheGroupUser) {
             self.groupUserList = cacheGroupUser;
             // self.groupUserList = self.groupUserList.concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser)
-            console.log(self.groupUserList)
           }
           self.isSetting = true
           self.showHistory = true
@@ -290,7 +289,6 @@
       },
       showHistory:function(newvalue,oldvalue) { 
           if(!newvalue) {
-              console.log("sucheng")
               Bus.$emit("update-session");
           }
       },
@@ -302,7 +300,6 @@
     },
     mounted: function() {
       Bus.$on("close-show", data => {
-        console.log(111777)
         this.showHistory = false
       });
       // 每次滚动到最底部

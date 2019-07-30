@@ -19,6 +19,7 @@
     import {mapGetters} from 'vuex'
     import Bus from "@/utils/eventBus.js";
     import ajax from '@/utils/request'
+    const {ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
     export default {
         props: ['chat','groupUserList'],
         data() {
@@ -89,9 +90,26 @@
                     }
                     console.log(objArr)
                     this.$store.commit('sendMessage', objArr);
-                    this.$emit('close-add-user')
+                    this.updateSession()
                 }).catch(() => {
                 });
+            },
+            updateSession() {
+                let groupList = ChatListUtils.getGroupList(this.user.userId)
+                let sessionList = ChatListUtils.getSessionList(this.user.userId)
+                groupList.forEach((item)=>{
+                    if(this.chat.targetId == item.targetId) {
+                        item.owner = this.checkList[0]
+                    }
+                })
+                sessionList.forEach((item)=>{
+                    if(this.chat.targetId == item.targetId) {
+                        item.owner = this.checkList[0]
+                    }
+                })
+                ChatListUtils.setGroupList(this.user.userId, groupList);
+                ChatListUtils.setSessionList(this.user.userId, sessionList);
+                this.$emit('close-add-user')
             },
         }
     };

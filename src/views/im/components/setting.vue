@@ -84,7 +84,7 @@
     import transferGroup from '../components/transferGroup.vue';
     import eliminateUser from '../components/eliminateUser.vue';
     import Bus from "@/utils/eventBus.js";
-    const { imageLoad, transform, ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
+    const { ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
     export default {
         props: ['chat','groupUserList'],
         components: {
@@ -115,9 +115,9 @@
         };
         },
         computed: {
-        ...mapGetters([
-            'user',
-        ])
+            ...mapGetters([
+                'user',
+            ])
         },
         watch: {
             userName:function(newvalue,oldvalue) {
@@ -157,19 +157,14 @@
             },
             showTransferUser:function(newvalue,oldvalue) { 
                 if(!newvalue) {
-                    console.log("chengsu")
                     let sessionList = ChatListUtils.getSessionList(this.user.userId)
                     sessionList.forEach(item => {
                         if(item.targetId == this.chat.targetId) {
                             this.chats = item
-                            this.$forceUpdate()
                         }
                     });
                 }
-            },
-        },
-        destroyed() {
-            Bus.$off("close-show")
+            }
         },
         created() {
             this.groupUserListSearchCopy = Object.assign([],this.groupUserLists);
@@ -229,9 +224,26 @@
                     type: 'warning'
                 }).then(() => {
                     this.updateGroupInformation(subTopic,3,string)
+                    this.updateSession()
                 }).catch(() => {
                 
                 });
+            },
+            updateSession() {
+                let groupList = ChatListUtils.getGroupList(this.user.userId)
+                let arr1 = []
+                groupList.forEach((item)=>{
+                    let flag = false
+                    if(this.chat.targetId == item.targetId) {
+                        flag = true
+                    }
+                    if(!flag) {
+                        arr1.push(item)
+                    }
+                })
+                ChatListUtils.setGroupList(this.user.userId, arr1);
+                this.$store.commit('delSession', this.chat);
+                Bus.$emit("close-show");
             },
             // 转移群聊
             transferGroup() {

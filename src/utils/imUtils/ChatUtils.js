@@ -288,7 +288,6 @@ export const ChatListUtils = {
   },
   // 缓存所有群成员信息
   setChatGroupListMap: function(userId, groupList) {
-    console.log(groupList)
     localStorage.setItem(userId+'group_user', JSON.stringify(groupList));
   },
   //从缓存中获取已经保存的聊天记录
@@ -305,7 +304,6 @@ export const ChatListUtils = {
     if (!str) {
       return [];
     }
-    console.log(str)
     return JSON.parse(str);
   },
   //从缓存中获取已经保存的群信息

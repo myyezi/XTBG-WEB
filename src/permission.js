@@ -19,6 +19,7 @@ router.beforeEach((to, from, next) => {
                     store.dispatch('GetInfo');
                     store.dispatch('getAuth').then(_=>{
                         store.commit('setCurrentUser', store.getters.user);
+                        console.log(store.state.user.user.userId)
                         if (!store.state.im.websocket.clientId) {
                             store.dispatch('getWebsocket', {
                                 ip: '192.168.10.134',

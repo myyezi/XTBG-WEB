@@ -41,6 +41,14 @@ const websocketConnect = {
             console.log("subscribeTopic:", IMTopic[v]);
             client.subscribe(IMTopic[v], { qos: 1 });
         });
+        
+        localStorage.getItem('type')
+        let obj1 = JSON.stringify({
+            id: localStorage.getItem('head_last_message'),
+            type: localStorage.getItem('type_last_message')
+        });
+        client.pubMessage(obj1,"MP")
+
         let obj = JSON.stringify({
             requestList: [{
                 target:objData.username,
@@ -54,7 +62,7 @@ const websocketConnect = {
     //连接丢失
     onConnectionLost: function(responseObject) {
         if (responseObject.errorCode !== 0) {
-            // client.connect(objData);
+            client.connect(objData);
             console.log("onConnectionLost:" + responseObject.errorMessage);
         }
     },
@@ -69,6 +77,8 @@ const websocketConnect = {
                 type: msg.type
             });
             client.pubMessage(obj,"MP")
+            localStorage.setItem('head_last_message',msg.head+'')
+            localStorage.setItem('type_last_message',msg.type)
         } else if (message.destinationName == "MP") {
             console.log(msg)
             if(msg.messages.length>0) {
@@ -87,6 +97,7 @@ const websocketConnect = {
                     } else {
 
                     }
+                    store.commit('addMessage', item);
                 }) 
             }
         } else if (message.destinationName == "GC") {

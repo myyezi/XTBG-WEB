@@ -2,7 +2,7 @@
     <div class="user-box">
         <div class="user-box-list">
             <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
-            <div class="group-box">
+            <div class="group-organization-box">
                 <el-tree 
                     :data="organizationTreeList" 
                     :props="defaultProps" 
@@ -97,9 +97,11 @@
                 Bus.$emit("sessione-updata",{targetId:data.targetId}); 
             } else {
                 if(!data.children || data.children.length==0) {
-                    this.showChat = true
-                    this.currentChat = data
-                    this.$refs.welcomeDedail.back()
+                    if(data.name != '我的群组') {
+                        this.showChat = true
+                        this.currentChat = data
+                        this.$refs.welcomeDedail.back()
+                    }
                 }
             }
         },
@@ -179,6 +181,10 @@
             .search-box {
                 margin: 24px 8px;
                 width: calc(100% - 16px);
+            }
+            .group-organization-box {
+                height: calc(100% - 80px);
+                overflow: auto;
             }
             .organization_tree {
                 background: #eeeeee;

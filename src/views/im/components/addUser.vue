@@ -29,6 +29,7 @@
   import {mapGetters} from 'vuex'
   import Bus from "@/utils/eventBus.js";
   import ajax from '@/utils/request'
+  const {ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
   export default {
     props: ['groupUserList','chat'],
     data() {
@@ -108,10 +109,16 @@
                 obj:obj,
                 subTopic:'GAM'
             }
-            console.log(userNameString)
             console.log(objArr)
-            this.$store.commit('sendMessage', objArr);
             
+            this.$store.commit('sendMessage', objArr);
+            this.updateSession()
+        },
+        updateSession() {
+            let groupListMap = ChatListUtils.getChatGroupListMap(this.user.userId)
+            groupListMap[this.chat.targetId]=groupListMap[this.chat.targetId].concat(groupMembers)
+            ChatListUtils.setChatGroupListMap(this.user.userId, groupListMap);
+            this.$emit('close-add-user')
         },
         filterNode(value, data) {
             if (!value) return true;

@@ -150,6 +150,7 @@
                   subTopic:'GC'
               }
               this.$store.commit('sendMessage', objArr);
+              this.$emit('close-add-group')
             } else {
               return false;
             }
