@@ -12,8 +12,8 @@
                             <div class="im-chat-user">
                                 <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
                                 <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
-                                <cite v-if="item.fromUserId == user.userId"><i>{{ item.serverTimestamp }}</i>{{ user.name }}</cite>
-                                <cite v-else>{{ chat.name }}<i>{{ item.serverTimestamp }}</i></cite>
+                                <cite v-if="item.fromUserId == user.userId"><i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
+                                <cite v-else>{{ chat.name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
                             <div class="im-chat-text">
                                 <pre v-html="item.content.content" v-on:click="openImageProxy($event)" class="clearfix"></pre>
@@ -51,7 +51,7 @@
                 <span v-show="isSetting"> 群设置</span>
               </div>
               <setting :chat="chat" :groupUserList="groupUserList"  v-if="showHistory&&isSetting"></setting>
-              <chat-history :messageList="messageList" v-if="showHistory&&!isSetting"></chat-history>
+              <chat-history :chat="chat" :messageList="messageList" v-if="showHistory&&!isSetting"></chat-history>
         </el-dialog>
     </div>
 </template>
@@ -213,7 +213,6 @@
             subTopic:'MS'
         }
         self.$store.commit('sendMessage', objArr);
-        message.serverTimestamp = self.formatDateTime(new Date(message.serverTimestamp));
         self.$store.commit('addMessage', message);
         self.$store.commit('addSession', session);
         self.messageContent = '';

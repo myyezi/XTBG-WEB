@@ -249,7 +249,7 @@ export function transform(content) {
         let href = (str.match(/file\(([\s\S]+?)\)\[/) || [])[1];
         let text = (str.match(/\)\[([\s\S]*?)]/) || [])[1];
         if (!href) return str;
-        return '<a class="message-file" href="' + href + '"><i class="el-icon-document"></i><span>' + (text || href) + '</span><i class="el-icon-download"></i></a>';
+        return '<a class="message-file clearfix" href="' + href + '"><i class="el-icon-document"></i><span>' + (text || href) + '</span><i class="el-icon-download"></i></a>';
       })
       .replace(/audio\[([^\s]+?)]/g, function(audio) {
         // 转义音频

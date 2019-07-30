@@ -27,7 +27,7 @@
   import {mapGetters} from 'vuex'
   const { imageLoad, transform, ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
   export default {
-    props: ['messageList'],
+    props: ['messageList','chat'],
     data() {
       return {
           defaultPic:require('@/styles/img/morentx.png'),
@@ -127,6 +127,9 @@
                 .im_chat_record_text {
                   color:#000;
                   margin-top: 10px;
+                  img {
+                      max-width: 20rem;
+                  }
                 }
             }
           }
