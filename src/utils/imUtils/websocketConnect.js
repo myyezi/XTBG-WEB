@@ -97,7 +97,6 @@ const websocketConnect = {
                     } else {
 
                     }
-                    item.content.content = transform(item.content.content);
                     store.commit('addMessage', item);
                     store.commit('addSession', item);
                 }) 
