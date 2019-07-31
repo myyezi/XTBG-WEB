@@ -87,7 +87,6 @@ const im = {
         addMessage: function(state, message) {
           console.log(message)
           let getChatList = ChatListUtils.getChatList(state.user.id);
-          message.content.content = transform(message.content.content);
           if(message.conversation.type === 1) {
             if(getChatList[message.conversation.targetId]) {
               getChatList[message.conversation.targetId].push(message);
@@ -144,25 +143,29 @@ const im = {
               },
             }
             if(session.conversation.type == 1) {
-              sessionObj.targetId = session.conversation.targetId
+              let groupList = ChatListUtils.getGroupList(state.user.id);
+              groupList.forEach((item)=>{
+                  if(item.targetId == session.conversation.targetId) {
+                      sessionObj.targetId = item.targetId
+                      sessionObj.portrait = item.portrait
+                      sessionObj.targetName = item.name
+                  }
+              })
             } else {
+              // let getSessionList = ChatListUtils.getSessionList(state.user.id);
               sessionObj.targetId = session.fromUserId
-              
             }
           } else {
             sessionObj = session
           }
+          console.log(sessionObj)
           let getSessionList = ChatListUtils.getSessionList(state.user.id);
           if(getSessionList&&getSessionList.length>0) {
               getSessionList.forEach((item,index)=>{
                 if(item.targetId == sessionObj.targetId) {
                   flag = true
                   indexs = index
-                  if(sessionObj.content&&JSON.stringify(sessionObj.content) !== '{}') {
-                    if(sessionObj.content.content) {
-                      item.content.content = transform(sessionObj.content.content);
-                    }
-                  }
+                  item.content.content = sessionObj.content.content;
                   if(sessionObj.serverTimestamp) {
                     item.serverTimestamp = sessionObj.serverTimestamp
                   }

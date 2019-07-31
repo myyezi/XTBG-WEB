@@ -8,7 +8,7 @@
             <div class="im-chat-main-left">
                 <div class="im-chat-main-box messages" id="message-box">
                     <ul>
-                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index">
+                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="item.conversation.topic=='MS' || !item.conversation.topic">
                             <div class="im-chat-user">
                                 <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
                                 <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
@@ -18,6 +18,10 @@
                             <div class="im-chat-text">
                                 <pre v-html="item.content.content" v-on:click="openImageProxy($event)" class="clearfix"></pre>
                             </div>
+                        </li>
+                        <li v-else class="group_system_chat">
+                          <span>{{ formatDateTime(new Date(item.serverTimestamp)) }}</span>
+                          <p>{{item.content.content}}</p>
                         </li>
                     </ul>
                 </div>
@@ -170,7 +174,7 @@
       mineSend(type) {
         let self = this;
         let time = new Date().getTime();
-        let content = self.messageContent;
+        let content = transform(self.messageContent);
         if (content !== '' && content !== '\n') {
           if (content.length > 2000) {
             self.openMessage('不能超过2000个字符');
@@ -536,6 +540,18 @@
                             padding-right: 15px;
                         }
                     }
+                }
+            }
+            .group_system_chat {
+                text-align: center;
+                span {
+                    font-size:12px;
+                    color:#999;
+                }
+                p {
+                    font-size: 14px;
+                    margin-top: 5px;
+                    color: #333;
                 }
             }
         }
