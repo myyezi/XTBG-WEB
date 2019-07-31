@@ -89,6 +89,14 @@
         set: function(messageList) {
           this.$store.commit('setMessageList', messageList);
         }
+      },
+      sessionList: {
+        get: function() {
+          return this.$store.state.im.sessionList;
+        },
+        set: function(sessionList) {
+          this.$store.commit('setSessionList', sessionList);
+        }
       }
     },
     data() {
@@ -294,6 +302,15 @@
           if(!newvalue) {
               Bus.$emit("update-session");
           }
+      },
+      sessionList :function(newvalue,oldvalue) {
+        if(newvalue&&newvalue.length>0) {
+            newvalue.forEach((item)=>{
+                if(item.targetId == this.chat.targetId) {
+                    this.chat.targetName = item.targetName
+                }
+            })
+        }
       },
       messageList :function(newvalue,oldvalue) {
         // 每次滚动到最底部

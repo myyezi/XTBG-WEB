@@ -135,6 +135,7 @@ const im = {
               portrait: '', // 接收人头像
               serverTimestamp: session.serverTimestamp, // 发送时间
               targetName:'', //接收人名称
+              targetId:session.conversation.targetId,
               type: session.conversation.type, //消息类别 0、单聊 1、群聊
               // 发送消息的内容属性
               content: {
@@ -146,7 +147,6 @@ const im = {
               let groupList = ChatListUtils.getGroupList(state.user.id);
               groupList.forEach((item)=>{
                   if(item.targetId == session.conversation.targetId) {
-                      sessionObj.targetId = item.targetId
                       sessionObj.portrait = item.portrait
                       sessionObj.targetName = item.name
                   }

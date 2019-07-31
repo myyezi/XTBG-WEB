@@ -112,9 +112,9 @@
             console.log(objArr)
             
             this.$store.commit('sendMessage', objArr);
-            this.updateSession()
+            this.updateSession(groupMembers)
         },
-        updateSession() {
+        updateSession(groupMembers) {
             let groupListMap = ChatListUtils.getChatGroupListMap(this.user.userId)
             groupListMap[this.chat.targetId]=groupListMap[this.chat.targetId].concat(groupMembers)
             ChatListUtils.setChatGroupListMap(this.user.userId, groupListMap);
