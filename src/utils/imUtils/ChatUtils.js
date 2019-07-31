@@ -353,6 +353,7 @@ export const ChatListUtils = {
   
     // 放入缓存
     this.setChatList(userId, tempAllSessionList);
+    this.setSessionList(userId, tempAllSessionList);
     return tempAllSessionList;
   }
 };

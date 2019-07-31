@@ -35,7 +35,6 @@ const im = {
         setChatGroupList: function(state, chatGroupList) {
           if(chatGroupList&&chatGroupList.length>0) {
             let sessionList = ChatListUtils.getSessionList(state.user.id)
-            let sessionListArr = []
             state.chatGroupList = chatGroupList //更新状态管理数据
             // 所有群聊放入缓存
             ChatListUtils.setGroupList(state.user.id, state.chatGroupList);
@@ -49,19 +48,16 @@ const im = {
                     item.portrait = items.portrait
                     item.targetName = items.name
                     item.owner = items.owner
-                    sessionListArr.push(item)
                   }
               })
             })
-            state.sessionList = sessionListArr //更新状态管理数据
+            state.sessionList = sessionList //更新状态管理数据
             // 所有会话放入缓存
             ChatListUtils.setSessionList(state.user.id, state.sessionList);
           }  else {
             state.chatGroupList = []
             state.chatGroupListMap = {}
-            state.sessionList = []
             ChatListUtils.setGroupList(state.user.id, state.chatGroupList);
-            ChatListUtils.setSessionList(state.user.id, state.sessionList);
           }
         },
         // 更新所有群列表成员
@@ -90,39 +86,93 @@ const im = {
         // 保存聊天信息到内存
         addMessage: function(state, message) {
           console.log(message)
+          let getChatList = ChatListUtils.getChatList(state.user.id);
           message.content.content = transform(message.content.content);
-          state.messageList.push(message);
-          state.messageListMap[message.conversation.targetId] = state.messageList;
+          if(message.conversation.type === 1) {
+            getChatList[message.conversation.targetId] = state.messageList;
+          } else {
+            if(message.fromUserId == state.user.id) {
+              if(getChatList[message.conversation.targetId]) {
+                getChatList[message.conversation.targetId].push(message);
+              } else {
+                getChatList[message.conversation.targetId] = []
+                getChatList[message.conversation.targetId].push(message);
+              }
+            } else {
+              let chatList = getChatList[message.fromUserId];
+              if(chatList&&chatList.length>0) {
+                let flag = false
+                chatList.forEach((item)=>{
+                    if(item.messageId == message.messageId) {
+                      flag = true
+                    }
+                })
+                if(!flag) {
+                  getChatList[message.fromUserId].push(message);
+                }
+              } else {
+                getChatList[message.fromUserId] = []
+                getChatList[message.fromUserId].push(message)
+              }
+            }
+          }
+          state.messageListMap = getChatList
           // 放入缓存
           ChatListUtils.setChatList(state.user.id, state.messageListMap);
         },
         // 保存会话记录到内存
         addSession: function(state, session) {
+          console.log(session)
           let flag = false;
           let indexs = null;
-          if(state.sessionList&&state.sessionList.length>0) {
-            state.sessionList.forEach((item,index)=>{
-                if(item.targetId == session.targetId) {
+          let sessionObj = {}
+          if(session.conversation) {
+            sessionObj = {
+              portrait: '', // 接收人头像
+              serverTimestamp: session.serverTimestamp, // 发送时间
+              targetName:'', //接收人名称
+              type: session.conversation.type, //消息类别 0、单聊 1、群聊
+              // 发送消息的内容属性
+              content: {
+                  type:session.content.type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                  content:session.content.type==1?session.content.content:session.content.type==3?'图片':'文件'// 发送消息内容
+              },
+            }
+            if(session.conversation.type == 1) {
+              sessionObj.targetId = session.conversation.targetId
+            } else {
+              sessionObj.targetId = session.fromUserId
+              
+            }
+          } else {
+            sessionObj = session
+          }
+          let getSessionList = ChatListUtils.getSessionList(state.user.id);
+          if(getSessionList&&getSessionList.length>0) {
+              getSessionList.forEach((item,index)=>{
+                if(item.targetId == sessionObj.targetId) {
                   flag = true
                   indexs = index
-                  if(session.content&&JSON.stringify(session.content) !== '{}') {
-                    if(session.content.content) {
-                      item.content.content = transform(session.content.content);
+                  if(sessionObj.content&&JSON.stringify(sessionObj.content) !== '{}') {
+                    if(sessionObj.content.content) {
+                      item.content.content = transform(sessionObj.content.content);
                     }
                   }
-                  if(session.serverTimestamp) {
-                    item.serverTimestamp = session.serverTimestamp
+                  if(sessionObj.serverTimestamp) {
+                    item.serverTimestamp = sessionObj.serverTimestamp
                   }
                 }
             })
           }
           if(!flag) {
-            state.sessionList.unshift(session)
+            getSessionList.unshift(sessionObj)
           } else {
-            let obj = state.sessionList[indexs]
-            state.sessionList.splice(indexs,1)
-            state.sessionList.unshift(obj)
+            let obj = getSessionList[indexs]
+            getSessionList.splice(indexs,1)
+            getSessionList.unshift(obj)
           }
+          console.log(getSessionList)
+          state.sessionList = getSessionList
           // 放入缓存
           ChatListUtils.setSessionList(state.user.id, state.sessionList);
         },

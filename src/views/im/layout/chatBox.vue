@@ -55,7 +55,6 @@ export default {
       visibleBox:false,
       showAddGroup:false,
       filterText: '',
-      sessionList:[],
       currentChat:{},
       rightSeleteChat:[],
       top: 0,
@@ -71,7 +70,15 @@ export default {
   computed: {
     ...mapGetters([
         'user',
-    ])
+    ]),
+    sessionList: {
+      get: function() {
+        return this.$store.state.im.sessionList;
+      },
+      set: function(sessionList) {
+        this.$store.commit('setSessionList', sessionList);
+      }
+    }
   },
   methods: {
     closeAddGroup() {

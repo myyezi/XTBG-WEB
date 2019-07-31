@@ -42,10 +42,9 @@ const websocketConnect = {
             client.subscribe(IMTopic[v], { qos: 1 });
         });
         
-        localStorage.getItem('type')
         let obj1 = JSON.stringify({
-            id: localStorage.getItem('head_last_message'),
-            type: localStorage.getItem('type_last_message')
+            id: localStorage.getItem('head_last_message')?localStorage.getItem('head_last_message'):'0',
+            type: localStorage.getItem('type_last_message')?localStorage.getItem('type_last_message'):0
         });
         client.pubMessage(obj1,"MP")
 
@@ -98,6 +97,7 @@ const websocketConnect = {
 
                     }
                     store.commit('addMessage', item);
+                    store.commit('addSession', item);
                 }) 
             }
         } else if (message.destinationName == "GC") {

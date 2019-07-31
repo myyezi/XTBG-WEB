@@ -37,7 +37,7 @@
                         <Faces v-show="showFace" @click="showFace = true" class="faces-box"  @insertFace="insertFace"></Faces>
                         <el-button size="mini" class="history-message-btn" @click="getHistoryMessage()">聊天记录</el-button>
                     </div>
-                    <textarea v-model="messageContent" class="textarea" @keyup.enter="mineSend()"></textarea>
+                    <textarea v-model="messageContent" class="textarea" @keyup.enter="mineSend(1)"></textarea>
                     <div class="im-chat-send">
                         <el-button size="mini" @click="mineSend(1)">发送</el-button>
                     </div>
@@ -80,7 +80,7 @@
       ]),
       messageList: {
         get: function() {
-          return this.$store.state.im.messageList;
+          return this.$store.state.im.messageListMap[this.chat.targetId];
         },
         set: function(messageList) {
           this.$store.commit('setMessageList', messageList);
@@ -293,6 +293,7 @@
       },
     },
     created: function() {
+      console.log(this.chat)
       if(this.chat&&this.chat.targetId) {
           this.getCurrentMessageList()
       }
