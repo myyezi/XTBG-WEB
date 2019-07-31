@@ -16,7 +16,8 @@
                                 <cite v-else>{{ chat.name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
                             <div class="im-chat-text">
-                                <pre v-html="item.content.content" v-on:click="openImageProxy($event)" class="clearfix"></pre>
+                                <pre v-html="item.content.content" v-on:click="openImageProxy($event)" v-if="item.content.content.indexOf('href=') == -1"></pre>
+                                <pre v-html="item.content.content" v-else></pre>
                             </div>
                         </li>
                         <li v-else class="group_system_chat">
