@@ -48,14 +48,14 @@ const websocketConnect = {
         });
         client.pubMessage(obj1,"MP")
 
-        let obj = JSON.stringify({
+        let obj2 = JSON.stringify({
             requestList: [{
                 target:objData.username,
                 type:2,
                 updateTime:0
             }]
         });
-        client.pubMessage(obj,"GGI")
+        client.pubMessage(obj2,"GGI")
         console.log("connect success.");
     },
     //连接丢失
@@ -72,13 +72,13 @@ const websocketConnect = {
         if (message.destinationName == "MN") {
             console.log(msg)
             let obj = JSON.stringify({
-                id: msg.head+'',
-                type: msg.type
+                id: localStorage.getItem('head_last_message')?localStorage.getItem('head_last_message'):'0',
+                type: localStorage.getItem('type_last_message')?localStorage.getItem('type_last_message'):0
             });
             client.pubMessage(obj,"MP")
-            localStorage.setItem('head_last_message',msg.head+'')
-            localStorage.setItem('type_last_message',msg.type)
         } else if (message.destinationName == "MP") {
+            localStorage.setItem('head_last_message',msg.head)
+            localStorage.setItem('type_last_message',msg.type)
             console.log(msg)
             if(msg.messages.length>0) {
                 msg.messages.forEach((item,index)=> {

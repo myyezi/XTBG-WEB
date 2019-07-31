@@ -89,7 +89,12 @@ const im = {
           let getChatList = ChatListUtils.getChatList(state.user.id);
           message.content.content = transform(message.content.content);
           if(message.conversation.type === 1) {
-            getChatList[message.conversation.targetId] = state.messageList;
+            if(getChatList[message.conversation.targetId]) {
+              getChatList[message.conversation.targetId].push(message);
+            } else {
+              getChatList[message.conversation.targetId] = []
+              getChatList[message.conversation.targetId].push(message);
+            }
           } else {
             if(message.fromUserId == state.user.id) {
               if(getChatList[message.conversation.targetId]) {
