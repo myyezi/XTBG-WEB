@@ -291,6 +291,12 @@
               Bus.$emit("update-session");
           }
       },
+      messageList :function(newvalue,oldvalue) {
+        // 每次滚动到最底部
+        this.$nextTick(() => {
+          imageLoad('message-box');
+        });
+      },
     },
     created: function() {
       console.log(this.chat)
