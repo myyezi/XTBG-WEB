@@ -2,52 +2,57 @@
   <div class="form-panel">
     <el-form :model="personnelattendancegroupForm" :rules="rules" ref="personnelattendancegroupForm" label-position="top" label-width="100px" :class="{'register-form': true}">
       <el-collapse v-model="openCollapse">
-        <el-collapse-item title="考勤组" name="1">
+        <el-collapse-item title="考勤组管理" name="1">
           <div class="flex-panel">
-            <el-form-item label="主键" prop="id">
-              <el-input v-model="personnelattendancegroupForm.id" placeholder="请输入主键" maxlength=30 clearable></el-input>
+              <el-form-item label="管理公司" prop="companyId">
+                  <el-select v-model="personnelattendancegroupForm.companyId" filterable clearable placeholder="请选择管理公司">
+                      <el-option
+                          v-for="item in companyList"
+                          :key="item.value"
+                          :label="item.name"
+                          :value="item.id">
+                      </el-option>
+                  </el-select>
+              </el-form-item>
+            <el-form-item label="规则名称" prop="name" class="big" >
+              <el-input v-model="personnelattendancegroupForm.name" placeholder="请输入规则名称" maxlength=30 clearable   style="width: calc(20% - 20px)" ></el-input>
             </el-form-item>
-            <el-form-item label="所属管理公司(组织表管理公司id)" prop="companyId">
-              <el-input v-model="personnelattendancegroupForm.companyId" placeholder="请输入所属管理公司(组织表管理公司id)" maxlength=30 clearable></el-input>
+
+            <el-form-item label="工作日" prop="workingDay" class="big">
+                <el-checkbox-group
+                    v-model="personnelattendancegroupForm.checkedCities" @change="test">
+                    <el-checkbox v-for="(item ,index) in cities" :label="item.value" :key="index">{{item.name}}</el-checkbox>
+                </el-checkbox-group>
             </el-form-item>
-            <el-form-item label="规则名称" prop="name">
-              <el-input v-model="personnelattendancegroupForm.name" placeholder="请输入规则名称" maxlength=30 clearable></el-input>
+
+            <el-form-item label="打卡时间" prop="duty"  >
+                <el-time-picker
+                    is-range
+                    v-model="personnelattendancegroupForm.duty"
+                    range-separator="至"
+                    start-placeholder="开始时间"
+                    end-placeholder="结束时间"
+                    placeholder="选择时间范围" value-format="HH:mm:ss">
+                </el-time-picker>
             </el-form-item>
-            <el-form-item label="工作日(1-常规工作日  2-含周六  3-含周日  4-含节假日)  多选逗号分隔" prop="workingDay">
-              <el-input v-model="personnelattendancegroupForm.workingDay" placeholder="请输入工作日(1-常规工作日  2-含周六  3-含周日  4-含节假日)  多选逗号分隔" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="上班打卡时间" prop="onduty">
-              <el-input v-model="personnelattendancegroupForm.onduty" placeholder="请输入上班打卡时间" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="下班打开时间" prop="offduty">
-              <el-input v-model="personnelattendancegroupForm.offduty" placeholder="请输入下班打开时间" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="详细地址" prop="adress">
-              <el-input v-model="personnelattendancegroupForm.adress" placeholder="请输入详细地址" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="经度" prop="longitude">
-              <el-input v-model="personnelattendancegroupForm.longitude" placeholder="请输入经度" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="纬度" prop="latitude">
-              <el-input v-model="personnelattendancegroupForm.latitude" placeholder="请输入纬度" maxlength=30 clearable></el-input>
-            </el-form-item>
+
+              <div class="flex-panel" style="padding-left: 10px">
+                  <el-form-item label="项目地址" prop="adress">
+                      <el-input v-model="personnelattendancegroupForm.adress" @click.native="showDialogAdress()" readonly>
+                          <el-button slot="append" icon="el-icon-search"></el-button>
+                      </el-input>
+                  </el-form-item>
+                  <el-form-item label="经度">
+                      <el-input v-model="personnelattendancegroupForm.longitude" placeholder="请确认位置"
+                                maxlength="10" disabled></el-input>
+                  </el-form-item>
+                  <el-form-item label="纬度">
+                      <el-input v-model="personnelattendancegroupForm.latitude" placeholder="请确认位置"
+                                maxlength="10" disabled></el-input>
+                  </el-form-item>
+              </div>
             <el-form-item label="打卡范围" prop="attendanceRange">
               <el-input v-model="personnelattendancegroupForm.attendanceRange" placeholder="请输入打卡范围" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="数据状态(0-删除，1-正常)" prop="status">
-              <el-input v-model="personnelattendancegroupForm.status" placeholder="请输入数据状态(0-删除，1-正常)" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="创建人" prop="creater">
-              <el-input v-model="personnelattendancegroupForm.creater" placeholder="请输入创建人" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="修改人" prop="updater">
-              <el-input v-model="personnelattendancegroupForm.updater" placeholder="请输入修改人" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="创建时间" prop="createTime">
-              <el-input v-model="personnelattendancegroupForm.createTime" placeholder="请输入创建时间" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="修改时间" prop="updateTime">
-              <el-input v-model="personnelattendancegroupForm.updateTime" placeholder="请输入修改时间" maxlength=30 clearable></el-input>
             </el-form-item>
           </div>
         </el-collapse-item>
@@ -57,33 +62,42 @@
         <el-button @click="close">返回</el-button>
       </div>
     </el-form>
+      <el-dialog title="位置" :visible.sync="dialogAdressVisible" :append-to-body="true" width="70%">
+          <baidu-map @selectLocation="selectLocation" v-model="adress"></baidu-map>
+      </el-dialog>
   </div>
 </template>
 
 <script>
 import ajax from '@/utils/request'
 import { tool, ruleTool } from '@/utils/common'
+import BaiduMap from '@/components/BaiduMap/index'
 
 export default {
   mixins: [tool, ruleTool],
-  components: {},
+  components: {BaiduMap},
   data() {
     return {
-      personnelattendancegroupForm: {},
+      companyList:[],
+      duty:[],
+      cities: [{name :'常规工作日',value:'1'},{name :'含周六',value:'2'},{name :'含周日',value:'3'},{name :'含节假日',value:'4'}],
+      personnelattendancegroupForm: {checkedCities:[]},
       openCollapse: ["1"],//默认打开的面板
+      adress : '',
+      dialogAdressVisible : false,
       rules: {
         id: [
           { required: true, message: '请输入主键', trigger: ['blur'] }
         ],
         companyId: [
-          { required: true, message: '请输入所属管理公司(组织表管理公司id)', trigger: ['blur'] }
+          { required: true, message: '请选择管理公司', trigger: ['blur'] }
         ],
         name: [
           { required: true, message: '请输入规则名称', trigger: ['blur'] }
         ],
-        workingDay: [
-          { required: true, message: '请输入工作日(1-常规工作日  2-含周六  3-含周日  4-含节假日)  多选逗号分隔', trigger: ['blur'] }
-        ],
+        // workingDay: [
+        //   { required: true, message: '请输入工作日', trigger: ['blur'] }
+        // ],
         onduty: [
           { required: true, message: '请输入上班打卡时间', trigger: ['blur'] }
         ],
@@ -102,34 +116,31 @@ export default {
         attendanceRange: [
           { required: true, message: '请输入打卡范围', trigger: ['blur'] }
         ],
-        status: [
-          { required: true, message: '请输入数据状态(0-删除，1-正常)', trigger: ['blur'] }
-        ],
-        creater: [
-          { required: true, message: '请输入创建人', trigger: ['blur'] }
-        ],
-        updater: [
-          { required: true, message: '请输入修改人', trigger: ['blur'] }
-        ],
-        createTime: [
-          { required: true, message: '请输入创建时间', trigger: ['blur'] }
-        ],
-        updateTime: [
-          { required: true, message: '请输入修改时间', trigger: ['blur'] }
-        ],
       }
     }
   },
   mounted() {
     this.open();
+    this.getCompanyList();
   },
   methods: {
+
 
     //进入编辑页调用 bean为列表页传入数据
     open() {
       if (this.$route.query.id) {
         ajax.get('personnel/personnelattendancegroup/' + this.$route.query.id).then(rs => {
           this.personnelattendancegroupForm = rs.data;
+            if (rs.data.onduty && rs.data.offduty.length > 0) {
+                let duty = [];
+                duty.push(rs.data.onduty);
+                duty.push(rs.data.offduty);
+                this.personnelattendancegroupForm.duty = duty;
+            }
+            if (rs.data.workingDay) {
+                this.personnelattendancegroupForm.checkedCities = rs.data.workingDay.split(",");
+            }
+            console.log(this.personnelattendancegroupForm)
           if (null != rs.data.img && rs.data.img.length > 0) {
             this.img = JSON.parse(rs.data.img);
           }
@@ -137,6 +148,27 @@ export default {
       }
     },
 
+      showDialogAdress() {
+          this.dialogAdressVisible = true;
+      },
+
+      test(){
+        console.log(this.personnelattendancegroupForm.checkedCities)
+      },
+      //加载地图
+      selectLocation(location) {
+          console.log(location)
+          this.personnelattendancegroupForm.adress = location.address;
+          this.personnelattendancegroupForm.longitude = location.lng;
+          this.personnelattendancegroupForm.latitude = location.lat;
+          this.dialogAdressVisible = false;
+      },
+      //获取项目
+      getCompanyList() {
+          ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
+              this.companyList = rs.data;
+          });
+      },
     //保存
     submitForm(form) {
       var data = this.personnelattendancegroupForm;
@@ -147,6 +179,13 @@ export default {
               .error('校验不通过，请检查输入项');
             return;
           }
+            if (this.personnelattendancegroupForm.duty && this.personnelattendancegroupForm.duty.length > 0) {
+                data.onduty = this.personnelattendancegroupForm.duty[0];
+                data.offduty = this.personnelattendancegroupForm.duty[1];
+            }
+            if (this.personnelattendancegroupForm.checkedCities && this.personnelattendancegroupForm.checkedCities.length > 0) {
+                data.workingDay = this.personnelattendancegroupForm.checkedCities.join();
+            }
           ajax.post('personnel/personnelattendancegroup', data).then(rs => {
             if (rs.status == 0) {
               this.$message
