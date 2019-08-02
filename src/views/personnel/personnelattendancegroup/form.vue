@@ -18,14 +18,14 @@
               <el-input v-model="personnelattendancegroupForm.name" placeholder="请输入规则名称" maxlength=30 clearable   style="width: calc(20% - 20px)" ></el-input>
             </el-form-item>
 
-            <el-form-item label="工作日" prop="workingDay" class="big">
+            <el-form-item label="工作日" prop="checkedCities" class="big">
                 <el-checkbox-group
-                    v-model="personnelattendancegroupForm.checkedCities" @change="test">
+                    v-model="personnelattendancegroupForm.checkedCities">
                     <el-checkbox v-for="(item ,index) in cities" :label="item.value" :key="index">{{item.name}}</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
 
-            <el-form-item label="打卡时间" prop="duty"  >
+            <el-form-item label="打卡时间" prop="duty">
                 <el-time-picker
                     is-range
                     v-model="personnelattendancegroupForm.duty"
@@ -79,9 +79,11 @@ export default {
   data() {
     return {
       companyList:[],
-      duty:[],
       cities: [{name :'常规工作日',value:'1'},{name :'含周六',value:'2'},{name :'含周日',value:'3'},{name :'含节假日',value:'4'}],
-      personnelattendancegroupForm: {checkedCities:[]},
+      personnelattendancegroupForm: {
+        checkedCities:[],
+        duty:[]
+      },
       openCollapse: ["1"],//默认打开的面板
       adress : '',
       dialogAdressVisible : false,
@@ -95,14 +97,11 @@ export default {
         name: [
           { required: true, message: '请输入规则名称', trigger: ['blur'] }
         ],
-        // workingDay: [
-        //   { required: true, message: '请输入工作日', trigger: ['blur'] }
-        // ],
-        onduty: [
-          { required: true, message: '请输入上班打卡时间', trigger: ['blur'] }
+        checkedCities: [
+          { required: true, message: '请输入工作日', trigger: ['blur','change'] }
         ],
-        offduty: [
-          { required: true, message: '请输入下班打开时间', trigger: ['blur'] }
+        duty: [
+          { required: true, message: '请输入上班打卡时间', trigger: ['blur','change'] }
         ],
         adress: [
           { required: true, message: '请输入详细地址', trigger: ['blur'] }
@@ -124,8 +123,6 @@ export default {
     this.getCompanyList();
   },
   methods: {
-
-
     //进入编辑页调用 bean为列表页传入数据
     open() {
       if (this.$route.query.id) {
@@ -135,70 +132,58 @@ export default {
                 let duty = [];
                 duty.push(rs.data.onduty);
                 duty.push(rs.data.offduty);
-                this.personnelattendancegroupForm.duty = duty;
+                this.$set(this.personnelattendancegroupForm,'duty',duty)
             }
             if (rs.data.workingDay) {
-                this.personnelattendancegroupForm.checkedCities = rs.data.workingDay.split(",");
+                this.$set(this.personnelattendancegroupForm,'checkedCities',rs.data.workingDay.split(","))
             }
-            console.log(this.personnelattendancegroupForm)
           if (null != rs.data.img && rs.data.img.length > 0) {
             this.img = JSON.parse(rs.data.img);
           }
         });
       }
     },
-
-      showDialogAdress() {
-          this.dialogAdressVisible = true;
-      },
-
-      test(){
-        console.log(this.personnelattendancegroupForm.checkedCities)
-      },
-      //加载地图
-      selectLocation(location) {
-          console.log(location)
-          this.personnelattendancegroupForm.adress = location.address;
-          this.personnelattendancegroupForm.longitude = location.lng;
-          this.personnelattendancegroupForm.latitude = location.lat;
-          this.dialogAdressVisible = false;
-      },
-      //获取项目
-      getCompanyList() {
-          ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
-              this.companyList = rs.data;
-          });
-      },
+    showDialogAdress() {
+        this.dialogAdressVisible = true;
+    },
+    //加载地图
+    selectLocation(location) {
+        this.personnelattendancegroupForm.adress = location.address;
+        this.personnelattendancegroupForm.longitude = location.lng;
+        this.personnelattendancegroupForm.latitude = location.lat;
+        this.dialogAdressVisible = false;
+    },
+    //获取项目
+    getCompanyList() {
+        ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
+            this.companyList = rs.data;
+        });
+    },
     //保存
     submitForm(form) {
       var data = this.personnelattendancegroupForm;
-      this.$refs[form]
-        .validate((valid) => {
+      this.$refs[form].validate((valid) => {
           if (!valid) {
-            this.$message
-              .error('校验不通过，请检查输入项');
+            this.$message.error('校验不通过，请检查输入项');
             return;
           }
-            if (this.personnelattendancegroupForm.duty && this.personnelattendancegroupForm.duty.length > 0) {
-                data.onduty = this.personnelattendancegroupForm.duty[0];
-                data.offduty = this.personnelattendancegroupForm.duty[1];
-            }
-            if (this.personnelattendancegroupForm.checkedCities && this.personnelattendancegroupForm.checkedCities.length > 0) {
-                data.workingDay = this.personnelattendancegroupForm.checkedCities.join();
-            }
+          if (this.personnelattendancegroupForm.duty && this.personnelattendancegroupForm.duty.length > 0) {
+              data.onduty = this.personnelattendancegroupForm.duty[0];
+              data.offduty = this.personnelattendancegroupForm.duty[1];
+          }
+          if (this.personnelattendancegroupForm.checkedCities && this.personnelattendancegroupForm.checkedCities.length > 0) {
+              data.workingDay = this.personnelattendancegroupForm.checkedCities.join();
+          }
           ajax.post('personnel/personnelattendancegroup', data).then(rs => {
             if (rs.status == 0) {
-              this.$message
-                .success(rs.msg);
+              this.$message.success(rs.msg);
               this.close();
             } else {
-              this.$message
-                .error(rs.msg);
+              this.$message.error(rs.msg);
             }
           });
         });
     },
-
   },
 }
 </script>
