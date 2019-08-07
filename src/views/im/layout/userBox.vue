@@ -47,9 +47,17 @@
         Welcome,
     },
     computed: {
-      ...mapGetters([
-          'user',
-      ])
+        ...mapGetters([
+            'user',
+        ]),
+        chatGroupList: {
+            get: function() {
+                return this.$store.state.im.chatGroupList;
+            },
+            set: function(chatGroupList) {
+                this.$store.commit('setChatGroupList', chatGroupList);
+            }
+        }
     },
     data() {
         return {
@@ -71,6 +79,9 @@
     watch: {
         filterText(val) {
             this.$refs.tree.filter(val);
+        },
+        chatGroupList:function(newvalue,oldvalue) {
+            this.getGroupList()
         }
     },
     destroyed() {

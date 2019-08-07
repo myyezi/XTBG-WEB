@@ -1,7 +1,7 @@
 <template>
   <div class="chat-wrapper" :class="{'isShow_chat':isFullscreen}">
-      <el-button type="success" icon="el-icon-s-promotion" circle @click="handleOpen"></el-button>
-      <el-dialog :visible.sync="chatDialogVisible" :fullscreen="isFullscreen" class="chat-dialog" width="900px"  top="calc((100vh - 600px)/2)" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false" :append-to-body="true" :modal="false">
+      <!-- <el-button type="success" icon="el-icon-s-promotion" circle @click="handleOpen"></el-button> -->
+      <el-dialog :visible.sync="chatDialogVisible" :fullscreen="isFullscreen" class="chat-dialog" width="900px"  top="calc((100vh - 600px)/2)" :show-close="false" :close-on-press-escape="false" :append-to-body="true" :modal="false">
           <div class="v-im" :style="{height:isFullscreen?'100%':'600px',width:'100%'}" @click="closeVisibleBox">
               <div class="left-bar" style="-webkit-app-region: drag">
                   <ul>
@@ -31,7 +31,7 @@
                   </ul>
               </div>
               <user-Box v-show="isUserBox" class="content" ref="userBox"></user-Box>
-              <chat-Box v-show="isChatBox" class="content" ref="chatBox" :isChatBox="isChatBox"></chat-Box>
+              <chat-Box v-show="isChatBox" class="content" ref="chatBox" :chatDialogVisible="chatDialogVisible"></chat-Box>
               <chat-GroupBox v-show="isChatGroupBox" class="content"></chat-GroupBox>
           </div>
       </el-dialog>
@@ -65,16 +65,10 @@ export default {
       chat:{}
     };
   },
-  watch: {
-      isUserBox:function(newvalue,oldvalue) { 
-          if(newvalue) {
-              this.$refs.userBox.getGroupList();
-          }
-      }
-  },
   methods: {
     closeVisibleBox() {
         this.$refs.chatBox.rightEvent(1)
+        Bus.$emit("close-visiblebox"); 
     },
     handleOpen() {
       this.chatDialogVisible = !this.chatDialogVisible

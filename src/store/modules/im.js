@@ -21,7 +21,9 @@ const im = {
         //群组列表
         chatGroupList: [],
         //所有的群组成员列表
-        chatGroupListMap: {}
+        chatGroupListMap: {},
+        //当前群成员
+        currentGroupUser:[]
       },
       mutations: {
         setCurrentUser: function(state, user) {
@@ -39,10 +41,6 @@ const im = {
             // 所有群聊放入缓存
             ChatListUtils.setGroupList(state.user.id, state.chatGroupList);
             chatGroupList.forEach((items)=>{
-              state.websocket.pubMessage(JSON.stringify({
-                target:items.targetId,
-                head:0
-              }),'GGM');
               sessionList.forEach((item)=>{
                   if(item.targetId == items.targetId) {
                     item.portrait = items.portrait
@@ -66,6 +64,10 @@ const im = {
           // 放入缓存
           ChatListUtils.setChatGroupListMap(state.user.id, state.chatGroupListMap);
         },
+        // 更新当前群成员列表
+        setCurrentGroupUser: function(state, currentGroupUser) {
+          state.currentGroupUser = currentGroupUser.groupMembers
+        },
         setChatMap: function(state, chatMap) {
           state.chatMap = chatMap;
         },
@@ -83,9 +85,13 @@ const im = {
           }
           state.currentChat['unReadCount'] = 0;
         },
+        recallMessage: function(state, message) {
+
+        },
         // 保存聊天信息到内存
         addMessage: function(state, message) {
           console.log(message)
+          message.serverTimestamp = parseInt(message.serverTimestamp)
           let getChatList = ChatListUtils.getChatList(state.user.id);
           if(message.conversation.type === 1) {
             if(getChatList[message.conversation.targetId]) {
@@ -126,7 +132,6 @@ const im = {
         },
         // 保存会话记录到内存
         addSession: function(state, session) {
-          console.log(session)
           let flag = false;
           let indexs = null;
           let sessionObj = {}
@@ -152,7 +157,6 @@ const im = {
                   }
               })
             } else {
-              // let getSessionList = ChatListUtils.getSessionList(state.user.id);
               sessionObj.targetId = session.fromUserId
             }
           } else {
@@ -165,7 +169,9 @@ const im = {
                 if(item.targetId == sessionObj.targetId) {
                   flag = true
                   indexs = index
-                  item.content.content = sessionObj.content.content;
+                  if(sessionObj.content.content) {
+                    item.content.content = sessionObj.content.content;
+                  }
                   if(sessionObj.serverTimestamp) {
                     item.serverTimestamp = sessionObj.serverTimestamp
                   }
@@ -201,7 +207,7 @@ const im = {
         },
         delSession: function(state, chat) {
           state.sessionList = ChatListUtils.delSession(state.user.id, chat);
-          state.messageListMap = ChatListUtils.delChat(state.user.id, chat);
+          // state.messageListMap = ChatListUtils.delChat(state.user.id, chat);
         },
         delAllSession : function(state, chat) {
           state.sessionList = ChatListUtils.delAllSession(state.user.id);

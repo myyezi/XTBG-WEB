@@ -19,9 +19,14 @@
         </el-dropdown>
         <div class="navbar_tools">
             <ul class="clearfix">
-                <li class="clearfix">
+                <!-- <li class="clearfix">
                     <img :src="messagePic" />
                     <span :style="{'color':sizeColor}">消息</span>
+                    <el-badge class="message_number" :value="12" />
+                </li> -->
+                <li class="clearfix"  @click="openImChat">
+                    <img :src="communicationPic" />
+                    <span :style="{'color':sizeColor}">通讯</span>
                     <el-badge class="message_number" :value="12" />
                 </li>
                 <el-dropdown trigger="click" :hide-on-click="false" class="clearfix">
@@ -35,6 +40,7 @@
                 </el-dropdown>
             </ul>
         </div>
+        <IMChat ref="imChat"></IMChat>
         <UpdPassword ref="form"></UpdPassword>
     </el-menu>
 </template>
@@ -44,7 +50,7 @@
     import UpdPassword from './UpdPassword'
     import Breadcrumb from '@/components/Breadcrumb'
     import Hamburger from '@/components/Hamburger'
-
+    import IMChat from '@/views/im/index2.vue';
     export default {
         data(){
             return {
@@ -53,6 +59,7 @@
                 nowTime: new Date().format('hh:mm'),
                 messagePic:require('@/styles/img/message1.png'),
                 skinPic:require('@/styles/img/skin1.png'),
+                communicationPic:require('@/styles/img/communication1.png'),
                 colorList: [
                     {sidebarColor:'#304156',navbarColor:'#fff',logColor:'#304156',sizeColor:'#333',backgroundImg:require('@/styles/img/skin_img.png')},
                     {sidebarColor:'#242e44',navbarColor:'#4781fe',logColor:'#3567d1',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img1.png')},
@@ -65,7 +72,7 @@
                 sizeColor:'#333'
             }
         },
-        components: { UpdPassword, Breadcrumb, Hamburger },
+        components: { UpdPassword, Breadcrumb, Hamburger ,IMChat},
         computed: {
             ...mapGetters([
                 'user',
@@ -77,6 +84,9 @@
             this.$set(this.colorList[0],'active',true);
         },
         methods: {
+            openImChat(){
+                this.$refs.imChat.handleOpen();
+            },
             toggleSideBar() {
                 this.$store.dispatch('ToggleSideBar')
             },
@@ -120,9 +130,11 @@
                 if(item.navbarColor !== '#fff') {
                     this.messagePic = require('@/styles/img/message.png')
                     this.skinPic = require('@/styles/img/skin.png')
+                    this.communicationPic = require('@/styles/img/communication.png')
                 } else {
                     this.messagePic = require('@/styles/img/message1.png')
                     this.skinPic = require('@/styles/img/skin1.png')
+                    this.communicationPic = require('@/styles/img/communication1.png')
                 }
                 this.navbarColor = item.navbarColor
                 this.sizeColor = item.sizeColor
@@ -159,6 +171,7 @@
             float:right;
             ul {
                 li {
+                    cursor:pointer;
                     float:left;
                     margin-right: 15px;
                     img {

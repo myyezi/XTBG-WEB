@@ -5,7 +5,7 @@
         <router-view :key="key" />
       </keep-alive>
     </transition>
-    <IMChat></IMChat>
+    <!-- <IMChat></IMChat> -->
   </section>
 </template>
 

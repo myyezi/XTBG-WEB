@@ -21,7 +21,7 @@
     </div>
     <div class="chat-box">
       <Top></Top>
-      <UserChat :chat="currentChat"></UserChat>
+      <UserChat :chat="currentChat" :chatDialogVisible="chatDialogVisible"></UserChat>
     </div>
     <ul v-show="visibleBox" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
         <li @click.stop="deleteCurrent">删除当前</li>
@@ -49,7 +49,7 @@ export default {
     UserChat,
     addGroup
   },
-  props:['isChatBox'],
+  props:['chatDialogVisible'],
   data() {
     return {
       visibleBox:false,
@@ -63,9 +63,16 @@ export default {
     };
   },
   watch:{
-      'isChatBox':function(newvalue,oldvalue) {
-          
-      }
+      sessionList :function(newvalue,oldvalue) {
+        if(!newvalue||newvalue.length==0) {
+            this.currentChat = {}
+        } else {
+          if(newvalue.length != oldvalue.length) {
+              this.visibleBox = false
+              this.getSessionList()
+          }
+        }
+      },
   },
   computed: {
     ...mapGetters([
@@ -158,10 +165,7 @@ export default {
       this.getSessionList()
   },
   mounted: function () {
-    Bus.$on("update-session", data => {
-      console.log("susususuussu")
-      this.getSessionList()
-    });
+    
   }
 };
 </script>

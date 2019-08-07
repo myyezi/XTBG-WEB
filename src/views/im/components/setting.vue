@@ -145,16 +145,6 @@
                     this.updateGroupInformation('GMI',1)
                 }
             },
-            showAddUser:function(newvalue,oldvalue) { 
-                if(!newvalue) {
-                    this.restGroupUserList()
-                }
-            },
-            showEliminateUser:function(newvalue,oldvalue) { 
-                if(!newvalue) {
-                    this.restGroupUserList()
-                }
-            },
             showTransferUser:function(newvalue,oldvalue) { 
                 if(!newvalue) {
                     let sessionList = ChatListUtils.getSessionList(this.user.userId)
@@ -202,7 +192,16 @@
                     this.showText = '展开更多'
                 }
             },
-            closeAddUser() {
+            closeAddUser(data) {
+                if(data) {
+                    this.userName = ''
+                    if(data.type == 1) {
+                        this.groupUserLists = this.groupUserLists.concat(data.groupMembers)
+                    } else if(data.type == 2) {
+                        this.groupUserLists = data.groupMembers
+                    }
+                    this.restGroupUserList()
+                }
                 this.showAddUser = false
                 this.showTransferUser = false
                 this.showEliminateUser = false
@@ -281,10 +280,8 @@
                 }
                 console.log(objArr)
                 this.$store.commit('sendMessage', objArr);
-                Bus.$emit("close-show");
             },
             restGroupUserList() {
-                this.groupUserLists = ChatListUtils.getChatGroupListMap(this.user.userId)[this.chats.targetId]
                 this.groupUserListSearchCopy = Object.assign([],this.groupUserLists);
                 this.groupUserListSearch = this.groupUserListSearchCopy 
                 this.groupUserListCopy  = this.groupUserListSearch.slice(0,10)

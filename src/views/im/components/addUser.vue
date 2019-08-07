@@ -109,16 +109,11 @@
                 obj:obj,
                 subTopic:'GAM'
             }
-            console.log(objArr)
-            
             this.$store.commit('sendMessage', objArr);
-            this.updateSession(groupMembers)
-        },
-        updateSession(groupMembers) {
-            let groupListMap = ChatListUtils.getChatGroupListMap(this.user.userId)
-            groupListMap[this.chat.targetId]=groupListMap[this.chat.targetId].concat(groupMembers)
-            ChatListUtils.setChatGroupListMap(this.user.userId, groupListMap);
-            this.$emit('close-add-user')
+            this.$emit('close-add-user',{
+                groupMembers:groupMembers,
+                type:1
+            })
         },
         filterNode(value, data) {
             if (!value) return true;

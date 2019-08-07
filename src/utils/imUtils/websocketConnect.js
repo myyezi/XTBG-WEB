@@ -1,12 +1,11 @@
 import store from '@/store'
-import { transform } from '@/utils/imUtils/ChatUtils';
 let client;
 let objData;
 
 const IMTopic = {
     SendMessageTopic: "MS",//发送消息
     NotifyMessageTopic:'MN',//接收通知
-    RecallMessageTopic: "MR",//
+    RecallMessageTopic: "MR",//撤回消息
     CreateGroupTopic: "GC",//创建群组
     GetGroupInfoTopic: "GGI",//获取群组
     GetGroupMemberTopic: "GGM",//获取群组成员
@@ -77,7 +76,10 @@ const websocketConnect = {
                 type: localStorage.getItem('type_last_message')?localStorage.getItem('type_last_message'):0
             });
             client.pubMessage(obj,"MP")
-        } else if (message.destinationName == "MP") {
+        } else if (message.destinationName == "MS") {
+            console.log(msg)
+            store.commit('addMessage', msg);
+        }else if (message.destinationName == "MP") {
             localStorage.setItem('head_last_message',msg.head)
             localStorage.setItem('type_last_message',msg.type)
             console.log(msg)
@@ -94,40 +96,48 @@ const websocketConnect = {
                             });
                             client.pubMessage(obj,"GGI")
                         }
+                        if(item.conversation.topic!='GD') {
+                            if(item.conversation.topic=='GQ') {
+                                if(objData.username != item.fromUserId) {
+                                    store.commit('addMessage', item);
+                                    store.commit('addSession', item);
+                                }
+                            } else {
+                                store.commit('addMessage', item);
+                                store.commit('addSession', item);
+                            }
+                        }
                     } else {
-
+                        store.commit('addMessage', item);
+                        store.commit('addSession', item);
                     }
-                    store.commit('addMessage', item);
-                    store.commit('addSession', item);
                 }) 
             }
         } else if (message.destinationName == "GC") {
-            // this.$message({
-            //     message: '创建成功',
-            //     type: 'success'
-            // });
+
         } else if (message.destinationName == "GGI") {
             console.log(msg)
             store.commit('setChatGroupList', msg.infoList);
         } else if (message.destinationName == "GGM") {
-            store.commit('setChatGroupListMap', msg);
             console.log(msg);
+            store.commit('setCurrentGroupUser', msg);
         } else if (message.destinationName == "GAM") { 
+
         } else if (message.destinationName == "GMI") {
             console.log(msg)
         } else if (message.destinationName == "GD") { 
+
         } else if (message.destinationName == "GTG") {
-            
+
         } else if (message.destinationName == "GQ") { 
-            console.log(msg)
+
         } else if (message.destinationName == "GKM") { 
+
         }
-        // $(".recMessage").append(txt);
     },
     // 发送消息成功后回调
     onMessageDelivered: function(message) {
         console.log("pub message" + message.payloadString);
-        // alert("pub message success,message: " + message.payloadString);
     },
     // 发送消息
     pubMessage(message,subTopic) {
@@ -137,7 +147,6 @@ const websocketConnect = {
         var message = new Paho.MQTT.Message(message);
         message.destinationName = subTopic;
         message.qos = 1;
-        console.log(message)
         client.send(message);
     }
 };

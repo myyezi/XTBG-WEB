@@ -51,15 +51,12 @@
         },
         watch: {
             userName:function(newvalue,oldvalue) { 
-                console.log(newvalue)
                 if (newvalue) { 
-                    console.log(111)
                     this.groupUserListCopy = this.groupUserLists.filter((item) => {
                         return item.alias.indexOf(newvalue)>-1
                     })
-                    console.log(this.groupUserListCopy)
                 } else {
-                    this.groupUserLists = ChatListUtils.getChatGroupListMap(this.user.userId)[this.chat.targetId]
+                    this.groupUserLists = Object.assign([],this.groupUserList);
                     this.groupUserListCopy = Object.assign([],this.groupUserLists);
                 }
             }
@@ -100,10 +97,9 @@
                         obj:obj,
                         subTopic:'GKM'
                     }
-                    console.log(objArr)
                     this.$store.commit('sendMessage', objArr);
                     let arr =[]
-                    this.groupUserListCopy.forEach((item)=>{
+                    this.groupUserList.forEach((item)=>{
                         let flag = false
                         this.checkList.forEach((items)=>{
                             if(items==item.memberId){
@@ -115,6 +111,10 @@
                         }
                     })
                     this.groupUserListCopy = arr
+                    this.$emit('close-add-user',{
+                        groupMembers:this.groupUserListCopy,
+                        type:2
+                    })
                 }).catch(() => {
                 });
             },

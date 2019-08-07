@@ -15,7 +15,7 @@
                                 <cite v-if="item.fromUserId == user.userId"><i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
                                 <cite v-else>{{ chat.name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
-                            <div class="im-chat-text">
+                            <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
                                 <pre v-html="item.content.content" v-on:click="openImageProxy($event)" v-if="item.content.content.indexOf('href=') == -1"></pre>
                                 <pre v-html="item.content.content" v-else></pre>
                             </div>
@@ -26,6 +26,9 @@
                         </li>
                     </ul>
                 </div>
+                <ul v-show="visibleBox" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+                  <li @click.stop="withdrawMessage" :style="{color:isTimeOut?'#999':'#333'}">撤回消息<span v-if="isTimeOut">(已超过两分钟)</span></li>
+              </ul>
                 <div class="im-chat-footer">
                     <div class="im-chat-tool">
                         <i class="icon-biaoqing" @click="showFaceBox()"></i>
@@ -55,7 +58,7 @@
                 <span v-show="!isSetting"> {{ chat.targetName }}</span>
                 <span v-show="isSetting"> 群设置</span>
               </div>
-              <setting :chat="chat" :groupUserList="groupUserList"  v-if="showHistory&&isSetting"></setting>
+              <setting :chat="chat" :groupUserList="currentGroupUser"  v-if="showHistory&&isSetting"></setting>
               <chat-history :chat="chat" :messageList="messageList" v-if="showHistory&&!isSetting"></chat-history>
         </el-dialog>
     </div>
@@ -98,7 +101,15 @@
         set: function(sessionList) {
           this.$store.commit('setSessionList', sessionList);
         }
-      }
+      },
+      currentGroupUser: {
+        get: function() {
+          return this.$store.state.im.currentGroupUser;
+        },
+        set: function(currentGroupUser) {
+          this.$store.commit('setCurrentGroupUser', currentGroupUser);
+        }
+      },
     },
     data() {
       return {
@@ -109,6 +120,11 @@
         },
         showHistory: false,
         isSetting:false,
+        visibleBox:false,
+        isTimeOut:false,
+        top: 0,
+        left: 0,
+        currentMessageObj:{},
         // 保存各个聊天记录的map
         messageListMap: {},
         chatGroupListMap:{},
@@ -119,12 +135,53 @@
         fileFormat: "doc', docx, jpg, jpeg, png, gif, xls, xlsx, pdf, exe, msi, swf, sql, apk, psd",
       };
     },
-    props: ['chat'],
+    props: ['chat','chatDialogVisible'],
     methods: {
       beforeUpload() {
         
       },
-
+      // 会话鼠标右键事件
+      rightEvent(chat,e) {
+        if(chat === 1) {
+            this.visibleBox = false
+        } else {
+            let time = new Date().getTime()
+            const offsetLeft = this.$el.getBoundingClientRect().left
+            const offsetTop = this.$el.getBoundingClientRect().top
+            if(chat.fromUserId == this.user.userId) {
+                this.visibleBox = true
+                this.currentMessageObj = chat // 右键选中的会话
+                this.left = e.clientX - offsetLeft - 50
+                this.top = e.clientY - offsetTop + 50
+                if(this.currentMessageObj.serverTimestamp) {
+                    if((time - this.currentMessageObj.serverTimestamp)/1000>60 * 2) {
+                      this.isTimeOut = true
+                    } else {
+                      this.isTimeOut = false
+                    }
+                }
+            }
+        }
+      },
+      // 撤回消息
+      withdrawMessage() {
+          let time = new Date().getTime()
+          if(this.currentMessageObj.serverTimestamp) {
+              if((time - this.currentMessageObj.serverTimestamp)/1000>60 * 2) {
+                  
+              } else {
+                  let obj ={
+                      id:this.currentMessageObj.messageId
+                  }
+                  let objArr = {
+                      obj:obj,
+                      subTopic:'MR'
+                  }
+                  console.log(objArr)
+                  this.$store.commit('sendMessage', objArr);
+              }
+          }
+      },
       // 错误提示
       openMessage(error) {
         this.$Message.error(error);
@@ -226,13 +283,10 @@
             subTopic:'MS'
         }
         self.$store.commit('sendMessage', objArr);
-        self.$store.commit('addMessage', message);
+        // self.$store.commit('addMessage', message);
         self.$store.commit('addSession', session);
         self.messageContent = '';
-        // 每次滚动到最底部
-        self.$nextTick(() => {
-          imageLoad('message-box');
-        });
+        this.scollBottom()
       },
       getHistoryMessage() {
         this.isSetting = false
@@ -260,48 +314,35 @@
           if (cacheMessages) {
             self.messageList = cacheMessages;
           }
-          // 每次滚动到最底部
-          self.$nextTick(() => {
-            imageLoad('message-box');
-          });
+          this.scollBottom()
       },
       // 得到当前点击群会话的群成员信息
       setting() {
           let self = this;
-          let cacheMessagesObj = {}
-          let cacheGroupUser = []
-          self.chatGroupListMap = [];
-          // 从内存中取群成员
-          cacheMessagesObj = self.$store.state.im.chatGroupListMap
-          if(JSON.stringify(cacheMessagesObj) !== '{}' && cacheMessagesObj[self.chat.targetId]) {
-              cacheGroupUser = cacheMessagesObj[self.chat.targetId]
+          let objArr = {
+              obj:{
+                target:self.chat.targetId,
+                head:0
+              },
+              subTopic:'GGM'
           }
-          if(!cacheGroupUser||cacheGroupUser.length===0) {
-            // 从缓存中取群成员
-            cacheMessagesObj = ChatListUtils.getChatGroupListMap(this.user.userId)
-            if(JSON.stringify(cacheMessagesObj) !== '{}') {
-                self.$store.commit('setChatGroupListMap', cacheMessagesObj);
-                cacheGroupUser = cacheMessagesObj[self.chat.targetId];
-            }
-          }
-          if (cacheGroupUser) {
-            self.groupUserList = cacheGroupUser;
-            // self.groupUserList = self.groupUserList.concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser).concat(cacheGroupUser)
-          }
+          self.$store.commit('sendMessage', objArr);
           self.isSetting = true
-          self.showHistory = true
+      },
+      // 每次滚动到最底部
+      scollBottom() {
+        this.$nextTick(() => {
+          imageLoad('message-box');
+        });
       }
-    },
-    destroyed() {
-        Bus.$off("update-session")
     },
     watch: {
       chat: function(newvalue,oldvalue) {
           this.getCurrentMessageList()
       },
-      showHistory:function(newvalue,oldvalue) { 
-          if(!newvalue) {
-              Bus.$emit("update-session");
+      chatDialogVisible: function(newvalue,oldvalue) {
+          if(newvalue) {
+              this.scollBottom()
           }
       },
       sessionList :function(newvalue,oldvalue) {
@@ -309,16 +350,20 @@
             newvalue.forEach((item)=>{
                 if(item.targetId == this.chat.targetId) {
                     this.chat.targetName = item.targetName
+                    this.chat.owner = item.owner
+                    this.chat.portrait = item.portrait
                 }
             })
         }
       },
       messageList :function(newvalue,oldvalue) {
-        // 每次滚动到最底部
-        this.$nextTick(() => {
-          imageLoad('message-box');
-        });
+        this.scollBottom()
       },
+      currentGroupUser :function(newvalue,oldvalue) {
+        if(this.isSetting) {
+            this.showHistory = true
+        }
+      }
     },
     created: function() {
       console.log(this.chat)
@@ -330,10 +375,10 @@
       Bus.$on("close-show", data => {
         this.showHistory = false
       });
-      // 每次滚动到最底部
-      this.$nextTick(() => {
-        imageLoad('message-box');
+      Bus.$on("close-visiblebox", data => {
+        this.rightEvent(1)
       });
+      this.scollBottom()
     }
   };
 </script>
@@ -570,6 +615,28 @@
                     font-size: 14px;
                     margin-top: 5px;
                     color: #333;
+                }
+            }
+        }
+
+        .contextmenu {
+            margin: 0;
+            background: #fff;
+            z-index: 100;
+            position: absolute;
+            list-style-type: none;
+            padding: 5px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #333;
+            box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+            li {
+                margin: 0;
+                padding: 7px 16px;
+                cursor: pointer;
+                &:hover {
+                    background: #eee;
                 }
             }
         }
