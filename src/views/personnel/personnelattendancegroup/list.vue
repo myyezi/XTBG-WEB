@@ -44,7 +44,6 @@
           </template>
         </el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="规则名称"></el-table-column>
-        <el-table-column  prop="member" sortable show-overflow-tooltip min-width="100" label="组成员"></el-table-column>
         <el-table-column prop="companyName" sortable show-overflow-tooltip min-width="100" label="所属管理公司"></el-table-column>
         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="创建人"></el-table-column>
           <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="创建时间"></el-table-column>
@@ -54,32 +53,47 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
     </div>
-
+<!--      <el-dialog title="项目任务书更改记录" :visible.sync="dialogVisible" width="60%"  v-cloak>-->
+<!--          <el-tabs v-model="activeName" type="card" @tab-click="handleClick">-->
+<!--              <el-tab-pane label="组织" name="first"><tree-one url="upms/organization/tree"></tree-one></el-tab-pane>-->
+<!--              <el-tab-pane label="用户" name="second">5555</el-tab-pane>-->
+<!--          </el-tabs>-->
+<!--      </el-dialog>-->
   </div>
 </template>
 
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
-
+import TreeOne from './compent/tree1.vue'
+import TreeTwo from './compent/tree2.vue'
 export default {
   name: 'PersonnelAttendanceGroup',
   mixins: [tool],
+  components: {TreeOne,TreeTwo},
   data() {
     return {
       companyList:[],
+        testList:[],
       isShowMore: false,
       listUrl: "personnel/personnelattendancegroup",
       showSearch: false,
       showAddBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/save"),
       showEditBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/edit"),
       showDelBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/del"),
-      member:'查看'
+      member:'查看',
+      dialogVisible:true,
+        defaultProps: {
+            isLeaf: 'leaf',
+            children: 'children',
+            label: 'name'
+        },
     }
   },
   mounted() {
     this.getList();
     this.getCompanyList();
+    this.getTest();
   },
   methods: {
       //获取公司
@@ -88,8 +102,16 @@ export default {
               this.companyList = rs.data;
           });
       },
-
-      //删除
+          handleClick(tab, event) {
+              console.log(tab, event);
+          },
+      //获取公司
+      getTest() {
+          ajax.get('upms/organization/tree').then(rs => {
+              this.testList = rs.data;
+          });
+      },
+              //删除
       delGroup(row) {
           this.$confirm('是否确认删除 ?').then(_ => {
               ajax.delete("personnel/personnelattendancegroup/" + row.id).then((result) => {

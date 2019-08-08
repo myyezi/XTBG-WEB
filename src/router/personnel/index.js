@@ -1,5 +1,7 @@
 import Layout from '@/views/common/layout/Layout'
 import personnelattendancegroup from "@/router/personnel/personnelattendancegroup";
+import personnelattendancereport from "@/router/personnel/personnelattendancereport";
+
 
 const index = {
     path: '/',
@@ -10,6 +12,7 @@ const index = {
     meta: {title: '人事管理'},
     children: [
         ...personnelattendancegroup,
+        ...personnelattendancereport,
     ]
 }
 export default index
