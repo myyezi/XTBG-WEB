@@ -6,6 +6,8 @@
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
       <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
+        <el-button v-show="showTemplateConfigBtn" @click="edits()" type="text" size="small" title="模板设置">sssssssss</el-button>
+
     </div>
     <!-- 展开更多查询开始 -->
     <el-collapse-transition>
@@ -36,8 +38,14 @@
     <div class="division-line"></div>
     <div class="table-box">
       <el-table :data="list" style="width: 100%">
-        <el-table-column prop="employeeId" sortable show-overflow-tooltip min-width="100" label="员工姓名"></el-table-column>
-        <el-table-column prop="month" sortable show-overflow-tooltip min-width="100" label="月份"></el-table-column>
+        <el-table-column prop="employeeName" sortable show-overflow-tooltip min-width="100" label="员工姓名"></el-table-column>
+          <el-table-column prop="month" sortable show-overflow-tooltip min-width="100" label="月份">
+              <template slot-scope="scope">
+                  <el-button type="text" size="small" @click="edits(scope.row)">
+                      {{scope.row.month}}
+                  </el-button>
+              </template>
+          </el-table-column>
         <el-table-column prop="days" sortable show-overflow-tooltip min-width="100" label="应出勤天数"></el-table-column>
         <el-table-column prop="actualDays" sortable show-overflow-tooltip min-width="100" label="实际出勤天数"></el-table-column>
         <el-table-column prop="late" sortable show-overflow-tooltip min-width="100" label="迟到次数"></el-table-column>
@@ -45,7 +53,7 @@
         <el-table-column prop="nopunches" sortable show-overflow-tooltip min-width="100" label="未打卡次数"></el-table-column>
         <el-table-column prop="completion" sortable show-overflow-tooltip min-width="100" label="旷工次数"></el-table-column>
         <el-table-column prop="overtime" sortable show-overflow-tooltip min-width="100" label="加班时长"></el-table-column>
-        <el-table-column prop="status" sortable show-overflow-tooltip min-width="100" label="组织"></el-table-column>
+        <el-table-column prop="organizationName" sortable show-overflow-tooltip min-width="100" label="组织"></el-table-column>
           <el-table-column prop="status" sortable show-overflow-tooltip min-width="100" label="所属管理公司"></el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
@@ -68,14 +76,23 @@ export default {
       listUrl: "personnel/personnelattendancereport",
       showSearch: false,
       showAddBtn: this.getCurrentUserAuthority("/personnelattendancereport/save"),
-      showEditBtn: this.getCurrentUserAuthority("/personnelattendancereport/edit")
+      showEditBtn: this.getCurrentUserAuthority("/personnelattendancereport/edit"),
+      showTemplateConfigBtn : this.getCurrentUserAuthority("/personnel/personnelattendance"),
+
     }
   },
   mounted() {
     this.getList();
   },
   methods: {
-
+      edits(row){
+          if(~this.$route.fullPath.indexOf("/detail?")){
+              return;
+          }
+          let url = this.$route.fullPath + '/detail?employeeId='+row.employeeId+'&month='+row.month+'&companyId=10';
+          console.log(row)
+          this.$router.push({path:url});
+      }
   }
 }
 </script>

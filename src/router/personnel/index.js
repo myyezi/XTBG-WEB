@@ -1,7 +1,7 @@
 import Layout from '@/views/common/layout/Layout'
 import personnelattendancegroup from "@/router/personnel/personnelattendancegroup";
 import personnelattendancereport from "@/router/personnel/personnelattendancereport";
-
+import personnelattendance from "@/router/personnel/personnelattendance";
 
 const index = {
     path: '/',
@@ -13,6 +13,7 @@ const index = {
     children: [
         ...personnelattendancegroup,
         ...personnelattendancereport,
+        ...personnelattendance,
     ]
 }
 export default index

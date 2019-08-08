@@ -40,7 +40,7 @@
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
             <el-button v-show="showDelBtn" @click="delGroup(row)" type="text" size="small">删除</el-button>
-            <el-button v-show="showAddBtn" @click="delGroup(row)" type="text" size="small">考勤对象设置</el-button>
+            <el-button v-show="showAddBtn" @click="setGroup(row)" type="text" size="small">考勤对象设置</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="规则名称"></el-table-column>
@@ -53,12 +53,20 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
     </div>
-<!--      <el-dialog title="项目任务书更改记录" :visible.sync="dialogVisible" width="60%"  v-cloak>-->
-<!--          <el-tabs v-model="activeName" type="card" @tab-click="handleClick">-->
-<!--              <el-tab-pane label="组织" name="first"><tree-one url="upms/organization/tree"></tree-one></el-tab-pane>-->
-<!--              <el-tab-pane label="用户" name="second">5555</el-tab-pane>-->
-<!--          </el-tabs>-->
-<!--      </el-dialog>-->
+      <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="60%"  v-cloak>
+          <el-tabs  type="card" @tab-click="handleClick">
+              <el-tab-pane label="组织" name="first">
+                  <tree-one url="upms/organization/tree">
+                  </tree-one>
+                  <div class="right-row">
+                      <el-button type="primary" @click="submitForm()">保存</el-button>
+                      <el-button @click="close">返回</el-button>
+                  </div>
+              </el-tab-pane>
+              <el-tab-pane label="用户" name="second">5555</el-tab-pane>
+          </el-tabs>
+
+      </el-dialog>
   </div>
 </template>
 
@@ -82,7 +90,7 @@ export default {
       showEditBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/edit"),
       showDelBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/del"),
       member:'查看',
-      dialogVisible:true,
+      dialogVisible:false,
         defaultProps: {
             isLeaf: 'leaf',
             children: 'children',
@@ -123,6 +131,10 @@ export default {
           }).catch(_ => {
               console.info("关闭");
           });
+      },
+      //设置考情组
+      setGroup(row) {
+          this.dialogVisible =true;
       },
   }
 }

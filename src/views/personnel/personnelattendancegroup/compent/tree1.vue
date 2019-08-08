@@ -22,6 +22,7 @@
                     </span>
                     </el-tree>
                 </div>
+
     </div>
 
 </template>
@@ -137,6 +138,9 @@
                         this.setData(item.children);
                     }
                 })
+            },
+            submitForm(){
+              console.log(this.selectData)
             },
             // 设置选中数据
             setSelectData() {
