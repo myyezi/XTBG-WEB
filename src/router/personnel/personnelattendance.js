@@ -1,7 +1,7 @@
 const index = [
     {
         path: '/personnel/personnelattendance',
-        name: 'personnelattendance',
+    name: 'personnelattendance',
         component: () => import('@/views/personnel/personnelattendance/list'),
         meta: {icon: 'auth3', title: '考勤'},
     },
