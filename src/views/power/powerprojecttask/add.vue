@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import formTemplate from '@/views/project/powerprojecttask/form'
+import formTemplate from '@/views/power/powerprojecttask/form'
 
 export default {
-  name: "PowerProjectTaskEdit",
+  name: "PowerProjectTaskAdd",
   components: {
     formTemplate
   }
