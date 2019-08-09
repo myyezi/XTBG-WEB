@@ -6,7 +6,6 @@
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
       <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
-        <el-button v-show="showTemplateConfigBtn" @click="edits()" type="text" size="small" title="模板设置">sssssssss</el-button>
 
     </div>
     <!-- 展开更多查询开始 -->
@@ -28,7 +27,13 @@
           <div class="form-group">
             <label class="control-label">月份</label>
             <div class="input-group">
-              <el-input v-model="searchParam.actualDays" placeholder="请输入实际出勤天数"></el-input>
+                <el-date-picker
+                    v-model="month"
+                    type="monthrange"
+                    range-separator="至"
+                    start-placeholder="开始月份"
+                    end-placeholder="结束月份">
+                </el-date-picker>
             </div>
           </div>
 
@@ -54,7 +59,7 @@
         <el-table-column prop="completion" sortable show-overflow-tooltip min-width="100" label="旷工次数"></el-table-column>
         <el-table-column prop="overtime" sortable show-overflow-tooltip min-width="100" label="加班时长"></el-table-column>
         <el-table-column prop="organizationName" sortable show-overflow-tooltip min-width="100" label="组织"></el-table-column>
-          <el-table-column prop="status" sortable show-overflow-tooltip min-width="100" label="所属管理公司"></el-table-column>
+          <el-table-column prop="companyName" sortable show-overflow-tooltip min-width="150" label="所属管理公司"></el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
@@ -78,6 +83,7 @@ export default {
       showAddBtn: this.getCurrentUserAuthority("/personnelattendancereport/save"),
       showEditBtn: this.getCurrentUserAuthority("/personnelattendancereport/edit"),
       showTemplateConfigBtn : this.getCurrentUserAuthority("/personnel/personnelattendance"),
+      month:[],
 
     }
   },

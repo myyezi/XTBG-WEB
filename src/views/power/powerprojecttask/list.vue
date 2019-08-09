@@ -189,10 +189,10 @@ export default {
         detailList:[],
         pageList:[],
         isShowMore: false,
-        listUrl: "project/powerprojecttask",
+        listUrl: "power/powerprojecttask",
         showSearch: false,
-        showAddBtn: this.getCurrentUserAuthority("/project/powerprojecttask/save"),
-        showEditBtn: this.getCurrentUserAuthority("/project/powerprojecttask/edit"),
+        showAddBtn: this.getCurrentUserAuthority("/power/powerprojecttask/save"),
+        showEditBtn: this.getCurrentUserAuthority("/power/powerprojecttask/edit"),
         dialogVisible:false,
         pageC :1,
         pageS :10,
@@ -248,13 +248,13 @@ export default {
       },
 
       getUserList(){
-          ajax.get("project/powerproprietor/getUser").then(rs => {
+          ajax.get("power/powerproprietor/getUser").then(rs => {
               this.userList = rs.data;
           });
       },
       //业主列表
       getProprietor(){
-          ajax.get("project/powerproprietor/getPowerProprietorList").then(rs => {
+          ajax.get("power/powerproprietor/getPowerProprietorList").then(rs => {
               this.ProprietorList = rs.data;
           });
       },
@@ -269,14 +269,14 @@ export default {
       },
 
       getChangeList(){
-          ajax.get('project/powerprojecttaskchange',{projectTaskId:this.projectTaskId,current:this.pageC,size:this.pageS}).then(rs => {
+          ajax.get('power/powerprojecttaskchange',{projectTaskId:this.projectTaskId,current:this.pageC,size:this.pageS}).then(rs => {
               this.detailList = rs.records;
               this.pageList =rs;
           });
       },
       //加载业主联系人
       getContact() {
-          ajax.get('project/powerproprietorcontact/getContactList/'+ this.powerprojecttaskForm.proprietorId).then(rs => {
+          ajax.get('power/powerproprietorcontact/getContactList/'+ this.powerprojecttaskForm.proprietorId).then(rs => {
               this.ContactList = rs.data;
           });
       },

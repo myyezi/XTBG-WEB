@@ -198,7 +198,7 @@ export default {
     //进入编辑页调用 bean为列表页传入数据
     open() {
       if (this.$route.query.id) {
-        ajax.get('project/powerprojecttask/' + this.$route.query.id).then(rs => {
+        ajax.get('power/powerprojecttask/' + this.$route.query.id).then(rs => {
           this.powerprojecttaskForm = rs.data;
           this.powerprojecttaskForm.source =this.powerprojecttaskForm.source.toString();
           this.powerprojecttaskForm.relatedDesign =  this.powerprojecttaskForm.relatedDesign.split(',')
@@ -222,20 +222,20 @@ export default {
       },
 
       getUserList(){
-          ajax.get("project/powerproprietor/getUser").then(rs => {
+          ajax.get("power/powerproprietor/getUser").then(rs => {
               this.userList = rs.data;
           });
       },
       //业主列表
       getProprietor(){
-          ajax.get("project/powerproprietor/getPowerProprietorList").then(rs => {
+          ajax.get("power/powerproprietor/getPowerProprietorList").then(rs => {
               this.ProprietorList = rs.data;
           });
       },
 
       //加载业主联系人
       getContact() {
-          ajax.get('project/powerproprietorcontact/getContactList/'+ this.powerprojecttaskForm.proprietorId).then(rs => {
+          ajax.get('power/powerproprietorcontact/getContactList/'+ this.powerprojecttaskForm.proprietorId).then(rs => {
               this.ContactList = rs.data;
           });
       },
@@ -266,7 +266,7 @@ export default {
           }
           data.coDepartment =  data.coDepartment.join(',');
           data.relatedDesign =  data.relatedDesign.join(',')
-          ajax.post('project/powerprojecttask', data).then(rs => {
+          ajax.post('power/powerprojecttask', data).then(rs => {
             if (rs.status == 0) {
               this.$message
                 .success(rs.msg);

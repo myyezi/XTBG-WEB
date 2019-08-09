@@ -8,7 +8,7 @@ import safe from '@/router/qsm/safe/index.js'
 import quality from '@/router/qsm/quality/index.js'
 import archive from '@/router/archive//index.js'
 import personnel from '@/router/personnel/index.js'
-import project from '@/router/project/index.js'
+import power from '@/router/power/index.js'
 Vue.use(Router)
 
 //import sys from '@/router/tgpt/sys/index'
@@ -82,7 +82,7 @@ export const authRouterMap = [
     quality,
     archive,
     personnel,
-    project,
+    power,
     {path: '*', redirect: '/404', hidden: true}
 ]
 

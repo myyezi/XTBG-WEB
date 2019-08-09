@@ -1,5 +1,5 @@
 import Layout from '@/views/common/layout/Layout'
-import powerprojecttask from "@/router/project/powerprojecttask";
+import powerprojecttask from "@/router/power/powerprojecttask";
 
 const index = {
     path: '/',
