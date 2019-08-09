@@ -5,6 +5,7 @@
         <router-view :key="key" />
       </keep-alive>
     </transition>
+    <audio ref="mmAudio" src="../../../../../static/audio/msg.mp3" controls></audio>
     <!-- <IMChat></IMChat> -->
   </section>
 </template>
@@ -20,6 +21,19 @@ export default {
     },
     key() {
       return this.$route.fullPath
+    },
+    messageCount() {
+      return this.$store.state.im.messageCount;
+    },
+  },
+  watch: {
+    messageCount: function () {
+      this.aplayAudio()
+    }
+  },
+  methods: {
+    aplayAudio () {
+      this.$nextTick(() => this.$refs.mmAudio.play())
     }
   }
 }

@@ -23,7 +23,9 @@ const im = {
         //所有的群组成员列表
         chatGroupListMap: {},
         //当前群成员
-        currentGroupUser:[]
+        currentGroupUser:[],
+        // 未读消息
+        messageCount:0
       },
       mutations: {
         setCurrentUser: function(state, user) {
@@ -181,6 +183,7 @@ const im = {
                   }
                   if(state.user.id!= session.fromUserId) {
                     item.unReadCount = item.unReadCount + 1
+                    state.messageCount += 1
                   }
                 }
             })
