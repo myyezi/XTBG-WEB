@@ -1,18 +1,49 @@
 <template>
-    <div class="tree-panel" @click.prevent.stop>
-        <el-input :placeholder="placeholder" v-model="filterText"></el-input>
-        <el-tree
-            :data="data"
-            :check-strictly="true"
-            :show-checkbox="false"
-            node-key="id"
-            :props="defaultProps"
-            :ref="treeName"
-            :expand-on-click-node="true"
-            :filter-node-method="filterNode"
-            default-expand-all>
-        </el-tree>
-
+    <div class="tree-panel"  style="padding:20px 0">
+        <el-input :placeholder="placeholder" v-model="filterText" style="padding-bottom:10px"></el-input>
+        <div class="tree_two_count">
+            <el-tree
+                class="tree_two_count_left"
+                :data="data"
+                node-key="id"
+                :props="defaultProps"
+                ref="treeNameTwo"
+                :expand-on-click-node="true"
+                :filter-node-method="filterNode"
+                @node-click="handleNodeClick"
+                default-expand-all>
+            </el-tree>
+            <div class="tree_two_count_right">
+                <p v-if="checkData.name">{{checkData.name}}</p>
+                <el-table
+                    v-if="isClickNode"
+                    ref="multipleTable"
+                    :data="tableData"
+                    style="width: 100%"
+                    max-height="360"
+                    @selection-change="handleSelectionChange">
+                    <el-table-column
+                        type="selection"
+                        width="30">
+                    </el-table-column>
+                    <el-table-column
+                        label="日期"
+                        width="120">
+                    <template slot-scope="scope">{{ scope.row.date }}</template>
+                    </el-table-column>
+                    <el-table-column
+                        prop="name"
+                        label="姓名"
+                        width="120">
+                    </el-table-column>
+                    <el-table-column
+                        prop="address"
+                        label="地址"
+                        show-overflow-tooltip>
+                    </el-table-column>
+                </el-table>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -33,15 +64,46 @@
         },
         data() {
             return {
-                treeName: "tree" + new Date().getTime(),
                 placeholder: "请输入名称过滤",
                 filterText: '',// 搜索关键字
                 data: [],
+                isClickNode:false,
+                checkData:{},
                 defaultProps: {
                     isLeaf: 'leaf',
                     children: 'children',
                     label: 'name'
                 },
+                tableData: [{
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-02',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-04',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-01',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-08',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-06',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-07',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }],
+                multipleSelection: []
             };
         },
         watch: {
@@ -55,33 +117,18 @@
                 deep: true
             },
             filterText(val) {
-                this.$refs[this.treeName].filter(val);
+                this.$refs.treeNameTwo.filter(val);
             }
         },
         methods: {
-            // 编辑节点
-            edit(data) {
-                let opt = {
-                    title: "修改" + this.name,
-                    state: 1,// 1编辑 2添加
-                    data: data
-                }
-                this.$emit('show-form', opt);
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
             },
-            // 添加节点
-            append(data) {
-                let opt = {
-                    title: "添加" + this.name,
-                    state: 2,// 1编辑 2添加
-                    data: data
-                }
-                this.$emit('show-form', opt);
+            handleNodeClick(data) {
+                this.isClickNode = true
+                this.checkData = data
+                console.log(data);
             },
-            // 删除节点
-            remove(data) {
-                this.$emit('delete-data', data);
-            },
-
             getData() {
                 if (!this.url) {
                     return;
@@ -89,9 +136,6 @@
                 ajax.get(this.url, this.params).then((res) => {
                     if (res && res.status === 0) {
                         this.data = res.data;
-                        this.$nextTick(_ => {
-                            this.$refs[this.treeName].filter(this.filterText);
-                        });
                     }
                 })
             },
@@ -99,9 +143,7 @@
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
             },
-            // showAddChild(data) {
-            //     return ['10', '20'].indexOf(data.id) < 0;
-            // }
+            
         },
         mounted() {
             this.getData();
@@ -110,28 +152,19 @@
 </script>
 
 <style lang="scss" scoped>
-    .custom-tree-node {
+    .tree_two_count {
         display: flex;
-        width: calc(100% - 25px);
-        justify-content: space-between;
-        align-items: center;
-
-        .name-text {
-            display: inline-block;
-            max-width: calc(100% - 370px);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            line-height: 2;
+        .tree_two_count_left {
+            max-height: 360px;
+            overflow: auto;
+            margin-right:20px;
+            width:300px;
         }
-
-        .btn-list {
-            width: 350px;
-            text-align: right;
-
-            .type-text {
-                float: left;
-                margin-top: 6px;
+        .tree_two_count_right {
+            flex-grow: 1;
+            p {
+                height:30px;
+                line-height: 30px;
             }
         }
     }

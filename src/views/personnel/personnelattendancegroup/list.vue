@@ -53,20 +53,19 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
     </div>
-      <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="60%"  v-cloak>
-          <el-tabs  type="card" @tab-click="handleClick">
+      <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="800px"  v-cloak>
+          <el-tabs  type="card" @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
               <el-tab-pane label="组织" name="first">
-                  <tree-one url="upms/organization/tree">
-                  </tree-one>
-                  <div class="right-row">
-                      <el-button type="primary" @click="submitForm()">保存</el-button>
-                      <el-button @click="close">返回</el-button>
-                  </div>
+                  <tree-one url="upms/organization/tree"></tree-one>
               </el-tab-pane>
-              <el-tab-pane label="用户" name="second">  <tree-two url="upms/organization/tree">
-              </tree-two></el-tab-pane>
+              <el-tab-pane label="用户" name="second">  
+                <tree-two url="upms/organization/tree"></tree-two>
+              </el-tab-pane>
+              <div style="text-align: center;">
+                  <el-button type="primary" @click="submitForm()">保存</el-button>
+                  <el-button @click="close">返回</el-button>
+              </div>
           </el-tabs>
-
       </el-dialog>
   </div>
 </template>
@@ -92,11 +91,12 @@ export default {
       showDelBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/del"),
       member:'查看',
       dialogVisible:false,
-        defaultProps: {
-            isLeaf: 'leaf',
-            children: 'children',
-            label: 'name'
-        },
+      defaultProps: {
+          isLeaf: 'leaf',
+          children: 'children',
+          label: 'name'
+      },
+      activeName:'first'
     }
   },
   mounted() {
@@ -111,9 +111,8 @@ export default {
               this.companyList = rs.data;
           });
       },
-          handleClick(tab, event) {
-              console.log(tab, event);
-          },
+      handleClick(tab, event) {
+      },
       //获取公司
       getTest() {
           ajax.get('upms/organization/tree').then(rs => {

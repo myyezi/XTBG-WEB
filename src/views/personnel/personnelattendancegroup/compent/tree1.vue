@@ -1,28 +1,28 @@
 <template>
-    <div class="tree-select-panel">
-                <div class="tree-box" @click.prevent.stop>
-                    <el-input
-                        placeholder="输入关键字搜索"
-                        v-model="filterText">
-                    </el-input>
-                    <span class="num" v-if="type!='one'">已选中{{selectIds.length}}个</span>
-                    <el-tree    :data="data"
-                                :check-strictly="false"
-                                @check-change="update"
-                                @node-click="nodeClick"
-                                :show-checkbox="type!='one'"
-                                node-key="id"
-                                :props="defaultProps"
-                                :ref="treeName"
-                                :expand-on-click-node="false"
-                                :filter-node-method="filterNode"
-                                default-expand-all>
-                    <span class="custom-tree-node" slot-scope="{ node, data }">
-                        <span class="name-text" :class="{'disabled':data.disabled}" :title="node.label">{{ node.label }}</span>
-                    </span>
-                    </el-tree>
-                </div>
-
+    <div class="tree-select-panel" style="padding:20px 0">
+        <div class="tree-box">
+            <el-input
+                placeholder="输入关键字搜索"
+                v-model="filterText">
+            </el-input>
+            <span class="num" v-if="type!='one'" style="display:block;padding:10px 0">已选中{{selectIds.length}}个</span>
+            <el-tree    
+                :data="data"
+                :check-strictly="false"
+                @check-change="update"
+                @node-click="nodeClick"
+                :show-checkbox="type!='one'"
+                node-key="id"
+                :props="defaultProps"
+                :ref="treeName"
+                :expand-on-click-node="false"
+                :filter-node-method="filterNode"
+                default-expand-all>
+                <span class="custom-tree-node" slot-scope="{ node, data }">
+                    <span class="name-text" :class="{'disabled':data.disabled}" :title="node.label">{{ node.label }}</span>
+                </span>
+            </el-tree>
+        </div>
     </div>
 
 </template>
@@ -51,7 +51,6 @@
             return {
                 treeName: "tree" + new Date().getTime(),
                 text:'',
-
                 filterText: '',// 搜索关键字
                 selectIds: [],
                 selectData: [],
