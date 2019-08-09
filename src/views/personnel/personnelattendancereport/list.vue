@@ -4,7 +4,7 @@
       <el-input v-model="searchParam.zy_input" placeholder="请输入员工姓名或手机号" clearable class="zy_input" style="width:190px"></el-input>
       <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
-      <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
+      <el-button type="primary" icon="el-icon-refresh" size="small" @click="month=[];resetList()">重置</el-button>
       <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
 
     </div>
@@ -15,7 +15,14 @@
           <div class="form-group">
             <label class="control-label">管理公司</label>
             <div class="input-group">
-              <el-input v-model="searchParam.month" placeholder="请选择管理公司"></el-input>
+                    <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择管理公司">
+                        <el-option
+                            v-for="item in companyList"
+                            :key="item.value"
+                            :label="item.name"
+                            :value="item.id">
+                        </el-option>
+                    </el-select>
             </div>
           </div>
           <div class="form-group">
@@ -32,7 +39,7 @@
                     type="monthrange"
                     range-separator="至"
                     start-placeholder="开始月份"
-                    end-placeholder="结束月份">
+                    end-placeholder="结束月份"  value-format="yyyy-MM" >
                 </el-date-picker>
             </div>
           </div>
@@ -84,13 +91,27 @@ export default {
       showEditBtn: this.getCurrentUserAuthority("/personnelattendancereport/edit"),
       showTemplateConfigBtn : this.getCurrentUserAuthority("/personnel/personnelattendance"),
       month:[],
+      companyList:[]
 
     }
   },
   mounted() {
     this.getList();
+    this.getCompanyList();
   },
   methods: {
+
+      //处理条件查询的时间问题
+      getListBefore(params) {
+          if (this.month) {
+              params.monthStart = this.month[0];
+              params.monthEnd = this.month[1];
+          } else {
+              params.monthStart = '';
+              params.monthEnd = '';
+          }
+      },
+
       edits(row){
           if(~this.$route.fullPath.indexOf("/detail?")){
               return;
@@ -98,7 +119,13 @@ export default {
           let url = this.$route.fullPath + '/detail?employeeId='+row.employeeId+'&month='+row.month+'&companyId=10';
           console.log(row)
           this.$router.push({path:url});
-      }
+      },
+      //获取公司
+      getCompanyList() {
+          ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
+              this.companyList = rs.data;
+          });
+      },
   }
 }
 </script>

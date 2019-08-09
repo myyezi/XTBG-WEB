@@ -15,7 +15,14 @@
           <div class="form-group">
             <label class="control-label">组织</label>
             <div class="input-group">
-              <el-input v-model="searchParam.id" placeholder="请选择组织"></el-input>
+                <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择组织">
+                    <el-option
+                        v-for="item in companyList"
+                        :key="item.value"
+                        :label="item.name"
+                        :value="item.id">
+                    </el-option>
+                </el-select>
             </div>
           </div>
           <div class="form-group">
@@ -146,10 +153,6 @@
     </div>
       <el-dialog title="项目任务书更改记录" :visible.sync="dialogVisible" width="60%"  v-cloak>
           <div class="app-container white-bg list-panel">
-<!--              <div class="opertion-box">-->
-<!--                  <el-input v-model="searchParam.code" placeholder="请输入问题通知单编号" clearable class="zy_input" style="width:190px"></el-input>-->
-<!--                  <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>-->
-<!--              </div>-->
               <div class="division-line"></div>
               <div class="table-box">
                   <el-table :data="detailList" style="width: 100%">
@@ -204,6 +207,7 @@ export default {
       this.getDict();
       this.getProprietor();
       this.getUserList();
+      this.getCompanyList();
   },
   methods: {
       //处理条件查询的时间问题
@@ -278,6 +282,12 @@ export default {
       getContact() {
           ajax.get('power/powerproprietorcontact/getContactList/'+ this.powerprojecttaskForm.proprietorId).then(rs => {
               this.ContactList = rs.data;
+          });
+      },
+      //获取公司
+      getCompanyList() {
+          ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
+              this.companyList = rs.data;
           });
       },
 
