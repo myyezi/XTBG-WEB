@@ -63,7 +63,8 @@
                       <el-button @click="close">返回</el-button>
                   </div>
               </el-tab-pane>
-              <el-tab-pane label="用户" name="second">5555</el-tab-pane>
+              <el-tab-pane label="用户" name="second">  <tree-two url="upms/organization/tree">
+              </tree-two></el-tab-pane>
           </el-tabs>
 
       </el-dialog>
