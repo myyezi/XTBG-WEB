@@ -5,7 +5,7 @@
         <router-view :key="key" />
       </keep-alive>
     </transition>
-    <audio ref="mmAudio" src="../../../../../static/audio/msg.mp3" controls></audio>
+    <audio ref="mmAudio" src="../../../../../static/audio/msg.mp3"></audio>
     <!-- <IMChat></IMChat> -->
   </section>
 </template>
