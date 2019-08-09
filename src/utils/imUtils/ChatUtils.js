@@ -274,6 +274,14 @@ export function transform(content) {
 }
 
 export const ChatListUtils = {
+  // 缓存聊天框关闭状态
+  setChatDialog: function(userId, chatDialog) {
+    localStorage.setItem(userId+'chatDialog', chatDialog);
+  },
+  // 缓存当前聊天框id
+  setCurrentChatId: function(userId, chatId) {
+    localStorage.setItem(userId+'chatId', chatId);
+  },
   // 缓存所有聊天记录
   setChatList: function(userId, chatList) {
     localStorage.setItem(userId+'chat', JSON.stringify(chatList));
@@ -289,6 +297,22 @@ export const ChatListUtils = {
   // 缓存所有群成员信息
   setChatGroupListMap: function(userId, groupList) {
     localStorage.setItem(userId+'group_user', JSON.stringify(groupList));
+  },
+  //从缓存中获取聊天框是否关闭
+  getChatDialog: function(userId) {
+    let str = localStorage.getItem(userId+'chatDialog');
+    if (!str) {
+      return false;
+    }
+    return str;
+  },
+  //从缓存中获取已经保存的当前聊天框id
+  getCurrentChatId: function(userId) {
+    let str = localStorage.getItem(userId+'chatId');
+    if (!str) {
+      return '';
+    }
+    return str;
   },
   //从缓存中获取已经保存的聊天记录
   getChatList: function(userId) {
@@ -357,31 +381,6 @@ export const ChatListUtils = {
     return tempAllSessionList;
   }
 };
-//信息的类型 MSG_PING 心跳 、MSG_READY 链接就绪  MSG_MESSAGE 消息
-export const MessageInfoType = {
-  MSG_PING: '0',
-  MSG_READY: '1',
-  MSG_MESSAGE: '2'
-};
-//信息的目标类型 FRIEND 私聊 、CHAT_GROUP 群聊
-export const MessageTargetType = {
-  FRIEND: '0',
-  CHAT_GROUP: '1'
-};
-
-/**
- * 退出登录
- * @param self vue this对象
- */
-export function logout(self) {
-  self.$store.commit('closeConnect');
-  self.$store.commit('clear');
-  self.$store.commit('clearFlushTokenTimerId');
-  self.$router.push({
-    path: '/',
-    params: {}
-  });
-}
 
 export const ErrorType = {
   TIMEOUT_ERROR: 9, //超时

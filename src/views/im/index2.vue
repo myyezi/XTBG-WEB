@@ -20,13 +20,13 @@
                       </el-popover>
                     </li>
                       <li @click="isChatBox=true;isUserBox=false;isChatGroupBox=false">
-                         <i class="el-icon-chat-round left-bar_icon" :class="{'left-bar_icon_active':isChatBox}" ></i>
+                          <i class="el-icon-chat-round left-bar_icon" :class="{'left-bar_icon_active':isChatBox}" ></i>
                       </li>
                       <li @click="isUserBox=true;isChatBox=false;isChatGroupBox=false;">
-                         <i class="icon-tongxunlu left-bar_icon" :class="{'left-bar_icon_active':isUserBox}"></i>
+                          <i class="icon-tongxunlu left-bar_icon" :class="{'left-bar_icon_active':isUserBox}"></i>
                       </li>
                       <!-- <li @click="isChatGroupBox=true;isUserBox=false;isChatBox=false">
-                         <i class="icon-qun left-bar_icon" :class="{'left-bar_icon_active':isChatGroupBox}"></i>
+                          <i class="icon-qun left-bar_icon" :class="{'left-bar_icon_active':isChatGroupBox}"></i>
                       </li> -->
                   </ul>
               </div>

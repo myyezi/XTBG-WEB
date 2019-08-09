@@ -137,6 +137,7 @@ const im = {
           let sessionObj = {}
           if(session.conversation) {
             sessionObj = {
+              unReadCount:0,
               portrait: '', // 接收人头像
               serverTimestamp: session.serverTimestamp, // 发送时间
               targetName:'', //接收人名称
@@ -148,17 +149,20 @@ const im = {
                   content:session.content.type==1?session.content.content:session.content.type==3?'图片':'文件'// 发送消息内容
               },
             }
-            if(session.conversation.type == 1) {
-              let groupList = ChatListUtils.getGroupList(state.user.id);
-              groupList.forEach((item)=>{
-                  if(item.targetId == session.conversation.targetId) {
-                      sessionObj.portrait = item.portrait
-                      sessionObj.targetName = item.name
-                  }
-              })
-            } else {
-              sessionObj.targetId = session.fromUserId
-            }
+            // 是否本人发的消息
+            if(state.user.id!= session.fromUserId) {
+              if(session.conversation.type == 1) {
+                let groupList = ChatListUtils.getGroupList(state.user.id);
+                groupList.forEach((item)=>{
+                    if(item.targetId == session.conversation.targetId) {
+                        sessionObj.portrait = item.portrait
+                        sessionObj.targetName = item.name
+                    }
+                })
+              } else {
+                sessionObj.targetId = session.fromUserId
+              }
+            } 
           } else {
             sessionObj = session
           }
@@ -174,6 +178,9 @@ const im = {
                   }
                   if(sessionObj.serverTimestamp) {
                     item.serverTimestamp = sessionObj.serverTimestamp
+                  }
+                  if(state.user.id!= session.fromUserId) {
+                    item.unReadCount = item.unReadCount + 1
                   }
                 }
             })
@@ -212,49 +219,17 @@ const im = {
         delAllSession : function(state, chat) {
           state.sessionList = ChatListUtils.delAllSession(state.user.id);
         },
-        /**
-         * 设置未读消息条数
-         * @param state state
-         * @param message 消息
-         */
-        setUnReadCount: function(state, message) {
-          let tempChatList = [];
-          let tempChat = {};
-    
-          for (let chat of state.chatList) {
-            // 给接受消息的聊天室未读数量 +1
-            if (String(chat.id) === String(message.fromid) && message.type === MessageTargetType.FRIEND) {
-              if (!chat['unReadCount']) {
-                chat['unReadCount'] = 0;
-              }
-              chat['unReadCount'] = chat['unReadCount'] + 1;
-              tempChat = chat;
+        // 设置消息已读
+        setReadCount: function(state, chat) {
+          let getSessionList = ChatListUtils.getSessionList(state.user.id);
+          getSessionList.forEach((item)=> { 
+            if (item.targetId === chat.targetId) {
+              item.unReadCount = chat.unReadCount
             }
-            //群组聊天
-            else if (String(chat.id) === String(message.id) && message.type === MessageTargetType.CHAT_GROUP) {
-              if (!chat['unReadCount']) {
-                chat['unReadCount'] = 0;
-              }
-              chat['unReadCount'] = chat['unReadCount'] + 1;
-              chat.portrait = conf.getHostUrl() + state.chatMap[message.id].portrait;
-              tempChat = chat;
-            } else {
-              tempChatList.push(chat);
-            }
-          }
-          // 聊天列表没有此人的chat
-          if (!tempChat.id && message.type === MessageTargetType.FRIEND) {
-            tempChat = new Chat(message.fromid, message.username, message.portrait, 1, message.content, state.user.mobile, state.user.email, MessageTargetType.FRIEND);
-          } else if (!tempChat.id && message.type === MessageTargetType.CHAT_GROUP) {
-            let groupChat = state.chatMap[message.id];
-            tempChat = new Chat(message.id, groupChat.name, conf.getHostUrl() + groupChat.portrait, 1, message.content, state.user.mobile, state.user.email, MessageTargetType.CHAT_GROUP);
-          }
-          // 添加到聊天室列表的第一个
-          tempChatList.unshift(tempChat);
-          // 重新设置chatList
-          state.chatList = tempChatList;
+          })
+          state.sessionList = getSessionList
           // 放入缓存
-          ChatListUtils.setChatList(state.user.id, tempChatList);
+          ChatListUtils.setSessionList(state.user.id, state.sessionList);
         }
       },
       actions: {

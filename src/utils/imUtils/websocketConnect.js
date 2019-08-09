@@ -79,6 +79,7 @@ const websocketConnect = {
         } else if (message.destinationName == "MS") {
             console.log(msg)
             store.commit('addMessage', msg);
+            store.commit('addSession', msg);
         }else if (message.destinationName == "MP") {
             localStorage.setItem('head_last_message',msg.head)
             localStorage.setItem('type_last_message',msg.type)
@@ -97,12 +98,7 @@ const websocketConnect = {
                             client.pubMessage(obj,"GGI")
                         }
                         if(item.conversation.topic!='GD') {
-                            if(item.conversation.topic=='GQ') {
-                                if(objData.username != item.fromUserId) {
-                                    store.commit('addMessage', item);
-                                    store.commit('addSession', item);
-                                }
-                            } else {
+                            if(item.conversation.topic!='GQ' || objData.username != item.fromUserId) {
                                 store.commit('addMessage', item);
                                 store.commit('addSession', item);
                             }

@@ -9,7 +9,7 @@
         <ul class="user-list">
           <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionList" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
             <a href="javascript:" :class="currentChat&&currentChat.targetId===chat.targetId?'active':''">
-              <i v-if="chat.unReadCount>0">{{ chat.unReadCount }}</i>
+              <i v-if="chat.unReadCount&&chat.unReadCount>0">{{ chat.unReadCount }}</i>
               <img :src="chat.portrait?chat.portrait:defaultPic">
               <b>{{ chat.targetName?chat.targetName:'test' }}</b>
               <span>{{ chat.serverTimestamp?dateStr(chat.serverTimestamp):''}}</span>
@@ -113,8 +113,9 @@ export default {
       }
     },
     showChat(chat) {
-      console.log(chat)
       this.currentChat = chat;
+      this.currentChat.unReadCount = 0
+      this.$store.commit('setReadCount', this.currentChat);
     },
     // 删除当前会话
     deleteCurrent() {
@@ -147,7 +148,7 @@ export default {
           let flag = false
           if(self.currentChat&&JSON.stringify(self.currentChat) !== '{}') {
               self.sessionList.forEach((item)=>{
-                  if(item.targetId == this.currentChat.targetId) {
+                  if(item.targetId == self.currentChat.targetId) {
                       flag = true
                       self.currentChat = item
                   }
@@ -155,6 +156,8 @@ export default {
           }
           if(!flag) {
               self.currentChat = self.sessionList[0]
+              self.currentChat.unReadCount = 0
+              this.$store.commit('setReadCount', self.currentChat);
           }
       } else {
         self.currentChat = {}
@@ -292,14 +295,16 @@ export default {
             display: inline-block;
             width: 1.8rem;
             height: 1.6rem;
-            background-color: #ff0000;
+            line-height: 1.6rem;
+            font-size: 12px;
+            background-color: #F56C6C;
             border-radius: 50%;
-            color: $color-write;
+            color: #FFF;
             text-align: center;
             font-style: normal;
             position: absolute;
             left: 1rem;
-            top: 0;
+            top: 0.5rem;
             z-index: 99999999999;
           }
 

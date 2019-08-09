@@ -27,7 +27,7 @@
                 <li class="clearfix"  @click="openImChat">
                     <img :src="communicationPic" />
                     <span :style="{'color':sizeColor}">通讯</span>
-                    <el-badge class="message_number" :value="12" />
+                    <el-badge class="message_number" :value="unReadNum" v-if="unReadNum>0"/>
                 </li>
                 <el-dropdown trigger="click" :hide-on-click="false" class="clearfix">
                     <span class="el-dropdown-link">
@@ -54,6 +54,7 @@
     export default {
         data(){
             return {
+                unReadNum:0,
                 nowDate: new Date().format('yyyy-MM-dd'),
                 nowText: this.getDateText(),
                 nowTime: new Date().format('hh:mm'),
@@ -78,7 +79,25 @@
                 'user',
                 'sidebar',
                 'avatar'
-            ])
+            ]),
+            sessionList: {
+                get: function() {
+                    console.log(111)
+                    return this.$store.state.im.sessionList;
+                }
+            }
+        },
+        watch:{
+            sessionList :function(newvalue,oldvalue) {
+                if(newvalue&&newvalue.length>0) {
+                    this.unReadNum = 0
+                    newvalue.forEach((item)=>{
+                        this.unReadNum += item.unReadCount
+                    })
+                } else {
+                    this.unReadNum = 0
+                }
+            },
         },
         created() {
             this.$set(this.colorList[0],'active',true);

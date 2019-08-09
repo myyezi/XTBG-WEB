@@ -260,6 +260,7 @@
               }
             };
             let currentSession = {
+              unReadCount:0,
               portrait: self.chat.portrait, // 接收人头像
               serverTimestamp: time, // 发送时间
               targetId: self.chat.targetId, //接收人id
@@ -272,6 +273,8 @@
               },
             };
             self.send(currentMessage,currentSession);
+            self.chat.unReadCount = 0
+            this.$store.commit('setReadCount', self.chat);
           }
         }
       },
@@ -284,7 +287,7 @@
         }
         self.$store.commit('sendMessage', objArr);
         // self.$store.commit('addMessage', message);
-        self.$store.commit('addSession', session);
+        // self.$store.commit('addSession', session);
         self.messageContent = '';
         this.scollBottom()
       },
