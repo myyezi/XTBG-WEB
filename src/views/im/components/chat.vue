@@ -8,7 +8,7 @@
             <div class="im-chat-main-left">
                 <div class="im-chat-main-box messages" id="message-box">
                     <ul>
-                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&(item.content.type!=2 || item.content.type!=4 ||item.content.type!=6 )">
+                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=2&&item.content.type!=4&&item.content.type!=6">
                             <div class="im-chat-user">
                                 <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
                                 <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
