@@ -231,7 +231,7 @@ export function transform(content,type) {
         let contents = JSON.parse(content)
         let path = contents.filedomain + contents.path;
         return '<img class="message-img" src="' + path + '" alt="消息图片不能加载">';
-    } else if(type == 5) {
+    } else if(type == 5 || type == 6) {
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
       let fileName = contents.name;

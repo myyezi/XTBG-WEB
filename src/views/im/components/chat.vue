@@ -134,7 +134,7 @@
         accept:'.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.pdf,.exe,',
         imgFormat: "jpg,jpeg,png,gif",
         fileFormat: "doc,docx,xls,xlsx,pdf,exe",
-        // videoFormat: "mp4, mvo",
+        videoFormat: "mp4,mvo",
         transform:transform
       };
     },
@@ -228,9 +228,9 @@
             type = 6
           }
           // 音频
-          else if (self.videoFormat.indexOf(suffix) >=0){
-            type = 2
-          }
+          // else if (self.videoFormat.indexOf(suffix) >=0){
+          //   type = 2
+          // }
           this.mineSend(type)
         } else {
           this.$Message.error('文件上传错误，请重试');
