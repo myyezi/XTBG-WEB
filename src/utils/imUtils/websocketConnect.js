@@ -20,7 +20,7 @@ const IMTopic = {
 const websocketConnect = {
     connect: function(data) {
         objData = data;
-        client = new Paho.MQTT.Client(data.ip,Number(data.port),"/mqtt",data.token);
+        client = new Paho.MQTT.Client(data.ip,Number(data.port),"/mqtt","1@@@"+data.username);
         client.onConnectionLost = this.onConnectionLost;
         client.onMessageArrived = this.onMessageArrived;
         client.onMessageDelivered = this.onMessageDelivered;
