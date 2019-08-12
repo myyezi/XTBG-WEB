@@ -94,6 +94,13 @@ const im = {
         addMessage: function(state, message) {
           console.log(message)
           message.serverTimestamp = parseInt(message.serverTimestamp)
+          if(message.content.type == 2) {
+            message.content.content = '收到语音消息，请在手机上查看'
+          } else if (message.content.type == 4) {
+            message.content.content = '收到定位消息，请在手机上查看'
+          } else if (message.content.type == 6) {
+            message.content.content = '收到视频消息，请在手机上查看'
+          } 
           let getChatList = ChatListUtils.getChatList(state.user.id);
           if(message.conversation.type === 1) {
             if(getChatList[message.conversation.targetId]) {
