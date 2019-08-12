@@ -33,7 +33,6 @@
                     <div class="im-chat-tool">
                         <i class="icon-biaoqing" @click.stop="showFaceBox()"></i>
                         <el-upload 
-                                :accept ="accept"
                                 :action="uploadUrl"
                                 :headers="headers" 
                                 class="im-upload"
