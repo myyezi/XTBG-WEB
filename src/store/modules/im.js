@@ -177,6 +177,7 @@ const im = {
                   indexs = index
                   if(sessionObj.content.content) {
                     item.content.content = sessionObj.content.content;
+                    item.content.type = sessionObj.content.type;
                   }
                   if(sessionObj.serverTimestamp) {
                     item.serverTimestamp = sessionObj.serverTimestamp

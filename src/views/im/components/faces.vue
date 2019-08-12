@@ -1,8 +1,12 @@
 <template>
     <div>
         <ul class="faces">
-            <li v-for="(item,index) in faceList" :key="index">
-                <img :src="faceMap[item]" :alt="item" :title="item" @click="insertFace(item)"/>
+            <li v-for="(item,index1) in emojiList" :key="index1">
+              <span @click="insertFace(item,1)">{{item}}</span>
+                <!-- <img :src="faceMap[item]" :alt="item" :title="item" @click="insertFace(item)"/> -->
+            </li>
+            <li v-for="(item,index2) in faceList" :key="emojiList.length+index2">
+                <img :src="faceMap[item]" :alt="item" :title="item" @click="insertFace(item,2)"/>
             </li>
         </ul>
         <div class="clear"></div>
@@ -16,13 +20,14 @@ export default {
   components: {},
   data() {
     return {
+      emojiList:faceUtils.emoji,
       faceList: faceUtils.alt,
       faceMap: faceUtils.faces()
     };
   },
   methods: {
-    insertFace: function(item) {
-      this.$emit('insertFace', item);
+    insertFace: function(item,type) {
+      this.$emit('insertFace', {item:item,type:type});
     }
   }
 };
@@ -36,11 +41,14 @@ export default {
   border: 1px solid #f0f5ff;
   display: block;
   height: 25rem;
+  padding: 1rem;
+  overflow: auto;
   & > li {
     width: 3rem !important;
     height: 3rem !important;
+    padding: 8px;
+    margin: 2px;
     display: inline-block;
-    padding: 4px;
     float: left;
     cursor: pointer;
     & > img {

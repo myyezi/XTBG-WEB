@@ -16,8 +16,8 @@
                                 <cite v-else>{{ chat.name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
                             <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
-                                <pre v-html="item.content.content" v-on:click="openImageProxy($event)" v-if="item.content.content.indexOf('href=') == -1"></pre>
-                                <pre v-html="item.content.content" v-else></pre>
+                                <pre v-html="transform(item.content.content,item.content.type)" v-on:click="openImageProxy($event)" v-if="transform(item.content.content,item.content.type).indexOf('message-file') >=0||transform(item.content.content,item.content.type).indexOf('message-img') >=0"></pre>
+                                <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
                             </div>
                         </li>
                         <li v-else class="group_system_chat">
@@ -31,8 +31,9 @@
               </ul>
                 <div class="im-chat-footer">
                     <div class="im-chat-tool">
-                        <i class="icon-biaoqing" @click="showFaceBox()"></i>
+                        <i class="icon-biaoqing" @click.stop="showFaceBox()"></i>
                         <el-upload 
+                                :accept ="accept"
                                 :action="uploadUrl"
                                 :headers="headers" 
                                 class="im-upload"
@@ -42,7 +43,7 @@
                                 :on-error="handleError">
                             <i class="el-icon-folder-opened"></i>
                         </el-upload>
-                        <Faces v-show="showFace" @click="showFace = true" class="faces-box"  @insertFace="insertFace"></Faces>
+                        <Faces v-show="showFace" class="faces-box"  @insertFace="insertFace"></Faces>
                         <el-button size="mini" class="history-message-btn" @click="getHistoryMessage()">聊天记录</el-button>
                     </div>
                     <textarea v-model="messageContent" class="textarea" @keyup.enter="mineSend(1)"></textarea>
@@ -131,8 +132,11 @@
         messageContent: '',
         showFace: false,
         groupUserList:[],
-        imgFormat: "jpg, jpeg, png, gif",
-        fileFormat: "doc', docx, jpg, jpeg, png, gif, xls, xlsx, pdf, exe, msi, swf, sql, apk, psd",
+        accept:'.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.pdf,.exe,',
+        imgFormat: "jpg,jpeg,png,gif",
+        fileFormat: "doc,docx,xls,xlsx,pdf,exe",
+        // videoFormat: "mp4, mvo",
+        transform:transform
       };
     },
     props: ['chat','chatDialogVisible'],
@@ -142,6 +146,7 @@
       },
       // 会话鼠标右键事件
       rightEvent(chat,e) {
+        this.showFace = false
         if(chat === 1) {
             this.visibleBox = false
         } else {
@@ -190,8 +195,12 @@
         this.showFace = !this.showFace;
       },
       // 发送表情
-      insertFace(item) {
-        this.messageContent = this.messageContent + 'face' + item;
+      insertFace(obj) {
+        if(obj.type==2) {
+          this.messageContent = this.messageContent + 'face' + obj.item;
+        } else {
+          this.messageContent = this.messageContent + obj.item;
+        }
         this.showFace = false;
       },
       handleFormatError(file) {
@@ -204,19 +213,24 @@
         let self = this;
         let type = null
         if (res.status == 0) {
-          let path = res.data.filedomain + res.data.path;
-          let fileName = res.data.name;
           // 文件后缀
           let suffix = res.data.suffix;
+          this.messageContent = JSON.stringify(res.data)
           // 文件
-          if (self.imgFormat.indexOf(suffix) === -1) {
-            this.messageContent = this.messageContent + 'file(' + path + ')[' + fileName + ']';
+          if (self.fileFormat.indexOf(suffix) >=0) {
             type = 5
           }
           // 图片
-          else {
-            this.messageContent = this.messageContent + 'img[' + path + ']';
+          else if (self.imgFormat.indexOf(suffix) >=0){
             type = 3
+          }
+          // 视频
+          else if (self.videoFormat.indexOf(suffix) >=0){
+            type = 6
+          }
+          // 音频
+          else if (self.videoFormat.indexOf(suffix) >=0){
+            type = 2
           }
           this.mineSend(type)
         } else {
@@ -228,11 +242,12 @@
       },
       // 附件和图片点击展开
       openImageProxy: function(event) {
+        console.log(event)
         let self = this;
         event.preventDefault();
         if (event.target.nodeName === 'IMG') {
           window.open(event.target.src);
-        } else if (event.target.className === 'message-file') {
+        } else if (event.target.className.indexOf('message-file')>=0) {
           window.open(event.target.href);
         }
       },
@@ -240,7 +255,7 @@
       mineSend(type) {
         let self = this;
         let time = new Date().getTime();
-        let content = transform(self.messageContent);
+        let content = self.messageContent;
         if (content !== '' && content !== '\n') {
           if (content.length > 2000) {
             self.openMessage('不能超过2000个字符');

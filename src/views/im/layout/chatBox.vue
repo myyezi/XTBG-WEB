@@ -13,7 +13,7 @@
               <img :src="chat.portrait?chat.portrait:defaultPic">
               <b>{{ chat.targetName?chat.targetName:'test' }}</b>
               <span>{{ chat.serverTimestamp?dateStr(chat.serverTimestamp):''}}</span>
-              <p v-html="chat.content.content?chat.content.content:''"></p>
+              <p v-html="chat.content.content?transform(chat.content.content):''"></p>
             </a>
           </li>
         </ul>
@@ -41,7 +41,7 @@ import Top from '../components/top.vue';
 import UserChat from '../components/chat.vue';
 import addGroup from '../components/addGroup.vue';
 import Bus from "@/utils/eventBus.js";
-import { ChatListUtils, imageLoad } from '@/utils/imUtils/ChatUtils';
+import { ChatListUtils, imageLoad ,transform} from '@/utils/imUtils/ChatUtils';
 
 export default {
   components: {
@@ -60,6 +60,7 @@ export default {
       top: 0,
       left: 0,
       defaultPic:require('@/styles/img/morentx.png'),
+      transform:transform
     };
   },
   watch:{

@@ -11,7 +11,8 @@
                     <div class="im_chat_record_user">
                         <p>{{ user.name }}<i>{{ item.serverTimestamp }}</i></p>
                         <div class="im_chat_record_text">
-                          <pre v-html="item.content.content" v-on:click="openImageProxy($event)"></pre>
+                          <pre v-html="transform(item.content.content,item.content.type)" v-on:click="openImageProxy($event)" v-if="transform(item.content.content,item.content.type).indexOf('message-file') >=0||transform(item.content.content).indexOf('message-img') >=0"></pre>
+                          <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
                         </div>
                     </div>
                 </li>
@@ -34,6 +35,7 @@
           historyMessageList: [],
           historyMessageListCopy:[],
           chatRecord:'',
+          transform:transform
       };
     },
     computed: {
@@ -70,6 +72,16 @@
               imageLoad('im_chat_record');
             });
         },
+        // 附件和图片点击展开
+      openImageProxy: function(event) {
+        let self = this;
+        event.preventDefault();
+        if (event.target.nodeName === 'IMG') {
+          window.open(event.target.src);
+        } else if (event.target.className === 'message-file') {
+          window.open(event.target.href);
+        }
+      },
     }
   };
 </script>

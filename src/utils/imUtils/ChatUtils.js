@@ -135,6 +135,7 @@ function scrollBottom(id) {
 }
 
 export let faceUtils = {
+  emoji:['😂','😱','😭','😘','😳','😒','😏','😄','😔','😍','😉','☺','😜','😁','😝','😰','😓','😚','😌','😊','💪','👊','👍','☝','👏','✌','👎','🙏','👌','👈','👉','👆','👇','👀','👃','👄','👂','🍚','🍝','🍜','🍙','🍧','🍣','🎂','🍞','🍔','🍳','🍟','🍺','🍻','🍸','☕','🍎','🍊','🍓','🍉','💊','🚬','🎄','🌹','🎉','🌴','💝','🎀','🎈','🐚','💍','💣','👑','🔔','✨','💨','💦','🔥','🏆','💰','💤','⚡','👣','💩','💉','♨','📫','🔑','🔒','✈','🚄','🚗','🚤','🚲','🐎','🚀','🚌','⛵','👨','👧','👦','🐵','🐙','🐷','💀','🐤','🐨','🐮','🐔','🐸','👻','🐛','🐠','🐶','🐯','👼','🐧','🐳','🐭','👒','👗','💄','👠','👢','🌂','👜','👙','👕','👟','☁','☀','☔','🌙','⛄','⭕','❌','❔','❕','☎','📷','📱','📠','💻','🎥','🎤','🔫','💿','💓','♣','🀄','〽','🎰','🚥','🚧','🎸','🛀','🚽','⛪','🏦','🏥','🏨','🏧','🏪','🚹','🚺'],
   alt: [
     '[微笑]',
     '[嘻嘻]',
@@ -219,14 +220,24 @@ export let faceUtils = {
   }
 };
 
-export function transform(content) {
+export function transform(content,type) {
   // 支持的html标签
   let html = function(end) {
     return new RegExp('\\n*\\[' + (end || '') + '(code|pre|div|span|p|table|thead|th|tbody|tr|td|ul|li|ol|li|dl|dt|dd|h2|h3|h4|h5)([\\s\\S]*?)]\\n*', 'g');
   };
   let fa = faceUtils.faces();
   if (content) {
-    content = content
+    if(type == 3) {
+        let contents = JSON.parse(content)
+        let path = contents.filedomain + contents.path;
+        return '<img class="message-img" src="' + path + '" alt="消息图片不能加载">';
+    } else if(type == 5) {
+      let contents = JSON.parse(content)
+      let path = contents.filedomain + contents.path;
+      let fileName = contents.name;
+      return '<a class="message-file clearfix" href="' + path + '"><i class="el-icon-document" type="message-file"></i><span type="message-file">' + (fileName) + '</span><i class="el-icon-download" type="message-file"></i></a>';
+    } else  {
+      content = content
       .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -249,7 +260,7 @@ export function transform(content) {
         let href = (str.match(/file\(([\s\S]+?)\)\[/) || [])[1];
         let text = (str.match(/\)\[([\s\S]*?)]/) || [])[1];
         if (!href) return str;
-        return '<a class="message-file clearfix" href="' + href + '"><i class="el-icon-document"></i><span>' + (text || href) + '</span><i class="el-icon-download"></i></a>';
+        return '<a class="message-file clearfix" href="' + href + '"><i class="el-icon-document message-file"></i><span class="message-file">' + (text || href) + '</span><i class="el-icon-download message-file"></i></a>';
       })
       .replace(/audio\[([^\s]+?)]/g, function(audio) {
         // 转义音频
@@ -269,6 +280,7 @@ export function transform(content) {
       .replace(html(), '<$1 $2>')
       .replace(html('/'), '</$1>') // 转移HTML代码
       .replace(/\n/g, '<br>'); // 转义换行
+    }
   }
   return content;
 }
