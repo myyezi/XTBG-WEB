@@ -134,7 +134,7 @@
         accept:'.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.pdf,.exe,',
         imgFormat: "jpg,jpeg,png,gif",
         fileFormat: "doc,docx,xls,xlsx,pdf,exe",
-        videoFormat: "mp4,mvo",
+        videoFormat: "mp4,mov",
         transform:transform
       };
     },
