@@ -136,11 +136,20 @@ const im = {
                   }
               })
               if(!flag) {
-                getChatList[message.fromUserId].push(message);
+                if(message.conversation.type === 1) {
+                  getChatList[message.conversation.targetId].push(message);
+                } else {
+                  getChatList[message.fromUserId].push(message);
+                }
               }
             } else {
-              getChatList[message.fromUserId] = []
-              getChatList[message.fromUserId].push(message)
+              if(message.conversation.type === 1) {
+                getChatList[message.conversation.targetId] = []
+                getChatList[message.conversation.targetId].push(message)
+              } else {
+                getChatList[message.fromUserId] = []
+                getChatList[message.fromUserId].push(message)
+              }
             }
           }
           state.messageListMap = getChatList
