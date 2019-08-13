@@ -55,11 +55,11 @@
     </div>
       <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="800px"  v-cloak>
           <el-tabs  type="card" @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
-              <el-tab-pane label="组织" name="first">
-                  <tree-one url="upms/organization/tree"></tree-one>
+              <el-tab-pane label="组织" name="first" >
+                  <tree-one url="upms/organization/tree" ref="one"></tree-one>
               </el-tab-pane>
               <el-tab-pane label="用户" name="second">  
-                <tree-two url="upms/organization/tree"></tree-two>
+                <tree-two url="upms/organization/tree" ref="two"></tree-two>
               </el-tab-pane>
               <div style="text-align: center;">
                   <el-button type="primary" @click="submitForm()">保存</el-button>
@@ -82,7 +82,7 @@ export default {
   data() {
     return {
       companyList:[],
-        testList:[],
+      testList:[],
       isShowMore: false,
       listUrl: "personnel/personnelattendancegroup",
       showSearch: false,
@@ -96,7 +96,11 @@ export default {
           children: 'children',
           label: 'name'
       },
-      activeName:'first'
+      activeName:'first',
+      selectData:[],
+      saveData:[],
+      attendanceGroupId:'',
+      organizationList:{},
     }
   },
   mounted() {
@@ -112,6 +116,8 @@ export default {
           });
       },
       handleClick(tab, event) {
+          console.log(tab.name)
+          this.activeName = tab.name
       },
       //获取公司
       getTest() {
@@ -134,8 +140,83 @@ export default {
       },
       //设置考情组
       setGroup(row) {
+          this.saveData=[],
           this.dialogVisible =true;
+          this.attendanceGroupId=row.id
+          this.params =  row.id;
+          this.getOrganizationList();
+          this.getOrganizationUserList();
       },
+
+      getOrganizationList(){
+          ajax.get('personnel/personnelattendancegrouporganization/getList/' + this.attendanceGroupId).then(rs => {
+              this.$refs.one.checkedData = [];
+              this.$refs.one.selectData = [];
+              this.organizationList =rs;
+              rs.forEach(item =>{
+                  this.$refs.one.checkedData.push(item.organizationId)
+              });
+          });
+      },
+
+      //已经设置考情的人员回显
+      getOrganizationUserList(){
+          ajax.get('personnel/personnelattendancegroupuser/getList/' + this.attendanceGroupId).then(rs => {
+              console.log(rs)
+           //   this.$refs.two.testData = rs;
+              rs.forEach(item =>{
+                  console.log(typeof  item+"----------------------")
+                  this.$refs.two.testData.push(item)
+              });
+              console.log(this.$refs.two.testData)
+          });
+      },
+
+      //提交保存设置
+      submitForm(){
+          //部门设置
+          if(this.activeName=='first'){
+              //处理只添加部门设置
+              this.selectData = this.$refs.one.selectData
+              for (let i = 0; i < this.selectData.length; i++) {
+                  if(this.selectData[i].type=='30'){
+                     this.save={};
+                     this.save.attendanceGroupId = this.attendanceGroupId
+                     this.save.organizationId=this.selectData[i].id
+                     this.saveData.push(this.save)
+                  }
+              }
+              ajax.post('personnel/personnelattendancegrouporganization', this.saveData).then(rs => {
+                  if (rs.status == 0) {
+                      this.$message.success(rs.msg);
+                      this.dialogVisible =false;
+                      this.getList();
+                  } else {
+                      this.$message
+                          .error(rs.msg);
+                  }
+              });
+          }else{
+              //处理只添加部门设置
+              this.selectData = this.$refs.two.multipleSelection
+              for (let i = 0; i < this.selectData.length; i++) {
+                      this.save={};
+                      this.save.attendanceGroupId = this.attendanceGroupId
+                      this.save.userId=this.selectData[i].userId
+                      this.saveData.push(this.save)
+              }
+              ajax.post('personnel/personnelattendancegroupuser', this.saveData).then(rs => {
+                  if (rs.status == 0) {
+                      this.$message.success(rs.msg);
+                      this.dialogVisible =false;
+                      this.getList();
+                  } else {
+                      this.$message
+                          .error(rs.msg);
+                  }
+              });
+          }
+      }
   }
 }
 </script>
