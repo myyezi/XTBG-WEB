@@ -101,38 +101,46 @@ const im = {
           } else if (message.content.type == 6) {
             message.content.content = '收到视频消息，请在手机上查看'
           } 
+          let chatList = []
           let getChatList = ChatListUtils.getChatList(state.user.id);
-          if(message.conversation.type === 1) {
-            if(getChatList[message.conversation.targetId]) {
-              getChatList[message.conversation.targetId].push(message);
+          // 是否是自己发的消息
+          if(message.fromUserId == state.user.id) {
+            chatList = getChatList[message.conversation.targetId];
+            if(message.serverTimestamp) {
+              chatList.forEach((item)=>{
+                  if(item.messageTag == message.messageTag) {
+                    item.serverTimestamp = message.serverTimestamp
+                    item.messageId = message.messageId
+                  }
+              })
             } else {
-              getChatList[message.conversation.targetId] = []
-              getChatList[message.conversation.targetId].push(message);
-            }
-          } else {
-            if(message.fromUserId == state.user.id) {
               if(getChatList[message.conversation.targetId]) {
                 getChatList[message.conversation.targetId].push(message);
               } else {
                 getChatList[message.conversation.targetId] = []
                 getChatList[message.conversation.targetId].push(message);
               }
+            }
+          } else {
+            // 0单聊或者1群聊
+            if(message.conversation.type === 1) {
+              chatList = getChatList[message.conversation.targetId];
             } else {
-              let chatList = getChatList[message.fromUserId];
-              if(chatList&&chatList.length>0) {
-                let flag = false
-                chatList.forEach((item)=>{
-                    if(item.messageId == message.messageId) {
-                      flag = true
-                    }
-                })
-                if(!flag) {
-                  getChatList[message.fromUserId].push(message);
-                }
-              } else {
-                getChatList[message.fromUserId] = []
-                getChatList[message.fromUserId].push(message)
+              chatList = getChatList[message.fromUserId];
+            }
+            if(chatList&&chatList.length>0) {
+              let flag = false
+              chatList.forEach((item)=>{
+                  if(item.messageId == message.messageId) {
+                    flag = true
+                  }
+              })
+              if(!flag) {
+                getChatList[message.fromUserId].push(message);
               }
+            } else {
+              getChatList[message.fromUserId] = []
+              getChatList[message.fromUserId].push(message)
             }
           }
           state.messageListMap = getChatList

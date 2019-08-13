@@ -12,10 +12,11 @@
                             <div class="im-chat-user">
                                 <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
                                 <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
-                                <cite v-if="item.fromUserId == user.userId"><i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
+                                <cite v-if="item.fromUserId == user.userId"><i v-if="item.serverTimestamp">{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
                                 <cite v-else>{{ chat.name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
                             <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
+                                <i class="el-icon-loading" v-if="(item.fromUserId == user.userId)&&!item.messageId"></i>
                                 <pre v-html="transform(item.content.content,item.content.type)" v-on:click="openImageProxy($event)" v-if="transform(item.content.content,item.content.type).indexOf('message-file') >=0||transform(item.content.content,item.content.type).indexOf('message-img') >=0"></pre>
                                 <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
                             </div>
@@ -31,7 +32,14 @@
               </ul>
                 <div class="im-chat-footer">
                     <div class="im-chat-tool">
-                        <i class="icon-biaoqing" @click.stop="showFaceBox()"></i>
+                        <el-popover
+                          placement="top"
+                          trigger="click"
+                          v-model="showFace"
+                          >
+                          <Faces v-show="showFace" class="faces-box"  @insertFace="insertFace"></Faces>
+                          <i class="icon-biaoqing" @click.stop="showFaceBox()" slot="reference"></i>
+                        </el-popover>
                         <el-upload 
                                 :action="uploadUrl"
                                 :headers="headers" 
@@ -42,10 +50,9 @@
                                 :on-error="handleError">
                             <i class="el-icon-folder-opened"></i>
                         </el-upload>
-                        <Faces v-show="showFace" class="faces-box"  @insertFace="insertFace"></Faces>
                         <el-button size="mini" class="history-message-btn" @click="getHistoryMessage()">聊天记录</el-button>
                     </div>
-                    <textarea v-model="messageContent" class="textarea" @keyup.enter="mineSend(1)"></textarea>
+                    <textarea v-model.trim="messageContent" class="textarea" @keyup.enter="mineSend(1)"></textarea>
                     <div class="im-chat-send">
                         <el-button size="mini" @click="mineSend(1)">发送</el-button>
                     </div>
@@ -195,12 +202,13 @@
       },
       // 发送表情
       insertFace(obj) {
+        this.showFaceBox()
         if(obj.type==2) {
           this.messageContent = this.messageContent + 'face' + obj.item;
+          this.mineSend(1)
         } else {
           this.messageContent = this.messageContent + obj.item;
         }
-        this.showFace = false;
       },
       handleFormatError(file) {
         this.$Message.warning('文件 ' + file.name + ' 格式不正确。');
@@ -255,13 +263,15 @@
         let self = this;
         let time = new Date().getTime();
         let content = self.messageContent;
+        console.log(content)
         if (content !== '' && content !== '\n') {
           if (content.length > 2000) {
             self.openMessage('不能超过2000个字符');
           } else {
             let currentMessage = {
               fromUserId:self.user.userId, //发送人id
-              serverTimestamp: time, // 发送时间
+              serverTimestamp: '', // 发送时间
+              messageTag:time,
               // 发送消息的内容属性
               content: {
                   type:type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
@@ -299,8 +309,8 @@
             obj:message,
             subTopic:'MS'
         }
+        self.$store.commit('addMessage', message);
         self.$store.commit('sendMessage', objArr);
-        // self.$store.commit('addMessage', message);
         // self.$store.commit('addSession', session);
         self.messageContent = '';
         this.scollBottom()
@@ -587,7 +597,7 @@
 
             .im-chat-mine {
                 text-align: right;
-                padding-left: 10px;
+                padding-left: 30px;
                 padding-right: 60px;
 
                 .im-chat-text {
@@ -598,7 +608,13 @@
                     display: inline-block;
                     vertical-align: top;
                     font-size: 14px;
-
+                    position: relative;
+                    .el-icon-loading {
+                      color:#333;
+                      position: absolute;
+                      left:-20px;
+                      top: 12px;
+                    }
                     &:after {
                         left: auto;
                         right: -10px;
