@@ -139,7 +139,7 @@ export default {
     }
   },
   mounted() {
-    ajax.get('project/powerprojecttask/' + this.$route.params.id).then(rs => {
+    ajax.get('power/powerprojecttask/' + this.$route.params.id).then(rs => {
       this.powerprojecttaskForm = rs.data;
 
     });

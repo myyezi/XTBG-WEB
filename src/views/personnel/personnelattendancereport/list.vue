@@ -116,7 +116,7 @@ export default {
           if(~this.$route.fullPath.indexOf("/detail?")){
               return;
           }
-          let url = this.$route.fullPath + '/detail?employeeId='+row.employeeId+'&month='+row.month+'&companyId=10';
+          let url = this.$route.fullPath + '/detail?employeeId='+row.employeeId+'&month='+row.month+'&companyId=30';
           console.log(row)
           this.$router.push({path:url});
       },

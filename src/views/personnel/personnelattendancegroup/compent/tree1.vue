@@ -17,6 +17,7 @@
                 :ref="treeName"
                 :expand-on-click-node="false"
                 :filter-node-method="filterNode"
+                :default-checked-keys="checkedData"
                 default-expand-all>
                 <span class="custom-tree-node" slot-scope="{ node, data }">
                     <span class="name-text" :class="{'disabled':data.disabled}" :title="node.label">{{ node.label }}</span>
@@ -62,6 +63,7 @@
                     children: 'children',
                     label: 'name'
                 },
+                checkedData:[],
             };
         },
         watch: {
