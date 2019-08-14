@@ -239,7 +239,7 @@ export function transform(content,type) {
     } else if(type == 6){
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
-      return '<video class="message-video" src="' + path + '"></video>';
+      return '<video class="message-video" src="' + path + '" controls style="width:200px"></video>';
     }
     else  {
       content = content

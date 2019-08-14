@@ -147,8 +147,12 @@
     },
     props: ['chat','chatDialogVisible'],
     methods: {
-      beforeUpload() {
-        
+      beforeUpload(file) {
+          const isLtM = file.size / 1024 / 1024 < 20;
+          if (!isLtM) {
+            this.$message.error('上传头像文件大小不能超过 20MB!');
+          }
+          return isLtM;
       },
       // 会话鼠标右键事件
       rightEvent(chat,e) {

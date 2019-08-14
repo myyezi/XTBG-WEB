@@ -98,9 +98,10 @@ const im = {
             message.content.content = '收到语音消息，请在手机上查看'
           } else if (message.content.type == 4) {
             message.content.content = '收到定位消息，请在手机上查看'
-          } else if (message.content.type == 6) {
-            message.content.content = '收到视频消息，请在手机上查看'
           } 
+          // else if (message.content.type == 6) {
+          //   message.content.content = '收到视频消息，请在手机上查看'
+          // } 
           let chatList = []
           let getChatList = ChatListUtils.getChatList(state.user.id);
           // 是否是自己发的消息
