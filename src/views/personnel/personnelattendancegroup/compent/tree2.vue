@@ -70,7 +70,7 @@
                 loadings:false,
                 tableData: [],
                 multipleSelection: [],
-                multipleSelectionAll:this.selectionAll,
+                multipleSelectionAll:[],
                 idKeyArr: [], //最后需要保存的id
             };
         },
@@ -86,6 +86,9 @@
             },
             filterText(val) {
                 this.$refs.treeNameTwo.filter(val);
+            },
+            selectionAll(val){
+                this.multipleSelectionAll =val;
             }
         },
         methods: {
@@ -132,6 +135,7 @@
             },
             // 记忆选择
             changePageCoreRecordData() {
+                console.log(this.multipleSelectionAll)
                 // 标识当前行的唯一键的名称
                 let idKey = 'userId';
                 // 如果总记忆中还没有选择的数据，那么就直接取当前table选中的数据，不需要后面一系列计算
@@ -191,6 +195,7 @@
                 }
                 ajax.get(this.url, this.params).then((res) => {
                     if (res && res.status === 0) {
+                        console.log(res.data.children)
                         this.data = res.data;
                     }
                 })
@@ -202,6 +207,7 @@
             
         },
         mounted() {
+            console.log(this.selectionAll)
             this.getData();
         },
     }
