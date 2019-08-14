@@ -1,73 +1,43 @@
 <template>
   <div class="app-container white-bg list-panel" v-cloak>
-    <div class="opertion-box">
-      <el-button type="primary" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建</el-button>
-      <el-input v-model="searchParam.zy_input" placeholder="请输入" clearable class="zy_input" style="width:190px"></el-input>
-      <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
-      <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
-      <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
-      <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
-    </div>
-    <!-- 展开更多查询开始 -->
-    <el-collapse-transition>
-      <div class="search-box" v-show="isShowMore">
-        <div class="form-box">
-          <div class="form-group">
-            <label class="control-label">主键id</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.id" placeholder="请输入主键id"></el-input>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">项目类型（关联字典表，取value值）</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.type" placeholder="请输入项目类型（关联字典表，取value值）"></el-input>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">数据状态(0-删除，1-正常)</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.status" placeholder="请输入数据状态(0-删除，1-正常)"></el-input>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">创建人</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.creater" placeholder="请输入创建人"></el-input>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">修改人</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.updater" placeholder="请输入修改人"></el-input>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">创建时间</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.createTime" placeholder="请输入创建时间"></el-input>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">修改时间</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.updateTime" placeholder="请输入修改时间"></el-input>
-            </div>
-          </div>
-        </div>
+      <div class="opertion-box">
+        <el-button type="primary" icon="el-icon-plus" size="small" @click="toPlanTemplate('add')" style="margin-right:10px">创建</el-button>
+        <el-select v-model="searchParam.type" placeholder="请选择项目类型" clearable style="width:190px">
+            <el-option v-for="e in projectTypeList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
+        </el-select>
+        <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
+        <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
+        <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
       </div>
-    </el-collapse-transition>
+      <!-- 展开更多查询开始 -->
+      <el-collapse-transition>
+          <div class="search-box" v-show="isShowMore">
+              <div class="form-box">
+                  <div class="form-group">
+                      <label class="control-label">组织</label>
+                      <div class="input-group">
+                          <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择组织">
+                              <el-option
+                                  v-for="item in companyList"
+                                  :key="item.value"
+                                  :label="item.name"
+                                  :value="item.id">
+                              </el-option>
+                          </el-select>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </el-collapse-transition>
     <div class="division-line"></div>
     <div class="table-box">
       <el-table :data="list" style="width: 100%">
         <el-table-column fixed label="操作" width="120">
           <template fixed slot-scope="{ row, column, $index }">
-            <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
+            <el-button v-show="showEditBtn" @click="toPlanTemplate('edit',row.type)" type="text" size="small">编辑</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="id" sortable show-overflow-tooltip min-width="100" label="主键id"></el-table-column>
-        <el-table-column prop="type" sortable show-overflow-tooltip min-width="100" label="项目类型（关联字典表，取value值）"></el-table-column>
-        <el-table-column prop="status" sortable show-overflow-tooltip min-width="100" label="数据状态(0-删除，1-正常)"></el-table-column>
+        <el-table-column prop="type" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="创建人"></el-table-column>
         <el-table-column prop="updater" sortable show-overflow-tooltip min-width="100" label="修改人"></el-table-column>
         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="创建时间"></el-table-column>
@@ -81,26 +51,51 @@
 </template>
 
 <script>
-import ajax from '@/utils/request'
-import { tool } from '@/utils/common'
+    import {tool} from '@/utils/common'
+    import ajax from '@/utils/request'
 
-export default {
-  name: 'PowerProjectTemplate',
-  mixins: [tool],
-  data() {
-    return {
-      isShowMore: false,
-      listUrl: "project/powerprojecttemplate",
-      showSearch: false,
-      showAddBtn: this.getCurrentUserAuthority("/powerprojecttemplate/save"),
-      showEditBtn: this.getCurrentUserAuthority("/powerprojecttemplate/edit")
-    }
-  },
-  mounted() {
-    this.getList();
-  },
-  methods: {
-
-  }
+    export default {
+        name: 'PowerProjectTemplate',
+        mixins: [tool],
+        data() {
+            return {
+                isShowMore: false,
+                listUrl: "power/powerprojecttemplate",
+                showSearch: false,
+                showAddBtn: this.getCurrentUserAuthority("/powerprojecttemplate/save"),
+                showEditBtn: this.getCurrentUserAuthority("/powerprojecttemplate/edit"),
+                projectTypeList: [],
+                companyList : [],
+            }
+        },
+        mounted() {
+            this.getList();
+            this.getProjectType();
+        },
+        methods: {
+            getProjectType() {
+                let type = "XMLX";
+                ajax.get('upms/dict/type/'+type).then(rs => {
+                    if (rs.length > 0) {
+                        this.projectTypeList = rs;
+                    }
+                });
+            },
+            //获取公司
+            getCompanyList() {
+                ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
+                    this.companyList = rs.data;
+                });
+            },
+            toPlanTemplate(operateType, projectType){
+                let url = "";
+                if (operateType == "add"){
+                    url = "/power/powerprojecttemplateconfig/edit?operateType="+operateType;
+                }else {
+                    url = "/power/powerprojecttemplateconfig/edit?projectType="+projectType+"&operateType="+operateType;
+                }
+                this.toPage(url)
+            }
+        }
 }
 </script>

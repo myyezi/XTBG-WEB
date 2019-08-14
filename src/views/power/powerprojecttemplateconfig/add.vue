@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import formTemplate from '@/views/project/powerprojecttemplateconfig/form'
+import formTemplate from '@/views/power/powerprojecttemplateconfig/form'
 
 export default {
   name: "PowerProjectTemplateConfigAdd",

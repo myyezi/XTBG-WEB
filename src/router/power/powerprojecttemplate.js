@@ -1,29 +1,29 @@
 const index = [
     {
-        path: '/project/powerprojecttemplate',
+        path: '/power/powerprojecttemplate',
         name: 'powerprojecttemplate',
-        component: () => import('@/views/project/powerprojecttemplate/list'),
+        component: () => import('@/views/power/powerprojecttemplate/list'),
         meta: {icon: 'auth3', title: '项目计划模板'},
     },
     {
-        path: '/project/powerprojecttemplate/add',
-        name: 'powerprojecttemplateAdd',
+        path: '/power/powerprojecttemplateconfig/add',
+        name: 'powerprojecttemplateconfigAdd',
         hidden: true,
-        component: () => import('@/views/project/powerprojecttemplate/add'),
+        component: () => import('@/views/power/powerprojecttemplateconfig/add'),
         meta: {title: '添加'},
     },
     {
-        path: '/project/powerprojecttemplate/edit',
-        name: 'powerprojecttemplateEdit',
+        path: '/power/powerprojecttemplateconfig/edit',
+        name: 'powerprojecttemplateconfigEdit',
         hidden: true,
-        component: () => import('@/views/project/powerprojecttemplate/edit'),
-        meta: {title: '编辑'}
+        component: () => import('@/views/power/powerprojecttemplateconfig/edit'),
+        meta: {title: '编辑模板'}
     },
     {
-        path: '/project/powerprojecttemplate/detail/:id',
+        path: '/power/powerprojecttemplate/detail/:id',
         name: 'powerprojecttemplateDetail',
         hidden: true,
-        component: () => import('@/views/project/powerprojecttemplate/detail'),
+        component: () => import('@/views/power/powerprojecttemplate/detail'),
         meta: {title: '查看'}
     }
 ];
