@@ -55,9 +55,9 @@
     </div>
       <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="800px"  v-cloak>
           <el-tabs  type="card" @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
-              <el-tab-pane label="组织" name="first" >
+              <!-- <el-tab-pane label="组织" name="first" >
                   <tree-one url="upms/organization/tree" ref="one"></tree-one>
-              </el-tab-pane>
+              </el-tab-pane> -->
               <el-tab-pane label="用户" name="second">  
                 <tree-two url="upms/organization/tree" ref="two" :selectionAll="selectionAll"></tree-two>
               </el-tab-pane>
@@ -96,7 +96,7 @@ export default {
           children: 'children',
           label: 'name'
       },
-      activeName:'first',
+      activeName:'second',
       selectData:[],
       saveData:[],
       attendanceGroupId:'',
@@ -151,12 +151,12 @@ export default {
 
       getOrganizationList(){
           ajax.get('personnel/personnelattendancegrouporganization/getList/' + this.attendanceGroupId).then(rs => {
-              this.$refs.one.checkedData = [];
-              this.$refs.one.selectData = [];
+              // this.$refs.one.checkedData = [];
+              // this.$refs.one.selectData = [];
               this.organizationList =rs;
-              rs.forEach(item =>{
-                  this.$refs.one.checkedData.push(item.organizationId)
-              });
+              // rs.forEach(item =>{
+                  // this.$refs.one.checkedData.push(item.organizationId)
+              // });
           });
       },
 

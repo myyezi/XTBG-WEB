@@ -72,7 +72,7 @@ export default {
         height: 3rem !important;
         padding: 8px;
         margin: 2px;
-        display: inline-block;
+        // display: inline-block;
         float: left;
         cursor: pointer;
         & > img {

@@ -1,7 +1,7 @@
 <template>
     <div class="tree-panel"  style="padding:20px 0">
         <el-input :placeholder="placeholder" v-model="filterText" style="padding-bottom:10px"></el-input>
-        <div class="tree_two_count">
+        <div class="tree_two_count" v-loading="loadings">
             <el-tree
                 class="tree_two_count_left"
                 :data="data"
@@ -67,6 +67,7 @@
                     children: 'children',
                     label: 'name'
                 },
+                loadings:false,
                 tableData: [],
                 multipleSelection: [],
                 multipleSelectionAll:this.selectionAll,
@@ -93,13 +94,15 @@
             },
             handleNodeClick(data) {
                 this.changePageCoreRecordData()
+                this.loadings = true
                 this.isClickNode = true
                 this.checkData = data
                 ajax.get('upms/organization/getOrganizationUserList/' + this.checkData.id).then(rs => {
                     this.tableData = rs.data;
-                    this.$nextTick(() => {
-                        this.setSelectRow()
-                    });
+                    this.loadings = false
+                    setTimeout(() => {
+                        this.setSelectRow();
+                    }, 0);
                 });
 
             },
@@ -117,15 +120,13 @@
                 });
                 // 先清除所有的勾选
                 this.$refs.multipleTable.clearSelection();
-
                 // 循环去判断当前页是否有勾选的数据并勾选有的
                 for (var i = 0; i < this.tableData.length; i++) {
                     if (selectAllIds.indexOf(this.tableData[i][idKey]) >= 0) {
-                    // 设置选中，记住table组件需要使用ref="multipleTable"
-                    this.$refs.multipleTable.toggleRowSelection(
-                        this.tableData[i],
-                        true
-                    );
+                        // 设置选中，记住table组件需要使用ref="multipleTable"
+                        this.$refs.multipleTable.toggleRowSelection(
+                            this.tableData[i]
+                        );
                     }
                 }
             },

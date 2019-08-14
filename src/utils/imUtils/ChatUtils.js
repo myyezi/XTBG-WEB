@@ -231,12 +231,17 @@ export function transform(content,type) {
         let contents = JSON.parse(content)
         let path = contents.filedomain + contents.path;
         return '<img class="message-img" src="' + path + '" alt="消息图片不能加载">';
-    } else if(type == 5 || type == 6) {
+    } else if(type == 5) {
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
       let fileName = contents.name;
       return '<a class="message-file clearfix" href="' + path + '"><i class="el-icon-document" type="message-file"></i><span type="message-file">' + (fileName) + '</span><i class="el-icon-download" type="message-file"></i></a>';
-    } else  {
+    } else if(type == 6){
+      let contents = JSON.parse(content)
+      let path = contents.filedomain + contents.path;
+      return '<video class="message-video" src="' + path + '"></video>';
+    }
+    else  {
       content = content
       .replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;')
       .replace(/</g, '&lt;')
