@@ -54,14 +54,7 @@
     export default {
         name: 'tree-panel',
         mixins: [tool],
-        props: {
-            showAdd: null,
-            showEdit: null,
-            showDel: null,
-            type: String,
-            params: Object,
-            url: String,
-        },
+        props: ['selectionAll','url'],
         data() {
             return {
                 placeholder: "请输入名称过滤",
@@ -76,7 +69,8 @@
                 },
                 tableData: [],
                 multipleSelection: [],
-                testData:[]
+                multipleSelectionAll:this.selectionAll,
+                idKeyArr: [], //最后需要保存的id
             };
         },
         watch: {
@@ -98,27 +92,95 @@
                 this.multipleSelection = val;
             },
             handleNodeClick(data) {
+                this.changePageCoreRecordData()
                 this.isClickNode = true
                 this.checkData = data
                 ajax.get('upms/organization/getOrganizationUserList/' + this.checkData.id).then(rs => {
                     this.tableData = rs.data;
                     this.$nextTick(() => {
-                        console.log(this.testData[0])
-                        console.log(this.tableData[0])
-                        this.toggleSelection([this.testData[0]])
+                        this.setSelectRow()
                     });
                 });
 
             },
-            toggleSelection(rows) {
-               console.log(rows)
-                if (rows) {
-                    rows.forEach(row => {
-                        this.$refs.multipleTable.toggleRowSelection(row);
-                    });
-                } else {
-                    this.$refs.multipleTable.clearSelection();
+            // 设置选中的方法
+            setSelectRow() {
+                if (!this.multipleSelectionAll || this.multipleSelectionAll.length <= 0) {
+                    return;
                 }
+                // 标识当前行的唯一键的名称
+                let idKey = 'userId';
+                // 所有勾选唯一键的集合
+                let selectAllIds = [];
+                this.multipleSelectionAll.forEach(row => {
+                    selectAllIds.push(row[idKey]);
+                });
+                // 先清除所有的勾选
+                this.$refs.multipleTable.clearSelection();
+
+                // 循环去判断当前页是否有勾选的数据并勾选有的
+                for (var i = 0; i < this.tableData.length; i++) {
+                    if (selectAllIds.indexOf(this.tableData[i][idKey]) >= 0) {
+                    // 设置选中，记住table组件需要使用ref="multipleTable"
+                    this.$refs.multipleTable.toggleRowSelection(
+                        this.tableData[i],
+                        true
+                    );
+                    }
+                }
+            },
+            // 记忆选择
+            changePageCoreRecordData() {
+                // 标识当前行的唯一键的名称
+                let idKey = 'userId';
+                // 如果总记忆中还没有选择的数据，那么就直接取当前table选中的数据，不需要后面一系列计算
+                if (this.multipleSelectionAll.length <= 0) {
+                    this.multipleSelectionAll = this.multipleSelection;
+                    // 所有勾选数据的唯一键
+                    this.idKeyArr = [];
+                    this.multipleSelectionAll.forEach(row => {
+                        this.idKeyArr.push(row[idKey]);
+                    });
+                    return;
+                }
+                // 所有勾选唯一键的集合
+                let selectAllIds = [];
+                this.multipleSelectionAll.forEach(row => {
+                    selectAllIds.push(row[idKey]);
+                });
+                // 获取当前table选中的唯一键
+                let selectIds = [];
+                this.multipleSelection.forEach(row => {
+                    selectIds.push(row[idKey]);
+                    // 如果总选择里面不包含当前table选中的数据，那么就加入到总选择集合里
+                    if (selectAllIds.indexOf(row[idKey]) < 0) {
+                        this.multipleSelectionAll.push(row);
+                    }
+                });
+                // 得到当前table没有选中的唯一键
+                let noSelectIds = [];
+                this.tableData.forEach(row => {
+                    if (selectIds.indexOf(row[idKey]) < 0) {
+                        noSelectIds.push(row[idKey]);
+                    }
+                });
+                noSelectIds.forEach(id => {
+                    if (selectAllIds.indexOf(id) >= 0) {
+                    for (let i = 0; i < this.multipleSelectionAll.length; i++) {
+                        if (this.multipleSelectionAll[i][idKey] == id) {
+                            // 如果总选择中有未被选中的，那么就删除这条
+                            this.multipleSelectionAll.splice(i, 1);
+                            break;
+                        }
+                    }
+                    }
+                });
+                // 所有勾选数据的userId
+                this.idKeyArr = [];
+                this.multipleSelectionAll.forEach(row => {
+                    this.idKeyArr.push(row[idKey]);
+                });
+                console.log(this.idKeyArr);
             },
 
 

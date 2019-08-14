@@ -59,7 +59,7 @@
                   <tree-one url="upms/organization/tree" ref="one"></tree-one>
               </el-tab-pane>
               <el-tab-pane label="用户" name="second">  
-                <tree-two url="upms/organization/tree" ref="two"></tree-two>
+                <tree-two url="upms/organization/tree" ref="two" :selectionAll="selectionAll"></tree-two>
               </el-tab-pane>
               <div style="text-align: center;">
                   <el-button type="primary" @click="submitForm()">保存</el-button>
@@ -101,6 +101,7 @@ export default {
       saveData:[],
       attendanceGroupId:'',
       organizationList:{},
+      selectionAll:[]
     }
   },
   mounted() {
@@ -125,7 +126,7 @@ export default {
               this.testList = rs.data;
           });
       },
-              //删除
+      //删除
       delGroup(row) {
           this.$confirm('是否确认删除 ?').then(_ => {
               ajax.delete("personnel/personnelattendancegroup/" + row.id).then((result) => {
@@ -162,13 +163,7 @@ export default {
       //已经设置考情的人员回显
       getOrganizationUserList(){
           ajax.get('personnel/personnelattendancegroupuser/getList/' + this.attendanceGroupId).then(rs => {
-              console.log(rs)
-           //   this.$refs.two.testData = rs;
-              rs.forEach(item =>{
-                  console.log(typeof  item+"----------------------")
-                  this.$refs.two.testData.push(item)
-              });
-              console.log(this.$refs.two.testData)
+              this.selectionAll = rs;
           });
       },
 
@@ -180,10 +175,10 @@ export default {
               this.selectData = this.$refs.one.selectData
               for (let i = 0; i < this.selectData.length; i++) {
                   if(this.selectData[i].type=='30'){
-                     this.save={};
-                     this.save.attendanceGroupId = this.attendanceGroupId
-                     this.save.organizationId=this.selectData[i].id
-                     this.saveData.push(this.save)
+                    this.save={};
+                    this.save.attendanceGroupId = this.attendanceGroupId
+                    this.save.organizationId=this.selectData[i].id
+                    this.saveData.push(this.save)
                   }
               }
               ajax.post('personnel/personnelattendancegrouporganization', this.saveData).then(rs => {
