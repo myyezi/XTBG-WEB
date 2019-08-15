@@ -241,6 +241,10 @@ export function transform(content,type) {
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
       return '<video class="message-video" src="' + path + '" controls style="width:200px"></video>';
+    } else if(type == 2) {
+      let contents = JSON.parse(content)
+      let path = contents.filedomain + contents.path;
+      return '<audio class="message-video" src="' + path + '" controls style="width:200px"></audio>';
     }
     else  {
       content = content

@@ -94,9 +94,10 @@ const im = {
         addMessage: function(state, message) {
           console.log(message)
           message.serverTimestamp = parseInt(message.serverTimestamp)
-          if(message.content.type == 2) {
-            message.content.content = '收到语音消息，请在手机上查看'
-          } else if (message.content.type == 4) {
+          // if(message.content.type == 2) {
+          //   message.content.content = '收到语音消息，请在手机上查看'
+          // } 
+          if (message.content.type == 4) {
             message.content.content = '收到定位消息，请在手机上查看'
           } 
           // else if (message.content.type == 6) {
@@ -173,7 +174,7 @@ const im = {
               // 发送消息的内容属性
               content: {
                   type:session.content.type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
-                  content:session.content.type==1?session.content.content:session.content.type==3?'图片':'文件'// 发送消息内容
+                  content:session.content.type==1?session.content.content:session.content.type==2?'语音':session.content.type==3?'图片':session.content.type==4?'定位':session.content.type==5?'文件':'视频'// 发送消息内容
               },
             }
             // 是否本人发的消息

@@ -8,7 +8,7 @@
             <div class="im-chat-main-left">
                 <div class="im-chat-main-box messages" id="message-box">
                     <ul>
-                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=2&&item.content.type!=4">
+                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=4">
                             <div class="im-chat-user">
                                 <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
                                 <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
@@ -294,7 +294,7 @@
               // 发送消息的内容属性
               content: {
                   type:type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
-                  content:type==1?content:type==3?'图片':'文件'// 发送消息内容
+                  content:type==1?content:type==2?'语音':type==3?'图片':type==4?'定位':type==5?'文件':'视频'// 发送消息内容
               },
             };
             self.send(currentMessage,currentSession);
