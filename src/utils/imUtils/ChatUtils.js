@@ -231,7 +231,7 @@ export function transform(content,type) {
     if(type == 3) {
         let contents = JSON.parse(content)
         let path = contents.filedomain + contents.path;
-        return '<img class="message-img" src="' + path + '" alt="消息图片不能加载">';
+        return '<img class="message-img" src="' + path + '" alt="消息图片不能加载" style="margin-top: 6px;">';
     } else if(type == 5) {
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
