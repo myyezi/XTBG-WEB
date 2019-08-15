@@ -26,22 +26,23 @@ export function dateStr(date) {
   let dates = new Date(parseInt(date));
   // 去掉 js 时间戳后三位
   time = parseInt((time - date) / 1000);
+  let timeString = dates.getHours()<10?'0'+dates.getHours():dates.getHours() + ':' + (dates.getMinutes()<10?'0'+dates.getMinutes():dates.getMinutes())
   // 存储转换值
   let s;
   if (time < 60 * 10) {
     // 十分钟内
     // return '刚刚';
-    return dates.getHours() + ':' + dates.getMinutes();
+    return timeString;
   } else if (time < 60 * 60 && time >= 60 * 10) {
     // 超过十分钟少于1小时
     s = Math.floor(time / 60);
     // return s + '分钟前';
-    return dates.getHours() + ':' + dates.getMinutes();
+    return timeString;
   } else if (time < 60 * 60 * 24 && time >= 60 * 60) {
     // 超过1小时少于24小时
     s = Math.floor(time / 60 / 60);
     // return s + '小时前';
-    return dates.getHours() + ':' + dates.getMinutes();
+    return timeString;
   } else if (time < 60 * 60 * 24 * 3 && time >= 60 * 60 * 24) {
     // 超过1天少于3天内
     s = Math.floor(time / 60 / 60 / 24);
@@ -53,7 +54,7 @@ export function dateStr(date) {
     }
   } else {
     // 超过3天
-    return dates.getFullYear() + '/' + (dates.getMonth() + 1) + '/' + dates.getDate();
+    return dates.getFullYear() + '/' + ((dates.getMonth() + 1)< 10 ? '0' + (dates.getMonth() + 1) : (dates.getMonth() + 1)) + '/' + (dates.getDate()< 10 ? '0' + dates.getDate() : dates.getDate());
   }
 }
 
@@ -235,7 +236,7 @@ export function transform(content,type) {
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
       let fileName = contents.name;
-      return '<a class="message-file clearfix" href="' + path + '"><i class="el-icon-document" type="message-file"></i><span type="message-file">' + (fileName) + '</span><i class="el-icon-download" type="message-file"></i></a>';
+      return '<a class="message-file clearfix" href="' + path + '" target="_Blank"><i class="el-icon-document"></i><span>' + (fileName) + '</span><i class="el-icon-download"></i></a>';
     } else if(type == 6){
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;

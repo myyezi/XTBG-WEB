@@ -17,7 +17,7 @@
                             </div>
                             <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
                                 <i class="el-icon-loading" v-if="(item.fromUserId == user.userId)&&!item.messageId"></i>
-                                <pre v-html="transform(item.content.content,item.content.type)" v-on:click="openImageProxy($event)" v-if="transform(item.content.content,item.content.type).indexOf('message-file') >=0||transform(item.content.content,item.content.type).indexOf('message-img') >=0"></pre>
+                                <pre v-html="transform(item.content.content,item.content.type)" v-on:click="openImageProxy($event)" v-if="transform(item.content.content,item.content.type).indexOf('message-img') >=0"></pre>
                                 <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
                             </div>
                         </li>
@@ -253,14 +253,11 @@
       },
       // 附件和图片点击展开
       openImageProxy: function(event) {
-        console.log(event)
         let self = this;
         event.preventDefault();
         if (event.target.nodeName === 'IMG') {
           window.open(event.target.src);
-        } else if (event.target.className.indexOf('message-file')>=0) {
-          window.open(event.target.href);
-        }
+        } 
       },
       // 本人发送信息
       mineSend(type) {
