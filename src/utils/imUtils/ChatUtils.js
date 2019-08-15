@@ -240,11 +240,11 @@ export function transform(content,type) {
     } else if(type == 6){
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
-      return '<video class="message-video" src="' + path + '" controls style="width:200px"></video>';
+      return '<video class="message-video" src="' + path + '" controls style="width:200px;margin-top: 6px;"></video>';
     } else if(type == 2) {
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
-      return '<audio class="message-video" src="' + path + '" controls></audio>';
+      return '<audio class="message-video" src="' + path + '" controls style="margin-top: 6px;"></audio>';
     }
     else  {
       content = content
