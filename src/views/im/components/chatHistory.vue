@@ -11,7 +11,7 @@
                     <div class="im_chat_record_user">
                         <p>{{ user.name }}<i>{{ item.serverTimestamp }}</i></p>
                         <div class="im_chat_record_text">
-                          <pre v-html="transform(item.content.content,item.content.type)" v-on:click="openImageProxy($event)" v-if="transform(item.content.content,item.content.type).indexOf('message-file') >=0||transform(item.content.content).indexOf('message-img') >=0"></pre>
+                          <img class="message-img" v-if="item.content.type == 3" :src='JSON.parse(item.content.content).filedomain+JSON.parse(item.content.content).path' alt="消息图片不能加载"  @click="openImageProxy(item)">
                           <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
                         </div>
                     </div>
@@ -22,20 +22,30 @@
               <p>暂无<span v-if="chatRecord">与"{{chatRecord}}"相关的</span>聊天记录</p>
             </div>
         </div>
+        <!-- 大图预览 -->
+        <img-previewer :list="previewerImgList" selector=".message-img" :options="options" @on-close="closePic" ref="previewer"></img-previewer>
     </div>
 </template>
 <script>
   import {mapGetters} from 'vuex'
+  import ImgPreviewer from '@/components/ImgPreviewer/index.js'
   const { imageLoad, transform, ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
   export default {
-    props: ['messageList','chat'],
+    components: {ImgPreviewer},
+    props: ['messageList','chat','messageImgList'],
     data() {
       return {
           defaultPic:require('@/styles/img/morentx.png'),
           historyMessageList: [],
           historyMessageListCopy:[],
           chatRecord:'',
-          transform:transform
+          transform:transform,
+          options: {
+              shareEl: false,
+              closeEl: true,
+              fullscreenEl: false
+          },
+          previewerImgList:[],//预览的图片集合
       };
     },
     computed: {
@@ -73,14 +83,18 @@
             });
         },
         // 附件和图片点击展开
-      openImageProxy: function(event) {
-        let self = this;
-        event.preventDefault();
-        if (event.target.nodeName === 'IMG') {
-          window.open(event.target.src);
-        } else if (event.target.className === 'message-file') {
-          window.open(event.target.href);
-        }
+      openImageProxy: function(item) {
+        let path = JSON.parse(item.content.content).filedomain+JSON.parse(item.content.content).path
+        this.previewerImgList = Object.assign([], this.messageImgList) 
+        this.messageImgList.forEach((item,index)=>{
+            if(item.src == path) {
+                this.$refs.previewer.curIndex = index
+            }
+        }) 
+      },
+      // 关闭预览
+      closePic () {
+          this.$emit && this.$emit("onClose")
       },
     }
   };
@@ -141,6 +155,7 @@
                   margin-top: 10px;
                   img {
                       max-width: 20rem;
+                      cursor: pointer;
                   }
                 }
             }

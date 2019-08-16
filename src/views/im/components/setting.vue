@@ -163,6 +163,7 @@
             console.log(this.chat)
         },
         methods: {
+            // 上传群图像
             beforeAvatarUpload(file) {
                 // 限制20M
                 if(this.accept && this.accept.toLowerCase().indexOf(file.name.toLowerCase().split(".")[(file.name.toLowerCase().split(".").length - 1)]) == -1) {
@@ -176,6 +177,7 @@
                     return true;
                 }
             },
+            // 上传头像成功
             handleAvatarSuccess(res, file) {
                 this.loading = false;
                 if(res.status == 0){
@@ -183,6 +185,7 @@
                     this.updateGroupInformation('GMI',2)
                 }
             },
+            // 展开收起
             checkMore() {
                 if(this.showText == '展开更多') {
                     this.groupUserListCopy = this.groupUserListSearch.slice(0,this.groupUserListSearch.length)
@@ -228,6 +231,7 @@
                 
                 });
             },
+            // 更新会话框
             updateSession() {
                 let groupList = ChatListUtils.getGroupList(this.user.userId)
                 let arr1 = []
@@ -252,6 +256,7 @@
             eliminateUser() {
                 this.showEliminateUser = true
             },
+            // 更新群信息
             updateGroupInformation(subTopic,type,string) {
                 let notifyContent = {
                     type:1
@@ -281,6 +286,7 @@
                 console.log(objArr)
                 this.$store.commit('sendMessage', objArr);
             },
+            // 重置群成员列表
             restGroupUserList() {
                 this.groupUserListSearchCopy = Object.assign([],this.groupUserLists);
                 this.groupUserListSearch = this.groupUserListSearchCopy 

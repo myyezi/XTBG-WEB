@@ -66,7 +66,7 @@
                 <span v-show="isSetting"> 群设置</span>
               </div>
               <setting :chat="chat" :groupUserList="currentGroupUser"  v-if="showHistory&&isSetting"></setting>
-              <chat-history :chat="chat" :messageList="messageList" v-if="showHistory&&!isSetting"></chat-history>
+              <chat-history :chat="chat" :messageList="messageList" :messageImgList="messageImgList" v-if="showHistory&&!isSetting"></chat-history>
         </el-dialog>
         <!-- 大图预览 -->
         <img-previewer :list="previewerImgList" selector=".message-img" :options="options" @on-close="closePic" ref="previewer"></img-previewer>

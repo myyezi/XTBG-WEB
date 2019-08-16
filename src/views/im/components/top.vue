@@ -36,10 +36,6 @@
 </script>
 <style lang="scss">
     @import '../../../styles/imCss/theme';
-
-    $top-height: 4rem;
-    $color-online: #d1ffe9;
-
     .im-top {
         height: 50px;
         padding: 0.5rem;
@@ -49,7 +45,6 @@
         width: 100%;
 
         a {
-            display: inline-block;
             color: $color-write;
             float: right;
             margin-left:10px;
@@ -57,19 +52,6 @@
                 color: $color-default;
                 font-size: 1.4rem;
                 font-weight: bolder;
-            }
-
-            :hover {
-                background-color: $color-gray;
-            }
-
-            .text-right {
-                float: right;
-                width: 2.4rem;
-                height: 2.4rem;
-                display: inline-block;
-                padding: 0.5rem;
-                text-align: center;
             }
         }
     }
