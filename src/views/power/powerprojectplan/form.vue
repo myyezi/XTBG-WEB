@@ -1,80 +1,61 @@
 <template>
   <div class="form-panel">
-    <el-form :model="powerprojectplanForm" :rules="rules" ref="powerprojectplanForm" label-position="top" label-width="100px" :class="{'register-form': true}">
+    <el-form :model="powerprojecttaskForm" :rules="rules" ref="powerprojecttaskForm" label-position="top" label-width="100px" :class="{'register-form': true}">
       <el-collapse v-model="openCollapse">
         <el-collapse-item title="项目计划" name="1">
-          <div class="flex-panel">
-            <el-form-item label="主键id" prop="id">
-              <el-input v-model="powerprojectplanForm.id" placeholder="请输入主键id" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="项目id" prop="projectId">
-              <el-input v-model="powerprojectplanForm.projectId" placeholder="请输入项目id" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="节点名称" prop="name">
-              <el-input v-model="powerprojectplanForm.name" placeholder="请输入节点名称" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="节点级别（1- 一级，2-二级，3-三级）" prop="level">
-              <el-input v-model="powerprojectplanForm.level" placeholder="请输入节点级别（1- 一级，2-二级，3-三级）" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="父节点id" prop="parentId">
-              <el-input v-model="powerprojectplanForm.parentId" placeholder="请输入父节点id" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="工程阶段（关联字典表，取value值）" prop="stage">
-              <el-input v-model="powerprojectplanForm.stage" placeholder="请输入工程阶段（关联字典表，取value值）" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="工期" prop="period">
-              <el-input v-model="powerprojectplanForm.period" placeholder="请输入工期" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="负责人" prop="principal">
-              <el-input v-model="powerprojectplanForm.principal" placeholder="请输入负责人" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="专业" prop="profession">
-              <el-input v-model="powerprojectplanForm.profession" placeholder="请输入专业" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="是否审批（0-否 1-是）" prop="isApproval">
-              <el-input v-model="powerprojectplanForm.isApproval" placeholder="请输入是否审批（0-否 1-是）" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="是否上传文件（0-否 1-是）" prop="isUpload">
-              <el-input v-model="powerprojectplanForm.isUpload" placeholder="请输入是否上传文件（0-否 1-是）" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="排序号" prop="sortNum">
-              <el-input v-model="powerprojectplanForm.sortNum" placeholder="请输入排序号" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="计划开始日期" prop="planStartDate">
-              <el-input v-model="powerprojectplanForm.planStartDate" placeholder="请输入计划开始日期" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="计划结束日期" prop="planEndDate">
-              <el-input v-model="powerprojectplanForm.planEndDate" placeholder="请输入计划结束日期" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="实际结束日期" prop="actualEndDate">
-              <el-input v-model="powerprojectplanForm.actualEndDate" placeholder="请输入实际结束日期" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="延期天数" prop="deferredDays">
-              <el-input v-model="powerprojectplanForm.deferredDays" placeholder="请输入延期天数" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="当前状态（1-未开始，2-进行中，3-延期  4-待审核  5-不合格  6-已完成）" prop="currentStatus">
-              <el-input v-model="powerprojectplanForm.currentStatus" placeholder="请输入当前状态（1-未开始，2-进行中，3-延期  4-待审核  5-不合格  6-已完成）" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="数据状态(0-删除，1-正常)" prop="status">
-              <el-input v-model="powerprojectplanForm.status" placeholder="请输入数据状态(0-删除，1-正常)" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="创建人" prop="creater">
-              <el-input v-model="powerprojectplanForm.creater" placeholder="请输入创建人" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="修改人" prop="updater">
-              <el-input v-model="powerprojectplanForm.updater" placeholder="请输入修改人" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="创建时间" prop="createTime">
-              <el-input v-model="powerprojectplanForm.createTime" placeholder="请输入创建时间" maxlength=30 clearable></el-input>
-            </el-form-item>
-            <el-form-item label="修改时间" prop="updateTime">
-              <el-input v-model="powerprojectplanForm.updateTime" placeholder="请输入修改时间" maxlength=30 clearable></el-input>
-            </el-form-item>
-          </div>
-        </el-collapse-item>
+            <div class="flex-panel">
+                <el-form-item label="项目任务书" prop="projectTaskId">
+                    <el-select v-model="taskId" placeholder="请选择项目任务书" clearable @change="onChangeProjectTask">
+                        <el-option v-for="e in projectTaskList"  :key="e.id" :label="e.name" :value="e.id" ></el-option >
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="项目类型">
+                  <el-input v-model="powerprojecttaskForm.typeText" placeholder="请选择项目类型" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="项目名称">
+                  <el-input v-model="powerprojecttaskForm.name" placeholder="请输入项目名称" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="建设单位">
+                  <el-input v-model="powerprojecttaskForm.proprietorName" placeholder="请输入建设单位" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="联系人">
+                  <el-input v-model="powerprojecttaskForm.proprietorContactName" placeholder="请输入联系人" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="任务依据">
+                  <el-input v-model="powerprojecttaskForm.sourceText" placeholder="请输入任务依据" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="相关设计">
+                  <el-input v-model="powerprojecttaskForm.relatedDesignText" placeholder="请输入相关设计" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="协办部门">
+                  <el-input v-model="powerprojecttaskForm.coDepartmentText" placeholder="请输入协办部门" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="项目经理">
+                  <el-input v-model="powerprojecttaskForm.manager" placeholder="请输入项目经理" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="签收人">
+                  <el-input v-model="powerprojecttaskForm.signer" placeholder="请输入签收人" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="设计规模" class="small">
+                  <el-input type="textarea" v-model="powerprojecttaskForm.designScale" placeholder="请输入设计规模" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="设计范围" class="small">
+                  <el-input type="textarea" v-model="powerprojecttaskForm.designRange" placeholder="请输入设计范围" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="项目进度要求" class="small">
+                  <el-input type="textarea" v-model="powerprojecttaskForm.progress" placeholder="请输入项目进度要求" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="备注" class="small">
+                  <el-input type="textarea" v-model="powerprojecttaskForm.remark" placeholder="请输入备注" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item title="计划信息" name="2">
+
+          </el-collapse-item>
       </el-collapse>
       <div class="left-row">
-        <el-button type="primary" @click="submitForm('powerprojectplanForm')">保存</el-button>
+        <el-button type="primary" @click="submitForm('powerprojecttaskForm')">保存</el-button>
         <el-button @click="close">返回</el-button>
       </div>
     </el-form>
@@ -90,98 +71,69 @@ export default {
   components: {},
   data() {
     return {
-      powerprojectplanForm: {},
-      openCollapse: ["1"],//默认打开的面板
-      rules: {
-        id: [
-          { required: true, message: '请输入主键id', trigger: ['blur'] }
-        ],
-        projectId: [
-          { required: true, message: '请输入项目id', trigger: ['blur'] }
-        ],
-        name: [
-          { required: true, message: '请输入节点名称', trigger: ['blur'] }
-        ],
-        level: [
-          { required: true, message: '请输入节点级别（1- 一级，2-二级，3-三级）', trigger: ['blur'] }
-        ],
-        parentId: [
-          { required: true, message: '请输入父节点id', trigger: ['blur'] }
-        ],
-        stage: [
-          { required: true, message: '请输入工程阶段（关联字典表，取value值）', trigger: ['blur'] }
-        ],
-        period: [
-          { required: true, message: '请输入工期', trigger: ['blur'] }
-        ],
-        principal: [
-          { required: true, message: '请输入负责人', trigger: ['blur'] }
-        ],
-        profession: [
-          { required: true, message: '请输入专业', trigger: ['blur'] }
-        ],
-        isApproval: [
-          { required: true, message: '请输入是否审批（0-否 1-是）', trigger: ['blur'] }
-        ],
-        isUpload: [
-          { required: true, message: '请输入是否上传文件（0-否 1-是）', trigger: ['blur'] }
-        ],
-        sortNum: [
-          { required: true, message: '请输入排序号', trigger: ['blur'] }
-        ],
-        planStartDate: [
-          { required: true, message: '请输入计划开始日期', trigger: ['blur'] }
-        ],
-        planEndDate: [
-          { required: true, message: '请输入计划结束日期', trigger: ['blur'] }
-        ],
-        actualEndDate: [
-          { required: true, message: '请输入实际结束日期', trigger: ['blur'] }
-        ],
-        deferredDays: [
-          { required: true, message: '请输入延期天数', trigger: ['blur'] }
-        ],
-        currentStatus: [
-          { required: true, message: '请输入当前状态（1-未开始，2-进行中，3-延期  4-待审核  5-不合格  6-已完成）', trigger: ['blur'] }
-        ],
-        status: [
-          { required: true, message: '请输入数据状态(0-删除，1-正常)', trigger: ['blur'] }
-        ],
-        creater: [
-          { required: true, message: '请输入创建人', trigger: ['blur'] }
-        ],
-        updater: [
-          { required: true, message: '请输入修改人', trigger: ['blur'] }
-        ],
-        createTime: [
-          { required: true, message: '请输入创建时间', trigger: ['blur'] }
-        ],
-        updateTime: [
-          { required: true, message: '请输入修改时间', trigger: ['blur'] }
-        ],
-      }
+        powerprojecttaskForm: {},
+        openCollapse: ["1","2"],
+        planDisabled : true,
+        projectTaskList : [],
+        taskId : "",
+        rules: {
+            id: [
+                { required: true, message: '请输入主键id', trigger: ['blur'] }
+            ],
+        }
     }
   },
   mounted() {
-    this.open();
+      //this.open();
+      this.getTaskList();
   },
   methods: {
 
     //进入编辑页调用 bean为列表页传入数据
     open() {
-      if (this.$route.query.id) {
-        ajax.get('project/powerprojectplan/' + this.$route.query.id).then(rs => {
-          this.powerprojectplanForm = rs.data;
-          if (null != rs.data.img && rs.data.img.length > 0) {
-            this.img = JSON.parse(rs.data.img);
-          }
+        if (this.$route.query.id) {
+            ajax.get('project/powerprojectplan/' + this.$route.query.id).then(rs => {
+                this.powerprojecttaskForm = rs.data;
+                if (null != rs.data.img && rs.data.img.length > 0) {
+                    this.img = JSON.parse(rs.data.img);
+                }
+            });
+        }
+    },
+
+    getTaskList(){
+        ajax.get('power/powerprojecttask/getTaskSelect').then(rs => {
+            if (rs.status === 0){
+                this.projectTaskList = rs.data;
+            }else{
+                this.$message({
+                    message: rs.msg,
+                    type: 'error'
+                });
+            }
         });
-      }
+    },
+
+    onChangeProjectTask(){
+        if (this.taskId){
+            ajax.get('power/powerprojecttask/getOneById/' + this.taskId).then(rs => {
+                if (rs.status === 0){
+                    this.powerprojecttaskForm = rs.data;
+                }else{
+                    this.$message({
+                        message: rs.msg,
+                        type: 'error'
+                    });
+                }
+            });
+        }else{
+            this.powerprojecttaskForm = [];
+        }
     },
 
     //保存
     submitForm(form) {
-      var data = this.powerprojectplanForm;
+      var data = this.powerprojecttaskForm;
       this.$refs[form]
         .validate((valid) => {
           if (!valid) {
