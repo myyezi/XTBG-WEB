@@ -66,7 +66,6 @@
       },
     },
     created() {
-      console.log(this.messageList)
         this.historyMessageListCopy = Object.assign([],this.messageList);
         this.historyMessageList = this.historyMessageListCopy
         this.$nextTick(() => {
@@ -74,15 +73,16 @@
         });
     },
     methods: {
-        updataCurrentMessageList(value) {
-            this.historyMessageList = this.historyMessageListCopy.filter((item) => {
-                return item.content.content.indexOf(value)>-1
-            })
-            this.$nextTick(() => {
-              imageLoad('im_chat_record');
-            });
-        },
-        // 附件和图片点击展开
+      // 更新历史消息
+      updataCurrentMessageList(value) {
+          this.historyMessageList = this.historyMessageListCopy.filter((item) => {
+              return item.content.content.indexOf(value)>-1
+          })
+          this.$nextTick(() => {
+            imageLoad('im_chat_record');
+          });
+      },
+        // 图片预览
       openImageProxy: function(item) {
         let path = JSON.parse(item.content.content).filedomain+JSON.parse(item.content.content).path
         this.previewerImgList = Object.assign([], this.messageImgList) 
