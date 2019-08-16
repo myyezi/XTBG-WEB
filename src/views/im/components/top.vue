@@ -1,10 +1,10 @@
 <template>
     <div class="im-top" style="-webkit-app-region: drag">
-        <a href="javascript:void(0)" @click="close" style="-webkit-app-region: no-drag;">
+        <!-- <a href="javascript:void(0)" @click="close" style="-webkit-app-region: no-drag;">
             <i  class="el-icon-close"></i>
-        </a>
+        </a> -->
         <a href="javascript:void(0)" @click="max" style="-webkit-app-region: no-drag;">
-            <i  class="el-icon-full-screen"></i>
+            <i  :class="icon"></i>
         </a>
         <a href="javascript:void(0)" @click="min" style="-webkit-app-region: no-drag">
             <i class="el-icon-minus"></i>
@@ -17,7 +17,7 @@
     data() {
       return {
         // 默认选中的值
-        icon: 'ios-square-outline'
+        icon: 'el-icon-full-screen'
       };
     },
     methods: {
@@ -26,7 +26,7 @@
       },
       max() {
         Bus.$emit("max",{}); 
-        this.icon = this.icon === 'ios-square-outline' ? 'ios-browsers-outline' : 'ios-square-outline';
+        this.icon = this.icon === 'el-icon-full-screen' ? 'icon-shousuo' : 'el-icon-full-screen';
       },
       close() {
         Bus.$emit("close",{}); 
@@ -36,10 +36,6 @@
 </script>
 <style lang="scss">
     @import '../../../styles/imCss/theme';
-
-    $top-height: 4rem;
-    $color-online: #d1ffe9;
-
     .im-top {
         height: 50px;
         padding: 0.5rem;
@@ -49,7 +45,6 @@
         width: 100%;
 
         a {
-            display: inline-block;
             color: $color-write;
             float: right;
             margin-left:10px;
@@ -57,19 +52,6 @@
                 color: $color-default;
                 font-size: 1.4rem;
                 font-weight: bolder;
-            }
-
-            :hover {
-                background-color: $color-gray;
-            }
-
-            .text-right {
-                float: right;
-                width: 2.4rem;
-                height: 2.4rem;
-                display: inline-block;
-                padding: 0.5rem;
-                text-align: center;
             }
         }
     }

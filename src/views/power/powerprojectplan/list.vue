@@ -155,28 +155,15 @@
             <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="id" sortable show-overflow-tooltip min-width="100" label="主键id"></el-table-column>
-        <el-table-column prop="projectId" sortable show-overflow-tooltip min-width="100" label="项目id"></el-table-column>
-        <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="节点名称"></el-table-column>
-        <el-table-column prop="level" sortable show-overflow-tooltip min-width="100" label="节点级别（1- 一级，2-二级，3-三级）"></el-table-column>
-        <el-table-column prop="parentId" sortable show-overflow-tooltip min-width="100" label="父节点id"></el-table-column>
-        <el-table-column prop="stage" sortable show-overflow-tooltip min-width="100" label="工程阶段（关联字典表，取value值）"></el-table-column>
-        <el-table-column prop="period" sortable show-overflow-tooltip min-width="100" label="工期"></el-table-column>
-        <el-table-column prop="principal" sortable show-overflow-tooltip min-width="100" label="负责人"></el-table-column>
-        <el-table-column prop="profession" sortable show-overflow-tooltip min-width="100" label="专业"></el-table-column>
-        <el-table-column prop="isApproval" sortable show-overflow-tooltip min-width="100" label="是否审批（0-否 1-是）"></el-table-column>
-        <el-table-column prop="isUpload" sortable show-overflow-tooltip min-width="100" label="是否上传文件（0-否 1-是）"></el-table-column>
-        <el-table-column prop="sortNum" sortable show-overflow-tooltip min-width="100" label="排序号"></el-table-column>
-        <el-table-column prop="planStartDate" sortable show-overflow-tooltip min-width="100" label="计划开始日期"></el-table-column>
-        <el-table-column prop="planEndDate" sortable show-overflow-tooltip min-width="100" label="计划结束日期"></el-table-column>
-        <el-table-column prop="actualEndDate" sortable show-overflow-tooltip min-width="100" label="实际结束日期"></el-table-column>
-        <el-table-column prop="deferredDays" sortable show-overflow-tooltip min-width="100" label="延期天数"></el-table-column>
-        <el-table-column prop="currentStatus" sortable show-overflow-tooltip min-width="100" label="当前状态（1-未开始，2-进行中，3-延期  4-待审核  5-不合格  6-已完成）"></el-table-column>
-        <el-table-column prop="status" sortable show-overflow-tooltip min-width="100" label="数据状态(0-删除，1-正常)"></el-table-column>
-        <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="创建人"></el-table-column>
-        <el-table-column prop="updater" sortable show-overflow-tooltip min-width="100" label="修改人"></el-table-column>
-        <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="创建时间"></el-table-column>
-        <el-table-column prop="updateTime" sortable show-overflow-tooltip min-width="100" label="修改时间"></el-table-column>
+        <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
+        <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
+        <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
+        <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
+        <el-table-column prop="coDepartmentText" sortable show-overflow-tooltip min-width="100" label="协办部门"></el-table-column>
+        <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="100" label="项目经理"></el-table-column>
+        <el-table-column prop="projectStatusText" sortable show-overflow-tooltip min-width="100" label="项目状态"></el-table-column>
+        <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="100" label="开始时间"></el-table-column>
+        <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="100" label="结束时间"></el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
@@ -195,7 +182,7 @@ export default {
   data() {
     return {
       isShowMore: false,
-      listUrl: "project/powerprojectplan",
+      listUrl: "power/powerproject",
       showSearch: false,
       showAddBtn: this.getCurrentUserAuthority("/powerprojectplan/save"),
       showEditBtn: this.getCurrentUserAuthority("/powerprojectplan/edit")

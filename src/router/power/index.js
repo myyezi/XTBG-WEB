@@ -1,6 +1,8 @@
 import Layout from '@/views/common/layout/Layout'
 import powerprojecttask from "@/router/power/powerprojecttask";
 import powerprojecttemplate from "@/router/power/powerprojecttemplate";
+import powerprojecttemplateconfig from "@/router/power/powerprojecttemplateconfig";
+import powerprojectplan from "@/router/power/powerprojectplan";
 
 const index = {
     path: '/',
@@ -11,7 +13,9 @@ const index = {
     meta: {title: '项目管理'},
     children: [
         ...powerprojecttask,
-        ...powerprojecttemplate
+        ...powerprojecttemplate,
+        ...powerprojecttemplateconfig,
+        ...powerprojectplan
     ]
 }
 export default index

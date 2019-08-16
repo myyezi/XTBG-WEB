@@ -8,7 +8,7 @@
             <div class="im-chat-main-left">
                 <div class="im-chat-main-box messages" id="message-box">
                     <ul>
-                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=2&&item.content.type!=4">
+                        <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=4">
                             <div class="im-chat-user">
                                 <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
                                 <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
@@ -17,7 +17,7 @@
                             </div>
                             <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
                                 <i class="el-icon-loading" v-if="(item.fromUserId == user.userId)&&!item.messageId"></i>
-                                <pre v-html="transform(item.content.content,item.content.type)" v-on:click="openImageProxy($event)" v-if="transform(item.content.content,item.content.type).indexOf('message-file') >=0||transform(item.content.content,item.content.type).indexOf('message-img') >=0"></pre>
+                                <img class="message-img" v-if="item.content.type == 3" :src='JSON.parse(item.content.content).filedomain+JSON.parse(item.content.content).path' alt="消息图片不能加载"  @click="openImageProxy(item)">
                                 <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
                             </div>
                         </li>
@@ -66,8 +66,10 @@
                 <span v-show="isSetting"> 群设置</span>
               </div>
               <setting :chat="chat" :groupUserList="currentGroupUser"  v-if="showHistory&&isSetting"></setting>
-              <chat-history :chat="chat" :messageList="messageList" v-if="showHistory&&!isSetting"></chat-history>
+              <chat-history :chat="chat" :messageList="messageList" :messageImgList="messageImgList" v-if="showHistory&&!isSetting"></chat-history>
         </el-dialog>
+        <!-- 大图预览 -->
+        <img-previewer :list="previewerImgList" selector=".message-img" :options="options" @on-close="closePic" ref="previewer"></img-previewer>
     </div>
 </template>
 
@@ -79,13 +81,15 @@
   import {getToken} from '@/utils/cookie' 
   import chatHistory from './chatHistory.vue';
   import Bus from "@/utils/eventBus.js";
+  import ImgPreviewer from '@/components/ImgPreviewer/index.js'
   const { imageLoad, transform, ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
 
   export default {
     components: {
       Faces,
       chatHistory,
-      Setting
+      Setting,
+      ImgPreviewer
       // Button
     },
     name: 'userChat',
@@ -142,7 +146,15 @@
         imgFormat: "jpg,jpeg,png,gif",
         fileFormat: "doc,docx,xls,xlsx,pdf,exe",
         videoFormat: "mp4,mov",
-        transform:transform
+        audioFormat: "mp3,m4a",
+        transform:transform,
+        options: {
+            shareEl: false,
+            closeEl: true,
+            fullscreenEl: false
+        },
+        previewerImgList:[],//预览的图片集合
+        messageImgList:[]//所有的图片消息图片的集合
       };
     },
     props: ['chat','chatDialogVisible'],
@@ -240,9 +252,9 @@
             type = 6
           }
           // 音频
-          // else if (self.videoFormat.indexOf(suffix) >=0){
-          //   type = 2
-          // }
+          else if (self.audioFormat.indexOf(suffix) >=0){
+            type = 2
+          }
           this.mineSend(type)
         } else {
           this.$Message.error('文件上传错误，请重试');
@@ -252,15 +264,18 @@
         this.$Message.error('上传错误！');
       },
       // 附件和图片点击展开
-      openImageProxy: function(event) {
-        console.log(event)
-        let self = this;
-        event.preventDefault();
-        if (event.target.nodeName === 'IMG') {
-          window.open(event.target.src);
-        } else if (event.target.className.indexOf('message-file')>=0) {
-          window.open(event.target.href);
-        }
+      openImageProxy: function(item) {
+        let path = JSON.parse(item.content.content).filedomain+JSON.parse(item.content.content).path
+        this.previewerImgList = Object.assign([], this.messageImgList) 
+        this.messageImgList.forEach((item,index)=>{
+            if(item.src == path) {
+                this.$refs.previewer.curIndex = index
+            }
+        }) 
+      },
+      // 关闭预览
+      closePic () {
+          this.$emit && this.$emit("onClose")
       },
       // 本人发送信息
       mineSend(type) {
@@ -297,7 +312,7 @@
               // 发送消息的内容属性
               content: {
                   type:type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
-                  content:type==1?content:type==3?'图片':'文件'// 发送消息内容
+                  content:type==1?content:type==2?'语音':type==3?'图片':type==4?'定位':type==5?'文件':'视频'// 发送消息内容
               },
             };
             self.send(currentMessage,currentSession);
@@ -329,6 +344,7 @@
           let cacheMessagesObj = {}
           let cacheMessages = []
           self.messageList = [];
+          self.messageImgList = []
           // 从内存中取聊天信息
           cacheMessagesObj = self.$store.state.im.messageListMap
           if(JSON.stringify(cacheMessagesObj) !== '{}' && cacheMessagesObj[self.chat.targetId]) {
@@ -343,7 +359,19 @@
             }
           }
           if (cacheMessages) {
+            let contents = {}
+            let path = ''
             self.messageList = cacheMessages;
+            // 得到所有是图片消息的图片集合
+            cacheMessages.forEach((item)=>{
+                if(item.content.type == 3) {
+                    contents = JSON.parse(item.content.content)
+                    path = contents.filedomain + contents.path
+                    self.messageImgList.push({
+                      src:path
+                    })
+                }
+            })
           }
           this.scollBottom()
       },
@@ -388,6 +416,7 @@
         }
       },
       messageList :function(newvalue,oldvalue) {
+        this.getCurrentMessageList()
         this.scollBottom()
       },
       currentGroupUser :function(newvalue,oldvalue) {
@@ -492,6 +521,8 @@
 
         .message-img {
             max-width: 20rem;
+            margin-top: 6px;
+            cursor: pointer;
         }
 
         .im-chat-users {

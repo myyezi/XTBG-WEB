@@ -22,8 +22,8 @@ router.beforeEach((to, from, next) => {
                         store.dispatch('getMenu').then(res =>{
                             if (!store.state.im.websocket.clientId) {
                                 store.dispatch('getWebsocket', {
-                                    ip: '192.168.10.134',
-                                    port: 8085,
+                                    ip: 'dev.xtbg.zdsxc.com',
+                                    port: 443,
                                     token: getToken(),
                                     username: store.state.user.user.userId
                                 })
