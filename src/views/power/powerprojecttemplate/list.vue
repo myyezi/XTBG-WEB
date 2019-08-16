@@ -1,7 +1,7 @@
 <template>
   <div class="app-container white-bg list-panel" v-cloak>
       <div class="opertion-box">
-        <el-button type="primary" icon="el-icon-plus" size="small" @click="toPlanTemplate('add')" style="margin-right:10px">创建</el-button>
+        <el-button v-show="showAddBtn" type="primary" icon="el-icon-plus" size="small" @click="toPlanTemplate('add')" style="margin-right:10px">创建</el-button>
         <el-select v-model="searchParam.type" placeholder="请选择项目类型" clearable style="width:190px">
             <el-option v-for="e in projectTypeList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
         </el-select>
@@ -34,10 +34,10 @@
       <el-table :data="list" style="width: 100%">
         <el-table-column fixed label="操作" width="120">
           <template fixed slot-scope="{ row, column, $index }">
-            <el-button v-show="showEditBtn" @click="toPlanTemplate('edit',row.type)" type="text" size="small">编辑</el-button>
+            <el-button v-show="showEditBtn" @click="toPlanTemplate('edit',row.type,row.id)" type="text" size="small">编辑</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="type" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
+        <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="创建人"></el-table-column>
         <el-table-column prop="updater" sortable show-overflow-tooltip min-width="100" label="修改人"></el-table-column>
         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="创建时间"></el-table-column>
@@ -62,8 +62,8 @@
                 isShowMore: false,
                 listUrl: "power/powerprojecttemplate",
                 showSearch: false,
-                showAddBtn: this.getCurrentUserAuthority("/powerprojecttemplate/save"),
-                showEditBtn: this.getCurrentUserAuthority("/powerprojecttemplate/edit"),
+                showAddBtn: this.getCurrentUserAuthority("/power/powerprojecttemplateconfig/add"),
+                showEditBtn: this.getCurrentUserAuthority("/power/powerprojecttemplateconfig/edit"),
                 projectTypeList: [],
                 companyList : [],
             }
@@ -87,12 +87,12 @@
                     this.companyList = rs.data;
                 });
             },
-            toPlanTemplate(operateType, projectType){
+            toPlanTemplate(operateType, projectType, templateId){
                 let url = "";
                 if (operateType == "add"){
                     url = "/power/powerprojecttemplateconfig/edit?operateType="+operateType;
                 }else {
-                    url = "/power/powerprojecttemplateconfig/edit?projectType="+projectType+"&operateType="+operateType;
+                    url = "/power/powerprojecttemplateconfig/edit?projectType="+projectType+"&operateType="+operateType+"&templateId="+templateId;
                 }
                 this.toPage(url)
             }
