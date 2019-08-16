@@ -20,7 +20,7 @@ const IMTopic = {
 const websocketConnect = {
     connect: function(data) {
         objData = data;
-        client = new Paho.MQTT.Client(data.ip,Number(data.port),"/mqtt","1@@@"+data.username);
+        client = new Paho.MQTT.Client(data.ip,Number(data.port),"/wss/mqtt","1@@@"+data.username);
         client.onConnectionLost = this.onConnectionLost;
         client.onMessageArrived = this.onMessageArrived;
         client.onMessageDelivered = this.onMessageDelivered;
@@ -28,6 +28,10 @@ const websocketConnect = {
         client.connect({
             userName: data.username,
             password: data.token,
+            timeout: 5,  
+            keepAliveInterval: 50,  
+            cleanSession: false, 
+            useSSL:true,
             onSuccess: this.onConnect,
             onFailure: function(message) {
                 client.connect(objData);

@@ -2,5 +2,5 @@
 module.exports = {
     NODE_ENV: '"production"',
     ENV_CONFIG: '"prod"',
-    BASE_API: '"https://zdsxc.com/"',
+    BASE_API: '"https://dev.xtbg.zdsxc.com/webapp/"',
 }
