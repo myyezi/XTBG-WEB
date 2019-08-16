@@ -1,10 +1,10 @@
 <template>
     <div class="im-top" style="-webkit-app-region: drag">
-        <a href="javascript:void(0)" @click="close" style="-webkit-app-region: no-drag;">
+        <!-- <a href="javascript:void(0)" @click="close" style="-webkit-app-region: no-drag;">
             <i  class="el-icon-close"></i>
-        </a>
+        </a> -->
         <a href="javascript:void(0)" @click="max" style="-webkit-app-region: no-drag;">
-            <i  class="el-icon-full-screen"></i>
+            <i  :class="icon"></i>
         </a>
         <a href="javascript:void(0)" @click="min" style="-webkit-app-region: no-drag">
             <i class="el-icon-minus"></i>
@@ -17,7 +17,7 @@
     data() {
       return {
         // 默认选中的值
-        icon: 'ios-square-outline'
+        icon: 'el-icon-full-screen'
       };
     },
     methods: {
@@ -26,7 +26,7 @@
       },
       max() {
         Bus.$emit("max",{}); 
-        this.icon = this.icon === 'ios-square-outline' ? 'ios-browsers-outline' : 'ios-square-outline';
+        this.icon = this.icon === 'el-icon-full-screen' ? 'icon-shousuo' : 'el-icon-full-screen';
       },
       close() {
         Bus.$emit("close",{}); 
