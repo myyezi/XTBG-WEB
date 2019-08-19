@@ -25,9 +25,14 @@ const im = {
         //当前群成员
         currentGroupUser:[],
         // 未读消息
-        messageCount:0
+        messageCount:0,
+        // 网络状态
+        netStaus:''
       },
       mutations: {
+        updateNet:function(state, net) {
+          state.netStaus = net;
+        },
         setCurrentUser: function(state, user) {
           user.id = user.userId
           state.user = user;
@@ -113,11 +118,23 @@ const im = {
                   if(item.messageTag == message.messageTag) {
                     item.serverTimestamp = message.serverTimestamp
                     item.messageId = message.messageId
+                    if(item.netStausType) {
+                      item.netStausType = 1
+                    }
                   }
               })
             } else {
               if(getChatList[message.conversation.targetId]) {
-                getChatList[message.conversation.targetId].push(message);
+                let flag = false 
+                chatList.forEach((item)=>{
+                  if(item.messageTag == message.messageTag) {
+                    flag = true
+                    item.netStausType = message.netStausType
+                  }
+                })
+                if(!flag) {
+                  getChatList[message.conversation.targetId].push(message);
+                } 
               } else {
                 getChatList[message.conversation.targetId] = []
                 getChatList[message.conversation.targetId].push(message);

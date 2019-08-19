@@ -296,9 +296,13 @@ export function transform(content,type) {
 }
 
 export const ChatListUtils = {
-  // 缓存聊天框关闭状态
-  setChatDialog: function(userId, chatDialog) {
-    localStorage.setItem(userId+'chatDialog', chatDialog);
+  // 缓存最后拉取消息head
+  setLastMessageHead: function(userId, head) {
+    localStorage.setItem(userId+'lastMessageHead', head);
+  },
+  // 缓存最后拉取消息type
+  setLastMessageType: function(userId, head) {
+    localStorage.setItem(userId+'lastMessageType', head);
   },
   // 缓存当前聊天框id
   setCurrentChatId: function(userId, chatId) {
@@ -320,9 +324,17 @@ export const ChatListUtils = {
   setChatGroupListMap: function(userId, groupList) {
     localStorage.setItem(userId+'group_user', JSON.stringify(groupList));
   },
-  //从缓存中获取聊天框是否关闭
-  getChatDialog: function(userId) {
-    let str = localStorage.getItem(userId+'chatDialog');
+  //从缓存中获取最后拉取head
+  getLastMessageHead: function(userId) {
+    let str = localStorage.getItem(userId+'lastMessageHead');
+    if (!str) {
+      return false;
+    }
+    return str;
+  },
+  //从缓存中获取最后拉取type
+  getLastMessageType: function(userId) {
+    let str = localStorage.getItem(userId+'lastMessageType');
     if (!str) {
       return false;
     }
@@ -410,5 +422,5 @@ export const ErrorType = {
   PARAM_ERROR: 400, //参数错误
   FLUSH_TOKEN_ERROR: 7, //刷新token错误
   SERVER_ERROR: 500, //服务器错误
-  NET_ERROR:'TypeError: Failed to fetch' //网络链接不通
+  NET_ERROR:'网络断开' //网络链接不通
 };

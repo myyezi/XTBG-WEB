@@ -16,10 +16,12 @@
                                 <cite v-else>{{ chat.name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
                             <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
-                                <i class="el-icon-loading" v-if="(item.fromUserId == user.userId)&&!item.messageId"></i>
+                                <i class="el-icon-loading" v-if="!item.messageId&&item.netStausType==1"></i>
+                                <i class="el-icon-warning" v-if="item.netStausType==2"></i>
                                 <img class="message-img" v-if="item.content.type == 3" :src='JSON.parse(item.content.content).filedomain+JSON.parse(item.content.content).path' alt="消息图片不能加载"  @click="openImageProxy(item)">
                                 <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
                             </div>
+                            <!-- <div class="im-chat-cxfs" v-if="item.netStausType==2" @click="resendMessage(item)">重新发送</div> -->
                         </li>
                         <li v-else class="group_system_chat">
                           <span>{{ formatDateTime(new Date(item.serverTimestamp)) }}</span>
@@ -121,6 +123,11 @@
           this.$store.commit('setCurrentGroupUser', currentGroupUser);
         }
       },
+      netStaus: {
+        get: function() {
+          return this.$store.state.im.netStaus;
+        }
+      }
     },
     data() {
       return {
@@ -133,6 +140,7 @@
         isSetting:false,
         visibleBox:false,
         isTimeOut:false,
+        netStausType:1,//网络状态1为正常2为断开
         top: 0,
         left: 0,
         currentMessageObj:{},
@@ -209,6 +217,14 @@
               }
           }
       },
+      // 重新发送消息 
+      resendMessage(item) {
+        let objArr = {
+            obj:item,
+            subTopic:'MS'
+        }
+        this.$store.commit('sendMessage', objArr); 
+      },
       // 错误提示
       openMessage(error) {
         this.$Message.error(error);
@@ -282,7 +298,6 @@
         let self = this;
         let time = new Date().getTime();
         let content = self.messageContent;
-        console.log(content)
         if (content !== '' && content !== '\n') {
           if (content.length > 2000) {
             self.openMessage('不能超过2000个字符');
@@ -291,6 +306,7 @@
               fromUserId:self.user.userId, //发送人id
               serverTimestamp: '', // 发送时间
               messageTag:time,
+              netStausType:self.netStausType,
               // 发送消息的内容属性
               content: {
                   type:type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
@@ -328,11 +344,15 @@
             obj:message,
             subTopic:'MS'
         }
-        self.$store.commit('addMessage', message);
-        self.$store.commit('sendMessage', objArr);
+        if(self.netStausType == 1) {
+            self.$store.commit('addMessage', message);
+            self.$store.commit('sendMessage', objArr);
+            self.messageContent = '';
+            this.scollBottom()
+        } else if(this.netStausType == 2) {
+            this.$message.error("网络链接断开！请刷新网络重连成功后发送！！！")
+        }
         // self.$store.commit('addSession', session);
-        self.messageContent = '';
-        this.scollBottom()
       },
       getHistoryMessage() {
         this.isSetting = false
@@ -359,6 +379,10 @@
             }
           }
           if (cacheMessages) {
+            let objArr = {
+                obj:{},
+                subTopic:'MS'
+            }
             let contents = {}
             let path = ''
             self.messageList = cacheMessages;
@@ -370,6 +394,19 @@
                     self.messageImgList.push({
                       src:path
                     })
+                }
+                // 网络重新链接或断开时的操作
+                if(this.netStausType == 1) {
+                    if(item.netStausType == 2) {
+                      item.netStausType = 1
+                      objArr.obj = item
+                      // this.$store.commit('sendMessage', objArr); 
+                    } 
+                } else if(this.netStausType == 2) {
+                    if(!item.messageId&&item.netStausType!=2) {
+                      item.netStausType = 2
+                      this.$store.commit('addMessage', item);
+                    } 
                 }
             })
           }
@@ -423,10 +460,15 @@
         if(this.isSetting) {
             this.showHistory = true
         }
-      }
+      },
+      netStaus :function(newvalue,oldvalue) {
+        this.netStausType = newvalue?2:1
+        this.getCurrentMessageList()
+      },
     },
     created: function() {
       console.log(this.chat)
+      this.netStausType = this.netStaus?2:1
       if(this.chat&&this.chat.targetId) {
           this.getCurrentMessageList()
       }
@@ -592,6 +634,16 @@
                             }
                         }
                     }
+                    .im-chat-cxfs{
+                        line-height: 20px;
+                        height: 20px;
+                        width: 100%;
+                        color: #999;
+                        text-align: right;
+                        font-size: 12px;
+                        margin-top: 5px;
+                        cursor: pointer;
+                    }
                 }
             }
 
@@ -646,6 +698,12 @@
                     position: relative;
                     .el-icon-loading {
                       color:#333;
+                      position: absolute;
+                      left:-20px;
+                      top: 12px;
+                    }
+                    .el-icon-warning {
+                      color:#e22222;
                       position: absolute;
                       left:-20px;
                       top: 12px;
