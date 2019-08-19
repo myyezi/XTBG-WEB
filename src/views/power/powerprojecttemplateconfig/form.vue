@@ -31,8 +31,8 @@
                     <el-select v-show="showContent" v-model="templateConfigForm.name" placeholder="请选择工作内容" clearable>
                         <el-option  label="勘察收资" value="勘察收资"></el-option>
                         <el-option  label="卷册设计" value="卷册设计"></el-option>
+                        <el-option  label="项目审查" value="项目审查"></el-option>
                         <el-option  label="技术交底" value="技术交底"></el-option>
-                        <el-option  label="设计变更" value="设计变更"></el-option>
                         <el-option  label="设计变更" value="设计变更"></el-option>
                     </el-select>
                 </el-form-item>

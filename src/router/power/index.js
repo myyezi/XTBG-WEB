@@ -2,6 +2,7 @@ import Layout from '@/views/common/layout/Layout'
 import powerprojecttask from "@/router/power/powerprojecttask";
 import powerprojecttemplate from "@/router/power/powerprojecttemplate";
 import powerprojecttemplateconfig from "@/router/power/powerprojecttemplateconfig";
+import powerprojectplan from "@/router/power/powerprojectplan";
 
 const index = {
     path: '/',
@@ -14,6 +15,7 @@ const index = {
         ...powerprojecttask,
         ...powerprojecttemplate,
         ...powerprojecttemplateconfig,
+        ...powerprojectplan
     ]
 }
 export default index
