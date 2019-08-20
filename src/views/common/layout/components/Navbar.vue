@@ -18,12 +18,27 @@
             </el-dropdown-menu>
         </el-dropdown>
         <div class="navbar_tools">
+            <el-select v-model="companyId" filterable clearable placeholder="切换所属公司">
+                <el-option label="湖北中大恒润科技有限公司" :value="10"></el-option>
+                <el-option label="湖北中大恒润能源工程有限公司" :value="20"></el-option>
+                <el-option label="胡中大恒润商业运营管理有限公司" :value="30"></el-option>
+            </el-select>
             <ul class="clearfix">
                 <!-- <li class="clearfix">
                     <img :src="messagePic" />
                     <span :style="{'color':sizeColor}">消息</span>
                     <el-badge class="message_number" :value="12" />
                 </li> -->
+                <!--<li class="clearfix"  @click="changeCompany()">
+                    <img :src="communicationPic" />
+                    <span :style="{'color':sizeColor}">切换</span>
+                    <el-select v-model="companyId" filterable clearable placeholder="请选择所属公司">
+                        <el-option label="湖北中大恒润科技有限公司" :value="10"></el-option>
+                        <el-option label="湖北中大恒润能源工程有限公司" :value="20"></el-option>
+                        <el-option label="胡中大恒润商业运营管理有限公司" :value="30"></el-option>
+                    </el-select>
+                    &lt;!&ndash;<el-badge class="message_number" :value="unReadNum" v-if="unReadNum>0"/>&ndash;&gt;
+                </li>-->
                 <li class="clearfix"  @click="openImChat">
                     <img :src="communicationPic" />
                     <span :style="{'color':sizeColor}">通讯</span>
@@ -103,6 +118,10 @@
             this.$set(this.colorList[0],'active',true);
         },
         methods: {
+            changeCompany() {
+
+            },
+
             openImChat(){
                 this.$refs.imChat.handleOpen();
             },
