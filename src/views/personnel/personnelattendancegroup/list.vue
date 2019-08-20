@@ -44,6 +44,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="规则名称"></el-table-column>
+          <el-table-column  label="组成员" width="260">
+          <template  slot-scope="{ row, column, $index }">
+              <el-button @click="look(row)" type="text" size="small">查看</el-button>
+          </template>
+          </el-table-column>
         <el-table-column prop="companyName" sortable show-overflow-tooltip min-width="100" label="所属管理公司"></el-table-column>
         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="创建人"></el-table-column>
           <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="创建时间"></el-table-column>
@@ -67,6 +72,19 @@
               </div>
           </el-tabs>
       </el-dialog>
+
+      <el-dialog title="查看考勤组成员" :visible.sync="dialogFormVisible" width="200"  >
+          <div class="app-container white-bg list-panel">
+              <div class="division-line"></div>
+              <div class="table-box">
+                  <el-table :data="memberList" style="width: 100%"   :height="300">
+                      <el-table-column prop="name" sortable show-overflow-tooltip min-width="80" label="姓名"></el-table-column>
+                      <el-table-column prop="phone" sortable show-overflow-tooltip min-width="80" label="联系方式"></el-table-column>
+                      <el-table-column prop="email" sortable show-overflow-tooltip min-width="80" label="邮箱"></el-table-column>
+                  </el-table>
+              </div>
+          </div>
+      </el-dialog>
   </div>
 </template>
 
@@ -82,6 +100,7 @@ export default {
   data() {
     return {
       companyList:[],
+        memberForm:[],
       testList:[],
       isShowMore: false,
       listUrl: "personnel/personnelattendancegroup",
@@ -102,7 +121,10 @@ export default {
       attendanceGroupId:'',
       organizationList:{},
       selectionAll:[],
-      companyId:''
+      companyId:'',
+      groupUserListByCompany:[],
+      dialogFormVisible:false,
+      memberList:[]
     }
   },
   mounted() {
@@ -127,6 +149,10 @@ export default {
               this.testList = rs.data;
           });
       },
+      //关闭窗口
+      close(){
+          this.dialogVisible =false;
+      },
       //删除
       delGroup(row) {
           this.$confirm('是否确认删除 ?').then(_ => {
@@ -149,16 +175,21 @@ export default {
           this.params =  row.id;
           this.getOrganizationList();
           this.getOrganizationUserList();
+         // this.getGroupUserListBycompany();
       },
 
+      //查看
+      look(row){
+          this.memberList =[];
+          this.dialogFormVisible = true ;
+          this.attendanceGroupId = row.id;
+          ajax.get('personnel/personnelattendancegroupuser/getList/' + this.attendanceGroupId).then(rs => {
+              this.memberList = rs;
+          });
+      },
       getOrganizationList(){
           ajax.get('personnel/personnelattendancegrouporganization/getList/' + this.attendanceGroupId).then(rs => {
-              // this.$refs.one.checkedData = [];
-              // this.$refs.one.selectData = [];
               this.organizationList =rs;
-              // rs.forEach(item =>{
-                  // this.$refs.one.checkedData.push(item.organizationId)
-              // });
           });
       },
 
@@ -167,6 +198,13 @@ export default {
           ajax.get('personnel/personnelattendancegroupuser/getList/' + this.attendanceGroupId).then(rs => {
               this.selectionAll = rs;
               console.log(this.selectionAll)
+          });
+      },
+
+      //查询该公司所有加入考勤人员
+      getGroupUserListBycompany(){
+          ajax.get('personnel/personnelattendancegroupuser/getListByCompanyId/' + this.companyId).then(rs => {
+              this.groupUserListByCompany = rs;
           });
       },
 
@@ -198,6 +236,8 @@ export default {
               this.$refs.two.changePageCoreRecordData();
               //处理只添加部门设置
               this.selectData = this.$refs.two.idKeyArr
+              console.log( this.selectData )
+              this.saveData =[];
               for (let i = 0; i < this.selectData.length; i++) {
                       this.save={};
                       this.save.attendanceGroupId = this.attendanceGroupId
@@ -212,6 +252,7 @@ export default {
                   } else {
                       this.$message
                           .error(rs.msg);
+                      this.$refs.two.changePageCoreRecordData();
                   }
               });
           }

@@ -5,6 +5,7 @@
           <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
           <i class="el-icon-circle-plus-outline" @click="addGroup"></i>
       </div>
+      <div class="net_eror" v-if="netStaus" @click="updateNet"><i class="el-icon-refresh"></i>网络链接断开！请点击刷新网络</div>
       <div class="group-box">
         <ul class="user-list">
           <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionList" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
@@ -36,6 +37,7 @@
   </div>
 </template>
 <script>
+import {getToken} from '@/utils/cookie' // 验权
 import {mapGetters} from 'vuex'
 import Top from '../components/top.vue';
 import UserChat from '../components/chat.vue';
@@ -52,6 +54,7 @@ export default {
   props:['chatDialogVisible'],
   data() {
     return {
+      // netStaus:true,
       visibleBox:false,
       showAddGroup:false,
       filterText: '',
@@ -86,9 +89,25 @@ export default {
       set: function(sessionList) {
         this.$store.commit('setSessionList', sessionList);
       }
+    },
+    netStaus: {
+      get: function() {
+        return this.$store.state.im.netStaus;
+      },
+      set: function(netStaus) {
+        this.$store.commit('updateNet', netStaus);
+      }
     }
   },
   methods: {
+    updateNet() {
+        this.$store.dispatch('getWebsocket', {
+            ip: 'dev.xtbg.zdsxc.com',
+            port: 443,
+            token: getToken(),
+            username: this.$store.state.user.user.userId
+        })
+    },
     closeAddGroup() {
         this.showAddGroup = false
     },
@@ -208,6 +227,17 @@ export default {
           font-size: 2.5rem;
           margin: 3.5px 0 0 0;
           cursor: pointer;
+      }
+    }
+    .net_eror {
+      height: 30px;
+      line-height: 30px;
+      background: #f7d5a3;
+      text-align: center;
+      margin: 0 8px 5px;
+      cursor: pointer;
+      .el-icon-refresh {
+        margin-right:5px;
       }
     }
     .search-box {

@@ -1,29 +1,29 @@
 const index = [
     {
-        path: '/project/powerprojectplan',
+        path: '/power/powerprojectplan',
         name: 'powerprojectplan',
-        component: () => import('@/views/project/powerprojectplan/list'),
+        component: () => import('@/views/power/powerprojectplan/list'),
         meta: {icon: 'auth3', title: '项目计划'},
     },
     {
-        path: '/project/powerprojectplan/add',
+        path: '/power/powerprojectplan/add',
         name: 'powerprojectplanAdd',
         hidden: true,
-        component: () => import('@/views/project/powerprojectplan/add'),
+        component: () => import('@/views/power/powerprojectplan/add'),
         meta: {title: '添加'},
     },
     {
-        path: '/project/powerprojectplan/edit',
+        path: '/power/powerprojectplan/edit',
         name: 'powerprojectplanEdit',
         hidden: true,
-        component: () => import('@/views/project/powerprojectplan/edit'),
+        component: () => import('@/views/power/powerprojectplan/edit'),
         meta: {title: '编辑'}
     },
     {
-        path: '/project/powerprojectplan/detail/:id',
+        path: '/power/powerprojectplan/detail/:id',
         name: 'powerprojectplanDetail',
         hidden: true,
-        component: () => import('@/views/project/powerprojectplan/detail'),
+        component: () => import('@/views/power/powerprojectplan/detail'),
         meta: {title: '查看'}
     }
 ];

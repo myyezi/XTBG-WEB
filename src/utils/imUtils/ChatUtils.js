@@ -26,22 +26,23 @@ export function dateStr(date) {
   let dates = new Date(parseInt(date));
   // 去掉 js 时间戳后三位
   time = parseInt((time - date) / 1000);
+  let timeString = dates.getHours()<10?'0'+dates.getHours():dates.getHours() + ':' + (dates.getMinutes()<10?'0'+dates.getMinutes():dates.getMinutes())
   // 存储转换值
   let s;
   if (time < 60 * 10) {
     // 十分钟内
     // return '刚刚';
-    return dates.getHours() + ':' + dates.getMinutes();
+    return timeString;
   } else if (time < 60 * 60 && time >= 60 * 10) {
     // 超过十分钟少于1小时
     s = Math.floor(time / 60);
     // return s + '分钟前';
-    return dates.getHours() + ':' + dates.getMinutes();
+    return timeString;
   } else if (time < 60 * 60 * 24 && time >= 60 * 60) {
     // 超过1小时少于24小时
     s = Math.floor(time / 60 / 60);
     // return s + '小时前';
-    return dates.getHours() + ':' + dates.getMinutes();
+    return timeString;
   } else if (time < 60 * 60 * 24 * 3 && time >= 60 * 60 * 24) {
     // 超过1天少于3天内
     s = Math.floor(time / 60 / 60 / 24);
@@ -53,7 +54,7 @@ export function dateStr(date) {
     }
   } else {
     // 超过3天
-    return dates.getFullYear() + '/' + (dates.getMonth() + 1) + '/' + dates.getDate();
+    return dates.getFullYear() + '/' + ((dates.getMonth() + 1)< 10 ? '0' + (dates.getMonth() + 1) : (dates.getMonth() + 1)) + '/' + (dates.getDate()< 10 ? '0' + dates.getDate() : dates.getDate());
   }
 }
 
@@ -230,16 +231,20 @@ export function transform(content,type) {
     if(type == 3) {
         let contents = JSON.parse(content)
         let path = contents.filedomain + contents.path;
-        return '<img class="message-img" src="' + path + '" alt="消息图片不能加载">';
+        return '<img class="message-img" src="' + path + '" alt="消息图片不能加载" style="margin-top: 6px;">';
     } else if(type == 5) {
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
       let fileName = contents.name;
-      return '<a class="message-file clearfix" href="' + path + '"><i class="el-icon-document" type="message-file"></i><span type="message-file">' + (fileName) + '</span><i class="el-icon-download" type="message-file"></i></a>';
+      return '<a class="message-file clearfix" href="' + path + '" target="_Blank"><i class="el-icon-document"></i><span>' + (fileName) + '</span><i class="el-icon-download"></i></a>';
     } else if(type == 6){
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
-      return '<video class="message-video" src="' + path + '" controls style="width:200px"></video>';
+      return '<video class="message-video" src="' + path + '" controls style="width:360px;margin-top: 6px;"></video>';
+    } else if(type == 2) {
+      let contents = JSON.parse(content)
+      let path = contents.filedomain + contents.path;
+      return '<audio class="message-video" src="' + path + '" controls style="margin-top: 6px;"></audio>';
     }
     else  {
       content = content
@@ -291,9 +296,13 @@ export function transform(content,type) {
 }
 
 export const ChatListUtils = {
-  // 缓存聊天框关闭状态
-  setChatDialog: function(userId, chatDialog) {
-    localStorage.setItem(userId+'chatDialog', chatDialog);
+  // 缓存最后拉取消息head
+  setLastMessageHead: function(userId, head) {
+    localStorage.setItem(userId+'lastMessageHead', head);
+  },
+  // 缓存最后拉取消息type
+  setLastMessageType: function(userId, head) {
+    localStorage.setItem(userId+'lastMessageType', head);
   },
   // 缓存当前聊天框id
   setCurrentChatId: function(userId, chatId) {
@@ -315,9 +324,17 @@ export const ChatListUtils = {
   setChatGroupListMap: function(userId, groupList) {
     localStorage.setItem(userId+'group_user', JSON.stringify(groupList));
   },
-  //从缓存中获取聊天框是否关闭
-  getChatDialog: function(userId) {
-    let str = localStorage.getItem(userId+'chatDialog');
+  //从缓存中获取最后拉取head
+  getLastMessageHead: function(userId) {
+    let str = localStorage.getItem(userId+'lastMessageHead');
+    if (!str) {
+      return false;
+    }
+    return str;
+  },
+  //从缓存中获取最后拉取type
+  getLastMessageType: function(userId) {
+    let str = localStorage.getItem(userId+'lastMessageType');
     if (!str) {
       return false;
     }
@@ -405,5 +422,5 @@ export const ErrorType = {
   PARAM_ERROR: 400, //参数错误
   FLUSH_TOKEN_ERROR: 7, //刷新token错误
   SERVER_ERROR: 500, //服务器错误
-  NET_ERROR:'TypeError: Failed to fetch' //网络链接不通
+  NET_ERROR:'网络断开' //网络链接不通
 };

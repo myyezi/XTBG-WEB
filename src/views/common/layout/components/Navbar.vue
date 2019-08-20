@@ -97,7 +97,6 @@
             ]),
             sessionList: {
                 get: function() {
-                    console.log(111)
                     return this.$store.state.im.sessionList;
                 }
             }

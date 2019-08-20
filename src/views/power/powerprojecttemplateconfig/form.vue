@@ -2,7 +2,7 @@
     <div class="app-container white-bg list-panel" v-cloak>
         <div class="opertion-box">
             <label class="control-label">项目类型</label>
-            <el-select v-model="searchParam.type" placeholder="请选择项目类型" clearable style="width:190px">
+            <el-select v-model="projectType" placeholder="请选择项目类型" clearable style="width:190px" @change="onChangeProjectType" :disabled="operateType == 'edit'">
                 <el-option v-for="e in projectTypeList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
             </el-select>
         </div>
@@ -19,11 +19,22 @@
             :isopen="isopen"
             :height="600">
         </dragTreeTable>
+        <div class="left-row">
+            <el-button type="primary" @click="submitForm()">保存</el-button>
+            <el-button @click="close">返回</el-button>
+        </div>
 
         <el-dialog title="项目计划模板" :visible.sync="dialogFormVisible" width="35%">
             <el-form :model="templateConfigForm" :rules="rules" ref="ruleForm" label-width="120px">
                 <el-form-item label="工作内容" prop="name">
-                    <el-input v-model.trim="templateConfigForm.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
+                    <el-input v-show="!showContent" v-model.trim="templateConfigForm.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
+                    <el-select v-show="showContent" v-model="templateConfigForm.name" placeholder="请选择工作内容" clearable>
+                        <el-option  label="勘察收资" value="勘察收资"></el-option>
+                        <el-option  label="卷册设计" value="卷册设计"></el-option>
+                        <el-option  label="项目审查" value="项目审查"></el-option>
+                        <el-option  label="技术交底" value="技术交底"></el-option>
+                        <el-option  label="设计变更" value="设计变更"></el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="工期" prop="period">
                     <el-input v-model="templateConfigForm.period" autocomplete="off"></el-input>
@@ -55,7 +66,7 @@
 
 <script>
 import ajax from '@/utils/request'
-import { tool, ruleTool } from '@/utils/common'
+import { tool, ruleTool, formRule } from '@/utils/common'
 import dragTreeTable from "@/components/treeTable/dragTreeTable.vue";
 
 export default {
@@ -87,12 +98,18 @@ export default {
                 order : 'sortNum'
             }
         },
+        showContent : false,
+        newList : [],
+        allList : [],
         isopen : false,
+        projectTypeDisabled : false,
         addImg : require('@/styles/img/icon-img/add.png'),
         editImg : require('@/styles/img/icon-img/edit.png'),
         deletedImg : require('@/styles/img/icon-img/deleted.png'),
-        operateType : "",
+        operateType : "",  // 上页面传过来的操作类型
+        tempType : "",     // 传给后台的操作类型
         projectType : "",
+        templateId : "",
         dialogFormVisible : false,
         rules: {
             name: [
@@ -102,7 +119,8 @@ export default {
               { required: true, message: '请选择工程阶段', trigger: ['change'] }
             ],
             period: [
-              { required: true, message: '请输入工期', trigger: ['blur'] }
+              { required: true, message: '请输入工期', trigger: ['blur'] },
+              { validator: formRule.money, message: '工期格式不正确', trigger: 'blur' }
             ],
             profession: [
               { required: true, message: '请输入专业', trigger: ['blur'] }
@@ -117,6 +135,8 @@ export default {
 mounted() {
     this.projectType = this.$route.query.projectType;
     this.operateType = this.$route.query.operateType;
+    this.templateId = this.$route.query.templateId;
+    this.tempType = this.operateType == 'edit' ? 'edit' : 'add';
     // 自定义树形表格表头 type的值为selection会显示展开收缩图标，为action指操作栏
     // 自定义树形表格表头 align单元格对齐方式left、center、right，默认居左对齐
     // 自定义树形表格表头 field单元格内容取值使用与this.treeData.lists中字段相对应
@@ -129,14 +149,21 @@ mounted() {
             actions: [
                 {
                     text: "新增",
-                    onclick: this.addNode,
+                    onclick: this.onAdd,
                     formatter: item => {
                         return "<img src='" + this.addImg + "' title='新增' style='margin-right:15px;vertical-align: middle;'/>";
                     }
                 },
                 {
+                    text: "编辑",
+                    onclick: this.onEdit,
+                    formatter: item => {
+                        return "<img src='" + this.editImg + "' title='编辑' style='margin-right:15px;vertical-align: middle;'/>";
+                    }
+                },
+                {
                     text: "删除",
-                    onclick: this.deleteNode,
+                    onclick: this.onDelete,
                     formatter: item => {
                         return "<img src='" + this.deletedImg + "' title='删除' style='margin-right:15px;vertical-align: middle;'/>";
                     }
@@ -144,6 +171,7 @@ mounted() {
             ]
         },
         {
+            type: "selection",
             title: "工作内容",
             field: "name",
             img : this.addImg,
@@ -155,7 +183,7 @@ mounted() {
             title: "工期",
             field: "period",
             width: 120,
-            align: "left",
+            align: "center",
         },
         {
             title: "专业",
@@ -183,7 +211,7 @@ mounted() {
             title: "是否审批",
             field: "isApproval",
             width: 120,
-            align: "left",
+            align: "center",
             isCutOut:true,
             formatter: item => {
                 return item.isApproval==1?'是':'否'
@@ -193,14 +221,16 @@ mounted() {
             title: "是否上传文件",
             field: "isUpload",
             width: 120,
-            align: "left",
+            align: "center",
             isCutOut:true,
             formatter: item => {
                 return item.isUpload==1?'是':'否'
             }
         },
     ];
-    this.getDragTree();
+    if (this.operateType == 'edit'){
+        this.getDragTree();
+    }
     this.getProjectType();
     this.getStageList();
 },
@@ -221,10 +251,34 @@ methods: {
             }
         });
     },
+    onChangeProjectType(){
+        if(this.projectType){
+            ajax.get('power/powerprojecttemplate/getTemplateId/'+this.projectType).then(rs => {
+                if(rs.status === 0) {
+                    if(rs.data) {
+                        this.templateId = rs.data;
+                        this.tempType = "edit";
+                        this.getDragTree();
+                    }else{
+                        this.tempType = "add";
+                        this.treeData.lists = [];
+                    }
+                } else {
+                    this.$message({
+                        message: rs.msg,
+                        type: 'error'
+                    });
+                }
+            });
+        }else{
+            this.treeData.lists = [];
+        }
+
+    },
     getDragTree(data) {
         ajax.get('power/powerprojecttemplateconfig/templateConfigTree/',{
             templateId : this.templateId,
-            type : this.searchParam.type,
+            projectType : this.projectType,
         }).then(rs => {
             if(rs.status === 0) {
                 if(rs.data) {
@@ -257,9 +311,16 @@ methods: {
     // 增加一级节点
     onAddFirst() {
         this.onAdd(1)
+        // 新增并且是一级节点
+        this.showContent = true;
     },
     // 增加节点
     onAdd(data) {
+        this.showContent = false;
+        if (!this.projectType){
+            this.$message.error('请先选择项目类型！');
+            return;
+        }
         this.formData = {};
         this.isAddFirst = false;
         if(data === 1) {
@@ -273,6 +334,9 @@ methods: {
     },
     // 编辑节点
     onEdit(data) {
+        if (data.parentId == "0"){
+            this.showContent = true;
+        }
         this.clearValidate('ruleForm');
         this.formData = data;
         this.operationType = 'edit';
@@ -285,7 +349,6 @@ methods: {
             isUpload : data.isUpload,
         }
         this.dialogFormVisible = true;
-        console.log("编辑", data);
     },
     // 删除节点
     onDelete(data) {
@@ -302,7 +365,7 @@ methods: {
             cancelButtonText: '取消',
             type: 'warning',
         }).then(function() {
-            _this.deleteProjectevaluatetemplate(data,_this.treeData.lists)
+            _this.deleteTemplateConfig(data,_this.treeData.lists)
         }).catch(function() {
         });
     },
@@ -312,10 +375,10 @@ methods: {
     // where: 拖拽的类型，top（上面）、center（里面）、bottom（下面）
     onTreeDataChange(list, from, to, where) {
         this.treeData.lists = list;
-        this.saveTemplate({
+        /*this.saveTemplate({
             json:JSON.stringify(this.treeData.lists)
         })
-        console.log(this.treeData.lists)
+        console.log(this.treeData.lists)*/
     },
     // 点击单元格事件
     onClickCell(data) {
@@ -340,47 +403,43 @@ methods: {
         this.$refs['ruleForm'].validate((valid) => {
             if (valid) {
                 let newChild = this.templateConfigForm;
-                newChild.type = this.tempType;
                 if(this.operationType === 'add') {
                     // 新增传父级id
-                    newChild.parentId = this.isAddFirst?0:this.formData.id
+                    newChild.parentId = this.isAddFirst ? 0 : this.formData.id;
+                    newChild.level = this.isAddFirst ? 1 : this.formData.level + 1;
                 } else {
                     // 编辑传id
                     newChild.id = this.formData.id
                 }
+                newChild.sortNum = this.getSortNum(newChild.parentId);
                 this.getNodeProcessing(newChild);
             } else {
                 return false;
             }
         });
     },
-    // 树形结构添加和编辑节点
-    addTemplateConfig(data) {
-        ajax.post('core/projectevaluatetemplate',data).then(rs => {
-            this.getNodeProcessing(data)
+    getSortNum(parentId){
+        this.getAllList(this.treeData.lists);
+        let arr = [];
+        this.allList.forEach((item) => {
+            if (item.parentId == parentId){
+                arr.push(item.sortNum ? item.sortNum : 0);
+            }
         });
+        arr.sort(function (a, b) {
+            return a-b;
+        });
+        let maxSortNum = arr[arr.length - 1];
+        return maxSortNum + 1;
     },
     // 删除节点
-    deleteProjectevaluatetemplate(data,node) {
-        ajax.delete('core/projectevaluatetemplate/'+ data.id).then(rs => {
-            this.getNodeProcessing(data,node)
-            this.$message({
-                message: '删除成功',
-                type: 'success'
-            });
-        });
-    },
-    // 树形结构整个保存
-    saveTemplate(data) {
-        ajax.post('core/projectevaluatetemplate/saveTemplate',data).then(rs => {
-            // this.getNodeProcessing(data)
-        });
+    deleteTemplateConfig(data,node) {
+        this.getNodeProcessing(data,node)
     },
     // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
     getNodeProcessing(data,node) {
-        console.log(data)
         if(this.operationType === 'add') {
-            data.id=new Date().getTime()
+            data.id = new Date().getTime()
             this.$message({
                 message: '新增成功',
                 type: 'success'
@@ -419,28 +478,49 @@ methods: {
             this.formData.isUpload = data.isUpload;
         }
     },
-//保存
-submitForm(form) {
-    var data = this.powerprojecttemplateconfigForm;
-    this.$refs[form]
-    .validate((valid) => {
-        if (!valid) {
-        this.$message
-            .error('校验不通过，请检查输入项');
-        return;
+    //保存
+    submitForm() {
+        if (!this.projectType || this.treeData.lists.length == 0){
+            this.$message.error('数据无效，请检查！');
+            return;
         }
-        ajax.post('project/powerprojecttemplateconfig', data).then(rs => {
-        if (rs.status == 0) {
-            this.$message
-            .success(rs.msg);
-            this.close();
-        } else {
-            this.$message
-            .error(rs.msg);
-        }
+        this.newList = [];
+        this.getNewList(this.treeData.lists);
+        ajax.post('power/powerprojecttemplateconfig', {
+            tempType: this.tempType,
+            templateId : this.templateId,
+            projectType : this.projectType,
+            treeDataList: this.newList
+        }).then(rs => {
+            if (rs.status == 0) {
+                this.$message .success(rs.msg);
+                this.getDragTree();
+            } else {
+                this.$message.error(rs.msg);
+            }
         });
-    });
-},
+    },
+
+    getNewList(list){
+        list.forEach((item) => {
+            this.newList.push(item);
+            if (item.children && item.children.length>0) {
+                this.getNewList(item.children);
+            }
+        });
+    },
+    getAllList(list){
+        list.forEach((item) => {
+            this.allList.push(item);
+            if (item.children && item.children.length>0) {
+                this.getAllList(item.children);
+            }
+        });
+    },
+    close(){
+        let url ='/power/powerprojecttemplate';
+        this.closeCurPage(url);
+    },
 
 },
 }

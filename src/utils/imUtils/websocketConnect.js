@@ -1,4 +1,5 @@
 import store from '@/store'
+import {ChatListUtils,ErrorType} from '@/utils/imUtils/ChatUtils'
 let client;
 let objData;
 
@@ -20,7 +21,7 @@ const IMTopic = {
 const websocketConnect = {
     connect: function(data) {
         objData = data;
-        client = new Paho.MQTT.Client(data.ip,Number(data.port),"/mqtt","1@@@"+data.username);
+        client = new Paho.MQTT.Client(data.ip,Number(data.port),"/wss/mqtt","1@@@"+data.username);
         client.onConnectionLost = this.onConnectionLost;
         client.onMessageArrived = this.onMessageArrived;
         client.onMessageDelivered = this.onMessageDelivered;
@@ -28,23 +29,30 @@ const websocketConnect = {
         client.connect({
             userName: data.username,
             password: data.token,
+            timeout: 5,  
+            keepAliveInterval: 50,  
+            cleanSession: false, 
+            useSSL:true,
             onSuccess: this.onConnect,
             onFailure: function(message) {
-                client.connect(objData);
+                console.log("onConnectionLost:failure");
+                store.commit('updateNet', ErrorType.NET_ERROR);
+                // client.connect(objData);
             }
         });
         return client;
     },
     // 返回链接成功没
     onConnect: function() {
+        store.commit('updateNet', '');
         Object.keys(IMTopic).map(v => {
             console.log("subscribeTopic:", IMTopic[v]);
             client.subscribe(IMTopic[v], { qos: 1 });
         });
         
         let obj1 = JSON.stringify({
-            id: localStorage.getItem('head_last_message')?localStorage.getItem('head_last_message'):'0',
-            type: localStorage.getItem('type_last_message')?localStorage.getItem('type_last_message'):0
+            id: ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):'0',
+            type: ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):0,
         });
         client.pubMessage(obj1,"MP")
 
@@ -61,7 +69,11 @@ const websocketConnect = {
     //连接丢失
     onConnectionLost: function(responseObject) {
         if (responseObject.errorCode !== 0) {
-            client.connect(objData);
+            if(responseObject.errorCode === 8) {
+                store.commit('updateNet', ErrorType.NET_ERROR);
+            } else {
+                client.connect(objData);
+            }
             console.log("onConnectionLost:" + responseObject.errorMessage);
         }
     },
@@ -72,8 +84,8 @@ const websocketConnect = {
         if (message.destinationName == "MN") {
             console.log(msg)
             let obj = JSON.stringify({
-                id: localStorage.getItem('head_last_message')?localStorage.getItem('head_last_message'):'0',
-                type: localStorage.getItem('type_last_message')?localStorage.getItem('type_last_message'):0
+                id: ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):'0',
+                type: ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):0,
             });
             client.pubMessage(obj,"MP")
         } else if (message.destinationName == "MS") {
@@ -81,8 +93,8 @@ const websocketConnect = {
             store.commit('addMessage', msg);
             store.commit('addSession', msg);
         }else if (message.destinationName == "MP") {
-            localStorage.setItem('head_last_message',msg.head)
-            localStorage.setItem('type_last_message',msg.type)
+            ChatListUtils.setLastMessageHead(objData.username,msg.head)
+            ChatListUtils.setLastMessageType(objData.username,msg.type)
             console.log(msg)
             if(msg.messages.length>0) {
                 msg.messages.forEach((item,index)=> {
