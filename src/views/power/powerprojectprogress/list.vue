@@ -5,6 +5,7 @@
         <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
+      <el-button type="primary" icon="el-icon-refresh" size="small" @click="stopUploadShow = true">测试</el-button>
     </div>
     <!-- 展开更多查询开始 -->
     <el-collapse-transition>
@@ -112,18 +113,24 @@
               <el-button type="primary" @click="cancel">确 定</el-button>
           </div>
       </el-dialog>
+      <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="80">
+          <stop-upload></stop-upload>
+      </el-dialog>
   </div>
 </template>
 
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
+import StopUpload from '@/components/StopUpload/index'
 
 export default {
   name: 'PowerProjectPlan',
   mixins: [tool],
+  components: {StopUpload},
   data() {
     return {
+      stopUploadShow:false,
       extDate:'',
       isShowMore: false,
       listUrl: "power/powerproject",
