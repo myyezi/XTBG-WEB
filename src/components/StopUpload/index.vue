@@ -2,7 +2,7 @@
   <div>
     <uploader
       browse_button="browse_button"
-      :url="server_config+'/BigFile/'"
+      :url="server_config+'power/powerprojecttask/bigFile'"
       chunk_size="2MB"
       :max_retries="3"
       :filters="{prevent_duplicates:true}"
@@ -108,6 +108,7 @@
         this.up.removeFile(file);
       },
       beforeUpload(up, file) {
+          console.log(file.getSource())
         up.setOption("multipart_params", {"size":file.size,"md5":file.md5});
       },
       uploadStart() {
