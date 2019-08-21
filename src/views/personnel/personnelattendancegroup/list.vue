@@ -63,7 +63,7 @@
               <!-- <el-tab-pane label="组织" name="first" >
                   <tree-one url="upms/organization/tree" ref="one"></tree-one>
               </el-tab-pane> -->
-              <el-tab-pane label="用户" name="second">  
+              <el-tab-pane label="用户" name="second">
                 <tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll"></tree-two>
               </el-tab-pane>
               <div style="text-align: center;">
