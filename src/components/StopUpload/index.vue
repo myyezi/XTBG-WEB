@@ -95,9 +95,10 @@
         this.files = up.files;
       },
       filesAdded(up, files) {
+        console.log(files)
         files.forEach((f) => {
           f.status = -1;
-          FileMd5(f.getNative(), (e, md5) => {
+          FileMd5({file:f.getNative(),currentChunk:6}, (e, md5) => {
             f["md5"] = md5;
             f.status = 1;
           });
