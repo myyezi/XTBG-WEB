@@ -1,12 +1,13 @@
 'use strict';
 
 // import './js-spark-md5.js'
-export default function (file, callback) {
+export default function (fileObj, callback) {
+    console.log(fileObj)
   var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
-    file = file,
+    file = fileObj.file,
     chunkSize = 2097152,                             // Read in chunks of 2MB
     chunks = Math.ceil(file.size / chunkSize),
-    currentChunk = 0,
+    currentChunk = fileObj.currentChunk,
     spark = new SparkMD5.ArrayBuffer(),
     fileReader = new FileReader();
 
