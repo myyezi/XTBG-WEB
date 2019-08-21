@@ -109,12 +109,7 @@
         this.up.removeFile(file);
       },
       beforeUpload(up, file) {
-<<<<<<< HEAD
         up.setOption("multipart_params", {"size":file.size,"md5":file.md5,'chunk':6});
-=======
-          console.log(file.getSource())
-        up.setOption("multipart_params", {"size":file.size,"md5":file.md5});
->>>>>>> 5eb66b4f81fb4f3ff6af2d5ba7be832b75cf8817
       },
       uploadStart() {
         this.uploading = true;
