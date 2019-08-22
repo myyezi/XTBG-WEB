@@ -32,16 +32,16 @@
                         </el-form-item>
                         <el-form-item label="职称" prop="qualification">
                             <el-select v-model="userForm.qualification" filterable clearable>
-                                <el-option label="正式员工" :value="1"></el-option>
-                                <el-option label="试用期" :value="2"></el-option>
+                                <el-option label="试用期" :value="1"></el-option>
+                                <el-option label="正式员工" :value="2"></el-option>
                                 <el-option label="离职" :value="3"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="状态" prop="userStatus">
                             <el-select v-model="userForm.userStatus" filterable clearable>
-                                <el-option label="正式员工" :value="1"></el-option>
-                                <el-option label="试用期" :value="2"></el-option>
-                                <el-option label="离职" :value="3"></el-option>
+                                <el-option label="试用期" :value="'1'"></el-option>
+                                <el-option label="正式员工" :value="'2'"></el-option>
+                                <el-option label="离职" :value="'3'"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="图像" prop="portrait" class="big">
@@ -49,7 +49,7 @@
                         </el-form-item>
                     </div>
                 </el-collapse-item>
-                <el-collapse-item title="权限信息" name="2">
+                <el-collapse-item title="权限信息" name="2" v-if="userForm.userStatus != 3">
                     <el-button class="float-btn" type="primary" @click="addItem">新增</el-button>
                     <el-table border :data="userForm.list" style="width: 100%">
                         <el-table-column label="组织" min-width="200" label-class-name="required">
@@ -86,7 +86,7 @@
                         </el-table-column>
                     </el-table>
                     <el-form-item label="附件" prop="attachment" class="big">
-                        <upload-panel :size="1" :file-list.sync="attachment" :show-img="true"></upload-panel>
+                        <upload-panel :size="6" accept=".jpg,.jpeg,.png,.gif" :file-list.sync="attachment" :show-img="true"></upload-panel>
                     </el-form-item>
                 </el-collapse-item>
             </el-collapse>
@@ -118,6 +118,7 @@
                     education: '',
                     qualification: '',
                     userStatus: '',
+                    gender: '',
                 },
                 portrait: [],
                 attachment: [],
@@ -130,11 +131,14 @@
                     ],
                     phone: [
                         {required: true, message: '请输入手机号码', trigger: ['blur', 'change']},
-                        {pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '手机号码格式错误', trigger: ['blur', 'change']}
+                        {pattern: /^[1][3,4,5,6,7,8,9][0-9]{9}$/, message: '手机号码格式错误', trigger: ['blur', 'change']}
                     ],
                     email: [
                         {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']},
                         {max: 50, message: '邮箱不能超过50个字符', trigger: ['blur', 'change']}
+                    ],
+                    gender: [
+                        {required: true, message: '请选择性别', trigger: ['blur', 'change']},
                     ],
                     userStatus: [
                         {required: true, message: '请选择状态', trigger: ['blur', 'change']},

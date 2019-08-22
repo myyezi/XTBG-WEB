@@ -18,27 +18,13 @@
             </el-dropdown-menu>
         </el-dropdown>
         <div class="navbar_tools">
-            <el-select v-model="companyId" filterable clearable placeholder="切换所属公司">
-                <el-option label="湖北中大恒润科技有限公司" :value="10"></el-option>
-                <el-option label="湖北中大恒润能源工程有限公司" :value="20"></el-option>
-                <el-option label="胡中大恒润商业运营管理有限公司" :value="30"></el-option>
+            <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()">
+                <el-option v-for="(item,index) in companys"
+                           :key="index"
+                           :label="item.name"
+                           :value="item.id"></el-option>
             </el-select>
             <ul class="clearfix">
-                <!-- <li class="clearfix">
-                    <img :src="messagePic" />
-                    <span :style="{'color':sizeColor}">消息</span>
-                    <el-badge class="message_number" :value="12" />
-                </li> -->
-                <!--<li class="clearfix"  @click="changeCompany()">
-                    <img :src="communicationPic" />
-                    <span :style="{'color':sizeColor}">切换</span>
-                    <el-select v-model="companyId" filterable clearable placeholder="请选择所属公司">
-                        <el-option label="湖北中大恒润科技有限公司" :value="10"></el-option>
-                        <el-option label="湖北中大恒润能源工程有限公司" :value="20"></el-option>
-                        <el-option label="胡中大恒润商业运营管理有限公司" :value="30"></el-option>
-                    </el-select>
-                    &lt;!&ndash;<el-badge class="message_number" :value="unReadNum" v-if="unReadNum>0"/>&ndash;&gt;
-                </li>-->
                 <li class="clearfix"  @click="openImChat">
                     <img :src="communicationPic" />
                     <span :style="{'color':sizeColor}">通讯</span>
@@ -66,9 +52,12 @@
     import Breadcrumb from '@/components/Breadcrumb'
     import Hamburger from '@/components/Hamburger'
     import IMChat from '@/views/im/index2.vue';
+    import ajax from '@/utils/request'
     export default {
         data(){
             return {
+                companyId: '',
+                companys: [],
                 unReadNum:0,
                 nowDate: new Date().format('yyyy-MM-dd'),
                 nowText: this.getDateText(),
@@ -117,8 +106,27 @@
             this.$set(this.colorList[0],'active',true);
         },
         methods: {
+            getCompanys() {
+                ajax.get('upms/organization/managerCompany').then(result => {
+                    this.companys = result.data;
+                });
+            },
             changeCompany() {
-
+                ajax.get('upms/user/getCurrentUserAuthority?companyId='+ this.companyId).then(response => {
+                    const data = response.data.menuStr;
+                    console.log(data);
+                    console.log(data.indexOf("/common/index") != -1);
+                    console.log(data.indexOf("/common/storeIndex") != -1);
+                    if (data.indexOf("/common/index") != -1) {
+                        this.$router.push({path: '/'})
+                    }
+                    else if (data.indexOf("/common/storeIndex") != -1) {
+                        this.$router.push({path: '/index'})
+                    }
+                    else {
+                        this.$router.push({path: '/'})
+                    }
+                })
             },
 
             openImChat(){
@@ -179,6 +187,7 @@
             },
         },
         mounted(){
+            this.getCompanys();
             window.setInterval(() => {
                 let date = new Date();
                 this.nowDate = date.format('yyyy-MM-dd');

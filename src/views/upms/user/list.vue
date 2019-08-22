@@ -56,8 +56,8 @@
                         <div class="input-group input-groups">
                             <el-select v-model="searchParam.userStatus" placeholder="全部">
                                 <el-option label="全部" value="-1"></el-option>
-                                <el-option label="正式员工" value="1"></el-option>
-                                <el-option label="试用期" value="2"></el-option>
+                                <el-option label="试用期" value="1"></el-option>
+                                <el-option label="正式员工" value="2"></el-option>
                                 <el-option label="离职" value="3"></el-option>
                             </el-select>
                         </div>
@@ -84,7 +84,6 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="phone" sortable min-width="130" label="手机号"></el-table-column>
-                <el-table-column prop="account" sortable show-overflow-tooltip min-width="150" label="用户名"></el-table-column>
                 <el-table-column prop="email" sortable show-overflow-tooltip min-width="150" label="邮箱"></el-table-column>
                 <el-table-column prop="organizations" sortable show-overflow-tooltip min-width="150" label="组织"></el-table-column>
                 <el-table-column prop="roles" sortable show-overflow-tooltip min-width="150" label="角色"></el-table-column>

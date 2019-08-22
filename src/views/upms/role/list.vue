@@ -48,8 +48,12 @@
                         <a size="mini" @click="assignAuthority(scope.row,false)">{{scope.row.name}}</a>
                     </template>
                 </el-table-column>
+                <el-table-column prop="assignedCount" sortable label="分配人数" min-width="100">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="small" @click="showUserList(scope.row)">{{scope.row.assignedCount}}</el-button>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="companyName" sortable label="所属管理公司" min-width="150" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="assignedCount" sortable label="分配人数" min-width="100"></el-table-column>
                 <el-table-column prop="creater" sortable label="创建人" min-width="100"></el-table-column>
                 <el-table-column prop="createTime" sortable label="创建时间" min-width="150"></el-table-column>
                 <el-table-column prop="updater" sortable label="更新人" min-width="100"></el-table-column>
@@ -88,6 +92,13 @@
         <!-- 权限分配、权限详情-->
         <permissionForm ref="form"></permissionForm>
 
+        <el-dialog width="400px" title="分配用户" :visible.sync="userDialogVisible" :append-to-body="true" class="el-dialog__body">
+            <el-table ref="multipleTable" :data="userList" tooltip-effect="dark" style="width: 100%">
+                <el-table-column prop="name" label="姓名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="userStatus" label="状态" show-overflow-tooltip></el-table-column>
+            </el-table>
+        </el-dialog>
     </div>
 </template>
 
@@ -103,6 +114,8 @@
         data() {
             return {
                 isShowMore:false,
+                userDialogVisible: false,
+                userList: [],
                 showEditBtn: this.getCurrentUserAuthority("role/edit"),
                 showAddBtn: this.getCurrentUserAuthority("role/add"),
                 showAuthorityBtn: this.getCurrentUserAuthority("role/authority"),
@@ -132,6 +145,13 @@
             this.getCompanys()
         },
         methods: {
+            showUserList(row) {
+                this.userDialogVisible = true
+                ajax.get('upms/user/getUserListByRoleId?roleId='+ row.id).then(rs => {
+                    this.userList = rs.data;
+                });
+            },
+
             assignAuthority(row, showButton) {
                 this.$refs.form.open(row, showButton);
             },
