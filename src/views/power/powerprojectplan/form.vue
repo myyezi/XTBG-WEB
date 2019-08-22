@@ -4,7 +4,7 @@
       <el-collapse v-model="openCollapse">
         <el-collapse-item title="项目计划" name="1">
             <div class="flex-panel">
-                <el-form-item label="项目任务书" prop="projectTaskId">
+                <el-form-item label="项目任务书" prop="taskId">
                     <el-select v-model="taskId" placeholder="请选择项目任务书" clearable @change="onChangeProjectTask" :disabled="disabledTaskSelect">
                         <el-option v-for="e in projectTaskList"  :key="e.id" :label="e.name" :value="e.id" ></el-option >
                     </el-select>
@@ -124,13 +124,13 @@
                   <el-radio v-model="powerprojectplanform.isApproval" :label="1">是</el-radio>
                   <el-radio v-model="powerprojectplanform.isApproval" :label="0">否</el-radio>
               </el-form-item>
-              <el-form-item label="是否上传文件" prop="indexScore">
+              <el-form-item label="是否上传文件" prop="isUpload">
                   <el-radio v-model="powerprojectplanform.isUpload" :label="1">是</el-radio>
                   <el-radio v-model="powerprojectplanform.isUpload" :label="0">否</el-radio>
               </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogVisible = false">取 消</el-button>
+              <el-button @click="dialogVisible = false;">取 消</el-button>
               <el-button type="primary" @click="ok">确 定</el-button>
           </div>
     </el-dialog>
@@ -181,6 +181,7 @@ export default {
         projectTaskList : [],
         stageList : [],
         taskId : "",
+        projectId : "",
         disabledTaskSelect : false,
         showContent : "",
         operationType : "",
@@ -190,8 +191,27 @@ export default {
         tempArr : [],
         showSaveDraftBtn : false,
         rules: {
-            projectTaskId: [
-                { required: true, message: '请选择项目任务书', trigger: ['blur'] }
+            name: [
+                { required: true, message: '请输入工作内容', trigger: ['change','blur'] }
+            ],
+            period: [
+                { required: true, message: '请输入工期', trigger: ['blur'] },
+                { validator: formRule.money, message: '工期格式不正确', trigger: 'blur' }
+            ],
+            planStartDate: [
+                { required: true, message: '请选择开始时间', trigger: ['blur'] }
+            ],
+            planEndDate: [
+                { required: true, message: '请选择结束时间', trigger: ['blur'] }
+            ],
+            stage: [
+                { required: true, message: '请选择所属阶段', trigger: ['change','blur'] }
+            ],
+            principal: [
+                { required: true, message: '请选择负责人', trigger: ['change','blur'] }
+            ],
+            profession: [
+                { required: true, message: '请输入专业', trigger: ['blur','blur'] }
             ],
         },
         tasks: {
@@ -300,7 +320,6 @@ export default {
           this.onChangeProjectTask();
           this.disabledTaskSelect = true;
       }
-
       Bus.$on("task-updated", data => {
           let _$this = this;
           let flag = false;
@@ -309,6 +328,7 @@ export default {
                   flag = true;
               }
           });
+          this.clearValidate('ruleForm');
           if(data.operationType === 'add') {
               this.powerprojectplanform = {
                   isApproval : 1,
@@ -337,6 +357,8 @@ export default {
               }
               if (this.powerprojectplanform.parent == "0"){
                   this.showContent = true;
+              }else{
+                  this.showContent = false;
               }
               this.dialogVisible = true;
           }else if(data.operationType === 'deleted') {
@@ -389,6 +411,7 @@ export default {
             ajax.get('power/powerprojecttask/getOneById/' + this.taskId).then(rs => {
                 if (rs.status === 0){
                     this.powerprojecttaskForm = rs.data;
+                    this.projectId = rs.data.projectId;
                     this._getTasksModel();
                 }else{
                     this.$message({
@@ -482,6 +505,15 @@ export default {
             this.tasks = obj;
         }
     },
+
+      // 清楚弹窗内容以及警告信息
+    clearValidate(formName) {
+        if(this.$refs[formName]) {
+            this.$refs[formName].clearValidate();
+        }
+    },
+
+    // 弹框“确定”操作
     ok(){
         this.$refs['ruleForm'].validate((valid) => {
             if (valid) {
@@ -495,7 +527,6 @@ export default {
                 } else if (this.operationType === 'inserted'){
                     newChild.parent = this.formData.id;
                     newChild.level = this.formData.level + 1;
-                    console.info(newChild);
                 } else {
                     if (this.tasks.data && this.tasks.data.length > 0){
                         this.dataArr.forEach((item,index) => {
@@ -571,26 +602,17 @@ export default {
             return;
         }
         let newList = [];
+        let obj = {};
         this.tasks.data.forEach((item) => {
-            this.formData.id = item.id;
-            this.formData.name = item.name;
-            this.formData.parentId = item.parent;
-            this.formData.level = item.level;
-            this.formData.period = item.period;
-            this.formData.planStartDate = item.planEndDate;
-            this.formData.planEndDate = item.planEndDate;
-            this.formData.profession = item.profession;
-            this.formData.stage = item.stage;
-            this.formData.principal = item.principal;
-            this.formData.isApproval = item.isApproval;
-            this.formData.isUpload = item.isUpload;
-            newList.push(this.formData);
+            obj = item;
+            newList.push(obj);
         });
         ajax.post('power/powerprojectplan', {
             projectStatus : projectStatus,
+            tempType : this.tempType,
             taskId : this.taskId,
             projectId : this.projectId,
-            treeDataList : this.newList
+            treeDataList : newList
         }).then(rs => {
             if (rs.status == 0) {
                 this.$message.success(rs.msg);

@@ -412,7 +412,6 @@ methods: {
                     newChild.id = this.formData.id
                 }
                 newChild.sortNum = this.getSortNum(newChild.parentId);
-                console.info("sortNum:",newChild.sortNum);
                 this.getNodeProcessing(newChild);
             } else {
                 return false;
@@ -424,7 +423,6 @@ methods: {
             return 1;
         }
         this.getAllList(this.treeData.lists);
-        console.info("allList:",this.allList);
         let arr = [];
         this.allList.forEach((item) => {
             if (item.parentId == parentId){
