@@ -5,7 +5,7 @@
         <el-collapse-item title="项目计划" name="1">
             <div class="flex-panel">
                 <el-form-item label="项目任务书" prop="projectTaskId">
-                    <el-select v-model="taskId" placeholder="请选择项目任务书" clearable @change="onChangeProjectTask">
+                    <el-select v-model="taskId" placeholder="请选择项目任务书" clearable @change="onChangeProjectTask" :disabled="disabledTaskSelect">
                         <el-option v-for="e in projectTaskList"  :key="e.id" :label="e.name" :value="e.id" ></el-option >
                     </el-select>
                 </el-form-item>
@@ -68,7 +68,8 @@
           </el-collapse-item>
       </el-collapse>
       <div class="left-row">
-        <el-button type="primary" @click="submitForm('powerprojecttaskForm')">保存</el-button>
+        <el-button type="primary" @click="submitForm(2)">提交</el-button>
+        <el-button v-show="showSaveDraftBtn" type="primary" @click="submitForm(1)">保存草稿</el-button>
         <el-button @click="close">返回</el-button>
       </div>
     </el-form>
@@ -140,7 +141,7 @@
 
 <script>
 import ajax from '@/utils/request'
-import { tool, ruleTool } from '@/utils/common'
+import { tool, ruleTool ,formRule} from '@/utils/common'
 import GanttAdd from '@/components/Gannt/add'
 import '@/components/dhtmlx-gantt'
 import "@/components/dhtmlx-gantt/codebase/locale/locale_cn"
@@ -162,6 +163,7 @@ export default {
             isUpload : 1,
         },
         formData : {
+            id : "",
             name : "",
             period : null,
             planStartDate : "",
@@ -179,8 +181,14 @@ export default {
         projectTaskList : [],
         stageList : [],
         taskId : "",
+        disabledTaskSelect : false,
         showContent : "",
         operationType : "",
+        dataArr : [],
+        idArr : [],
+        tempType : "",
+        tempArr : [],
+        showSaveDraftBtn : false,
         rules: {
             projectTaskId: [
                 { required: true, message: '请选择项目任务书', trigger: ['blur'] }
@@ -248,6 +256,13 @@ export default {
                 label:'负责人',
                 align: "center",
                 width:'100',
+                template:function(obj){
+                    if (!obj.principal){
+                        return ""
+                    }else {
+                        return obj.principalText
+                    }
+                }
             },
             {
                 name:'profession',
@@ -280,37 +295,59 @@ export default {
        this._getTasksModel();
   },
   mounted() {
-      //gantt.config.drag_links = true;
-      this.projectId = this.$route.query.id;
+      if (this.$route.query.id){
+          this.taskId = this.$route.query.id;
+          this.onChangeProjectTask();
+          this.disabledTaskSelect = true;
+      }
+
       Bus.$on("task-updated", data => {
           let _$this = this;
           let flag = false;
           this.tasks.data.forEach((item)=>{
-              if (item.parent == data.id){
+              if (item.parent && item.parent == data.id){
                   flag = true;
               }
           });
           if(data.operationType === 'add') {
+              this.powerprojectplanform = {
+                  isApproval : 1,
+                  isUpload : 1
+              };
               this.dialogVisible = true;
               this.showContent = true;
               this.operationType = "add";
           }else if (data.operationType === 'inserted'){
+              this.powerprojectplanform = {
+                  isApproval : 1,
+                  isUpload : 1
+              };
               this.dialogVisible = true;
               this.showContent = false;
+              this.formData.id = data.id;
               this.operationType = "inserted";
           }else if (data.operationType === 'updated'){
               this.operationType = "updated";
-              if (data.parentId == "0"){
+              if (this.tasks.data && this.tasks.data.length > 0){
+                  this.tasks.data.forEach((item) => {
+                      if(data.id == item.id) {
+                          this.powerprojectplanform = item;
+                      }
+                  });
+              }
+              if (this.powerprojectplanform.parent == "0"){
                   this.showContent = true;
               }
+              this.dialogVisible = true;
           }else if(data.operationType === 'deleted') {
+              this.operationType = "deleted";
               let message = flag ? "确定删除该节点及以下节点?" : "确定删除该节点?";
               this.$confirm(message ,'提示', {
                   confirmButtonText: '确定',
                   cancelButtonText: '取消',
                   type: 'warning',
               }).then(function() {
-                  _$this.delete(data.id);
+                  _$this.getNodeProcessing(data,_$this.dataArr);
               }).catch(function() {
               });
           }
@@ -320,18 +357,6 @@ export default {
       this.getStageList();
   },
   methods: {
-
-    //进入编辑页调用 bean为列表页传入数据
-    open() {
-        if (this.$route.query.id) {
-            ajax.get('project/powerprojectplan/' + this.$route.query.id).then(rs => {
-                this.powerprojecttaskForm = rs.data;
-                if (null != rs.data.img && rs.data.img.length > 0) {
-                    this.img = JSON.parse(rs.data.img);
-                }
-            });
-        }
-    },
 
     // 工程阶段字典
     getStageList() {
@@ -360,6 +385,7 @@ export default {
     // 改变项目任务书下拉框事件
     onChangeProjectTask(){
         if (this.taskId){
+            // 获取项目任务书对象
             ajax.get('power/powerprojecttask/getOneById/' + this.taskId).then(rs => {
                 if (rs.status === 0){
                     this.powerprojecttaskForm = rs.data;
@@ -387,27 +413,74 @@ export default {
 
     // 项目计划列表
     _getTasksModel() {
-        ajax.get('power/powerprojectplan/getPlanTree?taskId='+this.taskId).then(rs => {
-            if(rs.status === 0) {
-                if(rs.data) {
-                    rs.data.forEach((item)=>{
-                        item.start_date = item.planStartDate;
-                        item.end_date = item.planEndDate;
-                        item.open = true;
+        if(this.taskId){
+            ajax.get('power/powerprojectplan/getPlanTree?taskId='+this.taskId).then(rs => {
+                if(rs.status === 0) {
+                    if(rs.data) {
+                        if (rs.data.length > 0){
+                            rs.data.forEach((item)=>{
+                                item.start_date = item.planStartDate;
+                                item.end_date = item.planEndDate;
+                                item.text = item.name;
+                                item.parent = item.parentId;
+                                item.open = true;
+                            });
+                            let obj = {};
+                            this.isLoading = true;
+                            obj.data = rs.data;
+                            this.tasks = obj;
+                            this.dataArr = rs.data;
+                            this.tempType = "edit";
+                            this.showSaveDraftBtn = false;
+                        }else{
+                            // 根据项目类型复制模板数据到项目计划
+                            if (this.powerprojecttaskForm.type){
+                                ajax.post('power/powerprojectplan/copyToPlan/',{
+                                    projectType : this.powerprojecttaskForm.type,
+                                    taskId : this.taskId,
+                                }).then(rs => {
+                                    if(rs.status === 0) {
+                                        if(rs.data) {
+                                            rs.data.forEach((item)=>{
+                                                item.start_date = item.planStartDate ? item.planStartDate : "";
+                                                item.end_date = item.planEndDate ? item.planEndDate : "";
+                                                item.text = item.name;
+                                                item.parent = item.parentId;
+                                                item.open = true;
+                                            });
+                                            let obj = {};
+                                            this.isLoading = true;
+                                            obj.data = rs.data;
+                                            this.tasks = obj;
+                                            this.dataArr = rs.data;
+                                            this.tempType = "edit";
+                                            this.showSaveDraftBtn = false;
+                                        }else{
+                                            let obj = {};
+                                            this.isLoading = true;
+                                            obj.data = [];
+                                            this.tasks = obj;
+                                            this.tempType = "add";
+                                            this.showSaveDraftBtn = true;
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    this.$message({
+                        message: rs.msg,
+                        type: 'error'
                     });
-                    let obj = {};
-                    this.isLoading = true;
-                    obj.data = rs.data;
-                    this.tasks = obj;
                 }
-            } else {
-                this.$message({
-                    message: rs.msg,
-                    type: 'error'
-                });
-            }
-        });
-
+            });
+        }else{
+            let obj = {};
+            this.isLoading = true;
+            obj.data = [];
+            this.tasks = obj;
+        }
     },
     ok(){
         this.$refs['ruleForm'].validate((valid) => {
@@ -417,15 +490,20 @@ export default {
                 newChild.start_date = this.powerprojectplanform.planStartDate;
                 newChild.end_date = this.powerprojectplanform.planEndDate;
                 if(this.operationType === 'add') {
-                    // 新增传父级id
-                    newChild.parentId = 0;
+                    newChild.parent = 0;
                     newChild.level = 1;
                 } else if (this.operationType === 'inserted'){
-                    newChild.parentId = this.formData.id;
+                    newChild.parent = this.formData.id;
                     newChild.level = this.formData.level + 1;
+                    console.info(newChild);
                 } else {
-                    // 编辑传id
-                    newChild.id = this.formData.id
+                    if (this.tasks.data && this.tasks.data.length > 0){
+                        this.dataArr.forEach((item,index) => {
+                            if(item.id === this.powerprojectplanform.id) {
+                                this.dataArr.splice(index, 1);
+                            }
+                        });
+                    }
                 }
                 //newChild.sortNum = this.getSortNum(newChild.parentId);
                 this.getNodeProcessing(newChild);
@@ -444,68 +522,82 @@ export default {
                 type: 'success'
             });
             this.dialogVisible = false;
-            if(this.operationType === 'add') {
-                console.info("111111111",data);
-                let dataArr = [];
-                dataArr.push(data);
-                //this.tasks.data.push(data);
-                let obj = {};
-                this.isLoading = true;
-                obj.data = dataArr;
-                obj.links = [];
-                this.tasks = obj;
-                console.info("2222222",this.tasks);
-            } else {
-                if (!this.formData.children) {
-                    this.$set(this.formData, 'children', []);
-                }
-                this.formData.children.push(data);
-            }
-        } else if(this.operationType === 'delete') {
-            node.forEach((item,index) => {
-                if(item.id === data.id) {
-                    node.splice(index, 1);
-                } else {
-                    if (item.children && item.children.length>0) {
-                        this.getNodeProcessing(data,item.children)
+            this.dataArr.push(data);
+            let obj = {};
+            this.isLoading = true;
+            obj.data = this.dataArr;
+            this.tasks = obj;
+        } else if(this.operationType === 'deleted') {
+            if (node && node.length > 0){
+                node.forEach((item, index) => {
+                    if(item && item.id == data.id) {
+                        node.splice(index, 1, null);
+                    } else {
+                        if (item && item.parent && item.parent == data.id) {
+                            this.getNodeProcessing(item, node);
+                        }
                     }
+                });
+            }
+            let newArray = [];
+            this.dataArr.forEach((item) => {
+                if (item){
+                    newArray.push(item)
                 }
             });
+            this.dataArr = newArray;
+            let obj = {};
+            this.isLoading = true;
+            obj.data = this.dataArr;
+            this.tasks = obj;
         } else {
             this.$message({
                 message: '编辑成功',
                 type: 'success'
             });
+            debugger;
             this.dialogVisible = false;
-            // 弹窗表单修改的字段需要给formData中对应的字段附值
-            this.formData.name = data.name;
-            this.formData.period = data.period;
-            this.formData.profession = data.profession;
-            this.formData.stage = data.stage;
-            this.formData.isApproval = data.isApproval;
-            this.formData.isUpload = data.isUpload;
+            this.dataArr.push(data);
+            let obj = {};
+            this.isLoading = true;
+            obj.data = this.dataArr;
+            this.tasks = obj;
         }
     },
-    //保存
-    submitForm(form) {
-      var data = this.powerprojecttaskForm;
-      this.$refs[form]
-        .validate((valid) => {
-          if (!valid) {
-            this.$message
-              .error('校验不通过，请检查输入项');
+      //保存
+    submitForm(projectStatus) {
+        if (!this.taskId || this.tasks.data.length == 0){
+            this.$message.error('数据无效，请检查！');
             return;
-          }
-          ajax.post('project/powerprojectplan', data).then(rs => {
+        }
+        let newList = [];
+        this.tasks.data.forEach((item) => {
+            this.formData.id = item.id;
+            this.formData.name = item.name;
+            this.formData.parentId = item.parent;
+            this.formData.level = item.level;
+            this.formData.period = item.period;
+            this.formData.planStartDate = item.planEndDate;
+            this.formData.planEndDate = item.planEndDate;
+            this.formData.profession = item.profession;
+            this.formData.stage = item.stage;
+            this.formData.principal = item.principal;
+            this.formData.isApproval = item.isApproval;
+            this.formData.isUpload = item.isUpload;
+            newList.push(this.formData);
+        });
+        ajax.post('power/powerprojectplan', {
+            projectStatus : projectStatus,
+            taskId : this.taskId,
+            projectId : this.projectId,
+            treeDataList : this.newList
+        }).then(rs => {
             if (rs.status == 0) {
-              this.$message
-                .success(rs.msg);
-              this.close();
+                this.$message.success(rs.msg);
+                this._getTasksModel();
             } else {
-              this.$message
-                .error(rs.msg);
+                this.$message.error(rs.msg);
             }
-          });
         });
     },
 
