@@ -77,9 +77,10 @@
     <div class="division-line"></div>
     <div class="table-box">
       <el-table :data="list" style="width: 100%">
-        <el-table-column fixed label="操作" width="120">
+        <el-table-column fixed label="操作" width="150">
           <template fixed slot-scope="{ row, column, $index }">
-            <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="edit(row.id)" type="text" size="small">开启</el-button>
+            <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="operate(row.id, 2)" type="text" size="small">开启</el-button>
+            <el-button v-show="showStartBtn" v-if="row.projectStatus==2" @click="operate(row.id, 3)" type="text" size="small">暂停</el-button>
             <el-button v-show="showProgressBtn" v-if="row.projectStatus==2" @click="edit(row.id)" type="text" size="small">执行</el-button>
             <el-button v-show="showStopBtn"  v-if="row.projectStatus==2" @click="stop(row)" type="text" size="small">申请延期</el-button>
           </template>
@@ -189,7 +190,27 @@ export default {
                       .error(rs.msg);
               }
           });
+      },
+      operate(projectId, projectStatus){
+          let that = this;
+          let message = projectStatus == 2 ? "确定开启该项目?" : "确定暂停该项目?"
+          this.$confirm(message ,'提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning',
+          }).then(function() {
+              ajax.post('power/powerproject/operate',{projectId : projectId, projectStatus : projectStatus}).then(rs => {
+                  if (rs.status == 0) {
+                      that.getList();
+                      that.$message.success(rs.msg);
+                  } else {
+                      that.$message.error(rs.msg);
+                  }
+              });
+          }).catch(function() {
+          });
       }
+
   }
 }
 </script>

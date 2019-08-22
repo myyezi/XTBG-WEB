@@ -148,7 +148,7 @@ export default {
               cancelButtonText: '取消',
               type: 'warning',
           }).then(function() {
-              ajax.post('power/powerproject/finish',{projectId : projectId}).then(rs => {
+              ajax.post('power/powerproject/operate',{projectId : projectId, projectStatus : 4}).then(rs => {
                   if (rs.status == 0) {
                       that.getList();
                       that.$message.success(rs.msg);
@@ -158,7 +158,6 @@ export default {
               });
           }).catch(function() {
           });
-
       }
   }
 }
