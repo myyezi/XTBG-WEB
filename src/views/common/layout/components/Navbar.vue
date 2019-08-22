@@ -18,12 +18,12 @@
             </el-dropdown-menu>
         </el-dropdown>
         <div class="navbar_tools">
-            <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()">
+            <!--<el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()">
                 <el-option v-for="(item,index) in companys"
                            :key="index"
                            :label="item.name"
                            :value="item.id"></el-option>
-            </el-select>
+            </el-select>-->
             <ul class="clearfix">
                 <li class="clearfix"  @click="openImChat">
                     <img :src="communicationPic" />
