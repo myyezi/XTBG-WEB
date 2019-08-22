@@ -186,6 +186,7 @@ export default {
         ProprietorList: [],
         coDepartmentOptions: [],
         ContactList: [],
+        companyList:[],
         userList: [],
         createTime:[],
         signTime:[],
@@ -290,6 +291,7 @@ export default {
               this.companyList = rs.data;
           });
       },
+
 
       //切换页容量
       handleSizeChange2(val) {

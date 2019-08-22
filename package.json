@@ -24,6 +24,7 @@
     "normalize.css": "7.0.0",
     "object-assign": "^4.1.1",
     "nprogress": "0.2.0",
+    "plupload": "^2.3.6",
     "quill-image-drop-module": "1.0.3",
     "quill-image-resize-module": "^3.0.0",
     "v-charts": "^1.17.10",

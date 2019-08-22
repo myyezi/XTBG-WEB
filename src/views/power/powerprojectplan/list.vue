@@ -1,7 +1,7 @@
 <template>
   <div class="app-container white-bg list-panel" v-cloak>
     <div class="opertion-box">
-      <el-button type="primary" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建</el-button>
+      <el-button v-show="showAddBtn" type="primary" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建</el-button>
       <el-input v-model="searchParam.zy_input" placeholder="请输入" clearable class="zy_input" style="width:190px"></el-input>
       <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
@@ -152,7 +152,8 @@
       <el-table :data="list" style="width: 100%">
         <el-table-column fixed label="操作" width="120">
           <template fixed slot-scope="{ row, column, $index }">
-            <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
+              <el-button v-show="showEditBtn" @click="edit(row.taskId)" type="text" size="small">编辑</el-button>
+              <el-button v-show="showFinishBtn" @click="edit(row.id)" type="text" size="small">完成</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
@@ -184,8 +185,9 @@ export default {
       isShowMore: false,
       listUrl: "power/powerproject",
       showSearch: false,
-      showAddBtn: this.getCurrentUserAuthority("/powerprojectplan/save"),
-      showEditBtn: this.getCurrentUserAuthority("/powerprojectplan/edit")
+      showAddBtn: this.getCurrentUserAuthority("/power/powerprojectplan/add"),
+      showEditBtn: this.getCurrentUserAuthority("/power/powerprojectplan/edit"),
+      showFinishBtn: this.getCurrentUserAuthority("/power/powerprojectplan/finish"),
     }
   },
   mounted() {

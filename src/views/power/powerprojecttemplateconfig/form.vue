@@ -412,6 +412,7 @@ methods: {
                     newChild.id = this.formData.id
                 }
                 newChild.sortNum = this.getSortNum(newChild.parentId);
+                console.info("sortNum:",newChild.sortNum);
                 this.getNodeProcessing(newChild);
             } else {
                 return false;
@@ -419,13 +420,20 @@ methods: {
         });
     },
     getSortNum(parentId){
+        if (this.treeData.lists.length == 0){
+            return 1;
+        }
         this.getAllList(this.treeData.lists);
+        console.info("allList:",this.allList);
         let arr = [];
         this.allList.forEach((item) => {
             if (item.parentId == parentId){
                 arr.push(item.sortNum ? item.sortNum : 0);
             }
         });
+        if (arr.length == 0){
+            return 1;
+        }
         arr.sort(function (a, b) {
             return a-b;
         });
