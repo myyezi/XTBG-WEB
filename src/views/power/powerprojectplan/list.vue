@@ -194,7 +194,6 @@ export default {
     this.getList();
   },
   methods: {
-
   }
 }
 </script>
