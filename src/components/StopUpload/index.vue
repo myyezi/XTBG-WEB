@@ -2,7 +2,7 @@
   <div>
     <uploader
       browse_button="browse_button"
-      :url="server_config+'power/powerprojecttask/bigFile'"
+      :url="server_config+'file/upload/bigFile'"
       chunk_size="2MB"
       :max_retries="3"
       :filters="{prevent_duplicates:true}"
@@ -75,6 +75,7 @@
     watch: {
       files: {
         handler() {
+            console.log(this.files)
           this.tableData = [];
           this.files.forEach((e) => {
             this.tableData.push({
@@ -109,7 +110,8 @@
         this.up.removeFile(file);
       },
       beforeUpload(up, file) {
-        up.setOption("multipart_params", {"size":file.size,"md5":file.md5,'chunk':6});
+          console.log(file)
+        up.setOption("multipart_params", {"size":file.size,"md5":file.md5});
       },
       uploadStart() {
         this.uploading = true;
