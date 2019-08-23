@@ -26,8 +26,8 @@
             </span>
         </el-tree>
 
-        <!--<div class="tree_two_count_right">-->
-        <el-dialog width="600px" title="" :visible.sync="userDialogVisible" :append-to-body="true" class="el-dialog__body">
+        <div class="tree_two_count_right">
+        <!--<el-dialog width="600px" title="" :visible.sync="userDialogVisible" :append-to-body="true" class="el-dialog__body">-->
             <!--<p v-if="checkData.name" style="width: 2000px">{{checkData.name}}</p>-->
             <span style="color: black;font-size: 16px; text-align: left; display: block;" v-if="checkData.name">{{checkData.name}}
                 <el-select v-if="checkData.name" v-model="userStatus" filterable clearable style="width: 200px;" @change="getUserList()">
@@ -36,11 +36,6 @@
                 <el-option label="离职" :value="3"></el-option>
             </el-select>
             </span>
-            <!--<el-select v-if="checkData.name" v-model="userStatus" filterable clearable style="width: 200px" @change="getUserList()">
-                <el-option label="试用期" :value="1"></el-option>
-                <el-option label="正式员工" :value="2"></el-option>
-                <el-option label="离职" :value="3"></el-option>
-            </el-select>-->
             <el-table
                 v-if="isClickNode"
                 ref="multipleTable"
@@ -54,8 +49,8 @@
                 </el-table-column>
                 <el-table-column prop="email" label="邮箱" width="200" show-overflow-tooltip></el-table-column>
             </el-table>
-        </el-dialog>
-        <!--</div>-->
+<!--        </el-dialog>-->
+        </div>
     </div>
 
 </template>
