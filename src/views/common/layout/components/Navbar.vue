@@ -35,7 +35,7 @@
                 </el-dropdown>
             </ul>
         </div>
-        <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()" style="float:right;margin-right:10px">
+        <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()" style="float:right;width: 200px;margin-right:10px">
             <el-option v-for="(item,index) in companys"
                     :key="index"
                     :label="item.name"
