@@ -1,4 +1,5 @@
 <template>
+<div>
     <div class="tree-panel" @click.prevent.stop>
         <el-input :placeholder="placeholder" v-model="filterText"></el-input>
         <el-tree
@@ -25,34 +26,8 @@
                 </span>
             </span>
         </el-tree>
-
-        <div class="tree_two_count_right">
-        <!--<el-dialog width="600px" title="" :visible.sync="userDialogVisible" :append-to-body="true" class="el-dialog__body">-->
-            <!--<p v-if="checkData.name" style="width: 2000px">{{checkData.name}}</p>-->
-            <span style="color: black;font-size: 16px; text-align: left; display: block;" v-if="checkData.name">{{checkData.name}}
-                <el-select v-if="checkData.name" v-model="userStatus" filterable clearable style="width: 200px;" @change="getUserList()">
-                <el-option label="试用期" :value="1"></el-option>
-                <el-option label="正式员工" :value="2"></el-option>
-                <el-option label="离职" :value="3"></el-option>
-            </el-select>
-            </span>
-            <el-table
-                v-if="isClickNode"
-                ref="multipleTable"
-                :data="tableData"
-                style="width: 100%"
-                max-height="360"
-            >
-                <el-table-column prop="name" label="姓名" width="200"></el-table-column>
-                <el-table-column label="联系方式" width="200">
-                    <template slot-scope="scope">{{ scope.row.phone }}</template>
-                </el-table-column>
-                <el-table-column prop="email" label="邮箱" width="200" show-overflow-tooltip></el-table-column>
-            </el-table>
-<!--        </el-dialog>-->
-        </div>
     </div>
-
+</div>
 </template>
 
 <script>
@@ -88,7 +63,6 @@
                 checkData:{},
                 tableData: [],
                 multipleTable: "",
-                userDialogVisible: false,
             };
         },
         watch: {
@@ -106,23 +80,8 @@
             },
         },
         methods: {
-            getUserList() {
-                ajax.get('upms/organization/getOrganizationUserList/' + this.checkData.id, {userStatus: this.userStatus}).then(rs => {
-                    this.tableData = rs.data;
-                    this.loadings = false
-                });
-            },
-
             handleNodeClick(data) {
-                this.userDialogVisible = true
-                this.loadings = true
-                this.isClickNode = true
-                this.checkData = data
-                ajax.get('upms/organization/getOrganizationUserList/' + this.checkData.id).then(rs => {
-                    this.tableData = rs.data;
-                    this.loadings = false
-                });
-
+                this.$emit('show-table', data);
             },
             // 编辑节点
             edit(data) {
@@ -177,7 +136,7 @@
 <style lang="scss" scoped>
     .custom-tree-node {
         display: flex;
-        width: calc(100% - 25px);
+        width: 100%;
         justify-content: space-between;
         align-items: center;
 
@@ -191,7 +150,7 @@
         }
 
         .btn-list {
-            width: 350px;
+            width: 275px;
             text-align: right;
 
             .type-text {
