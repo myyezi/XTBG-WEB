@@ -5,6 +5,7 @@
                 <div class="title">组织设置</div>
             </div>
             <div class="tree-content">
+                <!--<tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll"></tree-two>-->
                 <tree-panel ref="tree" url="upms/organization/tree"
                             :showAdd="showAdd" :showEdit="showEdit" @show-form="open"></tree-panel>
             </div>
@@ -38,15 +39,17 @@
 </template>
 
 <script>
-    import TreePanel from '@/components/TreePanel/index'
+    // import TreePanel from '@/components/TreePanel/index'
+    import TreePanel from './TreePanel.vue'
     import TreeSelect from '@/components/TreeSelect/index'
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
+    import TreeTwo from './tree2.vue'
 
     export default {
         name: 'organization',
         mixins: [tool, ruleTool],
-        components: {TreePanel, TreeSelect},
+        components: {TreePanel, TreeSelect, TreeTwo},
         data() {
             return {
                 showAdd: this.getCurrentUserAuthority("sys/organization/insert"),
@@ -58,10 +61,15 @@
                 params: {},
                 editForm: {},
                 disabledArray: [],
-                parentDisabledArr: []
+                parentDisabledArr: [],
+
+                selectionAll:[],
+                companyId: 30,
+                activeName:'second',
             }
         },
         methods: {
+
             open(opt) {
                 this.disabledArray = [];
                 let isEdit = false;

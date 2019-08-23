@@ -114,7 +114,7 @@
               <el-button type="primary" @click="cancel">确 定</el-button>
           </div>
       </el-dialog>
-      <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="80">
+      <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="800px">
           <stop-upload></stop-upload>
       </el-dialog>
   </div>
@@ -131,6 +131,8 @@ export default {
   components: {StopUpload},
   data() {
     return {
+      searchParam: {
+      },
       stopUploadShow:false,
       extDate:'',
       isShowMore: false,
@@ -158,6 +160,9 @@ export default {
       this.getDict();
   },
   methods: {
+      getListBefore(params) {
+          params.initStatus = 1;
+      },
       // 获取字典
       getDict() {
           let r = 'XMLX,GCJD,XBBM';

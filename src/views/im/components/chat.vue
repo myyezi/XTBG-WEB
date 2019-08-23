@@ -11,9 +11,9 @@
                         <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=4">
                             <div class="im-chat-user">
                                 <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
-                                <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
+                                <img v-else :src="allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
                                 <cite v-if="item.fromUserId == user.userId"><i v-if="item.serverTimestamp">{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
-                                <cite v-else>{{ chat.name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
+                                <cite v-else>{{ allUserInfoObj[item.fromUserId].name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
                             <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
                                 <i class="el-icon-loading" v-if="!item.messageId&&item.netStausType==1"></i>
@@ -61,14 +61,14 @@
                 </div>
             </div>
         </div>
-        <el-dialog :visible.sync="showHistory" width="550px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_record_dialog">
+        <el-dialog :visible.sync="showHistory" width="600px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_record_dialog">
               <div slot="title" class="im_chat_record_title clearfix">
                 <img :src="chat.portrait?chat.portrait:defaultPic" alt="头像" v-show="!isSetting">
                 <span v-show="!isSetting"> {{ chat.targetName }}</span>
                 <span v-show="isSetting"> 群设置</span>
               </div>
               <setting :chat="chat" :groupUserList="currentGroupUser"  v-if="showHistory&&isSetting"></setting>
-              <chat-history :chat="chat" :messageList="messageList" :messageImgList="messageImgList" v-if="showHistory&&!isSetting"></chat-history>
+              <chat-history :chat="chat" :messageList="messageList" :messageImgList="messageImgList" :allUserInfoObj="allUserInfoObj" v-if="showHistory&&!isSetting"></chat-history>
         </el-dialog>
         <!-- 大图预览 -->
         <img-previewer :list="previewerImgList" selector=".message-img" :options="options" @on-close="closePic" ref="previewer"></img-previewer>
@@ -99,6 +99,11 @@
       ...mapGetters([
           'user',
       ]),
+      userFriendObj: {
+        get: function() {
+          return this.$store.state.im.userFriendObj
+        }
+      },
       messageList: {
         get: function() {
           return this.$store.state.im.messageListMap[this.chat.targetId];
@@ -162,7 +167,8 @@
             fullscreenEl: false
         },
         previewerImgList:[],//预览的图片集合
-        messageImgList:[]//所有的图片消息图片的集合
+        messageImgList:[],//所有的图片消息图片的集合
+        allUserInfoObj:{} //所有用户信息
       };
     },
     props: ['chat','chatDialogVisible'],
@@ -361,10 +367,20 @@
       // 得到当前点击会话框的聊天信息
       getCurrentMessageList() {
           let self = this;
+          let userInfoObj = {}
           let cacheMessagesObj = {}
           let cacheMessages = []
           self.messageList = [];
           self.messageImgList = []
+          // 从内存中取用户信息
+          userInfoObj = self.$store.state.im.userFriendObj
+          if(JSON.stringify(userInfoObj) == '{}') {
+              userInfoObj = ChatListUtils.getUserFriendObj(self.user.userId)
+              if(JSON.stringify(userInfoObj) !== '{}') {
+                  self.$store.commit('setUserFriendObj', userInfoObj);
+              }
+          }
+          self.allUserInfoObj = userInfoObj
           // 从内存中取聊天信息
           cacheMessagesObj = self.$store.state.im.messageListMap
           if(JSON.stringify(cacheMessagesObj) !== '{}' && cacheMessagesObj[self.chat.targetId]) {
@@ -372,7 +388,7 @@
           }
           if(!cacheMessages||cacheMessages.length===0) {
             // 从缓存中取聊天信息
-            cacheMessagesObj = ChatListUtils.getChatList(this.user.userId)
+            cacheMessagesObj = ChatListUtils.getChatList(self.user.userId)
             if(JSON.stringify(cacheMessagesObj) !== '{}') {
                 self.$store.commit('setMessageListMap', cacheMessagesObj);
                 cacheMessages = cacheMessagesObj[self.chat.targetId];
@@ -433,6 +449,9 @@
       }
     },
     watch: {
+      userFriendObj: function(newvalue,oldvalue) {
+          this.getCurrentMessageList()
+      },
       chat: function(newvalue,oldvalue) {
           this.getCurrentMessageList()
       },

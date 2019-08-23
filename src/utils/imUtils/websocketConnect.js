@@ -7,6 +7,7 @@ const IMTopic = {
     SendMessageTopic: "MS",//发送消息
     NotifyMessageTopic:'MN',//接收通知
     RecallMessageTopic: "MR",//撤回消息
+    GetAllUserTopic: "UUI",//获取所有用户信息
     CreateGroupTopic: "GC",//创建群组
     GetGroupInfoTopic: "GGI",//获取群组
     GetGroupMemberTopic: "GGM",//获取群组成员
@@ -21,7 +22,7 @@ const IMTopic = {
 const websocketConnect = {
     connect: function(data) {
         objData = data;
-        client = new Paho.MQTT.Client(data.ip,Number(data.port),"/wss/mqtt","1@@@"+data.username);
+        client = new Paho.MQTT.Client(data.ip,Number(data.port),process.env.BASE_MQQT,process.env.BASE_PCIM+data.username);
         client.onConnectionLost = this.onConnectionLost;
         client.onMessageArrived = this.onMessageArrived;
         client.onMessageDelivered = this.onMessageDelivered;
@@ -64,6 +65,11 @@ const websocketConnect = {
             }]
         });
         client.pubMessage(obj2,"GGI")
+
+        let obj3 = JSON.stringify({
+            requestList: []
+        });
+        client.pubMessage(obj3,"UUI")
         console.log("connect success.");
     },
     //连接丢失
@@ -123,7 +129,10 @@ const websocketConnect = {
             }
         } else if (message.destinationName == "GC") {
 
-        } else if (message.destinationName == "GGI") {
+        }  else if (message.destinationName == "UUI") {
+            console.log(msg)
+            store.commit('setUserFriendObj', msg.resultList);
+        }  else if (message.destinationName == "GGI") {
             console.log(msg)
             store.commit('setChatGroupList', msg.infoList);
         } else if (message.destinationName == "GGM") {

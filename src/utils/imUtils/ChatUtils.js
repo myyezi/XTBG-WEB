@@ -316,6 +316,10 @@ export const ChatListUtils = {
   setSessionList: function(userId, sessionList) {
     localStorage.setItem(userId+'session', JSON.stringify(sessionList));
   },
+  // 缓存所有用户信息
+  setUserFriendObj: function(userId, userFriendObj) {
+    localStorage.setItem(userId+'userInfo', JSON.stringify(userFriendObj));
+  },
   // 缓存所有群信息
   setGroupList: function(userId, groupList) {
     localStorage.setItem(userId+'group', JSON.stringify(groupList));
@@ -361,6 +365,14 @@ export const ChatListUtils = {
     let str = localStorage.getItem(userId+'session');
     if (!str) {
       return [];
+    }
+    return JSON.parse(str);
+  },
+  //从缓存中获取已经保存的用户信息
+  getUserFriendObj: function(userId) {
+    let str = localStorage.getItem(userId+'userInfo');
+    if (!str) {
+      return {};
     }
     return JSON.parse(str);
   },
