@@ -16,8 +16,8 @@ const im = {
         currentChat: {},
         // 所有的聊天窗口
         chatList: [],
-        //好友列表
-        userFriendList: [],
+        //好友信息集合
+        userFriendObj: [],
         //群组列表
         chatGroupList: [],
         //所有的群组成员列表
@@ -37,8 +37,25 @@ const im = {
           user.id = user.userId
           state.user = user;
         },
-        setUserFriendList: function(state, userFriendList) {
-          state.userFriendList = userFriendList;
+        setUserFriendObj: function(state, userFriendList) {
+          let obj = {}
+          if(userFriendList&&userFriendList.length>0) {
+              userFriendList.forEach((item)=>{
+                obj[item.user.userId] = {
+                  name:item.user.name,
+                  portrait:item.user.portrait,
+                  phone:item.user.phone,
+                  gender:item.user.gender,
+                  email:item.user.email,
+                  address:item.user.address,
+                  company:item.user.company,
+                  userType:item.user.userType
+                }
+              })
+          }
+          state.userFriendObj = obj;
+          // 所有用户信息放入缓存
+          ChatListUtils.setUserFriendObj(state.user.id, state.userFriendObj);
         },
         // 更新群列表
         setChatGroupList: function(state, chatGroupList) {
@@ -196,6 +213,7 @@ const im = {
             }
             // 是否本人发的消息
             if(state.user.id!= session.fromUserId) {
+              let userObj = ChatListUtils.getUserFriendObj(state.user.id);
               if(session.conversation.type == 1) {
                 let groupList = ChatListUtils.getGroupList(state.user.id);
                 groupList.forEach((item)=>{
@@ -204,10 +222,15 @@ const im = {
                         sessionObj.targetName = item.name
                     }
                 })
+                sessionObj.content.content =  userObj[session.fromUserId].name + ':  ' + sessionObj.content.content
               } else {
                 sessionObj.targetId = session.fromUserId
+                sessionObj.portrait = userObj[session.fromUserId].portrait
+                sessionObj.targetName = userObj[session.fromUserId].name
               }
-            } 
+            } else {
+              sessionObj.content.content =  state.user.name + ':' + sessionObj.content.content
+            }
           } else {
             sessionObj = session
           }

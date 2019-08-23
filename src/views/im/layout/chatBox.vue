@@ -102,8 +102,8 @@ export default {
   methods: {
     updateNet() {
         this.$store.dispatch('getWebsocket', {
-            ip: 'dev.xtbg.zdsxc.com',
-            port: 443,
+            ip: process.env.BASE_IP,
+            port: process.env.BASE_HOST,
             token: getToken(),
             username: this.$store.state.user.user.userId
         })

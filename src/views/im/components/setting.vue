@@ -23,7 +23,7 @@
         <div class="im_chat_setting_user">
             <div class="setting_user_title clearfix">
                 <span>群成员{{groupUserLists.length}}人</span>
-                <el-input style="width: 360px;;margin-left:20px" suffix-icon="el-icon-search" placeholder="请输入成员名称" v-model="userName"></el-input>
+                <el-input style="width: 399px;;margin-left:20px" suffix-icon="el-icon-search" placeholder="请输入成员名称" v-model="userName"></el-input>
                 <i class="el-icon-plus" @click="showAddUser = true"></i> 
             </div>
             <ul v-if="groupUserListSearch.length>0" class="clearfix">
@@ -298,7 +298,7 @@
 </script>
 <style lang="scss">
     .im_chat_setting_count {
-        padding-right: 20px;
+        padding: 0 30px 0 10px;
         .im_chat_setting_title {
             padding-bottom: 5px;
             border-bottom: 1px solid #ccc;

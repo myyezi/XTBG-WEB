@@ -6,10 +6,10 @@
                 <li v-for="(item,index) in historyMessageList" :key="index" class="clearfix">
                     <div class="im_chat_record_user_pic">
                       <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
-                      <img v-else :src="chat.portrait?chat.portrait:defaultPic"/>
+                      <img v-else :src="allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
                     </div>
                     <div class="im_chat_record_user">
-                        <p>{{ user.name }}<i>{{ item.serverTimestamp }}</i></p>
+                        <p>{{ item.fromUserId == user.userId?user.name:allUserInfoObj[item.fromUserId].name }}<i>{{ item.serverTimestamp }}</i></p>
                         <div class="im_chat_record_text">
                           <img class="message-img" v-if="item.content.type == 3" :src='JSON.parse(item.content.content).filedomain+JSON.parse(item.content.content).path' alt="消息图片不能加载"  @click="openImageProxy(item)">
                           <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
@@ -32,7 +32,7 @@
   const { imageLoad, transform, ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
   export default {
     components: {ImgPreviewer},
-    props: ['messageList','chat','messageImgList'],
+    props: ['messageList','chat','messageImgList','allUserInfoObj'],
     data() {
       return {
           defaultPic:require('@/styles/img/morentx.png'),

@@ -1,133 +1,228 @@
 <template>
-  <div>
-    <uploader
-      browse_button="browse_button"
-      :url="server_config+'power/powerprojecttask/bigFile'"
-      chunk_size="2MB"
-      :max_retries="3"
-      :filters="{prevent_duplicates:true}"
-      :FilesAdded="filesAdded"
-      :BeforeUpload="beforeUpload"
-      :Error="error"
-      :UploadComplete="uploadComplete"
-      @inputUploader="inputUploader"
-    />
-    <el-tag type="warning">自动重传三次</el-tag>
-    <br/>
-    <br/>
-    <el-button type="primary" id="browse_button">选择多个文件</el-button>
-    <br/>
-    <el-table
-      :data="tableData"
-      style="width: 100%; margin: 10px 0;">
-      <el-table-column
-        label="文件名">
-        <template slot-scope="scope">
-          <span>{{scope.row.name}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="大小">
-        <template slot-scope="scope">
-          <span>{{scope.row.size}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="状态">
-        <template slot-scope="scope">
-          <span v-if="scope.row.status === -1">正在计算MD5</span>
-          <span v-if="scope.row.status === 1 && scope.row.percent === 0">MD5计算完成，准备上传</span>
-          <span v-if="scope.row.status === 4" style="color: brown">上传失败</span>
-          <span v-if="scope.row.status === 5" style="color: chartreuse">已上传</span>
-          <el-progress v-if="scope.row.status === 2 || scope.row.status === 1 && scope.row.percent > 0" :text-inside="true" :stroke-width="20" :percentage="scope.row.percent"></el-progress>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="操作">
-        <template slot-scope="scope">
-          <el-button type="danger" @click="deleteFile(scope.row.id)">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <br/>
-    <el-button :disabled="uploading" type="danger" @click="uploadStart()">开始上传</el-button>
-    <el-button :disabled="!uploading" type="warring" @click="uploadStop()">暂停上传</el-button>
-  </div>
+    <div class="global-uploader">
+        <uploader
+            ref="uploader"
+            :options="options"
+            :autoStart="false"
+            :file-status-text="fileStatusText"
+            @file-added="onFileAdded"
+            @file-success="onFileSuccess"
+            @file-progress="onFileProgress"
+            @file-error="onFileError"
+            class="uploader-app">
+            <uploader-unsupport></uploader-unsupport>
+            <uploader-btn :attrs="attrs">选择文件</uploader-btn>
+            <uploader-list>
+                <div class="file-panel" slot-scope="props">
+                    <div class="file-title">
+                        <h2>文件列表</h2>
+                    </div>
+
+                    <ul class="file-list">
+                        <li v-for="file in props.fileList" :key="file.id">
+                            <uploader-file :class="'file_' + file.id" ref="files" :file="file" :list="true"></uploader-file>
+                        </li>
+                        <div class="no-file" v-if="!props.fileList.length"><i class="iconfont icon-empty-file"></i> 暂无待上传文件</div>
+                    </ul>
+                </div>
+            </uploader-list>
+        </uploader>
+    </div>
 </template>
 
 <script>
-  import FileMd5 from './common/file-md5.js'
-  import Uploader from './Uploader'
-  export default {
+//   import FileMd5 from './common/file-md5.js'z
+import {getToken} from '@/utils/cookie'
+import {ACCEPT_CONFIG} from './common/config';
+import FileMd5 from './common/file-md5.js'
+export default {
     name: "StopUpload",
     data() {
-      return {
-        server_config: process.env.BASE_API,
-        up: {},
-        files:[],
-        tableData: [],
-        uploading: false
-      }
+        return {
+            files:[],
+            tableData: [],
+            uploading: false,
+            options: {
+                target: process.env.BASE_API+'file/upload/bigFile',
+                chunkSize: 2 * 1024 * 1024,
+                fileParameterName: 'upfile',
+                maxChunkRetries: 3,
+                simultaneousUploads:1,
+                testChunks: true,   //是否开启服务器分片校验
+                // 服务器分片校验函数，秒传及断点续传基础
+                checkChunkUploadedByResponse: function (chunk, message) {
+                    let objMessage = JSON.parse(message);
+                    if (objMessage.status ===0) {
+                        if(objMessage.data.uploadStatus == 1) {
+                            return true;
+                        } else if(objMessage.data.uploadStatus == 2) {
+                            return (objMessage.data.chunkNum || []).indexOf(chunk.offset + 1) >= 0
+                        } else if(objMessage.data.uploadStatus == 3) {
+                            return false;
+                        }
+                    }
+                },
+                parseTimeRemaining: function (timeRemaining, parsedTimeRemaining) {
+                    return parsedTimeRemaining
+                        .replace(/\syears?/, '年')
+                        .replace(/\days?/, '天')
+                        .replace(/\shours?/, '小时')
+                        .replace(/\sminutes?/, '分钟')
+                        .replace(/\sseconds?/, '秒')
+                },
+                headers: {
+                    Authorization:"Bearer " + getToken()
+                },
+                query() {}
+            },
+            fileStatusText(status, response) {
+                console.log(status)
+                const statusTextMap = {
+                    success: '上传成功',
+                    error: '上传失败',
+                    uploading: '上传中',
+                    paused: '暂停中',
+                    waiting: '等待中'
+                }
+                return statusTextMap[status]
+            },
+            attrs: {
+                // accept: ACCEPT_CONFIG.getAll()
+            },
+        }
     },
-    components: {
-      'uploader': Uploader
-    },
-    watch: {
-      files: {
-        handler() {
-          this.tableData = [];
-          this.files.forEach((e) => {
-            this.tableData.push({
-              name: e.name,
-              size: e.size,
-              status: e.status,
-              id: e.id,
-              percent: e.percent
-            });
-          });
-        },
-        deep: true
-      }
+    components: {},
+    computed: {
+        //Uploader实例
+        uploader() {
+            return this.$refs.uploader.uploader;
+        }
     },
     methods: {
-      inputUploader(up) {
-        this.up = up;
-        this.files = up.files;
-      },
-      filesAdded(up, files) {
-        console.log(files)
-        files.forEach((f) => {
-          f.status = -1;
-          FileMd5({file:f.getNative(),currentChunk:6}, (e, md5) => {
-            f["md5"] = md5;
-            f.status = 1;
-          });
-        });
-      },
-      deleteFile(id) {
-        let file = this.up.getFile(id);
-        this.up.removeFile(file);
-      },
-      beforeUpload(up, file) {
-        up.setOption("multipart_params", {"size":file.size,"md5":file.md5,'chunk':6});
-      },
-      uploadStart() {
-        this.uploading = true;
-        this.up.start();
-      },
-      uploadStop() {
-        this.uploading = false;
-        this.up.stop();
-      },
-      error() {
-        this.uploading = false;
-      },
-      uploadComplete() {
-        this.uploading = false;
-      }
+        onFileAdded(file) {
+            console.log(file)
+            FileMd5(file, (file, md5) => {
+                this.computeMD5Success(md5, file)
+            });
+        },
+        onFileProgress(rootFile, file, chunk) {
+            console.log(`上传中 ${file.name}，chunk：${chunk.startByte / 1024 / 1024} ~ ${chunk.endByte / 1024 / 1024}`)
+        },
+        onFileSuccess(rootFile, file, response, chunk) {
+            let res = JSON.parse(response);
+            // 服务器自定义的错误（即虽返回200，但是是错误的情况），这种错误是Uploader无法拦截的
+            if (res.status !== 0) {
+                this.$message({ message: res.data.message, type: 'error' });
+                return
+            }
+            // 如果服务端返回需要合并
+            if (res.data.needMerge) {
+                // 文件状态设为“合并中”
+                // api.mergeSimpleUpload({
+                //     tempName: res.tempName,
+                //     fileName: file.name,
+                //     ...this.params,
+                // }).then(res => {
+                //     // 文件合并成功
+                //     Bus.$emit('fileSuccess');
+                //     this.statusRemove(file.id);
+                // }).catch(e => {});
+            // 不需要合并
+            } else {
+                console.log('文件上传成功')
+            }
+        },
+        onFileError(rootFile, file, response, chunk) {
+            console.log(response)
+            this.$message({
+                message: response,
+                type: 'error'
+            })
+        },
+        computeMD5Success(md5, file) {
+            // 将自定义参数直接加载uploader实例的opts上
+            Object.assign(this.uploader.opts, {
+                query: {
+                    ...this.params,
+                }
+            })
+            file.uniqueIdentifier = md5;
+            file.md5 = md5;
+            file.resume();
+        },
     }
-  }
+}
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+    .global-uploader {
+        .uploader-app {
+            .uploader-btn {
+                background:#4781fe;
+                margin-bottom:10px;
+                color:#fff;
+                border: none;
+            }
+        }
+        .file-panel {
+            background-color: #fff;
+            border: 1px solid #e2e2e2;
+            .file-title {
+                display: flex;
+                height: 40px;
+                line-height: 40px;
+                padding: 0 15px;
+                border-bottom: 1px solid #ddd;
+                .operate {
+                    flex: 1;
+                    text-align: right;
+                }
+            }
+            .file-list {
+                position: relative;
+                height: 240px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                background-color: #fff;
+                > li {
+                    background-color: #fff;
+                }
+            }
+            &.collapse {
+                .file-title {
+                    background-color: #E7ECF2;
+                }
+            }
+        }
+        .no-file {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+        /deep/.uploader-file-icon {
+            &[icon=image] {
+                &:before {
+                    content: '' !important;
+                }
+                background: url(../../styles/img/icon-img/image-icon.png);
+            }
+            &[icon=video] {
+                &:before {
+                    content: '' !important;
+                }
+                background: url(../../styles/img/icon-img/video-icon.png);
+            }
+            &[icon=document] {
+                &:before {
+                    content: '' !important;
+                }
+                background: url(../../styles/img/icon-img/text-icon.png);
+            }
+        }
+        /deep/.uploader-file-actions > span {
+            margin-right: 6px;
+        }
+    }
 </style>
