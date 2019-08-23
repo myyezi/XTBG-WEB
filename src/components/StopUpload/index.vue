@@ -31,7 +31,6 @@
 </template>
 
 <script>
-//   import FileMd5 from './common/file-md5.js'z
 import {getToken} from '@/utils/cookie'
 import {ACCEPT_CONFIG} from './common/config';
 import FileMd5 from './common/file-md5.js'
