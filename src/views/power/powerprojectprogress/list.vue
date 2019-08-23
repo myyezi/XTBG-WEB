@@ -131,6 +131,8 @@ export default {
   components: {StopUpload},
   data() {
     return {
+      searchParam: {
+      },
       stopUploadShow:false,
       extDate:'',
       isShowMore: false,
@@ -158,6 +160,9 @@ export default {
       this.getDict();
   },
   methods: {
+      getListBefore(params) {
+          params.initStatus = 1;
+      },
       // 获取字典
       getDict() {
           let r = 'XMLX,GCJD,XBBM';
