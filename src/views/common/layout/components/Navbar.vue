@@ -18,12 +18,13 @@
             </el-dropdown-menu>
         </el-dropdown>
         <div class="navbar_tools">
+            <!--<el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()">
+                <el-option v-for="(item,index) in companys"
+                           :key="index"
+                           :label="item.name"
+                           :value="item.id"></el-option>
+            </el-select>-->
             <ul class="clearfix">
-                <!-- <li class="clearfix">
-                    <img :src="messagePic" />
-                    <span :style="{'color':sizeColor}">消息</span>
-                    <el-badge class="message_number" :value="12" />
-                </li> -->
                 <li class="clearfix"  @click="openImChat">
                     <img :src="communicationPic" />
                     <span :style="{'color':sizeColor}">通讯</span>
@@ -51,9 +52,12 @@
     import Breadcrumb from '@/components/Breadcrumb'
     import Hamburger from '@/components/Hamburger'
     import IMChat from '@/views/im/index2.vue';
+    import ajax from '@/utils/request'
     export default {
         data(){
             return {
+                companyId: '',
+                companys: [],
                 unReadNum:0,
                 nowDate: new Date().format('yyyy-MM-dd'),
                 nowText: this.getDateText(),
@@ -102,6 +106,29 @@
             this.$set(this.colorList[0],'active',true);
         },
         methods: {
+            getCompanys() {
+                ajax.get('upms/organization/managerCompany').then(result => {
+                    this.companys = result.data;
+                });
+            },
+            changeCompany() {
+                ajax.get('upms/user/getCurrentUserAuthority?companyId='+ this.companyId).then(response => {
+                    const data = response.data.menuStr;
+                    console.log(data);
+                    console.log(data.indexOf("/common/index") != -1);
+                    console.log(data.indexOf("/common/storeIndex") != -1);
+                    if (data.indexOf("/common/index") != -1) {
+                        this.$router.push({path: '/'})
+                    }
+                    else if (data.indexOf("/common/storeIndex") != -1) {
+                        this.$router.push({path: '/index'})
+                    }
+                    else {
+                        this.$router.push({path: '/'})
+                    }
+                })
+            },
+
             openImChat(){
                 this.$refs.imChat.handleOpen();
             },
@@ -160,6 +187,7 @@
             },
         },
         mounted(){
+            this.getCompanys();
             window.setInterval(() => {
                 let date = new Date();
                 this.nowDate = date.format('yyyy-MM-dd');

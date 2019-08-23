@@ -27,6 +27,11 @@
                                 <input v-model="password" auto-complete="off" @keyup.enter="login"
                                        type="password" class="form-control nborder icon-input pwd" maxlength="30"
                                        placeholder="请输入密码"/>
+                                <!--<el-select v-model="companyId" filterable clearable placeholder="请选择所属公司">
+                                    <el-option label="湖北中大恒润科技有限公司" :value="10"></el-option>
+                                    <el-option label="湖北中大恒润能源工程有限公司" :value="20"></el-option>
+                                    <el-option label="胡中大恒润商业运营管理有限公司" :value="30"></el-option>
+                                </el-select>-->
                                 <div class="login-info">
                                     <el-checkbox v-model="savePwd">记住密码</el-checkbox>
                                     <span>忘记密码？请联系管理员</span>
@@ -62,7 +67,8 @@
                 account: localStorage.getItem("tgpt_account") || "",
                 password: localStorage.getItem("tgpt_password") || "",
                 message: "",
-                loading: false
+                loading: false,
+                companyId: ""
             }
         },
         watch: {

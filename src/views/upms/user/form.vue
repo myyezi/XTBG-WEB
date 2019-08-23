@@ -6,39 +6,50 @@
                 <el-collapse-item title="基本信息" name="1">
                     <div class="flex-panel">
                         <el-form-item label="姓名" prop="name">
-                            <el-input v-model="userForm.name" placeholder="请输入姓名"></el-input>
+                            <el-input v-model="userForm.name" placeholder="请输入姓名" clearable></el-input>
                         </el-form-item>
                         <el-form-item label="手机号" prop="phone">
-                            <el-input v-model="userForm.phone" placeholder="请输入手机号" :disabled="phonedisabled"
-                                      @input="phoneInputHandler"></el-input>
-                        </el-form-item>
-                        <el-form-item label="用户名" prop="account" class="user-input">
-                            <el-input v-model="userForm.account" placeholder="请输入用户名"
-                                      :class="{'s-input-un': true, sync: syncPhone}" :disabled="syncPhone"></el-input>
-                            <el-checkbox v-model="syncPhone" @change="syncBoxChange" v-if="showcheckbox"
-                            >同手机号
-                            </el-checkbox>
+                            <el-input v-model="userForm.phone" placeholder="请输入手机号" clearable></el-input>
                         </el-form-item>
                         <el-form-item label="邮箱" prop="email">
-                            <el-input v-model="userForm.email" placeholder="请输入邮箱"></el-input>
+                            <el-input v-model="userForm.email" placeholder="请输入邮箱" clearable></el-input>
                         </el-form-item>
-                        <!--<el-form-item label="微信号" prop="wechat">-->
-                        <!--<el-input v-model="userForm.wechat" placeholder="请输入微信号"></el-input>-->
-                        <!--</el-form-item>-->
-                        <el-form-item label="密码" prop="password" v-if="showPwd">
-                            <el-input type="password" v-model="userForm.password"
-                                      placeholder="请输入密码，6~14位" autocomplete="off"></el-input>
+                        <el-form-item label="学历" prop="education">
+                            <el-select v-model="userForm.education" filterable clearable>
+                                <el-option label="博士" :value="1"></el-option>
+                                <el-option label="硕士" :value="2"></el-option>
+                                <el-option label="本科" :value="3"></el-option>
+                                <el-option label="大专" :value="4"></el-option>
+                                <el-option label="高中" :value="5"></el-option>
+                            </el-select>
                         </el-form-item>
-                        <el-form-item label="确认密码" prop="passwordConfirm" v-if="showPwd">
-                            <el-input type="password" v-model="userForm.passwordConfirm"
-                                      placeholder="请再次输入密码" autocomplete="off"></el-input>
+                        <el-form-item label="性别" prop="gender">
+                            <el-select v-model="userForm.gender" filterable clearable>
+                                <el-option label="男" :value="1"></el-option>
+                                <el-option label="女" :value="2"></el-option>
+                                <el-option label="其他" :value="3"></el-option>
+                            </el-select>
                         </el-form-item>
-                        <el-form-item label="其他信息" prop="remark">
-                            <el-input v-model="userForm.remark" placeholder="请输入其他信息"></el-input>
+                        <el-form-item label="职称" prop="qualification">
+                            <el-select v-model="userForm.qualification" filterable clearable>
+                                <el-option label="试用期" :value="1"></el-option>
+                                <el-option label="正式员工" :value="2"></el-option>
+                                <el-option label="离职" :value="3"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="状态" prop="userStatus">
+                            <el-select v-model="userForm.userStatus" filterable clearable>
+                                <el-option label="试用期" :value="'1'"></el-option>
+                                <el-option label="正式员工" :value="'2'"></el-option>
+                                <el-option label="离职" :value="'3'"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="图像" prop="portrait" class="big">
+                            <upload-panel :size="1" accept=".jpg,.jpeg,.png,.gif" :file-list.sync="portrait" :show-img="true"></upload-panel>
                         </el-form-item>
                     </div>
                 </el-collapse-item>
-                <el-collapse-item title="权限信息" name="2">
+                <el-collapse-item title="权限信息" name="2" v-if="userForm.userStatus != 3">
                     <el-button class="float-btn" type="primary" @click="addItem">新增</el-button>
                     <el-table border :data="userForm.list" style="width: 100%">
                         <el-table-column label="组织" min-width="200" label-class-name="required">
@@ -70,12 +81,13 @@
                         </el-table-column>
                         <el-table-column label="操作" min-width="50">
                             <template slot-scope="{row, $index}">
-                                <el-button v-if="userForm.list.length>1" type="text"
-                                           size="small" @click="delItem($index)">删除
-                                </el-button>
+                                <el-button v-if="userForm.list.length>1" type="text" size="small" @click="delItem($index)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
+                    <el-form-item label="附件" prop="attachment" class="big">
+                        <upload-panel :size="6" accept=".jpg,.jpeg,.png,.gif" :file-list.sync="attachment" :show-img="true"></upload-panel>
+                    </el-form-item>
                 </el-collapse-item>
             </el-collapse>
             <div class="left-row">
@@ -90,36 +102,27 @@
     import TreeSelect from '@/components/TreeSelect/index'
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
+    import UploadPanel from '@/components/UploadPanel/index'
 
     export default {
         mixins: [tool, ruleTool],
-        components: {TreeSelect},
+        components: {TreeSelect, UploadPanel},
         data() {
 
-            var checkPwdConfirm = (rule, v, callback) => {
-                if (v != this.userForm.password) {
-                    callback(new Error('2次密码输入不一致'));
-                } else
-                    callback();
-            };
             return {
                 userForm: {
                     list: [{}],
                     name: '',
-                    account: '',
                     phone: '',
                     email: '',
-                    wechat: '',
-                    userType: '1',
-                    userStatus: '1',
-                    remark: '',
-                    password: '',
-                    passwordConfirm: '',
+                    education: '',
+                    qualification: '',
+                    userStatus: '',
+                    gender: '',
                 },
+                portrait: [],
+                attachment: [],
                 openCollapse: ["1", "2"],//默认打开的面板
-                syncPhone: true,
-                phonedisabled: false,
-                showcheckbox: true,
                 flag: this.getCurrentUserInfo()['managementCompanyId'] ? '' : 'empty',
                 rules: {
                     name: [
@@ -128,35 +131,26 @@
                     ],
                     phone: [
                         {required: true, message: '请输入手机号码', trigger: ['blur', 'change']},
-                        {pattern: /^[1][3,4,5,7,8][0-9]{9}$/, message: '手机号码格式错误', trigger: ['blur', 'change']}
-                    ],
-                    account: [
-                        {required: true, message: '请输入用户名', trigger: ['blur', 'change']},
-                        {max: 20, message: '用户名不能超过20个字符', trigger: ['blur', 'change']},
-                        {pattern: /^[a-zA-Z0-9]+$/, message: '只能输入数字和字母', trigger: ['blur', 'change']}
+                        {pattern: /^[1][3,4,5,6,7,8,9][0-9]{9}$/, message: '手机号码格式错误', trigger: ['blur', 'change']}
                     ],
                     email: [
                         {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']},
                         {max: 50, message: '邮箱不能超过50个字符', trigger: ['blur', 'change']}
                     ],
-                    wechat: [
-                        {min: 6, max: 20, message: '微信号长度在 6 到 20 个字符', trigger: ['blur', 'change']}
+                    gender: [
+                        {required: true, message: '请选择性别', trigger: ['blur', 'change']},
                     ],
-                    remark: [
-                        {max: 50, message: '备注不能超过50个字符', trigger: ['blur', 'change']}
+                    userStatus: [
+                        {required: true, message: '请选择状态', trigger: ['blur', 'change']},
                     ],
-                    password: [
-                        {required: true, message: '请输入密码', trigger: ['blur', 'change']},
-                        {min: 6, max: 14, message: '长度必须是6~14位', trigger: ['blur', 'change']}
+                    education: [
+                        {required: true, message: '请选择学历', trigger: ['blur', 'change']},
                     ],
-                    passwordConfirm: [
-                        {required: true, message: '请再次输入密码', trigger: ['blur', 'change']},
-                        {validator: checkPwdConfirm, trigger: ['blur', 'change']}
+                    qualification: [
+                        {required: true, message: '请选择职称', trigger: ['blur', 'change']},
                     ]
+
                 },
-                showPwd: true,
-                posUrlArray: [],
-                treeCompanyId: {}
             }
         },
         methods: {
@@ -164,14 +158,17 @@
             open() {
                 this.openCollapse = ["1", "2"];
                 if (this.$route.query.id) {
-                    this.showPwd = false;
-                    this.phonedisabled = true;
-                    this.showcheckbox = false;
                     ajax.get('upms/user/id/' + this.$route.query.id).then(rs => {
                         //if (this.checkResponse(rs)) {
-                        rs.data.userType += '';
-                        rs.data.userStatus += '';
+                        /*rs.data.userType += '';
+                        rs.data.userStatus += '';*/
                         this.userForm = Object.assign(this.userForm, rs.data);
+                        if (null != rs.data.portrait && rs.data.portrait.length > 0) {
+                            this.portrait = JSON.parse(rs.data.portrait);
+                        }
+                        if (null != rs.data.attachment && rs.data.attachment.length > 0) {
+                            this.attachment = JSON.parse(rs.data.attachment);
+                        }
                         //}
                     });
                     //加载用户的权限信息
@@ -239,6 +236,12 @@
                             roles: JSON.stringify(roles)
                         });
 
+                        if (this.portrait && this.portrait.length > 0) {
+                            data.portrait = JSON.stringify(this.portrait);
+                        }
+                        if (this.attachment && this.attachment.length > 0) {
+                            data.attachment = JSON.stringify(this.attachment);
+                        }
                         ajax.post('upms/user', data).then(rs => {
                             //if (this.checkResponse(rs)) {
                             that.$message({message: '保存成功！', type: 'success'});
@@ -264,16 +267,6 @@
             },
             delItem(i) {
                 this.userForm.list.splice(i, 1);
-            },
-            phoneInputHandler(v) {
-                if (this.syncPhone)
-                    this.userForm.account = v;
-            },
-            syncBoxChange(state) {
-                if (!state)
-                    return;
-                this.syncPhone = this.$route.query.id ? true : state;
-                this.userForm.account = this.userForm.phone;
             },
         },
         mounted() {

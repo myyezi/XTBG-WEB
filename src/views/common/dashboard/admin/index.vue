@@ -12,39 +12,14 @@
                     </div>
  
                     <div class="el-card__body">
-                        <el-table
-                            :data="tableData"
-                            style="width: 100%"
-                            height="400">
-                            <el-table-column
-                                label="序号"
-                                fixed
-                                type="index"
-                                width="50">
+                        <el-table :data="tableData" style="width: 100%" height="400">
+                            <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="50" label="类型"></el-table-column>
+                            <el-table-column prop="content" sortable show-overflow-tooltip min-width="300" label="消息内容">
+                                <!--<template fixed slot-scope="{ row, column, $index }">
+                                    <el-button v-show="showEditBtn" @click="forwardDetail(row.sourceId, row.type, row.content)" type="text" size="small">{{row.content}}</el-button>
+                                </template>-->
                             </el-table-column>
-                            <el-table-column
-                                prop="name"
-                                label="类型"
-                                width="100">
-                            </el-table-column>
-                            <el-table-column
-                                prop="province"
-                                label="所属项目"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                label="消息描述"
-                                width="300"
-                            >
-                                <template slot-scope="scope">
-                                    <span>{{ scope.row.city&&scope.row.city.length>20? scope.row.city.substring(0,20)+'...':scope.row.city}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                prop="date"
-                                label="时间"
-                                width="100">
-                            </el-table-column>
+                            <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="50" label="创建时间"></el-table-column>
                         </el-table>
                     </div>
                 </div>
@@ -160,57 +135,7 @@
                 projectNum1:5,
                 projectNum2:8,
                 projectNum3:10,
-                tableData: [{
-                    date: '2016-05-03',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区',
-                    }, {
-                    date: '2016-05-02',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区',
-                    }, {
-                    date: '2016-05-04',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区',
-                    }, {
-                    date: '2016-05-01',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区',
-                    }, {
-                    date: '2016-05-08',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区普陀区',
-                    }, {
-                    date: '2016-05-06',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区',
-                    }, {
-                    date: '2016-05-07',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区',
-                    }, {
-                    date: '2016-05-06',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区',
-                    }, {
-                    date: '2016-05-07',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区',
-                    }, {
-                    date: '2016-05-06',
-                    name: '王小虎小虎',
-                    province: '上海',
-                    city: '普陀区',
-                    }]
+                tableData: []
             }
         },
         computed: {},
@@ -218,8 +143,14 @@
         },
         mounted() {
             this.getList();
+            this.getMessageList()
         },
         methods: {
+            getMessageList() {
+                ajax.get('/upms/sysmessage?size=9').then(rs => {
+                    this.tableData = rs.records;
+                });
+            },
             handleClick(data) {
                 console.log(data)
                 this.projectName = data

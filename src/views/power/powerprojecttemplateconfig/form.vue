@@ -419,6 +419,9 @@ methods: {
         });
     },
     getSortNum(parentId){
+        if (this.treeData.lists.length == 0){
+            return 1;
+        }
         this.getAllList(this.treeData.lists);
         let arr = [];
         this.allList.forEach((item) => {
@@ -426,6 +429,9 @@ methods: {
                 arr.push(item.sortNum ? item.sortNum : 0);
             }
         });
+        if (arr.length == 0){
+            return 1;
+        }
         arr.sort(function (a, b) {
             return a-b;
         });

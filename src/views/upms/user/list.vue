@@ -40,12 +40,25 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label">学历</label>
+                        <div class="input-group input-groups">
+                            <el-select v-model="searchParam.education" filterable clearable>
+                                <el-option label="博士" :value="1"></el-option>
+                                <el-option label="硕士" :value="2"></el-option>
+                                <el-option label="本科" :value="3"></el-option>
+                                <el-option label="大专" :value="4"></el-option>
+                                <el-option label="高中" :value="5"></el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="control-label">状态</label>
                         <div class="input-group input-groups">
                             <el-select v-model="searchParam.userStatus" placeholder="全部">
                                 <el-option label="全部" value="-1"></el-option>
-                                <el-option label="正常" value="1"></el-option>
-                                <el-option label="停用" value="0"></el-option>
+                                <el-option label="试用期" value="1"></el-option>
+                                <el-option label="正式员工" value="2"></el-option>
+                                <el-option label="离职" value="3"></el-option>
                             </el-select>
                         </div>
                     </div>
@@ -57,15 +70,8 @@
             <el-table :data="list" style="width: 100%">
                 <el-table-column fixed label="操作" width="170">
                     <template slot-scope="{ row, column, $index }">
-                        <el-button v-show="showDisabledBtn" v-if="row.userStatus" @click="updateState(row)" type="text"
-                                   size="small">停用
-                        </el-button>
-                        <el-button v-show="showEnableBtn" v-if="!row.userStatus" @click="updateState(row)" type="text"
-                                   size="small">启用
-                        </el-button>
                         <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
-                        <el-button v-show="showResetPasswordBtn" @click="openResetPwdForm(row)" type="text"
-                                   size="small">重置密码
+                        <el-button v-show="showResetPasswordBtn" @click="openResetPwdForm(row)" type="text" size="small">重置密码
                         </el-button>
                     </template>
                 </el-table-column>
@@ -78,25 +84,14 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="phone" sortable min-width="130" label="手机号"></el-table-column>
-                <el-table-column prop="account" sortable show-overflow-tooltip min-width="150"
-                                 label="用户名">
-                </el-table-column>
-                <el-table-column prop="email" sortable show-overflow-tooltip min-width="150"
-                                 label="邮箱"></el-table-column>
-                <el-table-column prop="organizations" sortable show-overflow-tooltip min-width="150"
-                                 label="组织"></el-table-column>
-                <el-table-column prop="roles" sortable show-overflow-tooltip min-width="150"
-                                 label="角色"></el-table-column>
-                <el-table-column prop="positions" sortable show-overflow-tooltip min-width="150"
-                                 label="职位"></el-table-column>
-                <el-table-column prop="userStatus" sortable min-width="100" label="状态">
-                    <template slot-scope="{row}">
-                        <span v-if="row.userStatus">正常</span>
-                        <span v-if="!row.userStatus">停用</span>
-                    </template>
-                </el-table-column>
+                <el-table-column prop="email" sortable show-overflow-tooltip min-width="150" label="邮箱"></el-table-column>
+                <el-table-column prop="organizations" sortable show-overflow-tooltip min-width="150" label="组织"></el-table-column>
+                <el-table-column prop="roles" sortable show-overflow-tooltip min-width="150" label="角色"></el-table-column>
+                <el-table-column prop="positions" sortable show-overflow-tooltip min-width="150" label="职位"></el-table-column>
+                <el-table-column prop="positions" sortable show-overflow-tooltip min-width="150" label="所属管理公司"></el-table-column>
+                <el-table-column prop="userStatus" sortable min-width="100" label="状态"></el-table-column>
                 <el-table-column prop="createTimeStr" sortable min-width="150" label="创建时间"></el-table-column>
-                <el-table-column prop="loginTimeStr" sortable min-width="150" label="最后登录时间"></el-table-column>
+                <el-table-column prop="updateTime" sortable min-width="150" label="更新时间"></el-table-column>
             </el-table>
             <el-pagination
                 @size-change="handleSizeChange"

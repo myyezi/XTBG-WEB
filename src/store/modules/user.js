@@ -45,6 +45,8 @@ const user = {
             return new Promise((resolve, reject) => {
                 ajax.get('upms/user/vUserInfo').then(response => {
                     const data = response.data
+                    console.log("################################################################"+data)
+                    console.log(data)
                     commit('SET_USER', data)
                     resolve(response)
                 }).catch(error => {

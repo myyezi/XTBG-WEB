@@ -13,11 +13,21 @@
             <div class="search-box" v-show="isShowMore">              
                 <div class="form-box">
                     <div class="form-group">
-                        <label class="control-label">状态</label>
+                        <label class="control-label">管理公司</label>
+                        <!--<div class="input-group">
+                            <el-select v-model="roleForm.companyId" clearable>
+                                <el-option v-for="(item,index) in companys" :key="index"
+                                           :label="item.name" :value="item.id"></el-option>
+                            </el-select>
+                        </div>-->
                         <div class="input-group">
-                            <el-select placeholder="全部" clearable v-model="searchParam.enableStatus">
-                                <el-option label="禁用" value="0"></el-option>
-                                <el-option label="启用" value="1"></el-option>
+                            <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择">
+                                <el-option
+                                    v-for="item in companys"
+                                    :key="item.value"
+                                    :label="item.name"
+                                    :value="item.id">
+                                </el-option>
                             </el-select>
                         </div>
                     </div>
@@ -29,19 +39,8 @@
             <el-table :data="list" style="width: 100%">
                 <el-table-column fixed="left" label="操作" width="200">
                     <template slot-scope="scope">
-                        <el-button v-show="showEditBtn" @click="editRole(scope.row)" type="text" size="small">修改
-                        </el-button>
-                        <el-button v-show="showDeleteBtn" @click="deleteRole(scope.row)" type="text" size="small">删除
-                        </el-button>
-                        <el-button v-show="showAuthorityBtn" @click="assignAuthority(scope.row)" type="text"
-                                   size="small">分配权限
-                        </el-button>
-                        <el-button v-if="scope.row.enableStatus == 0" v-show="showEnableBtn"
-                                   @click="enableRole(scope.row)" type="text" size="small">启用
-                        </el-button>
-                        <el-button v-if="scope.row.enableStatus == 1" v-show="showEnableBtn"
-                                   @click="enableRole(scope.row)" type="text" size="small">禁用
-                        </el-button>
+                        <el-button v-show="showEditBtn" @click="editRole(scope.row)" type="text" size="small">编辑</el-button>
+                        <el-button v-show="showAuthorityBtn" @click="assignAuthority(scope.row)" type="text" size="small">分配权限</el-button>
                     </template>
                 </el-table-column>
                 <el-table-column prop="name" sortable label="角色名称" min-width="200" show-overflow-tooltip>
@@ -49,16 +48,15 @@
                         <a size="mini" @click="assignAuthority(scope.row,false)">{{scope.row.name}}</a>
                     </template>
                 </el-table-column>
-                <el-table-column prop="companyName" sortable label="所属管理公司" min-width="140"
-                                 show-overflow-tooltip></el-table-column>
-                <el-table-column prop="assignedCount" sortable label="分配人数" min-width="100"></el-table-column>
-                <el-table-column prop="enableStatus" sortable label="状态" min-width="100">
+                <el-table-column prop="assignedCount" sortable label="分配人数" min-width="100">
                     <template slot-scope="scope">
-                        <span v-if="scope.row.enableStatus == 1">启用</span>
-                        <span v-if="scope.row.enableStatus == 0">禁用</span>
+                        <el-button type="text" size="small" @click="showUserList(scope.row)">{{scope.row.assignedCount}}</el-button>
                     </template>
                 </el-table-column>
+                <el-table-column prop="companyName" sortable label="所属管理公司" min-width="150" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="creater" sortable label="创建人" min-width="100"></el-table-column>
                 <el-table-column prop="createTime" sortable label="创建时间" min-width="150"></el-table-column>
+                <el-table-column prop="updater" sortable label="更新人" min-width="100"></el-table-column>
                 <el-table-column prop="updateTime" sortable label="更新时间" min-width="150"></el-table-column>
             </el-table>
             <el-pagination
@@ -75,17 +73,14 @@
         <!-- 新增、编辑角色弹窗-->
         <el-dialog width="600px" :title="title" :visible.sync="addRoleVisible" :append-to-body="true">
             <el-form :model="roleForm" :rules="rules" label-position="top" ref="roleForm" class="full-input">
-                <el-form-item label="角色名" label-width="120px" prop="name">
-                    <el-input ref="nameInput" v-model="roleForm.name" clearable maxlength="50"></el-input>
-                </el-form-item>
-                <el-form-item label="备注" label-width="120px" prop="remark">
-                    <el-input type="roleForm.textarea" v-model="roleForm.remark" clearable maxlength="100"></el-input>
-                </el-form-item>
                 <el-form-item label="管理公司" label-width="120px" prop="companyId">
                     <el-select v-model="roleForm.companyId">
                         <el-option v-for="(item,index) in companys" :key="index"
                                    :label="item.name" :value="item.id"></el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="角色名" label-width="120px" prop="name">
+                    <el-input ref="nameInput" v-model="roleForm.name" clearable maxlength="50"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -97,6 +92,13 @@
         <!-- 权限分配、权限详情-->
         <permissionForm ref="form"></permissionForm>
 
+        <el-dialog width="400px" title="分配用户" :visible.sync="userDialogVisible" :append-to-body="true" class="el-dialog__body">
+            <el-table ref="multipleTable" :data="userList" tooltip-effect="dark" style="width: 100%">
+                <el-table-column prop="name" label="姓名" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="userStatus" label="状态" show-overflow-tooltip></el-table-column>
+            </el-table>
+        </el-dialog>
     </div>
 </template>
 
@@ -105,7 +107,6 @@
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
 
-
     export default {
         name: 'role',
         mixins: [tool, ruleTool],
@@ -113,6 +114,8 @@
         data() {
             return {
                 isShowMore:false,
+                userDialogVisible: false,
+                userList: [],
                 showEditBtn: this.getCurrentUserAuthority("role/edit"),
                 showAddBtn: this.getCurrentUserAuthority("role/add"),
                 showAuthorityBtn: this.getCurrentUserAuthority("role/authority"),
@@ -139,8 +142,16 @@
         },
         mounted: function () {
             this.getList();
+            this.getCompanys()
         },
         methods: {
+            showUserList(row) {
+                this.userDialogVisible = true
+                ajax.get('upms/user/getUserListByRoleId?roleId='+ row.id).then(rs => {
+                    this.userList = rs.data;
+                });
+            },
+
             assignAuthority(row, showButton) {
                 this.$refs.form.open(row, showButton);
             },

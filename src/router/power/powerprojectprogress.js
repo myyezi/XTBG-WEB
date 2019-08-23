@@ -1,7 +1,7 @@
 const index = [
     {
         path: '/power/powerprojectprogress',
-        name: 'powerprojectplan',
+        name: 'powerprojectprogress',
         component: () => import('@/views/power/powerprojectprogress/list'),
         meta: {icon: 'auth3', title: '项目执行'},
     },
