@@ -80,8 +80,7 @@
         <el-table-column fixed label="操作" width="150">
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="operate(row.id, 2)" type="text" size="small">开启</el-button>
-            <el-button v-show="showStartBtn" v-if="row.projectStatus==2" @click="operate(row.id, 3)" type="text" size="small">暂停</el-button>
-            <el-button v-show="showProgressBtn" v-if="row.projectStatus==2" @click="edit(row.id)" type="text" size="small">执行</el-button>
+            <el-button v-show="showProgressBtn" v-if="row.projectStatus==2" @click="edit(row.taskId)" type="text" size="small">执行</el-button>
             <el-button v-show="showStopBtn"  v-if="row.projectStatus==2" @click="stop(row)" type="text" size="small">申请延期</el-button>
           </template>
         </el-table-column>
