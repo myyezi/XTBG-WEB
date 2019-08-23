@@ -42,7 +42,6 @@ export default {
       if(gantt.$_eventsInitialized)
         return;
       gantt.attachEvent("onTaskRowClick", (id, row) => {
-        console.log(row.outerHTML)
           if(row.outerHTML.indexOf('新增')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'inserted'}); 
           }
@@ -52,14 +51,17 @@ export default {
           if(row.outerHTML.indexOf('删除')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'deleted'});
           }
-          if(row.outerHTML.indexOf('复制')!=-1) {
-              Bus.$emit("task-updated",{id:id,operationType:'copy'});
+          if(row.outerHTML.indexOf('上传')!=-1) {
+              Bus.$emit("task-updated",{id:id,operationType:'upload'});
           }
-          if(row.outerHTML.indexOf('关联文档')!=-1) {
-              Bus.$emit("task-updated",{id:id,operationType:'archive'});
+          if(row.outerHTML.indexOf('查看')!=-1) {
+              Bus.$emit("task-updated",{id:id,operationType:'view'});
           }
-          if(row.outerHTML.indexOf('关联风险')!=-1) {
-              Bus.$emit("task-updated",{id:id,operationType:'risk'});
+          if(row.outerHTML.indexOf('申请完成')!=-1) {
+              Bus.$emit("task-updated",{id:id,operationType:'approvefinish'});
+          }
+          if(row.outerHTML.indexOf('完成')!=-1) {
+              Bus.$emit("task-updated",{id:id,operationType:'finish'});
           }
       });
 
