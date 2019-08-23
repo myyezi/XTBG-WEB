@@ -1,16 +1,38 @@
 <template>
-    <div class="app-container white-bg list-panel" v-cloak>
+    <div class="app-container white-bg list-panel" v-cloak style="display:flex;overflow: auto;">
         <div class="tree-box">
             <div class="top-box">
                 <div class="title">组织设置</div>
             </div>
             <div class="tree-content">
-                <!--<tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll"></tree-two>-->
                 <tree-panel ref="tree" url="upms/organization/tree"
-                            :showAdd="showAdd" :showEdit="showEdit" @show-form="open"></tree-panel>
+                            :showAdd="showAdd" :showEdit="showEdit" @show-form="open" @show-table="showTable">
+
+                </tree-panel>
             </div>
         </div>
-
+        <div class="tree_two_count_right" v-loading="isLoading">
+            <span style="font-size: 16px; display: block;margin:25px 0 10px;" v-if="checkData.name">{{checkData.name}}
+                <el-select v-if="checkData.name" v-model="userStatus" filterable clearable style="width: 200px;" @change="getUserList()">
+                    <el-option label="试用期" :value="1"></el-option>
+                    <el-option label="正式员工" :value="2"></el-option>
+                    <el-option label="离职" :value="3"></el-option>
+                </el-select>
+            </span>
+            <el-table
+                v-if="isClickNode"
+                ref="multipleTable"
+                :data="tableData"
+                style="width: 100%"
+                max-height="660"
+            >
+                <el-table-column prop="name" label="姓名" width="100"></el-table-column>
+                <el-table-column label="联系方式" width="200">
+                    <template slot-scope="scope">{{ scope.row.phone }}</template>
+                </el-table-column>
+                <el-table-column prop="email" label="邮箱" width="200" show-overflow-tooltip></el-table-column>
+            </el-table>
+        </div>
         <el-dialog width="600px" class="full-input" :visible.sync="show" :title="title">
             <el-form :model="editForm" ref="editForm" label-position="top" label-width="100px">
                 <el-form-item label="上级组织" prop="parentId" v-if="parentShow" :rules="rules.required('请选择上级组织')">
@@ -20,13 +42,6 @@
                 </el-form-item>
                 <el-form-item label="组织名称" prop="name" :rules="rules.required('请输入组织名称')">
                     <el-input v-model="editForm.name" placeholder="请输入" maxlength="30"></el-input>
-                </el-form-item>
-                <el-form-item label="组织属性" prop="type" :rules="rules.required('请选择组织属性')">
-
-                    <tree-select v-model="editForm.type" placeholder="请选择" type="one" ref="typeTree"
-                                 url="upms/organization/typeTree" :params="params"
-                                 :disabled-id="disabledArray"></tree-select>
-
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -39,17 +54,15 @@
 </template>
 
 <script>
-    // import TreePanel from '@/components/TreePanel/index'
     import TreePanel from './TreePanel.vue'
     import TreeSelect from '@/components/TreeSelect/index'
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
-    import TreeTwo from './tree2.vue'
 
     export default {
         name: 'organization',
         mixins: [tool, ruleTool],
-        components: {TreePanel, TreeSelect, TreeTwo},
+        components: {TreePanel, TreeSelect},
         data() {
             return {
                 showAdd: this.getCurrentUserAuthority("sys/organization/insert"),
@@ -66,10 +79,28 @@
                 selectionAll:[],
                 companyId: 30,
                 activeName:'second',
+                isLoading:false,
+                isClickNode: false,
+                tableData:[],
+                checkData:{},
+                userStatus: '',// 搜索关键字
             }
         },
         methods: {
-
+            showTable(data) {
+                this.isLoading = true
+                this.checkData = data
+                this.isClickNode = true
+                ajax.get('upms/organization/getOrganizationUserList/' + data.id).then(rs => {
+                    this.tableData = rs.data;
+                    this.isLoading = false
+                });
+            },
+            getUserList() {
+                ajax.get('upms/organization/getOrganizationUserList/' + this.checkData.id, {userStatus: this.userStatus}).then(rs => {
+                    this.tableData = rs.data;
+                });
+            },
             open(opt) {
                 this.disabledArray = [];
                 let isEdit = false;
@@ -256,7 +287,8 @@
     }
 
     .tree-box {
-        width: 800px;
+        max-width: calc(100% - 570px);
+        min-width: 700px;
         height: 100%;
 
         .top-box {
@@ -283,5 +315,10 @@
         border: 1px solid #eee;
         padding: 20px;
         overflow: auto;
+    }
+    .tree_two_count_right {
+        width:520px;
+        margin-left: 50px;
+        padding-right: 20px;
     }
 </style>

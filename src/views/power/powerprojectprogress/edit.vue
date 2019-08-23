@@ -3,10 +3,10 @@
 </template>
 
 <script>
-import formTemplate from '@/views/power/powerprojectplan/form'
+import formTemplate from '@/views/power/powerprojectprogress/form'
 
 export default {
-  name: "PowerProjectPlanEdit",
+  name: "PowerProjectProgressEdit",
   components: {
     formTemplate
   }

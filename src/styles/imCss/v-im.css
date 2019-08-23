@@ -28,7 +28,7 @@ body {
   box-shadow: #aaaaaa 0px 0px 5px;
 }
 
-::-webkit-scrollbar {
+.v-im ::-webkit-scrollbar {
   width: 6px;
   height: 1px;
 }
