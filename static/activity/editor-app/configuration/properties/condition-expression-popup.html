@@ -1,0 +1,50 @@
+
+<div class="modal" ng-controller="KisBpmConditionExpressionPopupCtrl">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close()">&times;</button>
+    <h2 translate>PROPERTY.SEQUENCEFLOW.CONDITION.STATIC</h2>
+</div>
+<div class="modal-body" style="max-height:500px;overflow: auto;">
+
+    <div class="detail-group clearfix">
+        
+        <div class="form-group clearfix">
+            <div class="col-xs-12">
+                <!-- <label class="col-xs-2">{{'PROPERTY.SEQUENCEFLOW.CONDITION.STATIC' | translate}}</label> -->
+                <div class="col-xs-12" ng-repeat="conditionExpression in conditionExpressionList" style="margin-bottom: 10px;">
+                    <!-- <textarea class="form-control" ng-model="conditionExpression.value" style="width:90%; height:100%; max-width: 100%; max-height: 100%; min-height: 100px"/> -->
+                    <!-- <select ng-model="selectParam"  ng-change="selectChange(selectParam)">
+                        <option value="">请选择</option>
+                        <option ng-repeat="x in paramList" value="{{x}}"></option>{{x.name}}</option>     
+                    </select> -->
+                    <select class="form-control" ng-model="conditionExpression.linkConditionName" ng-change="selectLinkCondition(conditionExpression)" style="float:left;width:100px;margin: 0 20px 20px 0;" ng-if="$index > 0">
+                        <option ng-repeat="item in linkConditionList">{{item.linkConditionName}}</option>
+                    </select>
+                    <select class="form-control" ng-model="conditionExpression.name" ng-change="selectParamChange(conditionExpression)" style="float:left;width:100px;margin: 0 20px 20px 0;">
+                        <option ng-repeat="item in paramList" >{{item.name}}</option> 
+                    </select>
+                    <select class="form-control" ng-model="conditionExpression.paramInfoName"  ng-change="selectCondionChange(conditionExpression)" style="float:left;width:100px;margin: 0 20px 20px 0;">
+                        <option ng-repeat="item in conditionExpression.condionList">{{item.paramInfoName}}</option>     
+                    </select>
+                    <input type="text"  ng-model="conditionExpression.condionValue" style="width: 100px;height: 34px;text-align: center;border-radius: 4px;border: 1px solid #ccc;box-shadow: inset 0 1px 1px rgba(0,0,0,.075)"/>
+                    <!-- <select ng-model="selectModel">
+                        <option value="">请选择</option>
+                        <option ng-repeat="x in paramList" value="{{x.param}}">{{x.name}}</option>     
+                    </select> -->
+                    <i class="glyphicon glyphicon-minus clickable-property" ng-click="removeCandidateUserValue($index)" style="cursor: pointer"></i>
+                    <i class="glyphicon glyphicon-plus clickable-property" ng-click="addCandidateUserValue($index)" style="cursor: pointer"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button ng-click="addCandidateUserValue(-1)" class="btn btn-primary" translate ng-if="!conditionExpressionList || conditionExpressionList.length==0">添加条件</button>
+        <button ng-click="close()" class="btn btn-primary" translate>ACTION.CANCEL</button>
+        <button ng-click="save()" class="btn btn-primary" translate>ACTION.SAVE</button>
+    </div>
+</div>
+</div>
+</div>

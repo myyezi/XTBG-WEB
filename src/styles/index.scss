@@ -1,0 +1,175 @@
+@import './variables.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+@import './form.scss';
+@import './icon.scss';
+
+body {
+    height: 100%;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
+html {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.mt15 {
+    margin-top: 15px !important;
+}
+
+#app {
+    height: 100%;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
+}
+
+a,
+a:focus,
+a:hover {
+    cursor: pointer;
+    color: inherit;
+    outline: none;
+    text-decoration: none;
+}
+
+div:focus {
+    outline: none;
+}
+
+a:focus,
+a:active {
+    outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+    cursor: pointer;
+    color: inherit;
+    text-decoration: none;
+}
+
+.clearfix {
+    &:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0;
+    }
+}
+ul,li{
+    list-style: none;
+    padding: 0;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+input[type="number"]{
+    -moz-appearance: textfield;
+}
+
+::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-track-piece {
+    background: #fff;
+}
+
+//main-container全局样式
+.app-main {
+    //background: #f0f0f0;
+    font-size: 14px;
+    color: #676a6c;
+    height: calc(100vh - 90px);
+    position: relative;
+    padding: 15px;
+    overflow: auto;
+    background: #f2f2f2 url("../../static/img/loading.gif") no-repeat center;
+    //background-size: 130px;
+}
+
+.app-container {
+    padding: 20px;
+    background: #fff;
+}
+
+.app-container.tab {
+    padding: 20px;
+    background: #fff;
+}
+
+.flex-panel {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.full-big-img {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100000;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: self-start;
+    overflow: auto;
+    padding: 50px 0;
+}
+.full-big-img img {
+    max-width: 90%;
+}
+
+// .dialog_animation_in {
+//     height:100%;
+//     animation:dialog-fade-in 0.5s ease-in-out;
+// }
+// .dialog_animation_out {
+//     animation:dialog-fade-out 0.5s ease-in-out;
+// }
+// @keyframes dialog-fade-in {
+//     0% {
+//         transform: translate3d(100%, 0, 0);
+//         opacity: 0;
+//     }
+//     100% {
+//         transform: translate3d(0, 0, 0);
+//         opacity: 1;
+//     }
+
+// }
+// @keyframes dialog-fade-out {
+//     0% {
+//         transform: translate3d(0, 0, 0);
+//         opacity: 1;
+//     }
+//     100% {
+//         transform: translate3d(100%, 0, 0);
+//         opacity: 0;
+//     }
+// }
+
+@import './list.scss';
