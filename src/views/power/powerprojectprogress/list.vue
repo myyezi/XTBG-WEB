@@ -84,7 +84,7 @@
             <el-button v-show="showStopBtn"  v-if="row.projectStatus==2" @click="stop(row)" type="text" size="small">申请延期</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
+        <el-table-column prop="code" sortable shonpm w-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
         <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
