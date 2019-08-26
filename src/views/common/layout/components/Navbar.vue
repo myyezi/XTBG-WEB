@@ -107,7 +107,7 @@
         },
         methods: {
             getCompanys() {
-                ajax.get('upms/organization/managerCompany').then(result => {
+                ajax.get('upms/organization/getCompanyByUserId').then(result => {
                     this.companys = result.data;
                 });
             },
