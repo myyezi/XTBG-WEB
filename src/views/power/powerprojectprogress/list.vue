@@ -81,10 +81,10 @@
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="operate(row.id, 2)" type="text" size="small">开启</el-button>
             <el-button v-show="showProgressBtn" v-if="row.projectStatus==2" @click="edit(row.taskId)" type="text" size="small">执行</el-button>
-            <el-button v-show="showStopBtn"  v-if="row.projectStatus==2" @click="stop(row)" type="text" size="small">申请延期</el-button>
+            <el-button v-show="showStopBtn"  v-if="row.projectStatus==2 && row.isExtension==0" @click="stop(row)" type="text" size="small">申请延期</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
+        <el-table-column prop="code" sortable shonpm w-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
         <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
