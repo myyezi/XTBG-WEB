@@ -277,6 +277,7 @@ export default {
             if (rs.status == 0) {
               this.$message
                 .success(rs.msg);
+                this.getResFile(this.file);
               this.close();
             } else {
               this.$message
@@ -285,6 +286,24 @@ export default {
           });
         });
     },
+
+      // 上传成功回调
+      getResFile(file){
+          ajax.post('power/powerprojectattachment', {
+              sourceId : this.id,
+              projectId : this.projectId,
+              name : file.name,
+              size : file.size,
+              path : file.path
+          }).then(rs => {
+              if (rs.status == 0) {
+                  this.$message.success(rs.msg);
+                  this._getTasksModel();
+              } else {
+                  this.$message.error(rs.msg);
+              }
+          });
+      },
 
   },
 }
