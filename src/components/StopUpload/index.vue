@@ -128,15 +128,15 @@ export default {
                 // }).catch(e => {});
             // 不需要合并
             } else {
-                // 上传成功,向父组件传值
-                let resfile = {};
-                if (res.status === 0){
-                    resfile.name = file.name;
-                    resfile.size = file.size;
-                    resfile.path = res.data.path;
-                }
-                this.$emit('func', resfile);
             }
+            // 上传成功,向父组件传值
+            let resfile = {};
+            if (res.status === 0){
+                resfile.name = file.name;
+                resfile.size = file.size;
+                resfile.path = res.data.path;
+            }
+            this.$emit('func', resfile);
         },
         onFileError(rootFile, file, response, chunk) {
             console.log(response)
