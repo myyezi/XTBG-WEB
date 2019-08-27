@@ -12,7 +12,7 @@
     <el-collapse-transition>
       <div class="search-box" v-show="isShowMore">
         <div class="form-box">
-          <organization-select ref="organization" @get_seleted_id="getSeletedId"></organization-select>
+          <!--<organization-select ref="organization" @get_seleted_id="getSeletedId"></organization-select>-->
           <div class="form-group">
             <label class="control-label">下达人</label>
             <div class="input-group">
@@ -200,9 +200,9 @@ export default {
       this.getCompanyList();
   },
   methods: {
-      getSeletedId(obj) {
+      /*getSeletedId(obj) {
           this.searchParam.companyId =obj.id;
-      },
+      },*/
       //处理条件查询的时间问题
       getListBefore(params) {
           console.log(66666666666)

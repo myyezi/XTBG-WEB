@@ -13,12 +13,6 @@
         <div class="form-box">
 
           <div class="form-group">
-            <label class="control-label">组织</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.projectId" placeholder="请输入项目id"></el-input>
-            </div>
-          </div>
-          <div class="form-group">
             <label class="control-label">项目类型</label>
             <div class="input-group">
                 <el-select v-model="searchParam.type" clearable placeholder="请选择项目类型">
@@ -80,7 +74,7 @@
         <el-table-column fixed label="操作" width="150">
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="operate(row.id, 2)" type="text" size="small">开启</el-button>
-            <el-button v-show="showProgressBtn" v-if="row.projectStatus==2" @click="edit(row.taskId)" type="text" size="small">执行</el-button>
+            <el-button v-show="showProgressBtn" v-if="row.projectStatus==2 && row.isExtension==0" @click="edit(row.taskId)" type="text" size="small">执行</el-button>
             <el-button v-show="showStopBtn"  v-if="row.projectStatus==2 && row.isExtension==0" @click="stop(row)" type="text" size="small">申请延期</el-button>
           </template>
         </el-table-column>
@@ -91,6 +85,7 @@
         <el-table-column prop="coDepartmentText" sortable show-overflow-tooltip min-width="100" label="协办部门"></el-table-column>
         <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="100" label="项目经理"></el-table-column>
         <el-table-column prop="projectStatusText" sortable show-overflow-tooltip min-width="100" label="项目状态"></el-table-column>
+          <el-table-column prop="approvalStatusText" sortable show-overflow-tooltip min-width="100" label="延期审批状态"></el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
@@ -147,9 +142,8 @@ export default {
       extensionForm:{},
       saveForm:{},
       rules: {
-            name: [
-                { required: true, message: '请输入文件名称', trigger: 'blur' },
-                { min: 0, max: 100, message: '长度在 100个字符内', trigger: 'blur' }
+            reason: [
+                { required: true, message: '请输入延期原因', trigger: 'blur' }
             ],
         },
     }
@@ -180,18 +174,24 @@ export default {
       //确定
       cancel(){
           var data = {};
-          data.reason =this.extensionForm.reason;
-          data.extDate =this.extensionForm.extDate
-          data.projectId =  this.saveForm.id
-          data.approver= this.saveForm.manager
-          ajax.post('power/powerprojectextension', data).then(rs => {
-              if (rs.status == 0) {
-                  this.$message
-                      .success(rs.msg);
-                  this.close();
+          this.$refs['ruleForm'].validate((valid) => {
+              if (valid) {
+                  data.reason =this.extensionForm.reason;
+                  data.extDate =this.extensionForm.extDate
+                  data.projectId =  this.saveForm.id
+                  data.approver= this.saveForm.manager
+                  ajax.post('power/powerprojectextension', data).then(rs => {
+                      if (rs.status == 0) {
+                          this.$message
+                              .success(rs.msg);
+                          this.close();
+                      } else {
+                          this.$message
+                              .error(rs.msg);
+                      }
+                  });
               } else {
-                  this.$message
-                      .error(rs.msg);
+                  return false;
               }
           });
       },
