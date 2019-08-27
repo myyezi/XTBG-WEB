@@ -100,6 +100,9 @@
             <el-form-item label="备注" prop="remark"  class="big">
               <el-input v-model="powerprojecttaskForm.remark" placeholder="请输入备注" maxlength=30 clearable></el-input>
             </el-form-item>
+              <el-form-item label="附件上传" prop="img" class="big">
+                  <upload-panel :size="1" :file-list.sync="file" :showDownload="false"></upload-panel>
+              </el-form-item>
           </div>
         </el-collapse-item>
       </el-collapse>
@@ -118,10 +121,11 @@
 import ajax from '@/utils/request'
 import { tool, ruleTool } from '@/utils/common'
 import BaiduMap from '@/components/BaiduMap/index'
+import UploadPanel from '@/components/UploadPanel/index'
 
 export default {
   mixins: [tool, ruleTool],
-  components: {BaiduMap},
+  components: {BaiduMap,UploadPanel},
   data() {
     return {
       powerprojecttaskForm: {},
@@ -133,6 +137,7 @@ export default {
       userList:[],
       dialogAdressVisible:false,
       adress : '',
+      file: [],
       openCollapse: ["1"],//默认打开的面板
       rules: {
         name: [
@@ -256,6 +261,8 @@ export default {
       },
     //保存
     submitForm(form) {
+      console.log(this.file)
+      return
       var data = this.powerprojecttaskForm;
       this.$refs[form]
         .validate((valid) => {

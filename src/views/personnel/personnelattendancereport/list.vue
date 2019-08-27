@@ -78,6 +78,7 @@
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
+import $ from 'jquery-slim'
 
 export default {
   name: 'PersonnelAttendanceReport',
@@ -125,6 +126,11 @@ export default {
           ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
               this.companyList = rs.data;
           });
+      },
+
+      //导出评价明细功能
+      exportExcel() {
+          window.location = this.exportUrl("personnel/personnelattendancereport/exportAttendanceReport?" + $.param(this.searchParam));
       },
   }
 }

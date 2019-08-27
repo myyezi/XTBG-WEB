@@ -35,12 +35,12 @@
                 </el-dropdown>
             </ul>
         </div>
-        <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()" style="float:right;width: 200px;margin-right:10px">
-            <el-option v-for="(item,index) in companys"
-                    :key="index"
-                    :label="item.name"
-                    :value="item.id"></el-option>
-        </el-select>
+<!--        <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()" style="float:right;width: 200px;margin-right:10px">-->
+<!--            <el-option v-for="(item,index) in companys"-->
+<!--                    :key="index"-->
+<!--                    :label="item.name"-->
+<!--                    :value="item.id"></el-option>-->
+<!--        </el-select>-->
         <IMChat ref="imChat"></IMChat>
         <UpdPassword ref="form"></UpdPassword>
     </el-menu>
@@ -161,10 +161,10 @@
             },
             getPath(item) {
                 if(item.isPath) {
-                    this.$router.push({ 
+                    this.$router.push({
                         path: item.path
                     })
-                } 
+                }
             },
             getColor(item) {
                 console.log(item)
@@ -227,7 +227,7 @@
                         margin:15px 5px 0 0;
                     }
                     span {
-                        float:left; 
+                        float:left;
                     }
                     .message_number {
                         margin: -10px 0 0 -5px;
@@ -243,7 +243,7 @@
                         margin:15px 5px 0 0;
                     }
                     span {
-                        float:left; 
+                        float:left;
                     }
                 }
             }
