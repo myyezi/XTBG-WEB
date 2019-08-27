@@ -248,8 +248,6 @@
             },
 
             downloadFile(data){
-                console.info("11111111",process.env.URL_API);
-                console.info("22222222",data.path);
                 window.open(process.env.URL_API+data.path);
             },
 
