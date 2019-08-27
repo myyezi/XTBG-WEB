@@ -2,12 +2,11 @@
       <div class="form-group">
           <label class="control-label">组织</label>
           <div class="input-group">
-              <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择组织">
+              <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择组织" @change="getSeleted">
                   <el-option
                       v-for="item in companyList"
                       :key="item.value"
                       :label="item.name"
-                      :change="test()"
                       :value="item.id">
                   </el-option>
               </el-select>
@@ -45,8 +44,8 @@ export default {
               this.companyList = rs.data;
           });
       },
-      test(rs){
-          console.log(rs)
+      getSeleted(rs){
+          this.$emit("get_seleted_id",{id:rs})
       }
   }
 };

@@ -12,20 +12,7 @@
     <el-collapse-transition>
       <div class="search-box" v-show="isShowMore">
         <div class="form-box">
-<!--          <div class="form-group">-->
-<!--            <label class="control-label">组织</label>-->
-<!--            <div class="input-group">-->
-<!--                <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择组织">-->
-<!--                    <el-option-->
-<!--                        v-for="item in companyList"-->
-<!--                        :key="item.value"-->
-<!--                        :label="item.name"-->
-<!--                        :value="item.id">-->
-<!--                    </el-option>-->
-<!--                </el-select>-->
-<!--            </div>-->
-<!--          </div>-->
-          <organization-select ref="organization"></organization-select>
+          <organization-select ref="organization" @get_seleted_id="getSeletedId"></organization-select>
           <div class="form-group">
             <label class="control-label">下达人</label>
             <div class="input-group">
@@ -213,6 +200,9 @@ export default {
       this.getCompanyList();
   },
   methods: {
+      getSeletedId(obj) {
+          console.log(obj)
+      },
       //处理条件查询的时间问题
       getListBefore(params) {
           console.log(66666666666)
