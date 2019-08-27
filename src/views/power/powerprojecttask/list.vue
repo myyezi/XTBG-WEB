@@ -12,19 +12,7 @@
     <el-collapse-transition>
       <div class="search-box" v-show="isShowMore">
         <div class="form-box">
-          <div class="form-group">
-            <label class="control-label">组织</label>
-            <div class="input-group">
-                <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择组织">
-                    <el-option
-                        v-for="item in companyList"
-                        :key="item.value"
-                        :label="item.name"
-                        :value="item.id">
-                    </el-option>
-                </el-select>
-            </div>
-          </div>
+          <!--<organization-select ref="organization" @get_seleted_id="getSeletedId"></organization-select>-->
           <div class="form-group">
             <label class="control-label">下达人</label>
             <div class="input-group">
@@ -175,10 +163,11 @@
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
-
+import OrganizationSelect from '@/components/OrganizationSelect'
 export default {
   name: 'PowerProjectTask',
-  mixins: [tool],
+    components: {OrganizationSelect},
+    mixins: [tool],
   data() {
     return {
         typeOptions: [],
@@ -211,8 +200,13 @@ export default {
       this.getCompanyList();
   },
   methods: {
+      /*getSeletedId(obj) {
+          this.searchParam.companyId =obj.id;
+      },*/
       //处理条件查询的时间问题
       getListBefore(params) {
+          console.log(66666666666)
+          console.log(this.$refs.organization)
           if (this.searchParam.relatedDesign) {
               params.relatedDesign = this.searchParam.relatedDesign.join(',');
           }

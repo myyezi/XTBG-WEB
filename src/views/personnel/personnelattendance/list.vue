@@ -30,6 +30,7 @@
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
+import $ from 'jquery-slim'
 
 export default {
   name: 'PersonnelAttendance',
@@ -40,7 +41,8 @@ export default {
       listUrl: "personnel/personnelattendance",
       showSearch: false,
       showAddBtn: this.getCurrentUserAuthority("/personnelattendance/save"),
-      showEditBtn: this.getCurrentUserAuthority("/personnelattendance/edit")
+      showEditBtn: this.getCurrentUserAuthority("/personnelattendance/edit"),
+      searchParam:{}
     }
   },
   mounted() {
@@ -51,7 +53,12 @@ export default {
           params.employeeId =  this.$route.query.employeeId;
           params.attendanceDate =  this.$route.query.month;
           params.companyId =  this.$route.query.companyId;
-          console.log(params);
+          this.searchParam =params;
+          console.log( this.searchParam);
+      },
+      //导出评价明细功能
+      exportExcel() {
+          window.location = this.exportUrl("personnel/personnelattendance/exportAttendanceDetail?" + $.param(this.searchParam));
       },
   }
 }
