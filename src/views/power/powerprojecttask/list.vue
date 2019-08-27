@@ -201,7 +201,7 @@ export default {
   },
   methods: {
       getSeletedId(obj) {
-          console.log(obj)
+          this.searchParam.companyId =obj.id;
       },
       //处理条件查询的时间问题
       getListBefore(params) {
