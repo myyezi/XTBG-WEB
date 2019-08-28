@@ -106,7 +106,8 @@
                   :on-preview="handlePreview"
                   :on-remove="handleRemove"
                   :before-remove="beforeRemove"
-                  multiple
+                  :on-success="handleChange"
+                   multiple
                   :limit="3"
                   :on-exceed="handleExceed"
                   :file-list="saveList">
@@ -140,7 +141,7 @@ export default {
     return {
       uploadUrl: process.env.BASE_API + "file/upload/multipart",
       saveList: [],
-      powerprojecttaskForm: {},
+      powerprojecttaskForm: {proprietorContactId:''},
       typeOptions: [],
       designOptions:[],
       ProprietorList:[],
@@ -308,18 +309,13 @@ export default {
           for (let i = 0; i <this.saveList.length ; i++) {
               this.saveList[i].sourceId = taskId;
           }
-          ajax.post('power/powerprojectattachment/saveList', this.saveList).then(rs => {
-              if (rs.status == 0) {
-                  this.$message.success(rs.msg);
-              } else {
-                  this.$message.error(rs.msg);
-              }
+          ajax.post('power/powerprojectattachment/saveList/'+taskId, this.saveList).then(rs => {
+
           });
       },
 
       handleRemove(file, fileList) {
-        console.log(fileList)
-          this.saveList = fileList;
+           this.saveList = fileList;
       },
       handlePreview(file) {
           console.log(file);
@@ -331,6 +327,13 @@ export default {
           return this.$confirm(`确定移除 ${ file.name }？`);
       },
 
+      handleChange(res){
+          let file ={};
+          file.name = res.data.name;
+          file.path = res.data.path;
+          this.saveList.push(file)
+          console.log(this.saveList)
+      }
 
   },
 }
