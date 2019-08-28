@@ -4,50 +4,44 @@
             <i class="el-icon-loading"></i>
         </div>
         <div id="app" v-cloak class="signin">
-            <div class="top-div"></div>
             <div class="middle-div">
                 <div class="middle-count-div clearfix">
                     <div class="left-div">
-                        <div class="logo"></div>
+                        <div class="logo">
+                            <el-carousel trigger="click" height="100vh" arrow="never" indicator-position="none" class="product_swiper">
+                                <el-carousel-item v-for="(item,index) in productImg" :key="index" class="clearfix">
+                                    <div class="productImg"><img :src="item.url"/></div>
+                                </el-carousel-item>
+                            </el-carousel>
+                        </div>
                     </div>
                     <div class="right-div">
                         <div class="right-div-form">
                             <div id="frmLogin">
-                                <div class="title">用户登录</div>
-                                <div class="title_sm clearfix">
-                                    <div class="title_hx_left title_float">
+                                    <div class="title_sm">
+                                        协同办公系统登录
                                     </div>
-                                    <div class="title_float title_count">欢迎登录综合能源服务应用平台</div>
-                                    <div class="title_hx_right title_float">
+                                    <el-input v-model="account" auto-complete="off"
+                                        type="text" class="form-control nborder icon-input user" maxlength="20"
+                                        placeholder="请输入账号" clearable prefix-icon="el-icon-user"/>
+                                    <el-input v-model="password" auto-complete="off" @keyup.enter="login"
+                                        type="password" class="form-control nborder icon-input pwd" maxlength="30"
+                                        placeholder="请输入密码" clearable prefix-icon="el-icon-lock"/>
+                                    <div class="login-info">
+                                        <el-checkbox v-model="savePwd">记住密码</el-checkbox>
+                                        <!-- <span>忘记密码？请联系管理员</span> -->
                                     </div>
-                                </div>
-                                <input v-model="account" auto-complete="off"
-                                       type="text" class="form-control nborder icon-input user" maxlength="20"
-                                       placeholder="请输入账号"/>
-                                <input v-model="password" auto-complete="off" @keyup.enter="login"
-                                       type="password" class="form-control nborder icon-input pwd" maxlength="30"
-                                       placeholder="请输入密码"/>
-                                <!--<el-select v-model="companyId" filterable clearable placeholder="请选择所属公司">
-                                    <el-option label="湖北中大恒润科技有限公司" :value="10"></el-option>
-                                    <el-option label="湖北中大恒润能源工程有限公司" :value="20"></el-option>
-                                    <el-option label="胡中大恒润商业运营管理有限公司" :value="30"></el-option>
-                                </el-select>-->
-                                <div class="login-info">
-                                    <el-checkbox v-model="savePwd">记住密码</el-checkbox>
-                                    <span>忘记密码？请联系管理员</span>
-                                </div>
-                                <label class="form-group error-text" style="color:red;" v-html="message"
-                                       v-show="message"></label>
-                                <el-button id="btnSubmit" type="button" :disabled="disabled()" :loading="loading"
-                                           class="btn btn-primary block" @click="login">登录
-                                </el-button>
+                                    <label class="form-group error-text" style="color:red;" v-html="message"
+                                        v-show="message"></label>
+                                    <el-button id="btnSubmit" type="button" :disabled="disabled()" :loading="loading"
+                                            class="btn btn-primary block" @click="login">立刻登录
+                                    </el-button>
                             </div>
                         </div>
                     </div>
 
                 </div>
             </div>
-            <div class="footer">Copyright © 2019 湖北中大恒润科技有限公司 鄂ICP备19003003号</div>
         </div>
 
     </div>
@@ -68,7 +62,10 @@
                 password: localStorage.getItem("tgpt_password") || "",
                 message: "",
                 loading: false,
-                companyId: ""
+                companyId: "",
+                productImg:[
+                    {url:require('@/styles/img/banner.png')},
+                ],
             }
         },
         watch: {
