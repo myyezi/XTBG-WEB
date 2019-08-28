@@ -35,12 +35,12 @@
                 </el-dropdown>
             </ul>
         </div>
-<!--        <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()" style="float:right;width: 200px;margin-right:10px">-->
-<!--            <el-option v-for="(item,index) in companys"-->
-<!--                    :key="index"-->
-<!--                    :label="item.name"-->
-<!--                    :value="item.id"></el-option>-->
-<!--        </el-select>-->
+       <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()" style="float:right;width: 200px;margin-right:10px">
+           <el-option v-for="(item,index) in companys"
+                   :key="index"
+                   :label="item.name"
+                   :value="item.id"></el-option>
+       </el-select>
         <IMChat ref="imChat"></IMChat>
         <UpdPassword ref="form"></UpdPassword>
     </el-menu>
@@ -109,23 +109,13 @@
             getCompanys() {
                 ajax.get('upms/organization/getCompanyByUserId').then(result => {
                     this.companys = result.data;
+                    console.log(this.user.managementCompanyId);
+                    this.companyId = this.user.managementCompanyId;
                 });
             },
             changeCompany() {
-                ajax.get('upms/user/getCurrentUserAuthority?companyId='+ this.companyId).then(response => {
-                    const data = response.data.menuStr;
-                    console.log(data);
-                    console.log(data.indexOf("/common/index") != -1);
-                    console.log(data.indexOf("/common/storeIndex") != -1);
-                    if (data.indexOf("/common/index") != -1) {
-                        this.$router.push({path: '/'})
-                    }
-                    else if (data.indexOf("/common/storeIndex") != -1) {
-                        this.$router.push({path: '/index'})
-                    }
-                    else {
-                        this.$router.push({path: '/'})
-                    }
+                ajax.get('upms/user/changeCustomCompany/'+ this.companyId).then(response => {
+                     location.reload();
                 })
             },
 
