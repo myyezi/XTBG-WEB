@@ -12,8 +12,32 @@
                 :headerTitle="headerTitle">
             </gantt-add>
         </div>
-    </div>
+        <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
+            <stop-upload @func="getResFile"></stop-upload>
+        </el-dialog>
 
+        <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="200" height="800px">
+            <div>
+                <el-table :data="attachmentList" style="width: 100%;height: 500px;">
+                    <el-table-column fixed label="操作" width="120">
+                        <template fixed slot-scope="{ row, column, $index }">
+                            <el-button v-show="true" @click="delFile(row)" type="text" size="small">删除</el-button>
+                            <el-button v-show="true" @click="downloadFile(row)" type="text" size="small">下载</el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="序号" width="70px">
+                        <template slot-scope="scope">
+                            {{scope.$index+1}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称"></el-table-column>
+                    <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小"></el-table-column>
+                    <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="上传人"></el-table-column>
+                    <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="上传时间"></el-table-column>
+                </el-table>
+            </div>
+        </el-dialog>
+    </div>
 </template>
 
 <script>
@@ -23,24 +47,25 @@
     import '@/components/dhtmlx-gantt'
     import "@/components/dhtmlx-gantt/codebase/locale/locale_cn"
     import Bus from "@/utils/eventBus.js"
+    import StopUpload from '@/components/StopUpload/index'
 
-    const addImg = require('@/styles/img/icon-img/add.png')
-    const editImg = require('@/styles/img/icon-img/edit.png')
-    const deletedImg = require('@/styles/img/icon-img/deleted.png')
     export default {
         mixins: [tool, ruleTool],
-        components: {GanttAdd},
+        components: {GanttAdd, StopUpload},
         data() {
             let that = this;
             return {
                 dialogVisible : false,
+                fileFormVisible : false,
                 projectTaskList : [],
                 stageList : [],
+                attachmentList : [],
+                id : "",
                 taskId : "",
                 projectId : "",
                 projectName : "",
                 tempArr : [],
-                showSaveDraftBtn : false,
+                uploadShow : false,
                 rules: {
                     name: [
                         { required: true, message: '请输入工作内容', trigger: ['change','blur'] }
@@ -175,19 +200,56 @@
             }
             Bus.$on("task-updated", data => {
                 if(data.operationType === 'upload') {
-                    console.info("1111111",data);
+                    this.uploadShow = true;
+                    this.id = data.id;
                 }else if (data.operationType === 'view'){
-                    console.info("2222222",data);
+                    this.fileFormVisible = true;
+                    // 获取项目任务书对象
+                    ajax.get('power/powerprojectattachment/',{sourceId : data.id, projectId : this.projectId}).then(rs => {
+                        if (rs.status === 0){
+                            this.attachmentList = rs.data;
+                        }else{
+                            this.$message({
+                                message: rs.msg,
+                                type: 'error'
+                            });
+                        }
+                    });
                 }else if (data.operationType === 'approvefinish'){
-                    console.info("3333333",data);
+
                 }else if(data.operationType === 'finish') {
-                    console.info("4444444",data);
+
                 }
             });
             this.getProjectTask();
             this.getStageList();
         },
         methods: {
+            // 上传成功回调
+            getResFile(file){
+                ajax.post('power/powerprojectattachment', {
+                    sourceId : this.id,
+                    projectId : this.projectId,
+                    name : file.name,
+                    size : file.size,
+                    path : file.path
+                }).then(rs => {
+                    if (rs.status == 0) {
+                        this.$message.success(rs.msg);
+                        this._getTasksModel();
+                    } else {
+                        this.$message.error(rs.msg);
+                    }
+                });
+            },
+
+            delFile(data){
+
+            },
+
+            downloadFile(data){
+                window.open(process.env.URL_API+data.path);
+            },
 
             // 工程阶段字典
             getStageList() {

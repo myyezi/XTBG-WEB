@@ -13,9 +13,9 @@
       <div class="search-box" v-show="isShowMore">
         <div class="form-box">
           <div class="form-group">
-            <label class="control-label">管理公司</label>
+            <label class="control-label">组织</label>
             <div class="input-group">
-                    <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择管理公司">
+                    <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择组织">
                         <el-option
                             v-for="item in companyList"
                             :key="item.value"
@@ -23,12 +23,6 @@
                             :value="item.id">
                         </el-option>
                     </el-select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">组织</label>
-            <div class="input-group">
-              <el-input v-model="searchParam.days" placeholder="请选择组织"></el-input>
             </div>
           </div>
           <div class="form-group">
@@ -78,6 +72,7 @@
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
+import $ from 'jquery-slim'
 
 export default {
   name: 'PersonnelAttendanceReport',
@@ -125,6 +120,11 @@ export default {
           ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
               this.companyList = rs.data;
           });
+      },
+
+      //导出评价明细功能
+      exportExcel() {
+          window.location = this.exportUrl("personnel/personnelattendancereport/exportAttendanceReport?" + $.param(this.searchParam));
       },
   }
 }

@@ -40,7 +40,7 @@
                     :key="index"
                     :label="item.name"
                     :value="item.id"></el-option>
-        </el-select>
+        </el-select>        
         <IMChat ref="imChat"></IMChat>
         <UpdPassword ref="form"></UpdPassword>
     </el-menu>
@@ -107,25 +107,15 @@
         },
         methods: {
             getCompanys() {
-                ajax.get('upms/organization/managerCompany').then(result => {
+                ajax.get('upms/organization/getCompanyByUserId').then(result => {
                     this.companys = result.data;
+                    console.log(this.user.managementCompanyId);
+                    this.companyId = this.user.managementCompanyId;
                 });
             },
             changeCompany() {
-                ajax.get('upms/user/getCurrentUserAuthority?companyId='+ this.companyId).then(response => {
-                    const data = response.data.menuStr;
-                    console.log(data);
-                    console.log(data.indexOf("/common/index") != -1);
-                    console.log(data.indexOf("/common/storeIndex") != -1);
-                    if (data.indexOf("/common/index") != -1) {
-                        this.$router.push({path: '/'})
-                    }
-                    else if (data.indexOf("/common/storeIndex") != -1) {
-                        this.$router.push({path: '/index'})
-                    }
-                    else {
-                        this.$router.push({path: '/'})
-                    }
+                ajax.get('upms/user/changeCustomCompany/'+ this.companyId).then(response => {
+                     location.reload();
                 })
             },
 
@@ -161,10 +151,10 @@
             },
             getPath(item) {
                 if(item.isPath) {
-                    this.$router.push({ 
+                    this.$router.push({
                         path: item.path
                     })
-                } 
+                }
             },
             getColor(item) {
                 console.log(item)
@@ -227,7 +217,7 @@
                         margin:15px 5px 0 0;
                     }
                     span {
-                        float:left; 
+                        float:left;
                     }
                     .message_number {
                         margin: -10px 0 0 -5px;
@@ -243,7 +233,7 @@
                         margin:15px 5px 0 0;
                     }
                     span {
-                        float:left; 
+                        float:left;
                     }
                 }
             }
