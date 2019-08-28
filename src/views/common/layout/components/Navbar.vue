@@ -35,12 +35,13 @@
                 </el-dropdown>
             </ul>
         </div>
-<el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()" style="float:right;width: 200px;margin-right:10px">
+        <el-select v-model="companyId" filterable placeholder="切换所属公司" @change="changeCompany()" style="float:right;width: 200px;margin-right:10px">
             <el-option v-for="(item,index) in companys"
                     :key="index"
                     :label="item.name"
                     :value="item.id"></el-option>
-        </el-select>        <IMChat ref="imChat"></IMChat>
+        </el-select>        
+        <IMChat ref="imChat"></IMChat>
         <UpdPassword ref="form"></UpdPassword>
     </el-menu>
 </template>
