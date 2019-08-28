@@ -79,11 +79,7 @@
               <el-form-item label="工作内容" prop="name">
                   <el-input v-show="!showContent" v-model.trim="powerprojectplanform.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
                   <el-select v-show="showContent" v-model="powerprojectplanform.name" placeholder="请选择工作内容" clearable>
-                      <el-option  label="勘察收资" value="勘察收资"></el-option>
-                      <el-option  label="卷册设计" value="卷册设计"></el-option>
-                      <el-option  label="项目审查" value="项目审查"></el-option>
-                      <el-option  label="技术交底" value="技术交底"></el-option>
-                      <el-option  label="设计变更" value="设计变更"></el-option>
+                      <el-option v-for="e in contentList"  :key="e.value" :label="e.text" :value="e.text" ></el-option >
                   </el-select>
               </el-form-item>
               <el-form-item label="工期" prop="period">
@@ -165,6 +161,7 @@ export default {
         formData : {
             id : "",
             name : "",
+            nameType : "",
             period : null,
             planStartDate : "",
             planEndDate : "",
@@ -180,6 +177,7 @@ export default {
         showUserSelector : false,
         projectTaskList : [],
         stageList : [],
+        contentList : [],
         taskId : "",
         projectId : "",
         disabledTaskSelect : false,
@@ -352,6 +350,7 @@ export default {
                   this.tasks.data.forEach((item) => {
                       if(data.id == item.id) {
                           this.powerprojectplanform = item;
+                          console.info("1111111111111111",this.powerprojectplanform);
                       }
                   });
               }
@@ -376,23 +375,22 @@ export default {
       });
 
       this.getTaskList();
-      this.getStageList();
+      this.getDict();
   },
   methods: {
 
-    // 工程阶段字典
-    getStageList() {
-        let type = "GCJD";
-        ajax.get('upms/dict/type/'+type).then(rs => {
-            if (rs.length > 0) {
-                this.stageList = rs;
-            }
-        });
-     },
+      // 获取字典
+      getDict() {
+          let type = 'GCJD,GZNR';
+          ajax.get("upms/dict/allType/"+type).then(rs => {
+              this.stageList = rs.GCJD;
+              this.contentList = rs.GZNR;
+          });
+      },
 
     // 获取项目任务书下拉框数据
     getTaskList(){
-        ajax.get('power/powerprojecttask/getTaskSelect').then(rs => {
+        ajax.get('power/powerprojecttask/getTaskSelect/' + this.taskId).then(rs => {
             if (rs.status === 0){
                 this.projectTaskList = rs.data;
             }else{
@@ -524,10 +522,22 @@ export default {
                 if(this.operationType === 'add') {
                     newChild.parent = 0;
                     newChild.level = 1;
+                    this.contentList.forEach((item) => {
+                        if (item.text == this.powerprojectplanform.name){
+                            newChild.nameType = item.value;
+                        }
+                    });
                 } else if (this.operationType === 'inserted'){
                     newChild.parent = this.formData.id;
                     newChild.level = this.formData.level + 1;
+                    newChild.nameType = this.formData.nameType;
                 } else {
+                    // 获取工作内容类型
+                    this.contentList.forEach((item) => {
+                        if (item.text == this.powerprojectplanform.name){
+                            newChild.nameType = item.value;
+                        }
+                    });
                     if (this.tasks.data && this.tasks.data.length > 0){
                         this.dataArr.forEach((item,index) => {
                             if(item.id === this.powerprojectplanform.id) {
@@ -582,11 +592,11 @@ export default {
             obj.data = this.dataArr;
             this.tasks = obj;
         } else {
+            console.info("22222222222222",data);
             this.$message({
                 message: '编辑成功',
                 type: 'success'
             });
-            debugger;
             this.dialogVisible = false;
             this.dataArr.push(data);
             let obj = {};
