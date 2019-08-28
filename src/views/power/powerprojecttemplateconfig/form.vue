@@ -29,11 +29,7 @@
                 <el-form-item label="工作内容" prop="name">
                     <el-input v-show="!showContent" v-model.trim="templateConfigForm.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
                     <el-select v-show="showContent" v-model="templateConfigForm.name" placeholder="请选择工作内容" clearable>
-                        <el-option  label="勘察收资" value="勘察收资"></el-option>
-                        <el-option  label="卷册设计" value="卷册设计"></el-option>
-                        <el-option  label="项目审查" value="项目审查"></el-option>
-                        <el-option  label="技术交底" value="技术交底"></el-option>
-                        <el-option  label="设计变更" value="设计变更"></el-option>
+                        <el-option v-for="e in contentList"  :key="e.value" :label="e.text" :value="e.text" ></el-option >
                     </el-select>
                 </el-form-item>
                 <el-form-item label="工期" prop="period">
@@ -47,13 +43,13 @@
                         <el-option v-for="e in stageList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
                     </el-select>
                 </el-form-item>
-                <el-form-item label="是否审批" prop="isApproval">
-                    <el-radio v-model="templateConfigForm.isApproval" :label="1">是</el-radio>
-                    <el-radio v-model="templateConfigForm.isApproval" :label="0">否</el-radio>
+                <el-form-item label="是否审批" prop="isApproval" >
+                    <el-radio v-model="templateConfigForm.isApproval" :label="1" @change="changeApproval">是</el-radio>
+                    <el-radio v-model="templateConfigForm.isApproval" :label="0" @change="changeApproval">否</el-radio>
                 </el-form-item>
                 <el-form-item label="是否上传文件" prop="indexScore">
-                    <el-radio v-model="templateConfigForm.isUpload" :label="1">是</el-radio>
-                    <el-radio v-model="templateConfigForm.isUpload" :label="0">否</el-radio>
+                    <el-radio v-model="templateConfigForm.isUpload" :label="1" @change="changeUpload">是</el-radio>
+                    <el-radio v-model="templateConfigForm.isUpload" :label="0" @change="changeUpload">否</el-radio>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -80,6 +76,7 @@ export default {
         },
         formData : {
             name : "",
+            nameType : "",
             period : null,
             profession : "",
             stage : null,
@@ -88,6 +85,7 @@ export default {
         },
         projectTypeList : [],
         stageList : [],
+        contentList : [],
         treeData: {
             columns: [],
             lists: [],
@@ -231,24 +229,16 @@ mounted() {
     if (this.operateType == 'edit'){
         this.getDragTree();
     }
-    this.getProjectType();
-    this.getStageList();
+    this.getDict();
 },
 methods: {
-    getProjectType() {
-        let type = "XMLX";
-        ajax.get('upms/dict/type/'+type).then(rs => {
-            if (rs.length > 0) {
-                this.projectTypeList = rs;
-            }
-        });
-    },
-    getStageList() {
-        let type = "GCJD";
-        ajax.get('upms/dict/type/'+type).then(rs => {
-            if (rs.length > 0) {
-                this.stageList = rs;
-            }
+    // 获取字典
+    getDict() {
+        let type = 'XMLX,GCJD,GZNR';
+        ajax.get("upms/dict/allType/"+type).then(rs => {
+            this.projectTypeList = rs.XMLX;
+            this.stageList = rs.GCJD;
+            this.contentList = rs.GZNR;
         });
     },
     onChangeProjectType(){
@@ -296,15 +286,17 @@ methods: {
         });
     },
 
-    //进入编辑页调用 bean为列表页传入数据
-    open() {
-        if (this.$route.query.id) {
-            ajax.get('project/powerprojecttemplateconfig/' + this.$route.query.id).then(rs => {
-                this.powerprojecttemplateconfigForm = rs.data;
-                if (null != rs.data.img && rs.data.img.length > 0) {
-                    this.img = JSON.parse(rs.data.img);
-                }
-            });
+    changeApproval(){
+        if (this.templateConfigForm.isApproval == 1){
+            this.templateConfigForm.isUpload = 1;
+        }
+    },
+
+    changeUpload(){
+        if (this.templateConfigForm.isUpload == 0){
+            this.templateConfigForm.isApproval = 0;
+        }else{
+            this.templateConfigForm.isApproval = 1;
         }
     },
 
@@ -342,12 +334,13 @@ methods: {
         this.operationType = 'edit';
         this.templateConfigForm = {
             name : data.name,
+            nameType : data.nameType,
             period : data.period,
             profession : data.profession,
             stage : data.stage,
             isApproval : data.isApproval,
             isUpload : data.isUpload,
-        }
+        };
         this.dialogFormVisible = true;
     },
     // 删除节点
@@ -409,8 +402,20 @@ methods: {
                     newChild.level = this.isAddFirst ? 1 : this.formData.level + 1;
                 } else {
                     // 编辑传id
-                    newChild.id = this.formData.id
+                    newChild.id = this.formData.id;
                 }
+
+                // 获取工作内容类型
+                if (this.isAddFirst || this.formData.parentId == "0"){
+                    this.contentList.forEach((item) => {
+                        if (item.text == this.templateConfigForm.name){
+                            newChild.nameType = item.value;
+                        }
+                    });
+                }else{
+                    newChild.nameType = this.formData.nameType;
+                }
+
                 newChild.sortNum = this.getSortNum(newChild.parentId);
                 this.getNodeProcessing(newChild);
             } else {
@@ -477,6 +482,7 @@ methods: {
             this.dialogFormVisible = false;
             // 弹窗表单修改的字段需要给formData中对应的字段附值
             this.formData.name = data.name;
+            this.formData.nameType = data.nameType;
             this.formData.period = data.period;
             this.formData.profession = data.profession;
             this.formData.stage = data.stage;
