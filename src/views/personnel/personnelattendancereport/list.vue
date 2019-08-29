@@ -15,7 +15,7 @@
           <div class="form-group">
             <label class="control-label">组织</label>
             <div class="input-group">
-                    <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择组织">
+                    <el-select v-model="searchParam.organizationId" filterable clearable placeholder="请选择组织">
                         <el-option
                             v-for="item in companyList"
                             :key="item.value"

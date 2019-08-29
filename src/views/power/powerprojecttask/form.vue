@@ -162,9 +162,9 @@ export default {
         proprietorId: [
           { required: true, message: '请选择建设单位', trigger: ['blur'] }
         ],
-        proprietorContactId: [
-          { required: true, message: '请选择联系人', trigger: ['blur'] }
-        ],
+        // proprietorContactId: [
+        //   { required: true, message: '请选择联系人', trigger: ['blur'] }
+        // ],
         source: [
           { required: true, message: '请选择任务依据', trigger: ['blur'] }
         ],
