@@ -75,11 +75,7 @@ const websocketConnect = {
     //连接丢失
     onConnectionLost: function(responseObject) {
         if (responseObject.errorCode !== 0) {
-            if(responseObject.errorCode === 8) {
-                store.commit('updateNet', ErrorType.NET_ERROR);
-            } else {
-                client.connect(objData);
-            }
+            store.commit('updateNet', ErrorType.NET_ERROR);
             console.log("onConnectionLost:" + responseObject.errorMessage);
         }
     },
