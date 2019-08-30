@@ -100,9 +100,20 @@
             <el-form-item label="备注" prop="remark"  class="big">
               <el-input v-model="powerprojecttaskForm.remark" placeholder="请输入备注" maxlength=30 clearable></el-input>
             </el-form-item>
-              <el-form-item label="附件上传" prop="img" class="big">
-                  <upload-panel :size="1" :file-list.sync="file" :showDownload="false"></upload-panel>
-              </el-form-item>
+              <el-upload
+                  class="upload-demo" style="margin-left: 15px ;margin-top: 15px"
+                  :action="uploadUrl"
+                  :on-preview="handlePreview"
+                  :on-remove="handleRemove"
+                  :before-remove="beforeRemove"
+                  :on-success="handleChange"
+                   multiple
+                  :limit="3"
+                  :on-exceed="handleExceed"
+                  :file-list="saveList">
+                  <el-button size="small" type="primary" >上传附件</el-button>
+<!--                  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
+              </el-upload>
           </div>
         </el-collapse-item>
       </el-collapse>
@@ -128,7 +139,9 @@ export default {
   components: {BaiduMap,UploadPanel},
   data() {
     return {
-      powerprojecttaskForm: {},
+      uploadUrl: process.env.BASE_API + "file/upload/multipart",
+      saveList: [],
+      powerprojecttaskForm: {proprietorContactId:''},
       typeOptions: [],
       designOptions:[],
       ProprietorList:[],
@@ -149,9 +162,9 @@ export default {
         proprietorId: [
           { required: true, message: '请选择建设单位', trigger: ['blur'] }
         ],
-        proprietorContactId: [
-          { required: true, message: '请选择联系人', trigger: ['blur'] }
-        ],
+        // proprietorContactId: [
+        //   { required: true, message: '请选择联系人', trigger: ['blur'] }
+        // ],
         source: [
           { required: true, message: '请选择任务依据', trigger: ['blur'] }
         ],
@@ -208,7 +221,8 @@ export default {
           this.powerprojecttaskForm.source =this.powerprojecttaskForm.source.toString();
           this.powerprojecttaskForm.relatedDesign =  this.powerprojecttaskForm.relatedDesign.split(',')
           this.powerprojecttaskForm.coDepartment =  this.powerprojecttaskForm.coDepartment.split(',')
-            this.getContact();
+          this.getContact();
+          this.getAttachmentList();
           if (null != rs.data.img && rs.data.img.length > 0) {
             this.img = JSON.parse(rs.data.img);
           }
@@ -231,6 +245,11 @@ export default {
               this.userList = rs.data;
           });
       },
+      getAttachmentList(){
+          ajax.get('power/powerprojectattachment/getAttachmentList/'+this.$route.query.id).then(rs => {
+          this.saveList =rs.data;
+          });
+      },
       //业主列表
       getProprietor(){
           ajax.get("power/powerproprietor/getPowerProprietorList").then(rs => {
@@ -247,7 +266,7 @@ export default {
 
       loadContact(){
           this.powerprojecttaskForm.proprietorContactId ='';
-         this.getContact();
+          this.getContact();
       },
       showDialogAdress() {
           this.dialogAdressVisible = true;
@@ -261,8 +280,6 @@ export default {
       },
     //保存
     submitForm(form) {
-      console.log(this.file)
-      return
       var data = this.powerprojecttaskForm;
       this.$refs[form]
         .validate((valid) => {
@@ -277,8 +294,8 @@ export default {
             if (rs.status == 0) {
               this.$message
                 .success(rs.msg);
-                this.getResFile(this.file);
-              this.close();
+                this.getResFile(rs.data.id);
+                this.close();
             } else {
               this.$message
                 .error(rs.msg);
@@ -288,22 +305,35 @@ export default {
     },
 
       // 上传成功回调
-      getResFile(file){
-          ajax.post('power/powerprojectattachment', {
-              sourceId : this.id,
-              projectId : this.projectId,
-              name : file.name,
-              size : file.size,
-              path : file.path
-          }).then(rs => {
-              if (rs.status == 0) {
-                  this.$message.success(rs.msg);
-                  this._getTasksModel();
-              } else {
-                  this.$message.error(rs.msg);
-              }
+      getResFile(taskId){
+          for (let i = 0; i <this.saveList.length ; i++) {
+              this.saveList[i].sourceId = taskId;
+          }
+          ajax.post('power/powerprojectattachment/saveList/'+taskId, this.saveList).then(rs => {
+
           });
       },
+
+      handleRemove(file, fileList) {
+           this.saveList = fileList;
+      },
+      handlePreview(file) {
+          console.log(file);
+      },
+      handleExceed(files, fileList) {
+          this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      },
+      beforeRemove(file, fileList) {
+          return this.$confirm(`确定移除 ${ file.name }？`);
+      },
+
+      handleChange(res){
+          let file ={};
+          file.name = res.data.name;
+          file.path = res.data.path;
+          this.saveList.push(file)
+          console.log(this.saveList)
+      }
 
   },
 }

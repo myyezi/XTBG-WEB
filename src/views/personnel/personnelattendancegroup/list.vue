@@ -11,19 +11,19 @@
     <el-collapse-transition>
       <div class="search-box" v-show="isShowMore">
         <div class="form-box">
-          <div class="form-group">
-            <label class="control-label">管理公司</label>
-            <div class="input-group">
-                    <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择管理公司">
-                        <el-option
-                            v-for="item in companyList"
-                            :key="item.value"
-                            :label="item.name"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
-            </div>
-          </div>
+<!--          <div class="form-group">-->
+<!--            <label class="control-label">管理公司</label>-->
+<!--            <div class="input-group">-->
+<!--                    <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择管理公司">-->
+<!--                        <el-option-->
+<!--                            v-for="item in companyList"-->
+<!--                            :key="item.value"-->
+<!--                            :label="item.name"-->
+<!--                            :value="item.id">-->
+<!--                        </el-option>-->
+<!--                    </el-select>-->
+<!--            </div>-->
+<!--          </div>-->
           <div class="form-group">
             <label class="control-label">规则名称</label>
             <div class="input-group">

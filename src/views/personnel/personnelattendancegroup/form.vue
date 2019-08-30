@@ -4,16 +4,16 @@
       <el-collapse v-model="openCollapse">
         <el-collapse-item title="考勤组管理" name="1">
           <div class="flex-panel">
-              <el-form-item label="管理公司" prop="companyId">
-                  <el-select v-model="personnelattendancegroupForm.companyId" filterable clearable placeholder="请选择管理公司">
-                      <el-option
-                          v-for="item in companyList"
-                          :key="item.value"
-                          :label="item.name"
-                          :value="item.id">
-                      </el-option>
-                  </el-select>
-              </el-form-item>
+<!--              <el-form-item label="管理公司" prop="companyId">-->
+<!--                  <el-select v-model="personnelattendancegroupForm.companyId" filterable clearable placeholder="请选择管理公司">-->
+<!--                      <el-option-->
+<!--                          v-for="item in companyList"-->
+<!--                          :key="item.value"-->
+<!--                          :label="item.name"-->
+<!--                          :value="item.id">-->
+<!--                      </el-option>-->
+<!--                  </el-select>-->
+<!--              </el-form-item>-->
             <el-form-item label="规则名称" prop="name" class="big" >
               <el-input v-model="personnelattendancegroupForm.name" placeholder="请输入规则名称" maxlength=30 clearable   style="width: calc(20% - 20px)" ></el-input>
             </el-form-item>
@@ -79,21 +79,22 @@ export default {
   data() {
     return {
       companyList:[],
+      duty:[],
       cities: [{name :'常规工作日',value:'1'},{name :'含周六',value:'2'},{name :'含周日',value:'3'},{name :'含节假日',value:'4'}],
       personnelattendancegroupForm: {
         checkedCities:[],
-        duty:[]
+        attendanceRange:''
       },
       openCollapse: ["1"],//默认打开的面板
       adress : '',
       dialogAdressVisible : false,
       rules: {
-        id: [
-          { required: true, message: '请输入主键', trigger: ['blur'] }
-        ],
-        companyId: [
-          { required: true, message: '请选择管理公司', trigger: ['blur'] }
-        ],
+        // id: [
+        //   { required: true, message: '请输入主键', trigger: ['blur'] }
+        // ],
+        // companyId: [
+        //   { required: true, message: '请选择管理公司', trigger: ['blur'] }
+        // ],
         name: [
           { required: true, message: '请输入规则名称', trigger: ['blur'] }
         ],
@@ -120,7 +121,7 @@ export default {
   },
   mounted() {
     this.open();
-    this.getCompanyList();
+  //  this.getCompanyList();
   },
   methods: {
     //进入编辑页调用 bean为列表页传入数据
@@ -141,6 +142,8 @@ export default {
             this.img = JSON.parse(rs.data.img);
           }
         });
+      }else{
+          this.personnelattendancegroupForm.attendanceRange =200;
       }
     },
     showDialogAdress() {
