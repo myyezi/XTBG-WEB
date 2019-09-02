@@ -145,9 +145,9 @@ export default {
       },
       //获取公司
       getTest() {
-          ajax.get('upms/organization/tree').then(rs => {
-              this.testList = rs.data;
-          });
+          // ajax.get('upms/organization/tree').then(rs => {
+          //     this.testList = rs.data;
+          // });
       },
       //关闭窗口
       close(){
