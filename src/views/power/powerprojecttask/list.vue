@@ -175,7 +175,6 @@ export default {
         ProprietorList: [],
         coDepartmentOptions: [],
         ContactList: [],
-        companyList:[],
         userList: [],
         createTime:[],
         signTime:[],
@@ -197,7 +196,6 @@ export default {
       this.getDict();
       this.getProprietor();
       this.getUserList();
-      this.getCompanyList();
   },
   methods: {
       /*getSeletedId(obj) {
@@ -277,12 +275,6 @@ export default {
       getContact() {
           ajax.get('power/powerproprietorcontact/getContactList/'+ this.powerprojecttaskForm.proprietorId).then(rs => {
               this.ContactList = rs.data;
-          });
-      },
-      //获取公司
-      getCompanyList() {
-          ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
-              this.companyList = rs.data;
           });
       },
 
