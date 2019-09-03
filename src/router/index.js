@@ -31,6 +31,8 @@ export const constantRouterMap = [
     {path: '/', redirect: '/common/index', hidden: true},
     {path: '/index', redirect: '/common/storeIndex', hidden: true},
     {path: '/login', component: () => import('@/views/common/login/index'), hidden: true},
+    {path: '/register', component: () => import('@/views/common/register/index'), hidden: true},
+    {path: '/forget', component: () => import('@/views/common/forget/index'), hidden: true},
     {path: '/404', component: () => import('@/views/common/404'), hidden: true},
     {
         path: '/redirect',
