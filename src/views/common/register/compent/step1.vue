@@ -102,7 +102,8 @@
                         this.msgText = MSGSCUCCESS.replace("${time}", this.msgTime);
                         this.msgKey = true;
                         ajax.get("upms/user/getSmsCode",{
-                            mobile:this.ruleFormOne.phone
+                            mobile:this.ruleFormOne.phone,
+                            type:1
                         }).then(rs => {
                             if(rs.status === 1) {
                                 this.$message.error(rs.msg)
@@ -131,7 +132,8 @@
                     if (valid) {
                         ajax.get("upms/user/verifySmsCode",{
                             mobile:this.ruleFormOne.phone,
-                            smsCode:this.ruleFormOne.code
+                            smsCode:this.ruleFormOne.code,
+                            type:1
                         }).then(rs => {
                             if(rs.status === 0) {
                                 let obj = {
@@ -142,6 +144,9 @@
                                     isLastStep:false
                                 }
                                 this.$emit("get-form-data",obj)
+                            } else if(rs.status === 1) {
+                                this.$message.error(rs.msg)
+                                this.$router.push({path: '/login'})
                             }
                         });
                     } 

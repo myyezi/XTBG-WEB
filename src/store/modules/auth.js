@@ -83,7 +83,7 @@ const auth = {
                     console.log(response);
                     const data = response.data
                     commit('SET_MENU', data)
-                    resolve()
+                    resolve(response)
                 }).catch(error => {
                     reject(error)
                 })

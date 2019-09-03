@@ -30,7 +30,9 @@
         data() {
             return {
                 loading: false,
-                formData:{},
+                formData:{
+                    type:1
+                },
                 step:1,
                 stepList:[{
                     index:1,
@@ -104,6 +106,9 @@
                             this.loading = false;
                             this.$router.push({path: '/login'})
                         });
+                    } else if(rs.status === 1) {
+                        this.$message.error(rs.msg)
+                        this.$router.push({path: '/login'})
                     }
                 });
             }

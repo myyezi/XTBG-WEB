@@ -144,20 +144,18 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        // this.checkCode = false
                         let obj = {
-                            phone:this.ruleFormOne.phone,
-                            code:this.ruleFormOne.code,
-                            pass:this.ruleFormOne.pass
+                            account:this.ruleFormOne.phone,
+                            smsCode:this.ruleFormOne.code,
+                            password:this.ruleFormOne.pass,
+                            type:2
                         }
-                        console.log(obj)
-                    } 
-                });
-            },
-            updateForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        
+                        ajax.post("upms/user/registerUser",obj).then(rs => {
+                            if(rs.status === 0) {
+                                this.$message.success("密码修改成功")
+                                this.$router.push({path: '/login'})
+                            } 
+                        });
                     } 
                 });
             },
