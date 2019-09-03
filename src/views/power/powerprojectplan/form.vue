@@ -390,7 +390,7 @@ export default {
 
     // 获取项目任务书下拉框数据
     getTaskList(){
-        ajax.get('power/powerprojecttask/getTaskSelect/' + this.taskId).then(rs => {
+        ajax.get('power/powerprojecttask/getTaskSelect/' ,{taskId : this.taskId}).then(rs => {
             if (rs.status === 0){
                 this.projectTaskList = rs.data;
             }else{
