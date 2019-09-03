@@ -3,10 +3,7 @@ import Router from 'vue-router'
 /* Layout */
 import Layout from '@/views/common/layout/Layout'
 import upms from '@/router/upms/index.js'
-import core from '@/router/core/index.js'
-import safe from '@/router/qsm/safe/index.js'
-import quality from '@/router/qsm/quality/index.js'
-import archive from '@/router/archive//index.js'
+import adm from '@/router/adm/index.js'
 import personnel from '@/router/personnel/index.js'
 import power from '@/router/power/index.js'
 Vue.use(Router)
@@ -77,10 +74,7 @@ export const authRouterMap = [
     },
     /*权限管理*/
     upms,
-    core,
-    safe,
-    quality,
-    archive,
+    adm,
     personnel,
     power,
     {path: '*', redirect: '/404', hidden: true}

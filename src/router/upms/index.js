@@ -6,7 +6,6 @@ import position from '@/router/upms/position/'
 import role from '@/router/upms/role/'
 import codegen from "@/router/upms/codegen";
 import notice from "./notice";
-import message from "./message";
 import employee from "./employee";
 import powerproprietor from "./powerproprietor";
 import frontend from "@/router/upms/frontend";
@@ -27,7 +26,6 @@ const index = {
         ...codegen,
         ...notice,
         ...frontend,
-        ...message,
         ...powerproprietor,
         ...employee
     ]
