@@ -94,7 +94,7 @@ export const tool = {
             if (res && res.status === 0) {
                 return true;
             } else {
-                !disabledMessage && this.showMessage(res.message);
+                this.showMessage(res.message);
                 return false;
             }
         },

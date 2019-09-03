@@ -3,15 +3,6 @@
         <div class="tree-box">
             <div class="top-box">
                 <div class="title">职位</div>
-                <el-select v-model="params.managerId" style="width:150px;margin-left: 20px">
-                    <el-option
-                        v-for="(item,i) in companys2"
-                        :key="i"
-                        :label="item.name"
-                        :value="item.id"
-                    >
-                    </el-option>
-                </el-select>
             </div>
             <div class="tree-content">
                 <tree-panel ref="tree" url="upms/position/tree" :params="params"
@@ -21,20 +12,6 @@
 
         <el-dialog width="600px" class="full-input" :visible.sync="show" :title="title">
             <el-form :model="editForm" ref="editForm" label-position="top" label-width="100px">
-
-                <el-form-item label="所属组织" prop="companyId" :rules="rules.required('请选择所属组织')">
-                    <el-input v-if="null != editForm.companyName" v-model="editForm.companyName" disabled></el-input>
-
-                    <el-select v-else v-model="editForm.companyId">
-                        <el-option
-                            v-for="(item,i) in companys"
-                            :key="i"
-                            :label="item.name"
-                            :value="item.id"
-                        >
-                        </el-option>
-                    </el-select>
-                </el-form-item>
 
                 <el-form-item label="上级职位" prop="parentId" v-if="parentShow" :rules="rules.required('请选择上级职位')">
                     <tree-select v-model="editForm.parentId" placeholder="请选择" type="one" ref="parentTree"
@@ -72,8 +49,6 @@
                 showEdit: this.getCurrentUserAuthority("sys/position/update"),
 
                 show: false,
-                companys: [],
-                companys2: [],
                 title: "",
                 orgTypes: [{value: "30", text: "所属组织"}],
                 params: {},
@@ -82,27 +57,6 @@
                 parentShow: false
             }
         },
-        mounted() {
-            ajax.get('upms/organization/managerCompany').then(result => {
-                if (this.checkResponse(result)) {
-                    this.companys = result.data;
-
-                    this.companys2 = result.data.slice(0);
-                    if (this.companys2.length > 1) {
-                        this.companys2.unshift({
-                            id: '',
-                            name: '全部'
-                        });
-                    }
-
-                    if (this.companys2 && this.companys2.length > 0) {
-                        this.params = {
-                            managerId: this.companys2[0].id
-                        };
-                    }
-                }
-            })
-        },
         methods: {
             open(opt) {
 
@@ -110,7 +64,7 @@
                     this.title = "编辑职位";
 
                     this.parentShow = true;
-                    this.getDetail(opt.data.id, opt.data.companyName);
+                    this.getDetail(opt.data.id);
 
                     //上级职位禁选
                     setTimeout(function () {
@@ -119,12 +73,8 @@
                 } else {
                     this.editForm = {};
                     this.parentShow = false;
-                    this.$set(this.editForm, 'companyId', opt.data.companyId);
-                    this.editForm.companyName = opt.data.companyName;
                     this.editForm.parentId = opt.data.id;
                     this.title = opt.data.name + " - 新增职位";
-
-
                     this.show = true;
                     this.clearValidate();
                 }
@@ -149,10 +99,8 @@
                 ajax.get("upms/position/" + id).then(result => {
                     //if (this.checkResponse(result)) {
                     this.editForm = result.data;
-                    this.editForm.companyName = companyName;
                     this.show = true;
                     this.clearValidate();
-
                     this.$set(this.editForm, "parentId", [this.editForm.parentId]);
                     //}
                 }).catch(e => {
