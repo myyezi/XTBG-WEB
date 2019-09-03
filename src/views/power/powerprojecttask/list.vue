@@ -197,7 +197,7 @@ export default {
       this.getDict();
       this.getProprietor();
       this.getUserList();
-      this.getCompanyList();
+     // this.getCompanyList();
   },
   methods: {
       /*getSeletedId(obj) {
