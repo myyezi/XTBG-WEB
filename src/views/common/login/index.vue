@@ -29,13 +29,16 @@
                                         placeholder="请输入密码" clearable prefix-icon="el-icon-lock"/>
                                     <div class="login-info">
                                         <el-checkbox v-model="savePwd">记住密码</el-checkbox>
-                                        <!-- <span>忘记密码？请联系管理员</span> -->
+                                        <span class="forget_password" @click="toPath('/forget')">忘记密码</span>
                                     </div>
                                     <label class="form-group error-text" style="color:red;" v-html="message"
                                         v-show="message"></label>
                                     <el-button id="btnSubmit" type="button" :disabled="disabled()" :loading="loading"
                                             class="btn btn-primary block" @click="login">立刻登录
                                     </el-button>
+                                    <div class="login_register">
+                                        <span  @click="toPath('/register')">注册</span>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -77,6 +80,9 @@
             }
         },
         methods: {
+            toPath(path) {
+                this.$router.push({path: path})
+            },
             disabled: function () {
                 if (this.account == '' || this.password == '') {
                     return true;
