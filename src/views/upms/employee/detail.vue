@@ -12,12 +12,6 @@
                     <div class="detail-item">
                         <label class="control-label">手机号</label>
                         <div class="input-group">
-                            <span>{{userForm.phone}}</span>
-                        </div>
-                    </div>
-                    <div class="detail-item">
-                        <label class="control-label">用户名</label>
-                        <div class="input-group">
                             <span>{{userForm.account}}</span>
                         </div>
                     </div>
@@ -27,18 +21,30 @@
                             <span>{{userForm.email}}</span>
                         </div>
                     </div>
-                    <!--<div class="detail-item">-->
-                        <!--<label class="control-label">微信号</label>-->
-                        <!--<div class="input-group">-->
-                            <!--<span>{{userForm.wechat}}</span>-->
-                        <!--</div>-->
-                    <!--</div>-->
                     <div class="detail-item">
-                        <label class="control-label">其他信息</label>
+                        <label class="control-label">性别</label>
                         <div class="input-group">
-                            <span>{{userForm.remark}}</span>
+                            <span>{{userForm.gender == 1 ? "男" : "女"}}</span>
                         </div>
                     </div>
+                    <div class="detail-item">
+                        <label class="control-label">状态</label>
+                        <div class="input-group">
+                            <span>{{userForm.employeeStatus == 1 ? "试用期" : "正式员工"}}</span>
+                        </div>
+                    </div>
+                    <!--<div class="detail-item">
+                        <label class="control-label">创建时间</label>
+                        <div class="input-group">
+                            <span>{{userForm.createTime}}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <label class="control-label">修改时间</label>
+                        <div class="input-group">
+                            <span>{{userForm.updateTime}}</span>
+                        </div>
+                    </div>-->
                 </div>
             </el-collapse-item>
             <el-collapse-item title="权限信息" name="2">
@@ -65,13 +71,6 @@
                             </div>
                         </div>
                     </template>
-                    <div class="detail-item big">
-                        <label class="control-label">用户状态</label>
-                        <div class="input-group">
-                            <span v-if="userForm.userStatus==1">正常</span>
-                            <span v-if="userForm.userStatus==0">停用</span>
-                        </div>
-                    </div>
                 </div>
             </el-collapse-item>
         </el-collapse>
@@ -104,7 +103,7 @@
             }
         },
         mounted() {
-            ajax.get('upms/user/id/' + this.$route.params.id).then(rs => {
+            ajax.get('upms/employee/' + this.$route.params.id).then(rs => {
                 //if(this.checkResponse(rs)) {
                     rs.data.userType += '';
                     rs.data.userStatus += '';
