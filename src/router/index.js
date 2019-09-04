@@ -49,6 +49,19 @@ export const constantRouterMap = [
 
 export const authRouterMap = [
     {
+        path: '/default',
+        component: Layout,
+        name: '首页',
+        children: [
+            {
+                path: '/default/index',
+                name: 'default',
+                component: () => import('@/views/common/dashboard/admin/default'),
+                meta: {title: '首页', icon: 'index'}
+            }
+        ]
+    },
+    {
         path: '/index',
         component: Layout,
         name: '商户工作台',

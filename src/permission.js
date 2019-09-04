@@ -30,7 +30,16 @@ router.beforeEach((to, from, next) => {
                             }
                             console.log(store.getters.authRouters);
                             router.addRoutes(store.getters.authRouters)
-                            next({...to, replace: true});
+                            if(res.data&&res.data.length>0) {
+                                store.commit('SET_NOMENU', false)
+                                next({...to, replace: true});
+                            } else {
+                                store.commit('SET_MENU', [{
+                                    path: "/default/index"
+                                }])
+                                store.commit('SET_NOMENU', true)
+                                next({path: '/default'})
+                            }
                         });
                     });
 

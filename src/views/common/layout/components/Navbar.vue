@@ -115,7 +115,8 @@
             },
             changeCompany() {
                 ajax.get('upms/user/changeCustomCompany/'+ this.companyId).then(response => {
-                     location.reload();
+                    this.$store.commit('SET_MENU', [])
+                    location.reload();
                 })
             },
 

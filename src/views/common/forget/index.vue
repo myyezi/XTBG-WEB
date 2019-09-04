@@ -127,19 +127,36 @@
         },
         methods: {
             getCode() {
-                if (this.msgKey) return;
-                this.msgText = MSGSCUCCESS.replace("${time}", this.msgTime);
-                this.msgKey = true;
-                const time = setInterval(() => {
-                    this.msgTime--;
-                    this.msgText = MSGSCUCCESS.replace("${time}", this.msgTime);
-                    if (this.msgTime == 0) {
-                        this.msgTime = MSGTIME;
-                        this.msgText = MSGINIT;
-                        this.msgKey = false;
-                        clearInterval(time);
+                if (this.ruleFormOne.phone === '') {
+                    this.$message.error("请先输入手机号")
+                    return
+                } else {
+                    let reg = /^((1[3-9][0-9])+\d{8})$/;
+                    if(reg.test(this.ruleFormOne.phone)) {
+                        if (this.msgKey) return;
+                        this.msgText = MSGSCUCCESS.replace("${time}", this.msgTime);
+                        this.msgKey = true;
+                        ajax.get("upms/user/getSmsCode",{
+                            mobile:this.ruleFormOne.phone,
+                            type:2
+                        }).then(rs => {
+                        });
+
+                        const time = setInterval(() => {
+                            this.msgTime--;
+                            this.msgText = MSGSCUCCESS.replace("${time}", this.msgTime);
+                            if (this.msgTime == 0) {
+                                this.msgTime = MSGTIME;
+                                this.msgText = MSGINIT;
+                                this.msgKey = false;
+                                clearInterval(time);
+                            }
+                        }, 1000);
+                    }else {
+                        // this.$message.error("请输入11位正确手机号码")
+                        return 
                     }
-                }, 1000);
+                }
             },
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -150,11 +167,23 @@
                             password:this.ruleFormOne.pass,
                             type:2
                         }
-                        ajax.post("upms/user/registerUser",obj).then(rs => {
+                        ajax.get("upms/user/verifySmsCode",{
+                            mobile:this.ruleFormOne.phone,
+                            smsCode:this.ruleFormOne.code,
+                            type:2
+                        }).then(rs => {
                             if(rs.status === 0) {
-                                this.$message.success("密码修改成功")
-                                this.$router.push({path: '/login'})
-                            } 
+                                ajax.post("upms/user/registerUser",obj).then(rs => {
+                                    if(rs.status === 0) {
+                                        this.$message.success("密码修改成功")
+                                        this.$router.push({path: '/login'})
+                                    } else {
+                                        this.$message.error("密码修改失败")
+                                    }
+                                });
+                            } else {
+                                this.$message.error(rs.msg)
+                            }
                         });
                     } 
                 });
