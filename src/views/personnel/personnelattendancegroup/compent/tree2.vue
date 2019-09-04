@@ -34,7 +34,7 @@
                     <el-table-column
                         label="联系方式"
                         width="120">
-                        <template slot-scope="scope">{{ scope.row.phone }}</template>
+                        <template slot-scope="scope">{{ scope.row.account }}</template>
                     </el-table-column>
                     <el-table-column
                         prop="email"
@@ -115,7 +115,7 @@
                     return;
                 }
                 // 标识当前行的唯一键的名称
-                let idKey = 'userId';
+                let idKey = 'employeeId';
                 // 所有勾选唯一键的集合
                 let selectAllIds = [];
                 this.multipleSelectionAll.forEach(row => {
@@ -137,7 +137,7 @@
             changePageCoreRecordData() {
                 console.log(this.multipleSelectionAll)
                 // 标识当前行的唯一键的名称
-                let idKey = 'userId';
+                let idKey = 'employeeId';
                 // 如果总记忆中还没有选择的数据，那么就直接取当前table选中的数据，不需要后面一系列计算
                 if (this.multipleSelectionAll.length <= 0) {
                     this.multipleSelectionAll = this.multipleSelection;
@@ -204,7 +204,7 @@
                 if (!value) return true;
                 return data.name.indexOf(value) !== -1;
             },
-            
+
         },
         mounted() {
             console.log(this.selectionAll)

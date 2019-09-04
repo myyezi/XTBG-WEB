@@ -175,6 +175,7 @@ export default {
         ProprietorList: [],
         coDepartmentOptions: [],
         ContactList: [],
+        companyList:[],
         userList: [],
         createTime:[],
         signTime:[],

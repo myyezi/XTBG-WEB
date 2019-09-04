@@ -6,7 +6,7 @@
             <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
             <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
             <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
-            <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
+            <!--<el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>-->
         </div>
         <!-- 展开更多查询开始 -->
         <el-collapse-transition>
