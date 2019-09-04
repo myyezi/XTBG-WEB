@@ -35,7 +35,8 @@ router.beforeEach((to, from, next) => {
                                 next({...to, replace: true});
                             } else {
                                 store.commit('SET_MENU', [{
-                                    path: "/default/index"
+                                    path: "/default/index",
+                                    hidden:true
                                 }])
                                 store.commit('SET_NOMENU', true)
                                 next({path: '/default'})
