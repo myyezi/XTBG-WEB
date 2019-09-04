@@ -5,7 +5,7 @@
                 <div class="title">组织设置</div>
             </div>
             <div class="tree-content">
-                <tree-panel ref="tree" url="upms/organization/treeNode"
+                <tree-panel ref="tree" url="upms/organization/getOrganizationTree"
                             :showAdd="showAdd" :showEdit="showEdit" @show-form="open" @show-table="showTable">
 
                 </tree-panel>
