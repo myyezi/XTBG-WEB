@@ -5,8 +5,8 @@
             <el-collapse v-model="openCollapse">
                 <el-collapse-item title="基本信息" name="1">
                     <div class="flex-panel">
-                        <el-form-item label="手机号" prop="phone">
-                            <el-input v-model="userForm.phone" placeholder="请输入手机号" clearable @change="getUserByPhone()"></el-input>
+                        <el-form-item label="手机号" prop="account">
+                            <el-input v-model="userForm.account" placeholder="请输入手机号" clearable @change="getUserByPhone()"></el-input>
                         </el-form-item>
                         <el-form-item label="姓名" prop="name">
                             <el-input v-model="userForm.name" placeholder="请输入姓名" clearable disabled></el-input>
@@ -23,20 +23,19 @@
                         </el-form-item>
                         <el-form-item label="学历" prop="education">
                             <el-select v-model="userForm.education" filterable clearable disabled>
-                                <el-option label="博士" :value="1"></el-option>
-                                <el-option label="硕士" :value="2"></el-option>
-                                <el-option label="本科" :value="3"></el-option>
-                                <el-option label="大专" :value="4"></el-option>
-                                <el-option label="高中" :value="5"></el-option>
+                                <el-option label="博士" :value="'1'"></el-option>
+                                <el-option label="硕士" :value="'2'"></el-option>
+                                <el-option label="本科" :value="'3'"></el-option>
+                                <el-option label="大专" :value="'4'"></el-option>
+                                <el-option label="高中" :value="'5'"></el-option>
                             </el-select>
                         </el-form-item>
-                        <!--<el-form-item label="职称" prop="qualification">
+                        <el-form-item label="职称" prop="qualification">
                             <el-select v-model="userForm.qualification" filterable clearable disabled>
-                                <el-option label="试用期" :value="1"></el-option>
-                                <el-option label="正式员工" :value="2"></el-option>
-                                <el-option label="离职" :value="3"></el-option>
+                                <el-option label="科学家" :value="'1'"></el-option>
+                                <el-option label="一级建造师" :value="'2'"></el-option>
                             </el-select>
-                        </el-form-item>-->
+                        </el-form-item>
                         <el-form-item label="状态" prop="employeeStatus" v-if="userForm.id == null">
                             <el-select v-model="userForm.employeeStatus" filterable clearable>
                                 <el-option label="试用期" :value="'1'"></el-option>
@@ -45,14 +44,14 @@
                         </el-form-item>
                         <el-form-item label="状态" prop="employeeStatus" v-else>
                             <el-select v-model="userForm.employeeStatus" filterable clearable>
-                                <el-option label="试用期" :value="'1'"></el-option>
-                                <el-option label="正式员工" :value="'2'"></el-option>
-                                <el-option label="离职" :value="'3'"></el-option>
+                                <el-option label="试用期" :value="1"></el-option>
+                                <el-option label="正式员工" :value="2"></el-option>
+                                <el-option label="离职" :value="3"></el-option>
                             </el-select>
                         </el-form-item>
                     </div>
                 </el-collapse-item>
-                <el-collapse-item title="权限信息" name="2" v-if="userForm.employeeStatus != 3">
+                <el-collapse-item title="权限信息" name="2">
                     <el-button class="float-btn" type="primary" @click="addItem">新增</el-button>
                     <el-table border :data="userForm.list" style="width: 100%">
                         <el-table-column label="组织" min-width="200" label-class-name="required">
@@ -78,7 +77,7 @@
                                 <el-form-item :prop="'list.' + $index + '.positions'"
                                               :rules="rules.required('请选择职位')">
                                     <tree-select v-model="row.positions" placeholder="请选择"
-                                                 :url="setUrl('upms/position/tree',row)"></tree-select>
+                                                 :url="setUrl('upms/position/treeNode',row)"></tree-select>
                                 </el-form-item>
                             </template>
                         </el-table-column>
@@ -117,7 +116,7 @@
                     list: [{}],
                     userId: '',
                     name: '',
-                    phone: '',
+                    account: '',
                     email: '',
                     education: '',
                     qualification: '',
@@ -132,7 +131,7 @@
                         {required: true, message: '请输入姓名', trigger: ['blur', 'change']},
                         {max: 20, message: '姓名不能超过20字符', trigger: ['blur', 'change']}
                     ],
-                    phone: [
+                    account: [
                         {required: true, message: '请输入手机号码', trigger: ['blur', 'change']},
                         {pattern: /^[1][3,4,5,6,7,8,9][0-9]{9}$/, message: '手机号码格式错误', trigger: ['blur', 'change']}
                     ],
@@ -158,9 +157,9 @@
         },
         methods: {
             getUserByPhone() {
-                let phone = this.userForm.phone
-                if(phone && phone.length == 11) {
-                    ajax.get('upms/user/getUserByPhone?phone=' + phone).then(rs => {
+                let account = this.userForm.account
+                if(account && account.length == 11) {
+                    ajax.get('/upms/user/getUserByPhone?phone=' + account).then(rs => {
                         let data = rs.data
                         if(data) {
                             this.userForm.userId = data.id

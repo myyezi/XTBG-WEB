@@ -2,7 +2,7 @@
     <div class="app-container white-bg list-panel" v-cloak>
         <div class="opertion-box">
             <el-button type="primary" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建</el-button>
-            <el-input v-model="searchParam.account" placeholder="请输入用户名" clearable class="zy_input" style="width:190px"></el-input>
+            <el-input v-model="searchParam.account" placeholder="请输入手机号" clearable class="zy_input" style="width:190px"></el-input>
             <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
             <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
             <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
@@ -18,14 +18,14 @@
                             <el-input v-model="searchParam.nameOrPhone" placeholder="请输入姓名或手机号"></el-input>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label class="control-label">组织</label>
                         <div class="input-group organ_wrap input-groups">
                             <tree-select v-model="searchParam.organId" placeholder="请选择" type="one"
                                         url="upms/organization/tree"></tree-select>
-                            <!--<el-checkbox v-model="searchParam.organCascade">子组织</el-checkbox>-->
+                            &lt;!&ndash;<el-checkbox v-model="searchParam.organCascade">子组织</el-checkbox>&ndash;&gt;
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group">
                         <label class="control-label">角色</label>
                         <div class="input-group input-groups">
@@ -52,9 +52,19 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label">性别</label>
+                        <div class="input-group input-groups">
+                            <el-select v-model="searchParam.gender" filterable clearable>
+                                <el-option label="男" :value="1"></el-option>
+                                <el-option label="女" :value="2"></el-option>
+                                <el-option label="其他" :value="3"></el-option>
+                            </el-select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="control-label">状态</label>
                         <div class="input-group input-groups">
-                            <el-select v-model="searchParam.userStatus" placeholder="全部">
+                            <el-select v-model="searchParam.employeeStatus" placeholder="全部">
                                 <el-option label="全部" value="-1"></el-option>
                                 <el-option label="试用期" value="1"></el-option>
                                 <el-option label="正式员工" value="2"></el-option>
@@ -68,7 +78,7 @@
         <div class="division-line"></div>
         <div class="table-box">
             <el-table :data="list" style="width: 100%">
-                <el-table-column fixed label="操作" width="170">
+                <el-table-column fixed label="操作" width="60">
                     <template slot-scope="{ row, column, $index }">
                         <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
                         <el-button v-show="showResetPasswordBtn" @click="openResetPwdForm(row)" type="text" size="small">重置密码
@@ -83,12 +93,14 @@
                         </el-button>
                     </template>
                 </el-table-column>
-                <el-table-column prop="phone" sortable min-width="130" label="手机号"></el-table-column>
+                <el-table-column prop="account" sortable min-width="130" label="手机号"></el-table-column>
                 <el-table-column prop="email" sortable show-overflow-tooltip min-width="150" label="邮箱"></el-table-column>
+                <el-table-column prop="genderText" sortable show-overflow-tooltip min-width="150" label="性别"></el-table-column>
+                <el-table-column prop="birthday" sortable show-overflow-tooltip min-width="150" label="生日"></el-table-column>
                 <el-table-column prop="organizations" sortable show-overflow-tooltip min-width="150" label="组织"></el-table-column>
                 <el-table-column prop="positions" sortable show-overflow-tooltip min-width="150" label="职位"></el-table-column>
                 <el-table-column prop="roles" sortable show-overflow-tooltip min-width="150" label="角色"></el-table-column>
-                <el-table-column prop="userStatus" sortable min-width="100" label="状态"></el-table-column>
+                <el-table-column prop="employeeStatusText" sortable min-width="100" label="状态"></el-table-column>
                 <el-table-column prop="createTimeStr" sortable min-width="150" label="创建时间"></el-table-column>
                 <el-table-column prop="updateTime" sortable min-width="150" label="更新时间"></el-table-column>
             </el-table>
