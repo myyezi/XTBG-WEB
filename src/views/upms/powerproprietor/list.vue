@@ -43,7 +43,7 @@
                 </el-table-column>
                 <el-table-column prop="districtName" sortable show-overflow-tooltip min-width="100" label="地区"></el-table-column>
                 <el-table-column prop="address" sortable show-overflow-tooltip min-width="150" label="详细地址"></el-table-column>
-                <!--<el-table-column prop="adress" sortable show-overflow-tooltip min-width="100" label="所属管理公司"></el-table-column>-->
+                <el-table-column prop="companyName" sortable show-overflow-tooltip min-width="100" label="所属管理公司"></el-table-column>
                 <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="创建时间"></el-table-column>
                 <el-table-column prop="updateTime" sortable show-overflow-tooltip min-width="100" label="更新时间"></el-table-column>
             </el-table>
