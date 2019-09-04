@@ -43,6 +43,13 @@
                 <el-form-item label="组织名称" prop="name" :rules="rules.required('请输入组织名称')">
                     <el-input v-model="editForm.name" placeholder="请输入" maxlength="30"></el-input>
                 </el-form-item>
+                <el-form-item label="组织属性" prop="type" :rules="rules.required('请选择组织属性')">
+
+                    <tree-select v-model="editForm.type" placeholder="请选择" type="one" ref="typeTree"
+                                 url="upms/organization/typeTree" :params="params"
+                                 :disabled-id="disabledArray"></tree-select>
+
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="add">保存</el-button>
