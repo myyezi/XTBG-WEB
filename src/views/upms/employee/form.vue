@@ -18,10 +18,7 @@
                                 <el-option label="其他" :value="3"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="邮箱" prop="email">
-                            <el-input v-model="userForm.email" placeholder="请输入邮箱" clearable></el-input>
-                        </el-form-item>
-                        <el-form-item label="学历" prop="education">
+                        <!--<el-form-item label="学历" prop="education">
                             <el-select v-model="userForm.education" filterable clearable disabled>
                                 <el-option label="博士" :value="'1'"></el-option>
                                 <el-option label="硕士" :value="'2'"></el-option>
@@ -29,12 +26,21 @@
                                 <el-option label="大专" :value="'4'"></el-option>
                                 <el-option label="高中" :value="'5'"></el-option>
                             </el-select>
+                        </el-form-item>-->
+                        <el-form-item label="学历" prop="education">
+                            <el-input v-model="userForm.education" placeholder="" clearable disabled></el-input>
                         </el-form-item>
                         <el-form-item label="职称" prop="qualification">
+                            <el-input v-model="userForm.qualification" placeholder="" clearable disabled></el-input>
+                        </el-form-item>
+                        <!--<el-form-item label="职称" prop="qualification">
                             <el-select v-model="userForm.qualification" filterable clearable disabled>
                                 <el-option label="科学家" :value="'1'"></el-option>
                                 <el-option label="一级建造师" :value="'2'"></el-option>
                             </el-select>
+                        </el-form-item>-->
+                        <el-form-item label="邮箱" prop="email">
+                            <el-input v-model="userForm.email" placeholder="请输入邮箱" clearable></el-input>
                         </el-form-item>
                         <el-form-item label="状态" prop="employeeStatus" v-if="userForm.id == null">
                             <el-select v-model="userForm.employeeStatus" filterable clearable>
@@ -59,7 +65,7 @@
                                 <el-form-item :prop="'list.' + $index + '.organizations'"
                                               :rules="rules.required('请选择组织')">
                                     <tree-select v-model="row.organizations" placeholder="请选择" type="one"
-                                                 :disabled-id="['1']" url="/upms/organization/getOrganizationTree"></tree-select>
+                                                 :disabled-id="['1']" url="/upms/employee/treeNodeByCompanyId"></tree-select>
                                 </el-form-item>
                             </template>
                         </el-table-column>
