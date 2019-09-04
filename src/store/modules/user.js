@@ -26,7 +26,7 @@ const user = {
                     method: 'post',
                     headers:{'Authorization':'Basic dGVzdDp0ZXN0','Content-Type':'application/x-www-form-urlencoded'},
                     params: {
-                        username: data.account,
+                        username: data.account+"_1",
                         password: data.password,
                         grant_type: 'password'
                     }

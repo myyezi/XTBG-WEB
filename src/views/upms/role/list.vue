@@ -4,33 +4,33 @@
             <el-button type="primary" icon="el-icon-plus" size="small" @click="addRole()" style="margin-right:10px">创建</el-button>
             <el-input v-model="searchParam.name" placeholder="请输入角色名称" clearable class="zy_input" style="width:190px"></el-input>
             <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
-            <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
+            <!--<el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon&#45;&#45;right'] "></i></el-button>-->
             <el-button type="primary" icon="el-icon-refresh" size="small" @click="createTime=[];resetList()">重置</el-button>
             <!-- <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button> -->
         </div>
         <!-- 展开更多查询开始 -->
         <el-collapse-transition>
-            <div class="search-box" v-show="isShowMore">              
+            <div class="search-box" v-show="isShowMore">
                 <div class="form-box">
-                    <div class="form-group">
-                        <label class="control-label">管理公司</label>
-                        <!--<div class="input-group">
-                            <el-select v-model="roleForm.companyId" clearable>
-                                <el-option v-for="(item,index) in companys" :key="index"
-                                           :label="item.name" :value="item.id"></el-option>
-                            </el-select>
-                        </div>-->
-                        <div class="input-group">
-                            <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择">
-                                <el-option
-                                    v-for="item in companys"
-                                    :key="item.value"
-                                    :label="item.name"
-                                    :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </div>
+<!--                    <div class="form-group">-->
+<!--                        <label class="control-label">管理公司</label>-->
+<!--                        &lt;!&ndash;<div class="input-group">-->
+<!--                            <el-select v-model="roleForm.companyId" clearable>-->
+<!--                                <el-option v-for="(item,index) in companys" :key="index"-->
+<!--                                           :label="item.name" :value="item.id"></el-option>-->
+<!--                            </el-select>-->
+<!--                        </div>&ndash;&gt;-->
+<!--                        <div class="input-group">-->
+<!--                            <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择">-->
+<!--                                <el-option-->
+<!--                                    v-for="item in companys"-->
+<!--                                    :key="item.value"-->
+<!--                                    :label="item.name"-->
+<!--                                    :value="item.id">-->
+<!--                                </el-option>-->
+<!--                            </el-select>-->
+<!--                        </div>-->
+<!--                    </div>-->
                 </div>
             </div>
         </el-collapse-transition>
@@ -73,12 +73,12 @@
         <!-- 新增、编辑角色弹窗-->
         <el-dialog width="600px" :title="title" :visible.sync="addRoleVisible" :append-to-body="true">
             <el-form :model="roleForm" :rules="rules" label-position="top" ref="roleForm" class="full-input">
-                <el-form-item label="管理公司" label-width="120px" prop="companyId">
-                    <el-select v-model="roleForm.companyId">
-                        <el-option v-for="(item,index) in companys" :key="index"
-                                   :label="item.name" :value="item.id"></el-option>
-                    </el-select>
-                </el-form-item>
+<!--                <el-form-item label="管理公司" label-width="120px" prop="companyId">-->
+<!--                    <el-select v-model="roleForm.companyId">-->
+<!--                        <el-option v-for="(item,index) in companys" :key="index"-->
+<!--                                   :label="item.name" :value="item.id"></el-option>-->
+<!--                    </el-select>-->
+<!--                </el-form-item>-->
                 <el-form-item label="角色名" label-width="120px" prop="name">
                     <el-input ref="nameInput" v-model="roleForm.name" clearable maxlength="50"></el-input>
                 </el-form-item>
@@ -133,10 +133,8 @@
                 rules: {
                     name: [
                         {required: true, message: '请输入角色名称', trigger: 'blur'},
+                        {pattern: /^[\u4E00-\u9FA5A-Za-z0-9]+$/, message: '角色名支持汉字、字母、数字', trigger: ['blur', 'change']}
                     ],
-                    companyId: [
-                        {required: true, message: '请选择管理公司', trigger: 'change'},
-                    ]
                 }
             }
         },
@@ -156,7 +154,7 @@
                 this.$refs.form.open(row, showButton);
             },
             getCompanys() {
-                ajax.get('upms/organization/managerCompany').then(result => {
+                ajax.get('upms/organization/getCompanyByUserId').then(result => {
                     if (this.checkResponse(result)) {
                         this.companys = result.data;
                     } else {
@@ -216,6 +214,8 @@
                                 this.showMessage('保存成功', 'success');
                                 this.addRoleVisible = false;
                                 this.getList();
+                            } else {
+                                this.$message.error(res.msg);
                             }
                         })
                     } else {

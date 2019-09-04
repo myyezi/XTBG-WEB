@@ -45,6 +45,7 @@ const auth = {
         auth: [],
         authRouters: constantRouterMap,
         menu: [],
+        nomenu:false
     },
 
     mutations: {
@@ -53,6 +54,9 @@ const auth = {
         },
         SET_MENU: (state, data) => {
             state.menu = data
+        },
+        SET_NOMENU: (state, data) => {
+            state.nomenu = data
         },
         SET_ROUTERS: (state, routers) => {
             state.authRouters = constantRouterMap.concat(routers);
@@ -83,7 +87,7 @@ const auth = {
                     console.log(response);
                     const data = response.data
                     commit('SET_MENU', data)
-                    resolve()
+                    resolve(response)
                 }).catch(error => {
                     reject(error)
                 })

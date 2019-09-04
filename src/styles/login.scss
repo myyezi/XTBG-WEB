@@ -158,10 +158,21 @@ body {
     }
     .error-text {
         position: absolute;
-        bottom: 45px;
+        bottom: 70px;
     }
     #frmLogin {
         position: relative;
+        .login_register {
+            color: #0aa0a9;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            span {
+                border-bottom: 1px solid #0aa0a9;
+                cursor: pointer;
+            }
+        }
     }
     #frmLogin label {
         margin-bottom: 0;
@@ -240,6 +251,11 @@ body {
         margin-top: 15px;
         color: #999;
         font-size: 12px;
+        .forget_password {
+            color:#0aa0a9;
+            border-bottom: 1px solid #0aa0a9;
+            cursor: pointer;
+        }
     }
     #frmLogin .login-info .el-checkbox__label {
         color: #999;

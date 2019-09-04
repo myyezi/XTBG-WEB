@@ -1,5 +1,5 @@
 <template>
-    <div class="tags-view-container">
+    <div class="tags-view-container" v-if="!$store.getters.nomenu">
         <scroll-pane ref="scrollPane" class="tags-view-wrapper">
             <router-link
                 v-for="tag in Array.from(visitedViews)"

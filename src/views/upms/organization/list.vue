@@ -5,7 +5,7 @@
                 <div class="title">组织设置</div>
             </div>
             <div class="tree-content">
-                <tree-panel ref="tree" url="upms/organization/tree"
+                <tree-panel ref="tree" url="upms/organization/getOrganizationTree"
                             :showAdd="showAdd" :showEdit="showEdit" @show-form="open" @show-table="showTable">
 
                 </tree-panel>
@@ -13,7 +13,7 @@
         </div>
         <div class="tree_two_count_right" v-loading="isLoading">
             <span style="font-size: 16px; display: block;margin:25px 0 10px;" v-if="checkData.name">{{checkData.name}}
-                <el-select v-if="checkData.name" v-model="userStatus" filterable clearable style="width: 200px;" @change="getUserList()">
+                <el-select v-if="checkData.name" v-model="userStatus" filterable clearable style="width: 200px; left: 200px" @change="getUserList()">
                     <el-option label="试用期" :value="1"></el-option>
                     <el-option label="正式员工" :value="2"></el-option>
                     <el-option label="离职" :value="3"></el-option>
@@ -24,11 +24,11 @@
                 ref="multipleTable"
                 :data="tableData"
                 style="width: 100%"
-                max-height="660"
+                max-height="860"
             >
                 <el-table-column prop="name" label="姓名" width="100"></el-table-column>
                 <el-table-column label="联系方式" width="200">
-                    <template slot-scope="scope">{{ scope.row.phone }}</template>
+                    <template slot-scope="scope">{{ scope.row.account }}</template>
                 </el-table-column>
                 <el-table-column prop="email" label="邮箱" width="200" show-overflow-tooltip></el-table-column>
             </el-table>
@@ -42,6 +42,13 @@
                 </el-form-item>
                 <el-form-item label="组织名称" prop="name" :rules="rules.required('请输入组织名称')">
                     <el-input v-model="editForm.name" placeholder="请输入" maxlength="30"></el-input>
+                </el-form-item>
+                <el-form-item label="组织属性" prop="type" :rules="rules.required('请选择组织属性')">
+
+                    <tree-select v-model="editForm.type" placeholder="请选择" type="one" ref="typeTree"
+                                 url="upms/organization/typeTree" :params="params"
+                                 :disabled-id="disabledArray"></tree-select>
+
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">

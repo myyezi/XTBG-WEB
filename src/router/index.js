@@ -3,10 +3,7 @@ import Router from 'vue-router'
 /* Layout */
 import Layout from '@/views/common/layout/Layout'
 import upms from '@/router/upms/index.js'
-import core from '@/router/core/index.js'
-import safe from '@/router/qsm/safe/index.js'
-import quality from '@/router/qsm/quality/index.js'
-import archive from '@/router/archive//index.js'
+import adm from '@/router/adm/index.js'
 import personnel from '@/router/personnel/index.js'
 import power from '@/router/power/index.js'
 Vue.use(Router)
@@ -31,6 +28,8 @@ export const constantRouterMap = [
     {path: '/', redirect: '/common/index', hidden: true},
     {path: '/index', redirect: '/common/storeIndex', hidden: true},
     {path: '/login', component: () => import('@/views/common/login/index'), hidden: true},
+    {path: '/register', component: () => import('@/views/common/register/index'), hidden: true},
+    {path: '/forget', component: () => import('@/views/common/forget/index'), hidden: true},
     {path: '/404', component: () => import('@/views/common/404'), hidden: true},
     {
         path: '/redirect',
@@ -49,6 +48,19 @@ export const constantRouterMap = [
 ]
 
 export const authRouterMap = [
+    {
+        path: '/default',
+        component: Layout,
+        name: '首页',
+        children: [
+            {
+                path: '/default/index',
+                name: 'default',
+                component: () => import('@/views/common/dashboard/admin/default'),
+                meta: {title: '首页', icon: 'index'}
+            }
+        ]
+    },
     {
         path: '/index',
         component: Layout,
@@ -77,10 +89,7 @@ export const authRouterMap = [
     },
     /*权限管理*/
     upms,
-    core,
-    safe,
-    quality,
-    archive,
+    adm,
     personnel,
     power,
     {path: '*', redirect: '/404', hidden: true}

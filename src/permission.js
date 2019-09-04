@@ -5,7 +5,7 @@ import 'nprogress/nprogress.css'// Progress 进度条样式
 import {Message} from 'element-ui'
 import {getToken} from '@/utils/cookie' // 验权
 
-const whiteList = ['/login'] // 不重定向白名单
+const whiteList = ['/login','/forget','/register'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
     NProgress.start()
     if (getToken()) {
@@ -30,7 +30,17 @@ router.beforeEach((to, from, next) => {
                             }
                             console.log(store.getters.authRouters);
                             router.addRoutes(store.getters.authRouters)
-                            next({...to, replace: true});
+                            if(res.data&&res.data.length>0) {
+                                store.commit('SET_NOMENU', false)
+                                next({...to, replace: true});
+                            } else {
+                                store.commit('SET_MENU', [{
+                                    path: "/default/index",
+                                    hidden:true
+                                }])
+                                store.commit('SET_NOMENU', true)
+                                next({path: '/default'})
+                            }
                         });
                     });
 
