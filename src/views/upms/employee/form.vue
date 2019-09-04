@@ -59,7 +59,7 @@
                                 <el-form-item :prop="'list.' + $index + '.organizations'"
                                               :rules="rules.required('请选择组织')">
                                     <tree-select v-model="row.organizations" placeholder="请选择" type="one"
-                                                 :disabled-id="['1']" url="/upms/organization/tree"></tree-select>
+                                                 :disabled-id="['1']" url="/upms/organization/getOrganizationTree"></tree-select>
                                 </el-form-item>
                             </template>
                         </el-table-column>
@@ -77,7 +77,7 @@
                                 <el-form-item :prop="'list.' + $index + '.positions'"
                                               :rules="rules.required('请选择职位')">
                                     <tree-select v-model="row.positions" placeholder="请选择"
-                                                 :url="setUrl('upms/position/treeNode',row)"></tree-select>
+                                                 :url="setUrl('upms/position/tree',row)"></tree-select>
                                 </el-form-item>
                             </template>
                         </el-table-column>
@@ -257,10 +257,12 @@
                         data.updateTime = ''
                         console.log(data)
                         ajax.post('upms/employee', data).then(rs => {
-                            //if (this.checkResponse(rs)) {
-                            that.$message({message: '保存成功！', type: 'success'});
-                            that.close();
-                            //}
+                            if (rs.status == 0) {
+                                that.$message({message: '保存成功！', type: 'success'});
+                                that.close();
+                            } else {
+                                that.$message({message: rs.msg, type: 'error'});
+                            }
                         });
                     } else {
                         this.showMessage('校验不通过，请检查输入项');
