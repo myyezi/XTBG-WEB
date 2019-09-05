@@ -8,7 +8,7 @@
       <div class="net_eror" v-if="netStaus" @click="updateNet"><i class="el-icon-refresh"></i>网络链接断开！请点击刷新网络</div>
       <div class="group-box">
         <ul class="user-list">
-          <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in allSessionList" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
+          <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionList" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
             <a href="javascript:" :class="currentChat&&currentChat.targetId===chat.targetId?'active':''">
               <i v-if="chat.unReadCount&&chat.unReadCount>0">{{ chat.unReadCount }}</i>
               <img :src="chat.portrait?chat.portrait:defaultPic">
@@ -63,8 +63,7 @@ export default {
       top: 0,
       left: 0,
       defaultPic:require('@/styles/img/morentx.png'),
-      transform:transform,
-      allSessionList:[]
+      transform:transform
     };
   },
   watch:{
@@ -86,11 +85,17 @@ export default {
     sessionList: {
       get: function() {
         return this.$store.state.im.sessionList;
+      },
+      set: function(sessionList) {
+        this.$store.commit('setSessionList', sessionList);
       }
     },
     netStaus: {
       get: function() {
         return this.$store.state.im.netStaus;
+      },
+      set: function(netStaus) {
+        this.$store.commit('updateNet', netStaus);
       }
     }
   },
@@ -112,7 +117,7 @@ export default {
     },
     // 会话鼠标右键事件
     rightEvent(chat,e) {
-      this.allSessionList.forEach(items => {
+      this.sessionList.forEach(items => {
         this.$set(items,'active',false);
       });
       if(chat === 1) {
@@ -148,7 +153,7 @@ export default {
     getSessionList() {
       let self = this;
       let cacheSession = []
-      self.allSessionList = [];
+      self.sessionList = [];
       // 从内存中获取会话记录
       cacheSession = self.$store.state.im.sessionList;
       if(!cacheSession||cacheSession.length === 0) {
@@ -158,11 +163,11 @@ export default {
             self.$store.commit('setSessionList', cacheSession);
         }
       }
-      self.allSessionList = cacheSession
-      if(self.allSessionList&&self.allSessionList.length>0) {
+      self.sessionList = cacheSession
+      if(self.sessionList&&self.sessionList.length>0) {
           let flag = false
           if(self.currentChat&&JSON.stringify(self.currentChat) !== '{}') {
-              self.allSessionList.forEach((item)=>{
+              self.sessionList.forEach((item)=>{
                   if(item.targetId == self.currentChat.targetId) {
                       flag = true
                       self.currentChat = item
@@ -170,7 +175,7 @@ export default {
               })
           }
           if(!flag) {
-              self.currentChat = self.allSessionList[0]
+              self.currentChat = self.sessionList[0]
               self.currentChat.unReadCount = 0
               this.$store.commit('setReadCount', self.currentChat);
           }
