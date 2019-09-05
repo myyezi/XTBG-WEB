@@ -81,20 +81,40 @@
                         name:"action",
                         label:'执行操作',
                         align: "center",
-                        width:'150',
+                        width:'120',
                         template:function(obj){
-                            return "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>"+
-                                "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>"
+                            let operateStr = "";
+                            let uploadStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>";
+                            let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>";
+                            if (obj.isUpload == 1 && obj.currentStatus != 4){
+                                operateStr += uploadStr;
+                            }
+                            if (obj.fileNum > 0){
+                                operateStr += viewStr;
+                            }
+                            return operateStr;
                         }
                     },
                     {
                         name:"action",
                         label:'关联文件',
                         align: "center",
-                        width:'150',
+                        width:'120',
                         template:function(obj){
-                            return "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>申请完成</a>"+
-                                "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>完成</a>"
+                            let operateStr = "";
+                            let approvelStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>申请完成</a>";
+                            let finishStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>完成</a>";
+                            let hasApprovalStr = "<a style='display:inline-block;width:50px;height:100%;color: #999999;'>已申请</a>";
+                            if (obj.isUpload == 1 && obj.isApproval == 1 && obj.fileNum > 0){
+                                operateStr += approvelStr;
+                            }
+                            if (obj.currentStatus == 4){
+                                operateStr += hasApprovalStr;
+                            }
+                            if (obj.isApproval == 0){
+                                operateStr += finishStr;
+                            }
+                            return operateStr;
                         }
                     },
                     {
