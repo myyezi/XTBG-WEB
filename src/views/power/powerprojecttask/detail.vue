@@ -84,13 +84,13 @@
           <div class="detail-item">
             <label class="control-label">项目开始时间</label>
             <div class="input-group">
-              <span>{{powerprojecttaskForm.designScale}}</span>
+              <span>{{powerprojecttaskForm.startTime}}</span>
             </div>
           </div>
           <div class="detail-item">
             <label class="control-label">项目结束时间</label>
             <div class="input-group">
-              <span>{{powerprojecttaskForm.designRange}}</span>
+              <span>{{powerprojecttaskForm.endTime}}</span>
             </div>
           </div>
           <div class="detail-item big">

@@ -10,7 +10,8 @@
         <ul class="user-list">
           <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionList" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
             <a href="javascript:" :class="currentChat&&currentChat.targetId===chat.targetId?'active':''">
-              <i v-if="chat.unReadCount&&chat.unReadCount>0">{{ chat.unReadCount }}</i>
+              <i v-if="chat.unReadCount&&chat.unReadCount>0" class="un_read_count">{{ chat.unReadCount }}</i>
+              <i class="icon-qun1 group_identification" v-if="chat.owner"></i>
               <img :src="chat.portrait?chat.portrait:defaultPic">
               <b>{{ chat.targetName?chat.targetName:'test' }}</b>
               <span>{{ chat.serverTimestamp?dateStr(chat.serverTimestamp):''}}</span>
@@ -275,7 +276,7 @@ export default {
           height: 4.5rem;
           position: absolute;
           top: 0.5rem;
-          left: 1.5rem;
+          left: 2rem;
         }
 
         b {
@@ -322,7 +323,7 @@ export default {
           color: $color-default;
           position: relative;
 
-          i {
+          .un_read_count {
             display: inline-block;
             width: 1.8rem;
             height: 1.6rem;
@@ -338,7 +339,17 @@ export default {
             top: 0.5rem;
             z-index: 99999999999;
           }
-
+          .group_identification {
+              display: inline-block;
+              width: 1.5rem;
+              height: 1.5rem;
+              font-size: 1.5rem;
+              color: #e6a23c;
+              position: absolute;
+              top: 0.5rem;
+              left: 0.3rem;
+              z-index: 99999999999;
+          }
           p {
             width: 12rem;
           }

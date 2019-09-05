@@ -27,8 +27,10 @@
                 <i class="el-icon-plus" @click="showAddUser = true"></i> 
             </div>
             <ul v-if="groupUserListSearch.length>0" class="clearfix">
-                <li v-for="(item,index) in groupUserListCopy" :key="index">
+                <li v-for="(item,index) in groupUserListCopy" :key="index" :title="item.type == 2?'群主':item.type == 1?'管理员':''">
                     <img :src="item.portrait?item.portrait:defaultPic"/>
+                    <i class="icon-qunzhu" v-if="item.type == 2"></i>
+                    <i class="icon-qunzhu" v-if="item.type == 1" style="color:#67c23a"></i>
                     <p>{{item.alias}}</p>
                 </li>
             </ul>
@@ -361,15 +363,20 @@
                 overflow: auto;
                 li {
                     float: left;
+                    position: relative;
                     width:100px;
                     text-align: center;
                     margin-bottom: 15px;
                     img {
                         width:3rem;
                         height:3rem;
+                        border-radius: 50%;
                     }
-                    P {
-
+                    .icon-qunzhu{
+                        position: absolute;
+                        right: 20px;
+                        top: 5px;
+                        color: #409eff;
                     }
                 }
             }

@@ -132,7 +132,7 @@
                   groupMembers.push({
                       memberId:item.id,
                       alias:item.name,
-                      type:1
+                      type:0 //0普通成员，1管理员，2群主
                   })
               })
               let notifyContent = {

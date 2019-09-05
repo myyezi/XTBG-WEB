@@ -76,7 +76,8 @@ const websocketConnect = {
     onConnectionLost: function(responseObject) {
         if (responseObject.errorCode !== 0) {
             store.commit('updateNet', ErrorType.NET_ERROR);
-            console.log("onConnectionLost:" + responseObject.errorMessage);
+            console.log("onConnectionLost:")
+            console.log(responseObject);
         }
     },
     // 接受消息
