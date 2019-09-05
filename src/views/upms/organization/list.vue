@@ -37,11 +37,18 @@
             <el-form :model="editForm" ref="editForm" label-position="top" label-width="100px">
                 <el-form-item label="上级组织" prop="parentId" v-if="parentShow" :rules="rules.required('请选择上级组织')">
                     <tree-select v-model="editForm.parentId" placeholder="请选择" type="one" ref="parentTree"
-                                 url="upms/organization/tree" :disabled-id="parentDisabledArr" :params="params"></tree-select>
+                                 url="upms/organization/getOrganizationTree" :disabled-id="parentDisabledArr" :params="params"></tree-select>
 
                 </el-form-item>
                 <el-form-item label="组织名称" prop="name" :rules="rules.required('请输入组织名称')">
                     <el-input v-model="editForm.name" placeholder="请输入" maxlength="30"></el-input>
+                </el-form-item>
+                <el-form-item label="组织属性" prop="type" :rules="rules.required('请选择组织属性')">
+
+                    <tree-select v-model="editForm.type" placeholder="请选择" type="one" ref="typeTree"
+                                 url="upms/organization/typeTree" :params="params"
+                                 :disabled-id="disabledArray"></tree-select>
+
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">

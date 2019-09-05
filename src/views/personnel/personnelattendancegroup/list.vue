@@ -2,7 +2,7 @@
   <div class="app-container white-bg list-panel" v-cloak>
     <div class="opertion-box">
       <el-button type="primary" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建</el-button>
-      <el-input v-model="searchParam.zy_input" placeholder="请输入员工姓名或手机号" clearable class="zy_input" style="width:190px"></el-input>
+      <el-input v-model="searchParam.keyWord" placeholder="请输入员工姓名或手机号" clearable class="zy_input" satyle="width:190px"></el-input>
       <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
@@ -79,7 +79,7 @@
               <div class="table-box">
                   <el-table :data="memberList" style="width: 100%"   :height="300">
                       <el-table-column prop="name" sortable show-overflow-tooltip min-width="80" label="姓名"></el-table-column>
-                      <el-table-column prop="phone" sortable show-overflow-tooltip min-width="80" label="联系方式"></el-table-column>
+                      <el-table-column prop="account" sortable show-overflow-tooltip min-width="80" label="联系方式"></el-table-column>
                       <el-table-column prop="email" sortable show-overflow-tooltip min-width="80" label="邮箱"></el-table-column>
                   </el-table>
               </div>
@@ -241,7 +241,7 @@ export default {
               for (let i = 0; i < this.selectData.length; i++) {
                       this.save={};
                       this.save.attendanceGroupId = this.attendanceGroupId
-                      this.save.userId=this.selectData[i]
+                      this.save.employeeId=this.selectData[i]
                       this.saveData.push(this.save)
               }
               ajax.post('personnel/personnelattendancegroupuser', this.saveData).then(rs => {
