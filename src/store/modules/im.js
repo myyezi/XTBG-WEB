@@ -17,7 +17,9 @@ const im = {
         // 所有的聊天窗口
         chatList: [],
         //好友信息集合
-        userFriendObj: [],
+        userFriendObj: {},
+        //好友列表
+        userFriendList: [],
         //群组列表
         chatGroupList: [],
         //所有的群组成员列表
@@ -56,6 +58,30 @@ const im = {
           state.userFriendObj = obj;
           // 所有用户信息放入缓存
           ChatListUtils.setUserFriendObj(state.user.id, state.userFriendObj);
+        },
+        // 更新好友列表
+        setUserFriendList: function(state, userFriendList) {
+          if(userFriendList&&userFriendList.length>0) {
+            let sessionList = ChatListUtils.getSessionList(state.user.id)
+            state.userFriendList = userFriendList //更新状态管理数据
+            // 所有群聊放入缓存
+            ChatListUtils.setUserFriendList(state.user.id, state.userFriendList);
+            userFriendList.forEach((items)=>{
+              sessionList.forEach((item)=>{
+                  // if(item.targetId == items.targetId) {
+                  //   item.portrait = items.portrait
+                  //   item.targetName = items.name
+                  //   item.owner = items.owner
+                  // }
+              })
+            })
+            state.sessionList = sessionList //更新状态管理数据
+            // 所有会话放入缓存
+            ChatListUtils.setSessionList(state.user.id, state.sessionList);
+          }  else {
+            state.userFriendList = []
+            ChatListUtils.setUserFriendList(state.user.id, state.userFriendList);
+          }
         },
         // 更新群列表
         setChatGroupList: function(state, chatGroupList) {

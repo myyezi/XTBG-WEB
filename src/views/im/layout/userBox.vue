@@ -4,7 +4,7 @@
             <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
             <div class="group-organization-box">
                 <el-tree 
-                    :data="organizationTreeList" 
+                    :data="treeDataList" 
                     :props="defaultProps" 
                     @node-click="handleNodeClick" 
                     :filter-node-method="filterNode"
@@ -53,9 +53,11 @@
         chatGroupList: {
             get: function() {
                 return this.$store.state.im.chatGroupList;
-            },
-            set: function(chatGroupList) {
-                this.$store.commit('setChatGroupList', chatGroupList);
+            }
+        },
+        userFriendList: {
+            get: function() {
+                return this.$store.state.im.userFriendList;
             }
         }
     },
@@ -64,16 +66,19 @@
             defaultPic:require('@/styles/img/morentx.png'),
             companyPortrait:require('@/styles/img/icon_company.png'),
             groupPortrait:require('@/styles/img/icon_group.png'),
+            friendPortrait:require('@/styles/img/icon_friend.png'),
             currentChat:{},
             showChat:false,
             filterText: '',
+            treeDataList:[],
             organizationList: [],
             organizationTreeList:[],
             defaultProps: {
                 children: 'children',
                 label: 'name'
             },
-            groupList:[]
+            groupList:[],
+            friendList:[]
         };
     },
     watch: {
@@ -81,6 +86,9 @@
             this.$refs.tree.filter(val);
         },
         chatGroupList:function(newvalue,oldvalue) {
+            this.getGroupList()
+        },
+        userFriendList:function(newvalue,oldvalue) {
             this.getGroupList()
         }
     },
@@ -141,12 +149,7 @@
                 // 从缓存中取群组列表记录
                 cacheSession = ChatListUtils.getGroupList(this.user.userId)
                 if(cacheSession&&cacheSession.length>0) {
-                    self.$store.commit('setChatGroupList', {
-                        chatGroupList : {
-                            infoList:cacheSession
-                        },
-                        flag:true
-                    });
+                    self.$store.commit('setChatGroupList', cacheSession);
                 }
             }
             self.groupList = cacheSession
@@ -155,7 +158,31 @@
                 children:self.groupList,
                 portrait:self.groupPortrait
             })
-            this.organizationTreeList = this.organizationList.concat(myGroupList)
+            this.treeDataList = this.organizationList.concat(myGroupList)
+            this.getFriendList()
+        },
+        // 得到好友列表
+        getFriendList() {
+            let self = this;
+            let cacheSession = []
+            let myFriendList =[]
+            self.friendList = [];
+            // 从内存中获取好友列表记录
+            cacheSession = self.$store.state.im.userFriendList;
+            if(!cacheSession||cacheSession.length === 0) {
+                // 从缓存中取好友列表记录
+                cacheSession = ChatListUtils.getFriendList(this.user.userId)
+                if(cacheSession&&cacheSession.length>0) {
+                    self.$store.commit('setUserFriendList', cacheSession);
+                }
+            }
+            self.friendList = cacheSession
+            myFriendList.push({
+                name:'我的好友',
+                children:self.friendList,
+                portrait:self.friendPortrait
+            })
+            this.treeDataList = this.treeDataList.concat(myFriendList)
             console.log(this.organizationList)
         }
     }

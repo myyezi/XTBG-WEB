@@ -26,7 +26,7 @@ export function dateStr(date) {
   let dates = new Date(parseInt(date));
   // 去掉 js 时间戳后三位
   time = parseInt((time - date) / 1000);
-  let timeString = dates.getHours()<10?'0'+dates.getHours():dates.getHours() + ':' + (dates.getMinutes()<10?'0'+dates.getMinutes():dates.getMinutes())
+  let timeString = (dates.getHours()<10?'0'+dates.getHours():dates.getHours()) + ':' + (dates.getMinutes()<10?'0'+dates.getMinutes():dates.getMinutes())
   // 存储转换值
   let s;
   if (time < 60 * 10) {
@@ -324,6 +324,10 @@ export const ChatListUtils = {
   setGroupList: function(userId, groupList) {
     localStorage.setItem(userId+'group', JSON.stringify(groupList));
   },
+  // 缓存所有好友列表
+  setUserFriendList: function(userId, userFriendList) {
+    localStorage.setItem(userId+'friend', JSON.stringify(userFriendList));
+  },
   // 缓存所有群成员信息
   setChatGroupListMap: function(userId, groupList) {
     localStorage.setItem(userId+'group_user', JSON.stringify(groupList));
@@ -373,6 +377,14 @@ export const ChatListUtils = {
     let str = localStorage.getItem(userId+'userInfo');
     if (!str) {
       return {};
+    }
+    return JSON.parse(str);
+  },
+  //从缓存中获取已经保存的好友列表
+  getFriendList: function(userId) {
+    let str = localStorage.getItem(userId+'friend');
+    if (!str) {
+      return [];
     }
     return JSON.parse(str);
   },
