@@ -5,7 +5,7 @@
         <el-collapse-item title="项目任务书" name="1">
           <div class="flex-panel">
             <el-form-item label="项目名称" prop="name">
-              <el-input v-model="powerprojecttaskForm.name" placeholder="请输入项目名称" maxlength=30 clearable></el-input>
+              <el-input v-model="powerprojecttaskForm.name" placeholder="请输入项目名称" maxlength=100 show-word-limit clearable></el-input>
             </el-form-item>
               <el-form-item label="项目类型" prop="type">
                   <el-select v-model="powerprojecttaskForm.type" clearable placeholder="请选择项目类型">
@@ -14,7 +14,7 @@
                   </el-select>
               </el-form-item>
             <el-form-item label="建设单位" prop="proprietorId">
-                <el-select v-model="powerprojecttaskForm.proprietorId"  filterable clearable placeholder="请输入建设单位" @change="loadContact">
+                <el-select v-model="powerprojecttaskForm.proprietorId"  filterable clearable placeholder="请选择建设单位" @change="loadContact">
                     <el-option
                         v-for="item in ProprietorList"
                         :key="item.value"
@@ -24,7 +24,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="联系人" prop="proprietorContactId">
-                <el-select v-model="powerprojecttaskForm.proprietorContactId"  filterable clearable placeholder="请输入联系人">
+                <el-select v-model="powerprojecttaskForm.proprietorContactId"  filterable clearable placeholder="请选择联系人">
                     <el-option
                         v-for="item in ContactList"
                         :key="item.value"
@@ -34,7 +34,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="任务依据" prop="source">
-                  <el-select v-model="powerprojecttaskForm.source" clearable placeholder="请输入任务依据">
+                  <el-select v-model="powerprojecttaskForm.source" clearable placeholder="请选择任务依据">
                       <el-option  label="委托书" value="1"></el-option>
                       <el-option  label="招标书" value="2"></el-option>
                       <el-option  label="电话委托" value="3"></el-option>
@@ -54,7 +54,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="项目经理" prop="manager">
-                <el-select v-model="powerprojecttaskForm.manager"  filterable clearable placeholder="请输入项目经理" >
+                <el-select v-model="powerprojecttaskForm.manager"  filterable clearable placeholder="请选择项目经理" >
                     <el-option
                         v-for="item in userList"
                         :key="item.value"
@@ -64,7 +64,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="签收人" prop="signer">
-                <el-select v-model="powerprojecttaskForm.signer"  filterable clearable placeholder="请输入签收人" >
+                <el-select v-model="powerprojecttaskForm.signer"  filterable clearable placeholder="请选择签收人" >
                     <el-option
                         v-for="item in userList"
                         :key="item.value"
@@ -89,16 +89,16 @@
                   </el-form-item>
               </div>
             <el-form-item label="设计规模" prop="designScale" class="big">
-              <el-input v-model="powerprojecttaskForm.designScale" placeholder="请输入设计规模" maxlength=30 clearable></el-input>
+              <el-input v-model="powerprojecttaskForm.designScale" placeholder="请输入设计规模" maxlength=200 show-word-limit clearable></el-input>
             </el-form-item>
             <el-form-item label="设计范围" prop="designRange" class="big">
-              <el-input v-model="powerprojecttaskForm.designRange" placeholder="请输入设计范围" maxlength=30 clearable></el-input>
+              <el-input v-model="powerprojecttaskForm.designRange" placeholder="请输入设计范围" maxlength=200 show-word-limit clearable></el-input>
             </el-form-item>
             <el-form-item label="项目进度要求" prop="progress" class="big">
-              <el-input v-model="powerprojecttaskForm.progress" placeholder="请输入项目进度要求" maxlength=30 clearable></el-input>
+              <el-input v-model="powerprojecttaskForm.progress" placeholder="请输入项目进度要求" maxlength=200 show-word-limit clearable></el-input>
             </el-form-item>
             <el-form-item label="备注" prop="remark"  class="big">
-              <el-input v-model="powerprojecttaskForm.remark" placeholder="请输入备注" maxlength=30 clearable></el-input>
+              <el-input v-model="powerprojecttaskForm.remark" placeholder="请输入备注" maxlength=200 show-word-limit clearable></el-input>
             </el-form-item>
               <el-upload
                   class="upload-demo" style="margin-left: 15px ;margin-top: 15px"

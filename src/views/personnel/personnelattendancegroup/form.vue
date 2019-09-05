@@ -15,7 +15,7 @@
 <!--                  </el-select>-->
 <!--              </el-form-item>-->
             <el-form-item label="规则名称" prop="name" class="big" >
-              <el-input v-model="personnelattendancegroupForm.name" placeholder="请输入规则名称" maxlength=30 clearable   style="width: calc(20% - 20px)" ></el-input>
+              <el-input v-model="personnelattendancegroupForm.name" placeholder="请输入规则名称" maxlength=100 show-word-limit clearable   style="width: calc(20% - 20px)" ></el-input>
             </el-form-item>
 
             <el-form-item label="工作日" prop="checkedCities" class="big">
@@ -52,7 +52,7 @@
                   </el-form-item>
               </div>
             <el-form-item label="打卡范围" prop="attendanceRange">
-              <el-input v-model="personnelattendancegroupForm.attendanceRange" placeholder="请输入打卡范围" maxlength=30 clearable></el-input>
+              <el-input v-model="personnelattendancegroupForm.attendanceRange" placeholder="请输入打卡范围" maxlength=30 clearable type="number"></el-input>
             </el-form-item>
           </div>
         </el-collapse-item>
@@ -114,7 +114,8 @@ export default {
           { required: true, message: '请输入纬度', trigger: ['blur'] }
         ],
         attendanceRange: [
-          { required: true, message: '请输入打卡范围', trigger: ['blur'] }
+          { required: true, message: '请输入打卡范围', trigger: ['blur'] },
+          {pattern: /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/, message: '请输入大于0的数', trigger: ['blur', 'change']}
         ],
       }
     }
