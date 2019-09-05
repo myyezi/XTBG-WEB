@@ -220,6 +220,7 @@ const im = {
         },
         // 保存会话记录到内存
         addSession: function(state, session) {
+          console.log(session)
           let flag = false;
           let indexs = null;
           let sessionObj = {}
@@ -274,7 +275,7 @@ const im = {
                   if(sessionObj.serverTimestamp) {
                     item.serverTimestamp = sessionObj.serverTimestamp
                   }
-                  if(state.user.id!= session.fromUserId) {
+                  if(session.fromUserId&&state.user.id!= session.fromUserId) {
                     item.unReadCount = item.unReadCount + 1
                     state.messageCount += 1
                   }
@@ -282,8 +283,10 @@ const im = {
             })
           }
           if(!flag) {
-            sessionObj.unReadCount = sessionObj.unReadCount + 1
-            state.messageCount += 1
+            if(session.fromUserId) {
+              sessionObj.unReadCount = sessionObj.unReadCount + 1
+              state.messageCount += 1
+            }
             getSessionList.unshift(sessionObj)
           } else {
             let obj = getSessionList[indexs]
