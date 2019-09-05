@@ -27,6 +27,7 @@ const websocketConnect = {
         client.onMessageArrived = this.onMessageArrived;
         client.onMessageDelivered = this.onMessageDelivered;
         client.pubMessage = this.pubMessage;
+        client.groupOperation = this.groupOperation
         client.connect({
             userName: data.username,
             password: data.token,
@@ -140,14 +141,31 @@ const websocketConnect = {
         } else if (message.destinationName == "GMI") {
             console.log(msg)
         } else if (message.destinationName == "GD") { 
-
+            client.groupOperation({groupId:msg})
         } else if (message.destinationName == "GTG") {
 
         } else if (message.destinationName == "GQ") { 
-
+            client.groupOperation(msg)
         } else if (message.destinationName == "GKM") { 
 
         }
+    },
+    // 群处理 
+    groupOperation: function(msg) {
+        console.log(msg)
+        let groupList = ChatListUtils.getGroupList(objData.username)
+        let arr = []
+        groupList.forEach((item)=>{
+            let flag = false
+            if(msg.groupId == item.targetId) {
+                flag = true
+            }
+            if(!flag) {
+                arr.push(item)
+            }
+        })
+        store.commit('delSession', {targetId:msg.groupId});
+        store.commit('setChatGroupList', arr);
     },
     // 发送消息成功后回调
     onMessageDelivered: function(message) {

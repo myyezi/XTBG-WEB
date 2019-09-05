@@ -282,6 +282,8 @@ const im = {
             })
           }
           if(!flag) {
+            sessionObj.unReadCount = sessionObj.unReadCount + 1
+            state.messageCount += 1
             getSessionList.unshift(sessionObj)
           } else {
             let obj = getSessionList[indexs]

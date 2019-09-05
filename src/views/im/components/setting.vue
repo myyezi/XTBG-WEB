@@ -228,27 +228,10 @@
                     type: 'warning'
                 }).then(() => {
                     this.updateGroupInformation(subTopic,3,string)
-                    this.updateSession()
+                    Bus.$emit("close-show");
                 }).catch(() => {
                 
                 });
-            },
-            // 更新会话框
-            updateSession() {
-                let groupList = ChatListUtils.getGroupList(this.user.userId)
-                let arr1 = []
-                groupList.forEach((item)=>{
-                    let flag = false
-                    if(this.chat.targetId == item.targetId) {
-                        flag = true
-                    }
-                    if(!flag) {
-                        arr1.push(item)
-                    }
-                })
-                ChatListUtils.setGroupList(this.user.userId, arr1);
-                this.$store.commit('delSession', this.chat);
-                Bus.$emit("close-show");
             },
             // 转移群聊
             transferGroup() {

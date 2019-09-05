@@ -325,7 +325,7 @@ export default {
 
           .un_read_count {
             display: inline-block;
-            width: 1.8rem;
+            width: 1.6rem;
             height: 1.6rem;
             line-height: 1.6rem;
             font-size: 12px;
@@ -335,8 +335,8 @@ export default {
             text-align: center;
             font-style: normal;
             position: absolute;
-            left: 1rem;
-            top: 0.5rem;
+            left: 5.5rem;
+            top: 0.1rem;
             z-index: 99999999999;
           }
           .group_identification {

@@ -142,6 +142,7 @@
             let self = this;
             let cacheSession = []
             let myGroupList =[]
+            self.treeDataList = []
             self.groupList = [];
             // 从内存中获取群组列表记录
             cacheSession = self.$store.state.im.chatGroupList;
@@ -183,7 +184,7 @@
                 portrait:self.friendPortrait
             })
             this.treeDataList = this.treeDataList.concat(myFriendList)
-            console.log(this.organizationList)
+            console.log(this.treeDataList)
         }
     }
 };
