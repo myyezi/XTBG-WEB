@@ -60,19 +60,19 @@
                 </li>
             </ul>
         </div>
-        <el-dialog :visible.sync="showAddUser" width="560px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_user">
+        <el-dialog :visible.sync="showAddUser" width="600px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_user">
             <div slot="title">
                 <span > 选择联系人 </span>
             </div>
             <add-user @close-add-user="closeAddUser" :groupUserList="groupUserLists" :chat="chats" v-if="showAddUser"></add-user>
         </el-dialog>
-        <el-dialog :visible.sync="showTransferUser" width="560px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_user">
+        <el-dialog :visible.sync="showTransferUser" width="600px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_user">
             <div slot="title">
                 <span > 转移群聊 </span>
             </div>
             <transfer-group @close-add-user="closeAddUser" :groupUserList="groupUserLists" :chat="chats" v-if="showTransferUser"></transfer-group>
         </el-dialog>
-        <el-dialog :visible.sync="showEliminateUser" width="560px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_user">
+        <el-dialog :visible.sync="showEliminateUser" width="600px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_user">
             <div slot="title">
                 <span > 剔除群成员 </span>
             </div>

@@ -148,10 +148,8 @@
 </script>
 <style lang="scss">
     .user_tree {
-      padding-top: 20px;
-      margin: 0 auto;
-      height: 520px;
-      width: 300px;
+      margin: 20px auto 0;
+      height: 500px;
       overflow: auto;
       .custom-tree-node{
           img {
