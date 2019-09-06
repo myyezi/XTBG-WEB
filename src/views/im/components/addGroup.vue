@@ -204,10 +204,9 @@
     }
     .group_tree {
       float:left;
-      padding-top: 20px;
-      margin: 0 auto;
-      height: 520px;
-      width: 300px;
+      margin: 20px auto 0;
+      height: 500px;
+      width: 329px;
       overflow: auto;
       .custom-tree-node{
           img {

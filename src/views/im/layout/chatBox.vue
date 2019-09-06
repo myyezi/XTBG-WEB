@@ -29,7 +29,7 @@
         <li @click.stop="deleteCurrent">删除当前</li>
         <li @click.stop="deleteAll">删除全部</li>
     </ul>
-    <el-dialog :visible.sync="showAddGroup" width="620px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_group">
+    <el-dialog :visible.sync="showAddGroup" width="640px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_group">
         <div slot="title" class="im_chat_record_title clearfix">
           <span > 创建群组 </span>
         </div>
@@ -325,7 +325,7 @@ export default {
 
           .un_read_count {
             display: inline-block;
-            width: 1.8rem;
+            width: 1.6rem;
             height: 1.6rem;
             line-height: 1.6rem;
             font-size: 12px;
@@ -335,8 +335,8 @@ export default {
             text-align: center;
             font-style: normal;
             position: absolute;
-            left: 1rem;
-            top: 0.5rem;
+            left: 5.5rem;
+            top: 0.1rem;
             z-index: 99999999999;
           }
           .group_identification {
