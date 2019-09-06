@@ -36,19 +36,28 @@
                 </el-time-picker>
             </el-form-item>
 
-              <div class="flex-panel" style="padding-left: 10px">
-                  <el-form-item label="项目地址" prop="adress">
-                      <el-input v-model="personnelattendancegroupForm.adress" @click.native="showDialogAdress()" readonly>
+              <div class="flex-panel" style="padding-left: 10px" v-for="(item,index) in personnelattendancegroupForm.projectList" :key="item.key">
+                  <el-form-item 
+                      :label="'考勤位置' + (index+1)"
+                      :prop="'projectList.' + index + '.adress'" 
+                      :rules="{
+                        required: true, message: '请输入考勤位置', trigger: ['blur','change']
+                      }">
+                      <el-input v-model="item.adress" @click.native="showDialogAdress(item.adress,index)" readonly>
                           <el-button slot="append" icon="el-icon-search"></el-button>
                       </el-input>
                   </el-form-item>
                   <el-form-item label="经度">
-                      <el-input v-model="personnelattendancegroupForm.longitude" placeholder="请确认位置"
+                      <el-input v-model="item.longitude" placeholder="请确认位置"
                                 maxlength="10" disabled></el-input>
                   </el-form-item>
                   <el-form-item label="纬度">
-                      <el-input v-model="personnelattendancegroupForm.latitude" placeholder="请确认位置"
+                      <el-input v-model="item.latitude" placeholder="请确认位置"
                                 maxlength="10" disabled></el-input>
+                  </el-form-item>
+                  <el-form-item class="kaoqin_button">
+                      <i class="el-icon-remove-outline" v-if="personnelattendancegroupForm.projectList.length>1" @click="removeAddress(index)"></i>
+                      <i class="el-icon-circle-plus-outline" v-if="personnelattendancegroupForm.projectList.length == index+1" @click="addAddress"></i>
                   </el-form-item>
               </div>
             <el-form-item label="打卡范围" prop="attendanceRange">
@@ -83,10 +92,16 @@ export default {
       cities: [{name :'常规工作日',value:'1'},{name :'含周六',value:'2'},{name :'含周日',value:'3'},{name :'含节假日',value:'4'}],
       personnelattendancegroupForm: {
         checkedCities:[],
-        attendanceRange:''
+        attendanceRange:'',
+        projectList:[{
+          adress:'',
+          longitude:'',
+          latitude:''
+        }]
       },
       openCollapse: ["1"],//默认打开的面板
       adress : '',
+      adressIndex:null,
       dialogAdressVisible : false,
       rules: {
         // id: [
@@ -103,15 +118,6 @@ export default {
         ],
         duty: [
           { required: true, message: '请输入上班打卡时间', trigger: ['blur','change'] }
-        ],
-        adress: [
-          { required: true, message: '请输入详细地址', trigger: ['blur'] }
-        ],
-        longitude: [
-          { required: true, message: '请输入经度', trigger: ['blur'] }
-        ],
-        latitude: [
-          { required: true, message: '请输入纬度', trigger: ['blur'] }
         ],
         attendanceRange: [
           { required: true, message: '请输入打卡范围', trigger: ['blur'] },
@@ -147,14 +153,16 @@ export default {
           this.personnelattendancegroupForm.attendanceRange =200;
       }
     },
-    showDialogAdress() {
+    showDialogAdress(adress,index) {
+        this.adress = adress
+        this.adressIndex = index
         this.dialogAdressVisible = true;
     },
     //加载地图
     selectLocation(location) {
-        this.personnelattendancegroupForm.adress = location.address;
-        this.personnelattendancegroupForm.longitude = location.lng;
-        this.personnelattendancegroupForm.latitude = location.lat;
+        this.$set(this.personnelattendancegroupForm.projectList[this.adressIndex],'adress',location.address);
+        this.$set(this.personnelattendancegroupForm.projectList[this.adressIndex],'longitude',location.lng);
+        this.$set(this.personnelattendancegroupForm.projectList[this.adressIndex],'latitude',location.lat);
         this.dialogAdressVisible = false;
     },
     //获取项目
@@ -165,6 +173,7 @@ export default {
     },
     //保存
     submitForm(form) {
+      console.log(this.personnelattendancegroupForm)
       var data = this.personnelattendancegroupForm;
       this.$refs[form].validate((valid) => {
           if (!valid) {
@@ -188,6 +197,40 @@ export default {
           });
         });
     },
+    // 增加考勤地址
+    addAddress() {
+        this.personnelattendancegroupForm.projectList.push({
+            adress:'',
+            longitude:'',
+            latitude:'',
+            key: Date.now()
+        })
+    },
+    // 删除考勤地址
+    removeAddress(index) {
+        let _this = this
+        this.$confirm('是否删除该考勤地址' ,'提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }).then(function() {
+            // 删除成功数据处理
+            _this.personnelattendancegroupForm.projectList.splice(index, 1)
+        }).catch(function() {
+        });
+    },
   },
 }
 </script>
+<style lang="scss">
+  .kaoqin_button {
+    padding-top:40px;
+    i {
+      font-size:28px;
+      color:#999;
+      margin-top: 3px;
+      cursor: pointer;
+    }
+  }
+</style>
+
