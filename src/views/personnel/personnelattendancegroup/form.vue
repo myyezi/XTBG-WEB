@@ -121,7 +121,7 @@ export default {
         ],
         attendanceRange: [
           { required: true, message: '请输入打卡范围', trigger: ['blur'] },
-          {pattern: /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/, message: '请输入大于0的数', trigger: ['blur', 'change']}
+          {pattern: /^[+]{0,1}(\d+)$/, message: '请输入大于0的正整数', trigger: ['blur', 'change']}
         ],
       }
     }
