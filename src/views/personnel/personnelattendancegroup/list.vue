@@ -155,7 +155,7 @@ export default {
       },
       //删除
       delGroup(row) {
-          this.$confirm('是否确认删除 ?').then(_ => {
+          this.$confirm('您确定要删除该考勤组信息吗?删除后将自动解散该考勤成员,需重新设置.').then(_ => {
               ajax.delete("personnel/personnelattendancegroup/" + row.id).then((result) => {
                   if (this.checkResponse(result)) {
                       this.showMessage('删除成功', 'success');
