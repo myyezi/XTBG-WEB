@@ -15,7 +15,7 @@
                 <el-form-item label="上级组织" prop="parentId" v-if="parentShow" :rules="rules.required('请选择上级组织')">
 
                     <tree-select v-model="editForm.parentId" placeholder="请选择" type="one"
-                                 url="upms/organization/typeTree" :params="params"></tree-select>
+                                 url="upms/organization/typeTree" :disabled-id="parentDisabledArr" :params="params"></tree-select>
 
                 </el-form-item>
                 <el-form-item label="组织属性名称" prop="name" :rules="rules.required('请输入组织名称')">
@@ -47,6 +47,7 @@
                 showEdit: true,//this.getCurrentUserAuthority("sys/organization/update"),
                 show: false,
                 parentShow: false,
+                parentDisabledArr:[],
                 title: "",
                 orgTypes: [{value: "30", text: "所属组织"}],
                 params: {},
@@ -59,6 +60,7 @@
                     this.title = "编辑组织";
                     this.parentShow = true;
                     this.editForm.id = opt.data.id;
+                    this.parentDisabledArr=[opt.data.id];
                     this.$set(this.params, "delCompanyId", opt.data.id);
                     this.getOrganizationDetail(opt.data.id);
                 } else {
