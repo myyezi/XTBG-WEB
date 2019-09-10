@@ -1,5 +1,5 @@
 <template>
-    <div class="work-flow-item">
+    <!-- <div class="work-flow-item"> -->
         <!-- 判断流程是否是分支，是的话循环分支内部节点 -->
         <!-- <div v-if="workData.type == 2" class="work-flow-conditionNodes">
             <work-item v-if="workData.nextNode" :workData="workData.nextNode"></work-item>
@@ -9,8 +9,10 @@
         <!-- item 主体结束 -->
         <!-- 判断流程是否存在nextNode，如果有则去递归，没有就结束 -->
         <!-- <work-item :workData="workData.childNode" v-if="workData.childNode"></work-item> -->
-        <!-- <work v-if="workData.childNode" :workData="workData"></work> -->
-    </div>
+        <work v-if="workData.childNode&&JSON.stringify(workData.childNode) !== '{}'" :workData="workData.childNode">
+            <work-item :workData="workData.childNode"></work-item>
+        </work>
+    <!-- </div> -->
 </template>
 <script>
     import ajax from '@/utils/request'
@@ -26,7 +28,7 @@
             }
         },
         mounted() {
-            console.log(this.workData)
+            console.log(typeof this.workData.childNode)
         },
         methods: {
             
