@@ -6,7 +6,7 @@
             </div>
             <div class="tree-content">
                 <tree-panel ref="tree" url="upms/position/tree" :params="params"
-                            :showAdd="showAdd" :showEdit="showEdit" @show-form="open"></tree-panel>
+                            :showDel="showDel" :showAdd="showAdd" :showEdit="showEdit" @show-form="open"></tree-panel>
             </div>
         </div>
 
@@ -47,6 +47,7 @@
             return {
                 showAdd: this.getCurrentUserAuthority("sys/position/insert"),
                 showEdit: this.getCurrentUserAuthority("sys/position/update"),
+                showDel: this.getCurrentUserAuthority("sys/position/delete"),
 
                 show: false,
                 title: "",
@@ -120,9 +121,13 @@
                         params.parentId = params.parentId[0];
 
                     ajax.post('upms/position/', params).then(res => {
-                        this.showMessage("保存成功", "success");
-                        this.show = false;
-                        this.$refs.tree.getData();
+                        if(this.checkResponse(res)) {
+                            this.showMessage("保存成功", "success");
+                            this.show = false;
+                            this.$refs.tree.getData();
+                        } else {
+                            this.showMessage(res.msg, "error");
+                        }
                     });
                 });
             },

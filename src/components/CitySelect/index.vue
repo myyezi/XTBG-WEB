@@ -1,10 +1,10 @@
 <template>
     <div class="block">
         <el-cascader
-            :disabled="disabled"
-            :props="props"
             :options="options"
             v-model="cityId"
+            :props="{checkStrictly: true }"
+            clearable
             @change="handleChange">
         </el-cascader>
     </div>

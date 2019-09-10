@@ -29,7 +29,7 @@
             <label class="control-label">项目类型</label>
             <div class="input-group">
                 <el-select v-model="searchParam.type" clearable placeholder="请选择项目类型">
-                    <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value">
+                    <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value" @change="test">
                     </el-option>
                 </el-select>
             </div>
@@ -229,14 +229,16 @@ export default {
       },
       // 获取字典
       getDict() {
-          let r = 'FXDJ,XMLX,XGSJ,XBBM';
+          let r = 'XMLX,XBBM';
           ajax.get("upms/dict/allType/"+r).then(rs => {
               this.typeOptions = rs.XMLX;
-              this.designOptions = rs.XGSJ
               this.coDepartmentOptions = rs.XBBM;
           });
       },
 
+      test(){
+        alert(888)
+      },
       //重置筛选
       resetList() {
           this.createTime =[];

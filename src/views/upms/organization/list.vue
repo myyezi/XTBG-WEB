@@ -30,7 +30,7 @@
                 <el-table-column label="联系方式" width="200">
                     <template slot-scope="scope">{{ scope.row.account }}</template>
                 </el-table-column>
-                <el-table-column prop="email" label="邮箱" width="200" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="email" label="状态" width="200" show-overflow-tooltip></el-table-column>
             </el-table>
         </div>
         <el-dialog width="600px" class="full-input" :visible.sync="show" :title="title">
