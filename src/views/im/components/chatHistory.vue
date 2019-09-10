@@ -9,7 +9,7 @@
                       <img v-else :src="allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
                     </div>
                     <div class="im_chat_record_user">
-                        <p>{{ item.fromUserId == user.userId?user.name:allUserInfoObj[item.fromUserId].name }}<i>{{ item.serverTimestamp }}</i></p>
+                        <p>{{ item.fromUserId == user.userId?user.name:allUserInfoObj[item.fromUserId].name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></p>
                         <div class="im_chat_record_text">
                           <img class="message-img" v-if="item.content.type == 3" :src='JSON.parse(item.content.content).filedomain+JSON.parse(item.content.content).path' alt="消息图片不能加载"  @click="openImageProxy(item)">
                           <pre v-html="transform(item.content.content,item.content.type)" v-else></pre>
@@ -153,6 +153,11 @@
                 .im_chat_record_text {
                   color:#000;
                   margin-top: 10px;
+                  pre {
+                    width: 100%;
+                    white-space: pre-wrap;
+                    word-break: break-all;
+                  }
                   img {
                       max-width: 20rem;
                       cursor: pointer;

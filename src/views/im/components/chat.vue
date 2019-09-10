@@ -157,7 +157,7 @@
         groupUserList:[],
         accept:'.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.pdf,.exe,',
         imgFormat: "jpg,jpeg,png,gif",
-        fileFormat: "doc,docx,xls,xlsx,pdf,exe",
+        fileFormat: "doc,docx,xls,xlsx,pdf,exe,txt,ppt,pptx,zip,rar",
         videoFormat: "mp4,mov",
         audioFormat: "mp3,m4a",
         transform:transform,
