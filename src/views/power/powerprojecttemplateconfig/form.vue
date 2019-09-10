@@ -293,9 +293,7 @@ methods: {
     },
 
     changeUpload(){
-        if (this.templateConfigForm.isUpload == 0){
-            this.templateConfigForm.isApproval = 0;
-        }else{
+        if (this.templateConfigForm.isUpload == 1){
             this.templateConfigForm.isApproval = 1;
         }
     },
