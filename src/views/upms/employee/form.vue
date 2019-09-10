@@ -1,65 +1,61 @@
 <template>
     <div class="form-panel">
-        <el-form :model="userForm" :rules="rules" ref="userForm" label-position="top" label-width="100px"
+        <el-form :model="employeeForm" :rules="rules" ref="employeeForm" label-position="top" label-width="100px"
                  :class="{'register-form': true}">
             <el-collapse v-model="openCollapse">
                 <el-collapse-item title="基本信息" name="1">
                     <div class="flex-panel">
                         <el-form-item label="手机号" prop="account">
-                            <el-input v-model="userForm.account" placeholder="请输入手机号" clearable @change="getUserByPhone()"></el-input>
+                            <el-input v-model="employeeForm.account" placeholder="请输入手机号" clearable @change="getUserByPhone()"></el-input>
                         </el-form-item>
                         <el-form-item label="姓名" prop="name">
-                            <el-input v-model="userForm.name" placeholder="请输入姓名" clearable disabled></el-input>
+                            <el-input v-model="employeeForm.name" placeholder="输入手机号码自动带入" clearable disabled></el-input>
                         </el-form-item>
                         <el-form-item label="性别" prop="gender">
-                            <el-select v-model="userForm.gender" filterable clearable disabled>
+                            <el-select v-model="employeeForm.gender" placeholder="输入手机号码自动带入" filterable clearable disabled>
                                 <el-option label="男" :value="1"></el-option>
                                 <el-option label="女" :value="2"></el-option>
                                 <el-option label="其他" :value="3"></el-option>
                             </el-select>
                         </el-form-item>
-                        <!--<el-form-item label="学历" prop="education">
-                            <el-select v-model="userForm.education" filterable clearable disabled>
-                                <el-option label="博士" :value="'1'"></el-option>
-                                <el-option label="硕士" :value="'2'"></el-option>
-                                <el-option label="本科" :value="'3'"></el-option>
-                                <el-option label="大专" :value="'4'"></el-option>
-                                <el-option label="高中" :value="'5'"></el-option>
-                            </el-select>
-                        </el-form-item>-->
                         <el-form-item label="学历" prop="education">
-                            <el-input v-model="userForm.education" placeholder="" clearable disabled></el-input>
+                            <el-select class="overall_situation_input_icon" v-model="employeeForm.education" disabled placeholder="输入手机号码自动带入">
+                                <el-option v-for="item in xlList" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                            </el-select>
                         </el-form-item>
                         <el-form-item label="职称" prop="qualification">
-                            <el-input v-model="userForm.qualification" placeholder="" clearable disabled></el-input>
-                        </el-form-item>
-                        <!--<el-form-item label="职称" prop="qualification">
-                            <el-select v-model="userForm.qualification" filterable clearable disabled>
-                                <el-option label="科学家" :value="'1'"></el-option>
-                                <el-option label="一级建造师" :value="'2'"></el-option>
+                            <el-select class="overall_situation_input_icon" v-model="employeeForm.qualification" disabled placeholder="输入手机号码自动带入">
+                                <el-option v-for="item in zcList" :key="item.value" :label="item.text" :value="item.value"></el-option>
                             </el-select>
-                        </el-form-item>-->
-                        <el-form-item label="邮箱" prop="email">
-                            <el-input v-model="userForm.email" placeholder="请输入邮箱" clearable></el-input>
                         </el-form-item>
-                        <el-form-item label="状态" prop="employeeStatus" v-if="userForm.id == null">
-                            <el-select v-model="userForm.employeeStatus" filterable clearable>
+
+                        <!--<el-form-item label="学历" prop="education">
+                            <el-input v-model="employeeForm.education" placeholder="输入手机号码自动带入" clearable disabled></el-input>
+                        </el-form-item>
+                        <el-form-item label="职称" prop="qualification">
+                            <el-input v-model="employeeForm.qualification" placeholder="输入手机号码自动带入" clearable disabled></el-input>
+                        </el-form-item>-->
+                        <el-form-item label="状态" prop="employeeStatus" v-if="employeeForm.id == null">
+                            <el-select v-model="employeeForm.employeeStatus" filterable clearable>
                                 <el-option label="试用期" :value="'1'"></el-option>
                                 <el-option label="正式员工" :value="'2'"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="状态" prop="employeeStatus" v-else>
-                            <el-select v-model="userForm.employeeStatus" filterable clearable>
+                            <el-select v-model="employeeForm.employeeStatus" filterable clearable>
                                 <el-option label="试用期" :value="1"></el-option>
                                 <el-option label="正式员工" :value="2"></el-option>
                                 <el-option label="离职" :value="3"></el-option>
                             </el-select>
                         </el-form-item>
+                        <el-form-item label="邮箱" prop="email">
+                            <el-input v-model="employeeForm.email" placeholder="请输入邮箱" clearable></el-input>
+                        </el-form-item>
                     </div>
                 </el-collapse-item>
-                <el-collapse-item title="权限信息" name="2">
+                <el-collapse-item title="权限信息" name="2" v-if="employeeForm.employeeStatus != 3">
                     <el-button class="float-btn" type="primary" @click="addItem">新增</el-button>
-                    <el-table border :data="userForm.list" style="width: 100%">
+                    <el-table border :data="employeeForm.list" style="width: 100%">
                         <el-table-column label="组织" min-width="200" label-class-name="required">
                             <template slot-scope="{row,$index}">
                                 <el-form-item :prop="'list.' + $index + '.organizations'"
@@ -69,11 +65,10 @@
                                 </el-form-item>
                             </template>
                         </el-table-column>
-                        <el-table-column label="角色" min-width="200" label-class-name="required">
+                        <el-table-column label="角色" min-width="200" label-class-name="">
                             <template slot-scope="{row,$index}">
-                                <el-form-item :prop="'list.' + $index + '.roles'"
-                                              :rules="rules.required('请选择角色')">
-                                    <tree-select v-model="row.roles" placeholder="请选择"
+                                <el-form-item :prop="'list.' + $index + '.roles'">
+                                    <tree-select v-model="row.roles" placeholder="请选择" type="one"
                                                  :url="setUrl('upms/role/findByCompany',row)"></tree-select>
                                 </el-form-item>
                             </template>
@@ -82,14 +77,14 @@
                             <template slot-scope="{row,$index}">
                                 <el-form-item :prop="'list.' + $index + '.positions'"
                                               :rules="rules.required('请选择职位')">
-                                    <tree-select v-model="row.positions" placeholder="请选择"
+                                    <tree-select v-model="row.positions" placeholder="请选择" type="one"
                                                  :url="setUrl('upms/position/tree',row)"></tree-select>
                                 </el-form-item>
                             </template>
                         </el-table-column>
                         <el-table-column label="操作" min-width="50">
                             <template slot-scope="{row, $index}">
-                                <el-button v-if="userForm.list.length>1" type="text" size="small" @click="delItem($index)">删除</el-button>
+                                <el-button v-if="employeeForm.list.length>1" type="text" size="small" @click="delItem($index)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -99,7 +94,7 @@
                 </el-collapse-item>
             </el-collapse>
             <div class="left-row">
-                <el-button type="primary" @click="submitForm('userForm')">保存</el-button>
+                <el-button type="primary" @click="submitForm('employeeForm')">保存</el-button>
                 <el-button @click="close">返回</el-button>
             </div>
         </el-form>
@@ -118,7 +113,9 @@
         data() {
 
             return {
-                userForm: {
+                xlList: [],
+                zcList: [],
+                employeeForm: {
                     list: [{}],
                     userId: '',
                     name: '',
@@ -151,28 +148,38 @@
                     employeeStatus: [
                         {required: true, message: '请选择状态', trigger: ['blur', 'change']},
                     ],
-                    education: [
+                    /*education: [
                         {required: true, message: '请选择学历', trigger: ['blur', 'change']},
                     ],
                     qualification: [
                         {required: true, message: '请选择职称', trigger: ['blur', 'change']},
-                    ]
+                    ]*/
 
                 },
             }
         },
         methods: {
+
+            // 获取字典
+            getDict() {
+                let r = 'XL,ZC';
+                ajax.get("upms/dict/allType/"+r).then(rs => {
+                    this.xlList = rs.XL;
+                    this.zcList = rs.ZC
+                });
+            },
+
             getUserByPhone() {
-                let account = this.userForm.account
+                let account = this.employeeForm.account
                 if(account && account.length == 11) {
                     ajax.get('/upms/user/getUserByPhone?phone=' + account).then(rs => {
                         let data = rs.data
                         if(data) {
-                            this.userForm.userId = data.id
-                            this.userForm.name = data.name
-                            this.userForm.gender = data.gender
-                            this.userForm.education = data.education
-                            this.userForm.qualification = data.qualification
+                            this.employeeForm.userId = data.id
+                            this.employeeForm.name = data.name
+                            this.employeeForm.gender = data.gender
+                            this.employeeForm.education = data.education
+                            this.employeeForm.qualification = data.qualification
                         }
                     });
                 }
@@ -185,7 +192,7 @@
                         //if (this.checkResponse(rs)) {
                         /*rs.data.userType += '';
                         rs.data.employeeStatus += '';*/
-                        this.userForm = Object.assign(this.userForm, rs.data);
+                        this.employeeForm = Object.assign(this.employeeForm, rs.data);
                         if (null != rs.data.attachment && rs.data.attachment.length > 0) {
                             this.attachment = JSON.parse(rs.data.attachment);
                         }
@@ -194,7 +201,7 @@
                     //加载用户的权限信息
                     ajax.get('upms/user/getUserOrganStructure', {id: this.$route.query.id}).then(rs => {
                         if (this.checkResponse(rs)) {
-                            // this.$set(this.userForm,'list',rs.data)
+                            // this.$set(this.employeeForm,'list',rs.data)
                             this.setAuthData(rs.data.rows);
 
                         }
@@ -210,7 +217,7 @@
                 //         roles: [],
                 //     }
                 // ];
-                this.userForm.list = [];
+                this.employeeForm.list = [];
                 if (data && data.length) {
                     data.forEach(item => {
                         let bean = Object.assign({}, item);
@@ -226,31 +233,31 @@
                         item.roles && item.roles.forEach(item2 => {
                             bean.roles.push(item2.id);
                         });
-                        this.userForm.list.push(bean);
+                        this.employeeForm.list.push(bean);
                     })
                 } else {
-                    this.userForm.list = [{}];
+                    this.employeeForm.list = [{}];
                 }
-                this.$set(this.userForm, 'list', this.userForm.list);
+                this.$set(this.employeeForm, 'list', this.employeeForm.list);
 
             },
             submitForm(form) {
                 var that = this;
                 this.$refs[form].validate((valid) => {
                     if (valid) {
-                        if (!this.userForm.list || this.userForm.list.length === 0) {
+                        if (!this.employeeForm.list || this.employeeForm.list.length === 0) {
                             this.showMessage('校验不通过，请检查输入项');
                             return;
                         }
                         let organizations = [];
                         let positions = [];
                         let roles = [];
-                        this.userForm.list.forEach(item => {
+                        this.employeeForm.list.forEach(item => {
                             organizations.push(item.organizations);
                             positions.push(item.positions);
                             roles.push(item.roles);
                         });
-                        const data = Object.assign(this.userForm, {
+                        const data = Object.assign(this.employeeForm, {
                             organizations: JSON.stringify(organizations),
                             positions: JSON.stringify(positions),
                             roles: JSON.stringify(roles)
@@ -285,14 +292,18 @@
                 }
             },
             addItem() {
-                this.userForm.list.push({});
+                this.employeeForm.list.push({});
             },
             delItem(i) {
-                this.userForm.list.splice(i, 1);
+                this.$confirm("确认删除吗？").then(_ => {
+                    this.employeeForm.list.splice(i, 1);
+                }).catch(_ => {
+                });
             },
         },
         mounted() {
             this.open();
+            this.getDict();
         }
     }
 </script>

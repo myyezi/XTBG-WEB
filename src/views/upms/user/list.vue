@@ -54,7 +54,7 @@
                             <el-select v-model="searchParam.gender" filterable clearable>
                                 <el-option label="男" :value="1"></el-option>
                                 <el-option label="女" :value="2"></el-option>
-                                <el-option label="未知" :value="3"></el-option>
+                                <el-option label="其他" :value="3"></el-option>
                             </el-select>
                         </div>
                     </div>

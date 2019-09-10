@@ -133,7 +133,7 @@
             return {
                 listUrl: "/upms/employee",
                 isShowMore:false,
-                showAddBtn: this.getCurrentUserAuthority("/employee/save"),
+                showAddBtn: this.getCurrentUserAuthority("/employee/add"),
                 showEditBtn: this.getCurrentUserAuthority('/employee/edit'),
             }
         },

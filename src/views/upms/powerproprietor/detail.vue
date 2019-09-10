@@ -33,7 +33,7 @@
                         <span>{{powerproprietorForm.latitude}}</span>
                       </div>
                     </div>
-                    <div class="detail-item">
+                    <!--<div class="detail-item">
                       <label class="control-label">创建时间</label>
                       <div class="input-group">
                         <span>{{powerproprietorForm.createTime}}</span>
@@ -44,7 +44,7 @@
                       <div class="input-group">
                         <span>{{powerproprietorForm.updateTime}}</span>
                       </div>
-                    </div>
+                    </div>-->
                     <div class="detail-item big">
                         <label class="control-label">备注</label>
                         <div class="input-group">
