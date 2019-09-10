@@ -198,9 +198,9 @@ export default {
         latitude: [
           { required: true, message: '请输入纬度', trigger: ['blur'] }
         ],
-        remark: [
-          { required: true, message: '请输入备注', trigger: ['blur'] }
-        ],
+        // remark: [
+        //   { required: true, message: '请输入备注', trigger: ['blur'] }
+        // ],
       }
     }
   },

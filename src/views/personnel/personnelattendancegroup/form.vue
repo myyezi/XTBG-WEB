@@ -37,9 +37,9 @@
             </el-form-item>
 
               <div class="flex-panel" style="padding-left: 10px" v-for="(item,index) in personnelattendancegroupForm.projectList" :key="item.key">
-                  <el-form-item 
+                  <el-form-item
                       :label="'考勤位置' + (index+1)"
-                      :prop="'projectList.' + index + '.adress'" 
+                      :prop="'projectList.' + index + '.adress'"
                       :rules="{
                         required: true, message: '请输入考勤位置', trigger: ['blur','change']
                       }">
@@ -121,13 +121,13 @@ export default {
         ],
         attendanceRange: [
           { required: true, message: '请输入打卡范围', trigger: ['blur'] },
-          {pattern: /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/, message: '请输入大于0的数', trigger: ['blur', 'change']}
+          {pattern: /^[+]{0,1}(\d+)$/, message: '请输入大于0的正整数', trigger: ['blur', 'change']}
         ],
       }
     }
   },
   mounted() {
-    this.open();
+      this.open();
   //  this.getCompanyList();
   },
   methods: {
@@ -135,6 +135,7 @@ export default {
     open() {
       if (this.$route.query.id) {
         ajax.get('personnel/personnelattendancegroup/' + this.$route.query.id).then(rs => {
+            rs.data.projectList = this.personnelattendancegroupForm.projectList;
           this.personnelattendancegroupForm = rs.data;
             if (rs.data.onduty && rs.data.offduty.length > 0) {
                 let duty = [];
@@ -148,6 +149,9 @@ export default {
           if (null != rs.data.img && rs.data.img.length > 0) {
             this.img = JSON.parse(rs.data.img);
           }
+          if (null != rs.data.adress && rs.data.adress.length > 0) {
+                this.personnelattendancegroupForm.projectList = JSON.parse(rs.data.adress);
+            }
         });
       }else{
           this.personnelattendancegroupForm.attendanceRange =200;
@@ -187,6 +191,7 @@ export default {
           if (this.personnelattendancegroupForm.checkedCities && this.personnelattendancegroupForm.checkedCities.length > 0) {
               data.workingDay = this.personnelattendancegroupForm.checkedCities.join();
           }
+          data.adress = JSON.stringify(data.projectList)
           ajax.post('personnel/personnelattendancegroup', data).then(rs => {
             if (rs.status == 0) {
               this.$message.success(rs.msg);
@@ -205,6 +210,7 @@ export default {
             latitude:'',
             key: Date.now()
         })
+        this.$forceUpdate()
     },
     // 删除考勤地址
     removeAddress(index) {
@@ -216,6 +222,7 @@ export default {
         }).then(function() {
             // 删除成功数据处理
             _this.personnelattendancegroupForm.projectList.splice(index, 1)
+            _this.$forceUpdate()
         }).catch(function() {
         });
     },
