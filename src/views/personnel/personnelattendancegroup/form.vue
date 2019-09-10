@@ -188,6 +188,10 @@ export default {
               data.onduty = this.personnelattendancegroupForm.duty[0];
               data.offduty = this.personnelattendancegroupForm.duty[1];
           }
+          if(this.personnelattendancegroupForm.duty[0]>this.personnelattendancegroupForm.duty[1]){
+              this.$message.error('考勤开始时间须小于考勤结束时间');
+              return;
+          }
           if (this.personnelattendancegroupForm.checkedCities && this.personnelattendancegroupForm.checkedCities.length > 0) {
               data.workingDay = this.personnelattendancegroupForm.checkedCities.join();
           }
