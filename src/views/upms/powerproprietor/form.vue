@@ -9,7 +9,7 @@
                         <el-form-item label="业主名称" prop="name">
                             <el-input v-model="powerproprietorForm.name" placeholder="请输入业主名称" maxlength=30 clearable></el-input>
                         </el-form-item>
-                        <el-form-item label="城市" prop="districtId">
+                        <el-form-item label="地区" prop="districtId">
                             <city-select-panel :value.sync="powerproprietorForm.districtId" ref="citySelect"></city-select-panel>
                         </el-form-item>
                         <el-form-item label="详细位置" prop="address">
@@ -152,7 +152,7 @@
                         }
                     });
                 } else {
-                    this.powerproprietorForm.contactList= [{}];
+                    this.powerproprietorForm.contactList= [];
                 }
             },
 

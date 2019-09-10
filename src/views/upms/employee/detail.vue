@@ -24,13 +24,21 @@
                     <div class="detail-item">
                         <label class="control-label">性别</label>
                         <div class="input-group">
-                            <span>{{userForm.gender == 1 ? "男" : "女"}}</span>
+                            <span>{{userForm.gender == 1 ? "男" : userForm.gender == 2 ? "女" : "其他"}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
                         <label class="control-label">状态</label>
                         <div class="input-group">
-                            <span>{{userForm.employeeStatus == 1 ? "试用期" : "正式员工"}}</span>
+                            <span>{{userForm.employeeStatus == 1 ? "试用期" : userForm.employeeStatus == 2 ? "正式员工" : "离职"}}</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-item big">
+                        <label class="control-label" prop="realMap">附件</label>
+                        <div class="input-group">
+                            <upload-panel :size="6" accept=".jpg,.jpeg,.png,.gif" :file-list.sync="attachment" disabled
+                                          :show-img="true"></upload-panel>
                         </div>
                     </div>
                     <!--<div class="detail-item">
@@ -81,10 +89,12 @@
 <script>
     import ajax from '@/utils/request'
     import { tool } from '@/utils/common'
+    import UploadPanel from '@/components/UploadPanel/index'
 
     export default {
         name: "userDetail",
         mixins: [ tool ],
+        components: {UploadPanel},
         data() {
             return {
                 userForm: {
@@ -108,6 +118,9 @@
                     rs.data.userType += '';
                     rs.data.userStatus += '';
                     this.userForm = rs.data;
+                    if (null != rs.data.attachment && rs.data.attachment.length > 0) {
+                        this.attachment = JSON.parse(rs.data.attachment);
+                    }
                 //}
             });
 

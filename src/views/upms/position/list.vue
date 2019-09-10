@@ -120,9 +120,13 @@
                         params.parentId = params.parentId[0];
 
                     ajax.post('upms/position/', params).then(res => {
-                        this.showMessage("保存成功", "success");
-                        this.show = false;
-                        this.$refs.tree.getData();
+                        if(this.checkResponse(res)) {
+                            this.showMessage("保存成功", "success");
+                            this.show = false;
+                            this.$refs.tree.getData();
+                        } else {
+                            this.showMessage(res.msg, "error");
+                        }
                     });
                 });
             },

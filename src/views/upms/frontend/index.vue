@@ -126,12 +126,14 @@
     import treeTable from './treeTable'
     import ganttDetails from './ganttDetails'
     import ganttOpertion from './ganttOpertion'
+    import work from './compent/work'
 
     export default {
         mixins: [tool, ruleTool],
-        components: {Tinymce,UploadPanel,eleCalendar,treeTable,ganttDetails,ganttOpertion},
+        components: {Tinymce,UploadPanel,eleCalendar,treeTable,ganttDetails,ganttOpertion,work},
         data() {
             return {
+                dialogWorkVisible:true,
                 activeName: '1',
                 informationForm: {},
                 providers: [],
@@ -168,6 +170,294 @@
                 weekReportList:weekReportList,
                 valueYear:new Date().getFullYear().toString(),
                 dialogFormVisible:false,
+                workData:{
+                    "name": "发起人",
+                    "nodeId": "sid-startevent",
+                    "type": "start",
+                    "childNode": {
+                        "name": "直接主管1",
+                        "type": "approver",
+                        "prevId": "sid-startevent",
+                        "nodeId": "702c_daec",
+                        "properties": {
+                            "activateType": "ONE_BY_ONE",
+                            "agreeAll": false,
+                            "actionerRules": [{
+                                "type": "target_management",
+                                "level": 1,
+                                "isEmpty": false,
+                                "autoUp": true
+                            }],
+                            "noneActionerAction": "admin"
+                        },
+                        "childNode": {
+                            "type": "route",
+                            "prevId": "702c_daec",
+                            "nodeId": "f701_e579",
+                            "conditionNodes": [{
+                                "name": "条件1",
+                                "type": "condition",
+                                "prevId": "f701_e579",
+                                "nodeId": "6232_3e8e",
+                                "properties": {
+                                    "conditions": [
+                                        [{
+                                            "type": "dingtalk_actioner_value_condition",
+                                            "paramKey": "DDHolidayField-J2BWEN12__options",
+                                            "paramLabel": "请假类型",
+                                            "paramValue": "",
+                                            "paramValues": ["年假"],
+                                            "isEmpty": false
+                                        }, {
+                                            "type": "dingtalk_actioner_range_condition",
+                                            "paramKey": "DDHolidayField-J2BWEN12__duration",
+                                            "paramLabel": "时长（天）",
+                                            "lowerBound": 1,
+                                            "upperBound": "",
+                                            "unit": "天",
+                                            "isEmpty": false
+                                        }]
+                                    ]
+                                },
+                                "childNode": {
+                                    "name": "UNKNOWN",
+                                    "type": "approver",
+                                    "prevId": "6232_3e8e",
+                                    "nodeId": "d2da_2444",
+                                    "properties": {
+                                        "activateType": "ONE_BY_ONE",
+                                        "agreeAll": false,
+                                        "actionerRules": [{
+                                            "type": "target_management",
+                                            "level": 1,
+                                            "isEmpty": false,
+                                            "autoUp": true
+                                        }],
+                                        "noneActionerAction": "admin"
+                                    }
+                                }
+                            }, {
+                                "name": "条件4",
+                                "type": "condition",
+                                "prevId": "f701_e579",
+                                "nodeId": "aba1_c924",
+                                "properties": {
+                                    "conditions": [
+                                        [{
+                                            "type": "dingtalk_actioner_value_condition",
+                                            "paramKey": "DDHolidayField-J2BWEN12__options",
+                                            "paramLabel": "请假类型",
+                                            "paramValue": "",
+                                            "paramValues": ["年假"],
+                                            "isEmpty": false
+                                        }, {
+                                            "type": "dingtalk_actioner_range_condition",
+                                            "paramKey": "DDHolidayField-J2BWEN12__duration",
+                                            "paramLabel": "时长（天）",
+                                            "lowerBound": 1,
+                                            "upperBound": "",
+                                            "unit": "天",
+                                            "isEmpty": false
+                                        }]
+                                    ]
+                                },
+                                "childNode": {
+                                    "name": "UNKNOWN",
+                                    "type": "approver",
+                                    "prevId": "aba1_c924",
+                                    "nodeId": "aab6_12f3",
+                                    "properties": {
+                                        "activateType": "ONE_BY_ONE",
+                                        "agreeAll": false,
+                                        "actionerRules": [{
+                                            "type": "target_management",
+                                            "level": 1,
+                                            "isEmpty": false,
+                                            "autoUp": true
+                                        }],
+                                        "noneActionerAction": "admin"
+                                    },
+                                    "childNode": {
+                                        "type": "route",
+                                        "prevId": "aab6_12f3",
+                                        "nodeId": "281e_78f2",
+                                        "conditionNodes": [{
+                                            "name": "条件1",
+                                            "type": "condition",
+                                            "prevId": "281e_78f2",
+                                            "nodeId": "0e44_0924",
+                                            "properties": {
+                                                "conditions": [
+                                                    [{
+                                                        "type": "dingtalk_actioner_value_condition",
+                                                        "paramKey": "DDHolidayField-J2BWEN12__options",
+                                                        "paramLabel": "请假类型",
+                                                        "paramValue": "",
+                                                        "paramValues": ["年假"],
+                                                        "isEmpty": false
+                                                    }, {
+                                                        "type": "dingtalk_actioner_range_condition",
+                                                        "paramKey": "DDHolidayField-J2BWEN12__duration",
+                                                        "paramLabel": "时长（天）",
+                                                        "lowerBound": 1,
+                                                        "upperBound": "",
+                                                        "unit": "天",
+                                                        "isEmpty": false
+                                                    }]
+                                                ]
+                                            },
+                                            "childNode": {
+                                                "type": "route",
+                                                "prevId": "0e44_0924",
+                                                "nodeId": "1867_5667",
+                                                "conditionNodes": [{
+                                                    "name": "条件1",
+                                                    "type": "condition",
+                                                    "prevId": "1867_5667",
+                                                    "nodeId": "e7d2_6a2f",
+                                                    "properties": {
+                                                        "conditions": [
+                                                            [{
+                                                                "type": "dingtalk_actioner_value_condition",
+                                                                "paramKey": "DDHolidayField-J2BWEN12__options",
+                                                                "paramLabel": "请假类型",
+                                                                "paramValue": "",
+                                                                "paramValues": ["事假"],
+                                                                "isEmpty": false
+                                                            }, {
+                                                                "type": "dingtalk_actioner_range_condition",
+                                                                "paramKey": "DDHolidayField-J2BWEN12__duration",
+                                                                "paramLabel": "时长（天）",
+                                                                "lowerBound": 1,
+                                                                "upperBound": "",
+                                                                "unit": "天",
+                                                                "isEmpty": false
+                                                            }]
+                                                        ]
+                                                    },
+                                                    "childNode": {
+                                                        "name": "UNKNOWN",
+                                                        "type": "approver",
+                                                        "prevId": "e7d2_6a2f",
+                                                        "nodeId": "fd31_542d",
+                                                        "properties": {
+                                                            "activateType": "ONE_BY_ONE",
+                                                            "agreeAll": false,
+                                                            "actionerRules": [{
+                                                                "type": "target_management",
+                                                                "level": 1,
+                                                                "isEmpty": false,
+                                                                "autoUp": true
+                                                            }],
+                                                            "noneActionerAction": "admin"
+                                                        }
+                                                    }
+                                                }, {
+                                                    "name": "条件2",
+                                                    "type": "condition",
+                                                    "prevId": "1867_5667",
+                                                    "nodeId": "677f_a9ce",
+                                                    "properties": {
+                                                        "conditions": [
+                                                            [{
+                                                                "type": "dingtalk_actioner_value_condition",
+                                                                "paramKey": "DDHolidayField-J2BWEN12__options",
+                                                                "paramLabel": "请假类型",
+                                                                "paramValue": "",
+                                                                "paramValues": ["事假"],
+                                                                "isEmpty": false
+                                                            }, {
+                                                                "type": "dingtalk_actioner_range_condition",
+                                                                "paramKey": "DDHolidayField-J2BWEN12__duration",
+                                                                "paramLabel": "时长（天）",
+                                                                "lowerBound": 1,
+                                                                "upperBound": "",
+                                                                "unit": "天",
+                                                                "isEmpty": false
+                                                            }]
+                                                        ]
+                                                    }
+                                                }],
+                                                "properties": {}
+                                            }
+                                        }, {
+                                            "name": "条件2",
+                                            "type": "condition",
+                                            "prevId": "281e_78f2",
+                                            "nodeId": "732d_0c35",
+                                            "properties": {
+                                                "conditions": [
+                                                    [{
+                                                        "type": "dingtalk_actioner_value_condition",
+                                                        "paramKey": "DDHolidayField-J2BWEN12__options",
+                                                        "paramLabel": "请假类型",
+                                                        "paramValue": "",
+                                                        "paramValues": ["事假"],
+                                                        "isEmpty": false
+                                                    }, {
+                                                        "type": "dingtalk_actioner_range_condition",
+                                                        "paramKey": "DDHolidayField-J2BWEN12__duration",
+                                                        "paramLabel": "时长（天）",
+                                                        "lowerBound": 1,
+                                                        "upperBound": "",
+                                                        "unit": "天",
+                                                        "isEmpty": false
+                                                    }]
+                                                ]
+                                            }
+                                        }],
+                                        "properties": {}
+                                    }
+                                }
+                            }, {
+                                "name": "条件3",
+                                "type": "condition",
+                                "prevId": "f701_e579",
+                                "nodeId": "f4c2_31b3",
+                                "properties": {
+                                    "conditions": []
+                                }
+                            }],
+                            "properties": {},
+                            "childNode": {
+                                "name": "UNKNOWN",
+                                "type": "approver",
+                                "prevId": "f701_e579",
+                                "nodeId": "d5bb_ea83",
+                                "properties": {
+                                    "activateType": "ONE_BY_ONE",
+                                    "agreeAll": false,
+                                    "actionerRules": [{
+                                        "type": "target_select",
+                                        "multi": 0,
+                                        "select": ["allStaff"],
+                                        "range": {
+                                            "approvals": [],
+                                            "labels": [],
+                                            "allStaff": null
+                                        },
+                                        "isEmpty": false,
+                                        "key": "manual_d5bb_ea83_2204_347d"
+                                    }]
+                                },
+                                "childNode": {
+                                    "name": "UNKNOWN",
+                                    "type": "approver",
+                                    "prevId": "d5bb_ea83",
+                                    "nodeId": "3332_94bf",
+                                    "properties": {
+                                        "activateType": "ONE_BY_ONE",
+                                        "agreeAll": false,
+                                        "actionerRules": [{
+                                            "type": "target_originator",
+                                            "isEmpty": false
+                                        }]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         mounted() {

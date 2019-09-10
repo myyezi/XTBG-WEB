@@ -8,8 +8,8 @@
               <el-input v-model="powerprojecttaskForm.name" placeholder="请输入项目名称" maxlength=100 show-word-limit clearable></el-input>
             </el-form-item>
               <el-form-item label="项目类型" prop="type">
-                  <el-select v-model="powerprojecttaskForm.type" clearable placeholder="请选择项目类型">
-                      <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value">
+                  <el-select v-model="powerprojecttaskForm.type" clearable placeholder="请选择项目类型" @change="chickProjectType(powerprojecttaskForm.type)">
+                      <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value" >
                       </el-option>
                   </el-select>
               </el-form-item>
@@ -223,6 +223,7 @@ export default {
           this.powerprojecttaskForm.coDepartment =  this.powerprojecttaskForm.coDepartment.split(',')
           this.getContact();
           this.getAttachmentList();
+          this.getSjDict(rs.data.type);
           if (null != rs.data.img && rs.data.img.length > 0) {
             this.img = JSON.parse(rs.data.img);
           }
@@ -232,14 +233,28 @@ export default {
 
       // 获取字典
       getDict() {
-       let r = 'FXDJ,XMLX,XGSJ,XBBM';
+       let r = 'XMLX,XBBM';
           ajax.get("upms/dict/allType/"+r).then(rs => {
               this.typeOptions = rs.XMLX;
-              this.designOptions = rs.XGSJ
+              // this.designOptions = rs.XGSJ
               this.coDepartmentOptions = rs.XBBM;
           });
       },
 
+      //选择项目类型时初始相关设计
+      chickProjectType(type){
+          this.powerprojecttaskForm.relatedDesign='';
+          let r = 'XGSJ_'+type;
+          this.getSjDict(type);
+      },
+
+      //获取相关设计数据字典，需要和项目类型联动
+      getSjDict(type){
+          let r = 'XGSJ_'+type;
+          ajax.get("upms/dict/type/"+r).then(rs => {
+              this.designOptions = rs
+          });
+      },
       getUserList(){
           ajax.get("power/powerproprietor/getUser").then(rs => {
               this.userList = rs.data;
