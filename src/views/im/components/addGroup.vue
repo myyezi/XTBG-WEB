@@ -39,7 +39,7 @@
               :props="defaultProps">
               <span class="custom-tree-node clearfix" slot-scope="{ node, data }">
                   <img :src="data.portrait?data.portrait:defaultPic" v-if="data.type === 1">
-                  <span>{{ node.label }}</span>
+                  <span :title="node.label ">{{ node.label }}</span>
               </span>
           </el-tree>
       </div>
@@ -178,6 +178,8 @@
         height: 500px;
         border-right:1px solid #999;
         padding-right:10px;
+        width: 270px;
+        box-sizing: border-box;
         .avatar-uploader .el-upload {
           border: 1px dashed #d9d9d9;
           border-radius: 6px;
