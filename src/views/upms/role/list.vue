@@ -95,8 +95,8 @@
         <el-dialog width="400px" title="分配用户" :visible.sync="userDialogVisible" :append-to-body="true" class="el-dialog__body">
             <el-table ref="multipleTable" :data="userList" tooltip-effect="dark" style="width: 100%">
                 <el-table-column prop="name" label="姓名" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="userStatus" label="状态" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="account" label="手机号" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="roles" label="状态" show-overflow-tooltip></el-table-column>
             </el-table>
         </el-dialog>
     </div>

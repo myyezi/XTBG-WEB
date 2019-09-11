@@ -15,14 +15,8 @@
           <div class="form-group">
             <label class="control-label">组织</label>
             <div class="input-group">
-                    <el-select v-model="searchParam.organizationId" filterable clearable placeholder="请选择组织">
-                        <el-option
-                            v-for="item in companyList"
-                            :key="item.value"
-                            :label="item.name"
-                            :value="item.id">
-                        </el-option>
-                    </el-select>
+                <tree-select v-model="organizationIds" placeholder="请选择" type="one"
+                             :disabled-id="['1']" url="/upms/employee/treeNodeByCompanyId"></tree-select>
             </div>
           </div>
           <div class="form-group">
@@ -73,10 +67,12 @@
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
 import $ from 'jquery-slim'
+import TreeSelect from '@/components/TreeSelect/index'
 
 export default {
   name: 'PersonnelAttendanceReport',
   mixins: [tool],
+  components: {TreeSelect},
   data() {
     return {
       isShowMore: false,
@@ -86,13 +82,13 @@ export default {
       showEditBtn: this.getCurrentUserAuthority("/personnelattendancereport/edit"),
       showTemplateConfigBtn : this.getCurrentUserAuthority("/personnel/personnelattendance"),
       month:[],
-      companyList:[]
+      companyList:[],
+      organizationIds:[]
 
     }
   },
   mounted() {
     this.getList();
-    this.getCompanyList();
   },
   methods: {
 
@@ -105,21 +101,15 @@ export default {
               params.monthStart = '';
               params.monthEnd = '';
           }
+          params.organizationId = this.organizationIds[0];
       },
 
       edits(row){
           if(~this.$route.fullPath.indexOf("/detail?")){
               return;
           }
-          let url = this.$route.fullPath + '/detail?employeeId='+row.employeeId+'&month='+row.month+'&companyId=30';
-          console.log(row)
+          let url = this.$route.fullPath + '/detail?employeeId='+row.employeeId+'&month='+row.month;
           this.$router.push({path:url});
-      },
-      //获取公司
-      getCompanyList() {
-          ajax.get('personnel/personnelattendancegroup/getCompanyList').then(rs => {
-              this.companyList = rs.data;
-          });
       },
 
       //导出评价明细功能

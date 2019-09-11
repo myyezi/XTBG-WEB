@@ -20,7 +20,7 @@
                     <el-button type="primary" @click="submitForm('ruleFormOne')" style="background:#0aa0a9;width: 400px;">确定</el-button>
                 </el-form-item>
             </el-form>
-            <!-- <el-form :model="ruleFormTwo" status-icon :rules="rulesTwo" ref="ruleFormTwo" label-width="100px" v-show="!checkCode"> 
+            <!-- <el-form :model="ruleFormTwo" status-icon :rules="rulesTwo" ref="ruleFormTwo" label-width="100px" v-show="!checkCode">
                 <el-form-item label="密码" prop="pass" >
                     <el-input type="password" v-model="ruleFormTwo.pass"></el-input>
                 </el-form-item>
@@ -123,7 +123,7 @@
         },
         components: { commonHeader},
         watch: {
-            
+
         },
         methods: {
             getCode() {
@@ -140,6 +140,10 @@
                             mobile:this.ruleFormOne.phone,
                             type:2
                         }).then(rs => {
+                            if(rs.status === 0) {
+                            } else {
+                                this.$message.error(rs.msg)
+                            }
                         });
 
                         const time = setInterval(() => {
@@ -154,7 +158,7 @@
                         }, 1000);
                     }else {
                         // this.$message.error("请输入11位正确手机号码")
-                        return 
+                        return
                     }
                 }
             },
@@ -185,7 +189,7 @@
                                 this.$message.error(rs.msg)
                             }
                         });
-                    } 
+                    }
                 });
             },
         }

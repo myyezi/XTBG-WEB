@@ -6,7 +6,7 @@
     import formTemplate from '@/views/upms/employee/form'
 
     export default {
-        name: "userAdd",
+        name: "employeeAdd",
         components:{
             formTemplate
         }

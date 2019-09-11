@@ -11,19 +11,6 @@
     <el-collapse-transition>
       <div class="search-box" v-show="isShowMore">
         <div class="form-box">
-<!--          <div class="form-group">-->
-<!--            <label class="control-label">管理公司</label>-->
-<!--            <div class="input-group">-->
-<!--                    <el-select v-model="searchParam.companyId" filterable clearable placeholder="请选择管理公司">-->
-<!--                        <el-option-->
-<!--                            v-for="item in companyList"-->
-<!--                            :key="item.value"-->
-<!--                            :label="item.name"-->
-<!--                            :value="item.id">-->
-<!--                        </el-option>-->
-<!--                    </el-select>-->
-<!--            </div>-->
-<!--          </div>-->
           <div class="form-group">
             <label class="control-label">规则名称</label>
             <div class="input-group">
@@ -60,9 +47,6 @@
     </div>
       <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="800px"  v-cloak>
           <el-tabs  type="card" @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
-              <!-- <el-tab-pane label="组织" name="first" >
-                  <tree-one url="upms/organization/tree" ref="one"></tree-one>
-              </el-tab-pane> -->
               <el-tab-pane label="用户" name="second">
                 <tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll"></tree-two>
               </el-tab-pane>
@@ -130,7 +114,6 @@ export default {
   mounted() {
     this.getList();
     this.getCompanyList();
-    this.getTest();
   },
   methods: {
       //获取公司
@@ -142,12 +125,6 @@ export default {
       handleClick(tab, event) {
           console.log(tab.name)
           this.activeName = tab.name
-      },
-      //获取公司
-      getTest() {
-          // ajax.get('upms/organization/tree').then(rs => {
-          //     this.testList = rs.data;
-          // });
       },
       //关闭窗口
       close(){
@@ -244,7 +221,8 @@ export default {
                       this.save.employeeId=this.selectData[i]
                       this.saveData.push(this.save)
               }
-              ajax.post('personnel/personnelattendancegroupuser', this.saveData).then(rs => {
+
+              ajax.post('personnel/personnelattendancegroupuser', {list:this.saveData,attendanceGroupId:this.attendanceGroupId}).then(rs => {
                   if (rs.status == 0) {
                       this.$message.success(rs.msg);
                       this.dialogVisible =false;
