@@ -1,5 +1,5 @@
 import store from '@/store'
-import {ChatListUtils,ErrorType} from '@/utils/imUtils/ChatUtils'
+import {ChatListUtils,ErrorType,popNotice} from '@/utils/imUtils/ChatUtils'
 let client;
 let objData;
 
@@ -84,6 +84,7 @@ const websocketConnect = {
     // 接受消息
     onMessageArrived: function(message) {
         let msg = JSON.parse(message.payloadString);
+        console.log(msg);
         console.log(message.destinationName)
         if (message.destinationName == "MN") {
             console.log(msg)
@@ -122,6 +123,18 @@ const websocketConnect = {
                     } else {
                         store.commit('addMessage', item);
                         store.commit('addSession', item);
+                    }
+                    // 首先，让我们检查我们是否有权限发出通知
+                    // 如果没有，我们就请求获得权限
+                    if (window.Notification && window.Notification.permission !== "granted") {
+                        window.Notification.requestPermission(function (status) {
+                            if (window.Notification.permission !== status) {
+                                window.Notification.permission = status;
+                            }
+                            popNotice(item);
+                        });
+                    } else if (window.Notification.permission === "granted") {
+                        popNotice(item);
                     }
                 }) 
             }

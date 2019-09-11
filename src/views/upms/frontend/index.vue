@@ -1,6 +1,6 @@
 <template>
   <div class="form-panel list-panel">
-    <el-tabs v-model="activeName">
+    <el-tabs v-model="activeName" @tab-click="getActiveName">
       <el-tab-pane label="富文本" name="1">
         <el-form :model="informationForm" :rules="rules" ref="chargeStationForm" label-position="top" label-width="100px" :class="{'register-form': true}">
           <el-collapse v-model="openCollapse">
@@ -133,7 +133,7 @@
         components: {Tinymce,UploadPanel,eleCalendar,treeTable,ganttDetails,ganttOpertion,work},
         data() {
             return {
-                dialogWorkVisible:true,
+                workDialogVisible:false,
                 activeName: '1',
                 informationForm: {},
                 providers: [],
@@ -464,6 +464,11 @@
             this.open();
         },
         methods: {
+            getActiveName() {
+                if(this.activeName == 7) {
+                    this.workDialogVisible = true
+                }
+            },
             // 重写日历表显示的内容
             renderContent(h,parmas) {
                 const loop = data =>{
@@ -570,7 +575,7 @@
         }
     }
 </script>
-<style>
+<style lang="scss">
     .week_report {
         min-width: 1208px;
     }
@@ -648,6 +653,40 @@
         color: #333;
         font-weight: bold;
         font-size: 16px;
+    }
+    .fd-nav-content {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding-bottom: 30px;
+    }
+    .workflow-design {
+        width: 100%;
+        /* background-color: #f5f5f7; */
+        overflow: auto;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        top: 0;
+        .box-scale {
+            transform: scale(1);
+            display: inline-block;
+            position: relative;
+            width: 100%;
+            padding: 54.5px 0;
+            align-items: flex-start;
+            justify-content: center;
+            flex-wrap: wrap;
+            min-width: min-content;
+            background-color: #fff;
+            transform-origin: 0 0 0;
+        }
     }
 </style>
 

@@ -14,7 +14,32 @@ export function formatDateTime(date) {
   second = second < 10 ? '0' + second : second;
   return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
 }
-
+export function popNotice(msgInfo) {
+  console.log(msgInfo)
+  if (Notification.permission === "granted") {
+    let content = '';
+    if (msgInfo.content.type == 2) {
+      content = '[语音]';
+    } if (msgInfo.content.type == 3) {
+      content = '[图片]';
+    } if (msgInfo.content.type == 4) {
+      content = '[定位]';
+    } if (msgInfo.content.type == 5) {
+      content = '[文件]';
+    } if (msgInfo.content.type == 6) {
+      content = '[视频]';
+    } else if (msgInfo.content.type == 1){
+      content = msgInfo.content.content;
+    }
+    const notification = new Notification(`【${'消息'}】 提示`, {
+        body: content,
+        // icon: msgInfo.src
+    });
+    notification.onclick = function() {
+      notification.close();
+    };
+  }
+};
 /**
  * 毫秒转换友好的显示格式
  * 输出格式：21小时前
@@ -29,32 +54,30 @@ export function dateStr(date) {
   let timeString = (dates.getHours()<10?'0'+dates.getHours():dates.getHours()) + ':' + (dates.getMinutes()<10?'0'+dates.getMinutes():dates.getMinutes())
   // 存储转换值
   let s;
-  if (time < 60 * 10) {
-    // 十分钟内
-    // return '刚刚';
-    return timeString;
-  } else if (time < 60 * 60 && time >= 60 * 10) {
-    // 超过十分钟少于1小时
-    s = Math.floor(time / 60);
-    // return s + '分钟前';
-    return timeString;
-  } else if (time < 60 * 60 * 24 && time >= 60 * 60) {
-    // 超过1小时少于24小时
-    s = Math.floor(time / 60 / 60);
-    // return s + '小时前';
-    return timeString;
-  } else if (time < 60 * 60 * 24 * 3 && time >= 60 * 60 * 24) {
-    // 超过1天少于3天内
-    s = Math.floor(time / 60 / 60 / 24);
-    // return s + '天前';
-    if(s == 1) {
-      return '昨天'
-    } else {
-      return '前天'
-    }
-  } else {
-    // 超过3天
-    return dates.getFullYear() + '/' + ((dates.getMonth() + 1)< 10 ? '0' + (dates.getMonth() + 1) : (dates.getMonth() + 1)) + '/' + (dates.getDate()< 10 ? '0' + dates.getDate() : dates.getDate());
+  if (dates.toDateString() === new Date().toDateString()) {
+      //今天
+      if (time < 60 * 10) {
+        // 十分钟内
+        // return '刚刚';
+        return timeString;
+      } else if (time < 60 * 60 && time >= 60 * 10) {
+        // 超过十分钟少于1小时
+        s = Math.floor(time / 60);
+        // return s + '分钟前';
+        return timeString;
+      } else if (time < 60 * 60 * 24 && time >= 60 * 60) {
+        // 超过1小时少于24小时
+        s = Math.floor(time / 60 / 60);
+        // return s + '小时前';
+        return timeString;
+      } 
+  } else if (dates < new Date()){
+      //之前
+      return '昨天';
+      if (time >= 60 * 60 * 24) {
+        // 超过1天
+        return dates.getFullYear() + '/' + ((dates.getMonth() + 1)< 10 ? '0' + (dates.getMonth() + 1) : (dates.getMonth() + 1)) + '/' + (dates.getDate()< 10 ? '0' + dates.getDate() : dates.getDate());
+      } 
   }
 }
 

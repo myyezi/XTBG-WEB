@@ -8,7 +8,7 @@
       <div class="net_eror" v-if="netStaus" @click="updateNet"><i class="el-icon-refresh"></i>网络链接断开！请点击刷新网络</div>
       <div class="group-box">
         <ul class="user-list">
-          <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionList" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
+          <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionListCopy" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
             <a href="javascript:" :class="currentChat&&currentChat.targetId===chat.targetId?'active':''">
               <i v-if="chat.unReadCount&&chat.unReadCount>0" class="un_read_count">{{ chat.unReadCount }}</i>
               <i class="icon-qun1 group_identification" v-if="chat.owner"></i>
@@ -64,10 +64,24 @@ export default {
       top: 0,
       left: 0,
       defaultPic:require('@/styles/img/morentx.png'),
-      transform:transform
+      transform:transform,
+      sessionListCopy:[]
     };
   },
   watch:{
+      filterText:function(newvalue,oldvalue) {
+        if(newvalue) {
+            let arr = []
+            this.sessionList.forEach((item,index)=>{
+              if(item.targetName.indexOf(newvalue)>=0 || item.content.content.indexOf(newvalue)>=0) {
+                  arr.push(item)
+              }
+            })
+            this.sessionListCopy = arr
+        } else {
+            this.sessionListCopy = this.sessionList
+        }
+      },
       sessionList :function(newvalue,oldvalue) {
         if(!newvalue||newvalue.length==0) {
             this.currentChat = {}
@@ -155,6 +169,7 @@ export default {
       let self = this;
       let cacheSession = []
       self.sessionList = [];
+      self.filterText = ''
       // 从内存中获取会话记录
       cacheSession = self.$store.state.im.sessionList;
       if(!cacheSession||cacheSession.length === 0) {
@@ -165,6 +180,7 @@ export default {
         }
       }
       self.sessionList = cacheSession
+      self.sessionListCopy = self.sessionList
       if(self.sessionList&&self.sessionList.length>0) {
           let flag = false
           if(self.currentChat&&JSON.stringify(self.currentChat) !== '{}') {

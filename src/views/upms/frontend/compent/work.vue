@@ -1,18 +1,17 @@
 <template>
-    <!-- <div class="work-flow-item"> -->
+    <div class="work-flow-item">
         <!-- 判断流程是否是分支，是的话循环分支内部节点 -->
         <!-- <div v-if="workData.type == 2" class="work-flow-conditionNodes">
             <work-item v-if="workData.nextNode" :workData="workData.nextNode"></work-item>
         </div> -->
         <!-- item 主体开始 -->
-        <!-- <work-item :workData="workData"></work-item> -->
+        <work-item :workData="workData"></work-item>
         <!-- item 主体结束 -->
         <!-- 判断流程是否存在nextNode，如果有则去递归，没有就结束 -->
         <!-- <work-item :workData="workData.childNode" v-if="workData.childNode"></work-item> -->
         <work v-if="workData.childNode&&JSON.stringify(workData.childNode) !== '{}'" :workData="workData.childNode">
-            <work-item :workData="workData.childNode"></work-item>
         </work>
-    <!-- </div> -->
+    </div>
 </template>
 <script>
     import ajax from '@/utils/request'
@@ -28,7 +27,6 @@
             }
         },
         mounted() {
-            console.log(typeof this.workData.childNode)
         },
         methods: {
             
@@ -40,6 +38,21 @@
     width: 100%;
     // height:800px;
     // padding: 50px 0;
+    .editable-title {
+        line-height: 15px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        border-bottom: 1px dashed transparent;
+        &::before{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 40px;
+        }
+    }
     .node-wrap {
         display: inline-flex;
         width: 100%;
@@ -127,23 +140,23 @@
             display: block;
             white-space: nowrap;
         }
-        .add-node-btn-box {
-            width: 240px;
-            display: inline-flex;
-            flex-shrink: 0;
-            position: relative;
-            &::before{
-                content: "";
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                margin: auto;
-                width: 2px;
-                height: 100%;
-                background-color: #cacaca;
-            }
+    }
+    .add-node-btn-box {
+        width: 240px;
+        display: inline-flex;
+        flex-shrink: 0;
+        position: relative;
+        &::before{
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            width: 2px;
+            height: 100%;
+            background-color: #cacaca;
         }
     }
     .node-wrap-box.start-node {
@@ -176,6 +189,28 @@
         border-top: 2px solid #ccc;
         position: relative;
         margin-top: 15px;
+        .column—box {
+            background: #fff;
+            &::before{
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 0;
+                margin: auto;
+                width: 2px;
+                height: 100%;
+                background-color: #cacaca;
+            }
+        }
+    }
+    .column—box {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative; 
     }
     .add-branch {
         border: none;
@@ -200,25 +235,6 @@
         display: inline-flex;
         align-items: center;
         transition: all .3s cubic-bezier(.645,.045,.355,1);
-    }
-    .column—box {
-        display: inline-flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-        &::before{
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0;
-            margin: auto;
-            width: 2px;
-            height: 100%;
-            background-color: #cacaca;
-        }
     }
     .add-node-btn {
         user-select: none;
@@ -317,6 +333,39 @@
             transition: all .1s cubic-bezier(.645,.045,.355,1);
             box-shadow: 0 2px 5px 0 rgba(0,0,0,.1); 
         }
-    }
+        .title-wrapper {
+            position: relative;
+            font-size: 12px;
+            color: #15bc83;
+            text-align: left;
+            line-height: 16px;
+            .editable-title {
+                display: inline-block;
+                max-width: 120px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            .priority-title {
+                display: inline-block;
+                float: right;
+                margin-right: 10px;
+                color: rgba(25,31,37,.56);
+            }
+        }
+        .close{
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            width: 20px;
+            height: 20px;
+            font-size: 14px;
+            color: rgba(0,0,0,.25);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            z-index: 2;
+        }
+    } 
 }
 </style>
