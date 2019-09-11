@@ -1,7 +1,7 @@
 <template>
     <div class="user-box">
         <div class="user-box-list">
-            <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
+            <el-input v-model="filterText" placeholder="搜索" size="small" class="search-box" clearable></el-input>
             <div class="group-organization-box">
                 <el-tree 
                     :data="treeDataList" 
