@@ -6,7 +6,7 @@
             </div>
             <div class="tree-content">
                 <tree-panel ref="tree" url="upms/position/tree" :params="params"
-                            :showDel="showDel" :showAdd="showAdd" :showEdit="showEdit" @show-form="open"></tree-panel>
+                            :showDel="showDel" :showAdd="showAdd" :showEdit="showEdit" @show-form="open" @delete-data="deletePosition"></tree-panel>
             </div>
         </div>
 
@@ -59,8 +59,23 @@
             }
         },
         methods: {
+            deletePosition(opt) {
+                console.log(opt.id)
+                this.$confirm("确认删除吗？").then(_ => {
+                    ajax.delete('upms/position/'+ opt.id).then(res => {
+                        if(this.checkResponse(res)) {
+                            this.showMessage("删除成功", "success");
+                            this.show = false;
+                            this.$refs.tree.getData();
+                        } else {
+                            this.showMessage(res.msg, "error");
+                        }
+                    });
+                }).catch(_ => {
+                });
+            },
             open(opt) {
-
+                console.log(opt)
                 if (opt.state == 1) { //编辑
                     this.title = "编辑职位";
 
