@@ -7,6 +7,7 @@ import adm from '@/router/adm/index.js'
 import personnel from '@/router/personnel/index.js'
 import power from '@/router/power/index.js'
 import finance from '@/router/finance/index.js'
+import workflow from '@/router/workflow/index.js'
 Vue.use(Router)
 
 //import sys from '@/router/tgpt/sys/index'
@@ -94,6 +95,7 @@ export const authRouterMap = [
     personnel,
     power,
     finance,
+    workflow,
     {path: '*', redirect: '/404', hidden: true}
 ]
 
