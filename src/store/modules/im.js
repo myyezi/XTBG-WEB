@@ -296,6 +296,9 @@ const im = {
                       item.unReadCount = item.unReadCount + 1
                       state.messageCount += 1
                     }
+                    if(state.user.id == session.fromUserId) {
+                      item.draftContent = ''
+                    }
                   }
               })
             }

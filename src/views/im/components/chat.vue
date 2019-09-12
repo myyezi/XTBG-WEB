@@ -182,7 +182,7 @@
       },
       lineFeed() {
         console.log(213212312313)
-          this.messageContent = this.messageContent + '\n'
+          this.messageContent = this.messageContent + '\n' +'123'
           console.log(this.messageContent)
       },
       // 会话鼠标右键事件
@@ -474,6 +474,7 @@
                     this.chat.targetName = item.targetName
                     this.chat.owner = item.owner
                     this.chat.portrait = item.portrait
+                    this.chat.draftContent = item.draftContent
                 }
             })
         }
