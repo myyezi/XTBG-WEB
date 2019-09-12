@@ -54,7 +54,7 @@
                         </el-upload>
                         <el-button size="mini" class="history-message-btn" @click="getHistoryMessage()">聊天记录</el-button>
                     </div>
-                    <textarea v-model.trim="messageContent" class="textarea"  @keyup.enter.exact="mineSend(1)" @keyup.ctrl.enter="lineFeed()" autofocus></textarea>
+                    <textarea v-model="messageContent" class="textarea"  @keyup.enter.exact="mineSend(1)" @keyup.ctrl.enter="lineFeed()" @keyup.alt.enter="lineFeed()" autofocus></textarea>
                     <div class="im-chat-send">
                         <el-button size="mini" @click="mineSend(1)">发送</el-button>
                     </div>
@@ -181,9 +181,7 @@
           return isLtM;
       },
       lineFeed() {
-        console.log(213212312313)
           this.messageContent = this.messageContent + '\n'
-          console.log(this.messageContent)
       },
       // 会话鼠标右键事件
       rightEvent(chat,e) {
@@ -346,6 +344,8 @@
             self.chat.unReadCount = 0
             this.$store.commit('setReadCount', self.chat);
           }
+        } else {
+          self.messageContent= self.messageContent.replace('\n', "");
         }
       },
       // 发送消息的基础方法
@@ -474,6 +474,7 @@
                     this.chat.targetName = item.targetName
                     this.chat.owner = item.owner
                     this.chat.portrait = item.portrait
+                    this.chat.draftContent = item.draftContent
                 }
             })
         }

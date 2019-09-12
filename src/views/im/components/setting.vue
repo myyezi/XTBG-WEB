@@ -24,7 +24,7 @@
             <div class="setting_user_title clearfix">
                 <span>群成员{{groupUserLists.length}}人</span>
                 <el-input style="width: 399px;;margin-left:20px" suffix-icon="el-icon-search" placeholder="请输入成员名称" v-model="userName"></el-input>
-                <i class="el-icon-plus" @click="showAddUser = true"></i> 
+                <i class="el-icon-plus" @click="showAddUser = true" v-if="chats.owner == this.user.userId"></i> 
             </div>
             <ul v-if="groupUserListSearch.length>0" class="clearfix">
                 <li v-for="(item,index) in groupUserListCopy" :key="index" :title="item.type == 2?'群主':item.type == 1?'管理员':''">

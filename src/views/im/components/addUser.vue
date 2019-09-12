@@ -90,7 +90,7 @@
                     groupMembers.push({
                         memberId:item.id,
                         alias:item.name,
-                        type:1
+                        type:0
                     })
                     userNameString += item.name +','
                 }
