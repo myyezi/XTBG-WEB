@@ -2,7 +2,7 @@
   <div class="chat-panel">
     <div class="chat-box-list">
       <div class="search-box-content clearfix">
-          <el-input v-model="filterText" placeholder="搜索" size="small" suffix-icon="el-icon-search" class="search-box"></el-input>
+          <el-input v-model="filterText" placeholder="搜索" size="small" class="search-box" clearable></el-input>
           <i class="el-icon-circle-plus-outline" @click="addGroup"></i>
       </div>
       <div class="net_eror" v-if="netStaus" @click="updateNet"><i class="el-icon-refresh"></i>网络链接断开！请点击刷新网络</div>
@@ -84,11 +84,20 @@ export default {
       },
       sessionList :function(newvalue,oldvalue) {
         if(!newvalue||newvalue.length==0) {
+            this.sessionListCopy = []
             this.currentChat = {}
         } else {
           if(newvalue.length != oldvalue.length) {
               this.visibleBox = false
               this.getSessionList()
+          } else {
+            let arr = []
+            newvalue.forEach((item,index)=>{
+              if(item.targetName.indexOf(this.filterText)>=0 || item.content.content.indexOf(this.filterText)>=0) {
+                  arr.push(item)
+              }
+            })
+            this.sessionListCopy = arr
           }
         }
       },

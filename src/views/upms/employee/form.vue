@@ -170,6 +170,8 @@
             },
 
             getUserByPhone() {
+                this.employeeForm.name = ''
+                this.employeeForm.gender = ''
                 let account = this.employeeForm.account
                 if(account && account.length == 11) {
                     ajax.get('/upms/user/getUserByPhone?phone=' + account).then(rs => {
@@ -269,6 +271,9 @@
                         data.createTime = ''
                         data.updateTime = ''
                         console.log(data)
+                        if(data.roles == "[null]") {
+                            data.roles = "[]"
+                        }
                         ajax.post('upms/employee', data).then(rs => {
                             if (rs.status == 0) {
                                 that.$message({message: '保存成功！', type: 'success'});

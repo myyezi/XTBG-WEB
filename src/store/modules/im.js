@@ -157,24 +157,28 @@ const im = {
           if(message.fromUserId == state.user.id) {
             chatList = getChatList[message.conversation.targetId];
             if(message.serverTimestamp) {
-              chatList.forEach((item)=>{
-                  if(item.messageTag == message.messageTag) {
-                    item.serverTimestamp = message.serverTimestamp
-                    item.messageId = message.messageId
-                    if(item.netStausType) {
-                      item.netStausType = 1
+              if(chatList&&chatList.length>0) {
+                  chatList.forEach((item)=>{
+                    if(item.messageTag == message.messageTag) {
+                      item.serverTimestamp = message.serverTimestamp
+                      item.messageId = message.messageId
+                      if(item.netStausType) {
+                        item.netStausType = 1
+                      }
                     }
-                  }
-              })
+                })
+              }
             } else {
               if(getChatList[message.conversation.targetId]) {
                 let flag = false 
-                chatList.forEach((item)=>{
-                  if(item.messageTag == message.messageTag) {
-                    flag = true
-                    item.netStausType = message.netStausType
-                  }
-                })
+                if(chatList&&chatList.length>0) {
+                  chatList.forEach((item)=>{
+                    if(item.messageTag == message.messageTag) {
+                      flag = true
+                      item.netStausType = message.netStausType
+                    }
+                  })
+                }
                 if(!flag) {
                   getChatList[message.conversation.targetId].push(message);
                 } 
@@ -221,82 +225,96 @@ const im = {
         // 保存会话记录到内存
         addSession: function(state, session) {
           console.log(session)
-          let flag = false;
-          let indexs = null;
-          let sessionObj = {}
-          if(session.conversation) {
-            sessionObj = {
-              unReadCount:0,
-              portrait: '', // 接收人头像
-              serverTimestamp: session.serverTimestamp, // 发送时间
-              targetName:'', //接收人名称
-              targetId:session.conversation.targetId,
-              type: session.conversation.type, //消息类别 0、单聊 1、群聊
-              // 发送消息的内容属性
-              content: {
-                  type:session.content.type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
-                  content:session.content.type==1?session.content.content:session.content.type==2?'语音':session.content.type==3?'图片':session.content.type==4?'定位':session.content.type==5?'文件':'视频'// 发送消息内容
-              },
+          if(session.draft) {
+            let getSessionList = ChatListUtils.getSessionList(state.user.id);
+            if(getSessionList&&getSessionList.length>0) {
+                getSessionList.forEach((item,index)=>{
+                  if(item.targetId == session.targetId) {
+                    item.draftContent = session.draftContent
+                  }
+              })
             }
-            // 是否本人发的消息
-            if(state.user.id!= session.fromUserId) {
-              let userObj = ChatListUtils.getUserFriendObj(state.user.id);
-              if(session.conversation.type == 1) {
-                let groupList = ChatListUtils.getGroupList(state.user.id);
-                groupList.forEach((item)=>{
-                    if(item.targetId == session.conversation.targetId) {
-                        sessionObj.portrait = item.portrait
-                        sessionObj.targetName = item.name
-                    }
-                })
-                sessionObj.content.content =  userObj[session.fromUserId].name + ':  ' + sessionObj.content.content
+            state.sessionList = getSessionList
+            // 放入缓存
+            ChatListUtils.setSessionList(state.user.id, state.sessionList);
+          } else {
+            let flag = false;
+            let indexs = null;
+            let sessionObj = {}
+            if(session.conversation) {
+              sessionObj = {
+                unReadCount:0,
+                portrait: '', // 接收人头像
+                serverTimestamp: session.serverTimestamp, // 发送时间
+                targetName:'', //接收人名称
+                targetId:session.conversation.targetId,
+                type: session.conversation.type, //消息类别 0、单聊 1、群聊
+                // 发送消息的内容属性
+                content: {
+                    type:session.content.type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                    content:session.content.type==1?session.content.content:session.content.type==2?'语音':session.content.type==3?'图片':session.content.type==4?'定位':session.content.type==5?'文件':'视频'// 发送消息内容
+                },
+              }
+              // 是否本人发的消息
+              if(state.user.id!= session.fromUserId) {
+                let userObj = ChatListUtils.getUserFriendObj(state.user.id);
+                if(session.conversation.type == 1) {
+                  let groupList = ChatListUtils.getGroupList(state.user.id);
+                  groupList.forEach((item)=>{
+                      if(item.targetId == session.conversation.targetId) {
+                          sessionObj.portrait = item.portrait
+                          sessionObj.targetName = item.name
+                      }
+                  })
+                  sessionObj.content.content =  userObj[session.fromUserId].name + ':  ' + sessionObj.content.content
+                } else {
+                  sessionObj.targetId = session.fromUserId
+                  sessionObj.portrait = userObj[session.fromUserId].portrait
+                  sessionObj.targetName = userObj[session.fromUserId].name
+                }
               } else {
-                sessionObj.targetId = session.fromUserId
-                sessionObj.portrait = userObj[session.fromUserId].portrait
-                sessionObj.targetName = userObj[session.fromUserId].name
+                sessionObj.content.content =  state.user.name + ':' + sessionObj.content.content
               }
             } else {
-              sessionObj.content.content =  state.user.name + ':' + sessionObj.content.content
+              sessionObj = session
             }
-          } else {
-            sessionObj = session
-          }
-          console.log(sessionObj)
-          let getSessionList = ChatListUtils.getSessionList(state.user.id);
-          if(getSessionList&&getSessionList.length>0) {
-              getSessionList.forEach((item,index)=>{
-                if(item.targetId == sessionObj.targetId) {
-                  flag = true
-                  indexs = index
-                  if(sessionObj.content.content) {
-                    item.content.content = sessionObj.content.content;
-                    item.content.type = sessionObj.content.type;
+            console.log(sessionObj)
+            let getSessionList = ChatListUtils.getSessionList(state.user.id);
+            if(getSessionList&&getSessionList.length>0) {
+                getSessionList.forEach((item,index)=>{
+                  if(item.targetId == sessionObj.targetId) {
+                    flag = true
+                    indexs = index
+                    if(sessionObj.content.content) {
+                      item.content.content = sessionObj.content.content;
+                      item.content.type = sessionObj.content.type;
+                    }
+                    if(sessionObj.serverTimestamp) {
+                      item.serverTimestamp = sessionObj.serverTimestamp
+                    }
+                    if(session.fromUserId&&state.user.id!= session.fromUserId) {
+                      item.unReadCount = item.unReadCount + 1
+                      state.messageCount += 1
+                    }
                   }
-                  if(sessionObj.serverTimestamp) {
-                    item.serverTimestamp = sessionObj.serverTimestamp
-                  }
-                  if(session.fromUserId&&state.user.id!= session.fromUserId) {
-                    item.unReadCount = item.unReadCount + 1
-                    state.messageCount += 1
-                  }
-                }
-            })
-          }
-          if(!flag) {
-            if(session.fromUserId) {
-              sessionObj.unReadCount = sessionObj.unReadCount + 1
-              state.messageCount += 1
+              })
             }
-            getSessionList.unshift(sessionObj)
-          } else {
-            let obj = getSessionList[indexs]
-            getSessionList.splice(indexs,1)
-            getSessionList.unshift(obj)
+            if(!flag) {
+              if(session.fromUserId) {
+                sessionObj.unReadCount = sessionObj.unReadCount + 1
+                state.messageCount += 1
+              }
+              getSessionList.unshift(sessionObj)
+            } else {
+              let obj = getSessionList[indexs]
+              getSessionList.splice(indexs,1)
+              getSessionList.unshift(obj)
+            }
+            console.log(getSessionList)
+            state.sessionList = getSessionList
+            // 放入缓存
+            ChatListUtils.setSessionList(state.user.id, state.sessionList);
           }
-          console.log(getSessionList)
-          state.sessionList = getSessionList
-          // 放入缓存
-          ChatListUtils.setSessionList(state.user.id, state.sessionList);
         },
         setMessageList: function(state, messageList) {
           state.messageList = messageList;

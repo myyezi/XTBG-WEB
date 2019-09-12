@@ -259,7 +259,7 @@ export function transform(content,type) {
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
       let fileName = contents.name;
-      return '<a class="message-file clearfix" href="' + path + '" target="_Blank" download><i class="el-icon-document"></i><span>' + (fileName) + '</span><i class="el-icon-download"></i></a>';
+      return '<a class="message-file clearfix" href="' + path + '" target="_Blank" download title="'+fileName+'"><i class="el-icon-document"></i><span>' + (fileName) + '</span><i class="el-icon-download"></i></a>';
     } else if(type == 6){
       let contents = JSON.parse(content)
       let path = contents.filedomain + contents.path;
