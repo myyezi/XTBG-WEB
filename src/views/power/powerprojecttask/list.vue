@@ -28,8 +28,8 @@
           <div class="form-group">
             <label class="control-label">项目类型</label>
             <div class="input-group">
-                <el-select v-model="searchParam.type" clearable placeholder="请选择项目类型">
-                    <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value" @change="test">
+                <el-select v-model="searchParam.type" clearable placeholder="请选择项目类型" @change="chickProjectType(searchParam.type)">
+                    <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value" >
                     </el-option>
                 </el-select>
             </div>
@@ -46,7 +46,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="control-label">协调部门</label>
+            <label class="control-label">协办部门</label>
             <div class="input-group">
                 <el-select v-model="searchParam.coDepartment" multiple filterable default-first-option placeholder="请选择协办部门">
                     <el-option v-for="item in coDepartmentOptions" :key="item.value" :label="item.text" :value="item.value">
@@ -280,7 +280,20 @@ export default {
               this.ContactList = rs.data;
           });
       },
+      //选择项目类型时初始相关设计
+      chickProjectType(type){
+          this.searchParam.relatedDesign='';
+          let r = 'XGSJ_'+type;
+          this.getSjDict(type);
+      },
 
+      //获取相关设计数据字典，需要和项目类型联动
+      getSjDict(type){
+          let r = 'XGSJ_'+type;
+          ajax.get("upms/dict/type/"+r).then(rs => {
+              this.designOptions = rs
+          });
+      },
 
       //切换页容量
       handleSizeChange2(val) {
