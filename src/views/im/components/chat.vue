@@ -377,6 +377,7 @@
           let cacheMessages = []
           self.messageList = [];
           self.messageImgList = []
+          self.messageContent = self.chat.draftContent?self.chat.draftContent:'' //获取草稿信息
           // 从内存中取用户信息
           userInfoObj = self.$store.state.im.userFriendObj
           if(JSON.stringify(userInfoObj) == '{}') {
@@ -458,6 +459,7 @@
           this.getCurrentMessageList()
       },
       chat: function(newvalue,oldvalue) {
+          this.$store.commit('addSession', {draft:true,draftContent:this.messageContent,targetId:oldvalue.targetId});
           this.getCurrentMessageList()
       },
       chatDialogVisible: function(newvalue,oldvalue) {
@@ -650,6 +652,10 @@
                             span {
                               float: left;
                               margin:7px 10px 0 5px;
+                              text-overflow:ellipsis;//让超出的用...实现
+                              white-space:nowrap;//禁止换行
+                              overflow:hidden;//超出的隐藏
+                              width: 350px;
                             }
                             .el-icon-download {
                                 float: left;

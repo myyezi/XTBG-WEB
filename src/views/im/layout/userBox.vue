@@ -159,7 +159,7 @@
                 children:self.groupList,
                 portrait:self.groupPortrait
             })
-            if(this.organizationList[0].children.length == 0) {
+            if(this.organizationList[0].children&&this.organizationList[0].children.length == 0) {
                 this.organizationList = []
             }
             this.treeDataList = this.organizationList.concat(myGroupList)

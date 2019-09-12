@@ -16,34 +16,34 @@ router.beforeEach((to, from, next) => {
             if (!store.getters.menu || !store.getters.menu.length) {
                 try {
                     // store.dispatch('getAuth');
-                    store.dispatch('GetInfo');
-                    store.dispatch('getAuth').then(_=>{
-                        store.commit('setCurrentUser', store.getters.user);
-                        store.dispatch('getMenu').then(res =>{
-                            if (!store.state.im.websocket.clientId) {
-                                store.dispatch('getWebsocket', {
-                                    ip: process.env.BASE_IP,
-                                    port: process.env.BASE_HOST,
-                                    token: getToken(),
-                                    username: store.state.user.user.userId
-                                })
-                            }
-                            console.log(store.getters.authRouters);
-                            router.addRoutes(store.getters.authRouters)
-                            if(res.data&&res.data.length>0) {
-                                store.commit('SET_NOMENU', false)
-                                next({...to, replace: true});
-                            } else {
-                                store.commit('SET_MENU', [{
-                                    path: "/default/index",
-                                    hidden:true
-                                }])
-                                store.commit('SET_NOMENU', true)
-                                next({path: '/default'})
-                            }
+                    store.dispatch('GetInfo').then(() => {
+                        store.dispatch('getAuth').then(_=>{
+                            store.commit('setCurrentUser', store.getters.user);
+                            store.dispatch('getMenu').then(res =>{
+                                if (!store.state.im.websocket.clientId) {
+                                    store.dispatch('getWebsocket', {
+                                        ip: process.env.BASE_IP,
+                                        port: process.env.BASE_HOST,
+                                        token: getToken(),
+                                        username: store.state.user.user.userId
+                                    })
+                                }
+                                console.log(store.getters.authRouters);
+                                router.addRoutes(store.getters.authRouters)
+                                if(res.data&&res.data.length>0) {
+                                    store.commit('SET_NOMENU', false)
+                                    next({...to, replace: true});
+                                } else {
+                                    store.commit('SET_MENU', [{
+                                        path: "/default/index",
+                                        hidden:true
+                                    }])
+                                    store.commit('SET_NOMENU', true)
+                                    next({path: '/default'})
+                                }
+                            });
                         });
                     });
-
                 }catch(err){
                     store.dispatch('FedLogOut').then(() => {
                         Message.error(err || 'Verification failed, please login again')
