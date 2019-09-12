@@ -139,7 +139,14 @@ const websocketConnect = {
                 }) 
             }
         } else if (message.destinationName == "GC") {
-
+            let obj = JSON.stringify({
+                requestList: [{
+                    target:objData.username,
+                    type:2,
+                    updateTime:0
+                }]
+            });
+            client.pubMessage(obj,"GGI")
         }  else if (message.destinationName == "UUI") {
             console.log(msg)
             store.commit('setUserFriendObj', msg.resultList);
