@@ -3,85 +3,49 @@
         <el-collapse v-model="openCollapse">
             <el-collapse-item title="请假管理" name="1">
                 <div class="flex-panel detail-box">
-                                      <div class="detail-item">
-                      <label class="control-label">主键</label>
+                    <div class="detail-item">
+                      <label class="control-label">请假类型</label>
                       <div class="input-group">
-                        <span>{{id}}</span>
+                        <span>{{admleaveForm.type}}</span>
                       </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">所属管理公司(组织表管理公司id)</label>
-                      <div class="input-group">
-                        <span>{{companyId}}</span>
-                      </div>
-                    </div>
-                                      <div class="detail-item">
-                      <label class="control-label">请假类型(（关联字典表)</label>
-                      <div class="input-group">
-                        <span>{{type}}</span>
-                      </div>
-                    </div>
-                                      <div class="detail-item">
+                    <div class="detail-item">
                       <label class="control-label">开始时间</label>
                       <div class="input-group">
-                        <span>{{startTime}}</span>
+                        <span>{{admleaveForm.startTime}}</span>
                       </div>
                     </div>
-                                      <div class="detail-item">
+                    <div class="detail-item">
                       <label class="control-label">结束时间</label>
                       <div class="input-group">
-                        <span>{{endTime}}</span>
+                        <span>{{admleaveForm.endTime}}</span>
                       </div>
                     </div>
-                                      <div class="detail-item">
+                    <div class="detail-item">
                       <label class="control-label">请假时长</label>
                       <div class="input-group">
-                        <span>{{leaveTime}}</span>
+                        <span>{{admleaveForm.leaveTime}}</span>
                       </div>
                     </div>
-                                      <div class="detail-item">
+                    <div class="detail-item">
                       <label class="control-label">事由</label>
                       <div class="input-group">
-                        <span>{{reason}}</span>
+                        <span>{{admleaveForm.reason}}</span>
                       </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">状态(1-审批中，2-已通过  3-已驳回 4-已作废)</label>
-                      <div class="input-group">
-                        <span>{{approvalStatus}}</span>
-                      </div>
-                    </div>
-                                      <div class="detail-item">
-                      <label class="control-label">数据状态(0-删除，1-正常)</label>
-                      <div class="input-group">
-                        <span>{{status}}</span>
-                      </div>
-                    </div>
-                                      <div class="detail-item">
+                    <div class="detail-item">
                       <label class="control-label">申请人</label>
                       <div class="input-group">
-                        <span>{{creater}}</span>
+                        <span>{{admleaveForm.creater}}</span>
                       </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">修改人</label>
-                      <div class="input-group">
-                        <span>{{updater}}</span>
-                      </div>
-                    </div>
-                                      <div class="detail-item">
+                    <div class="detail-item">
                       <label class="control-label">申请时间</label>
                       <div class="input-group">
-                        <span>{{createTime}}</span>
+                        <span>{{admleaveForm.createTime}}</span>
                       </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">修改时间</label>
-                      <div class="input-group">
-                        <span>{{updateTime}}</span>
-                      </div>
-                    </div>
-                                  </div>
+                </div>
             </el-collapse-item>
         </el-collapse>
     </div>
@@ -97,7 +61,7 @@
         mixins: [tool],
         data() {
             return {
-                newCarForm: {},
+                admleaveForm: {},
                 openCollapse: ["1"],//默认打开的面板
             }
         },
