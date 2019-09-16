@@ -459,7 +459,9 @@
           this.getCurrentMessageList()
       },
       chat: function(newvalue,oldvalue) {
-          this.$store.commit('addSession', {draft:true,draftContent:this.messageContent,targetId:oldvalue.targetId});
+          if(JSON.stringify(newvalue) !== '{}'&&JSON.stringify(oldvalue) !== '{}') {
+              this.$store.commit('addSession', {draft:true,draftContent:this.messageContent,targetId:oldvalue.targetId});
+          }
           this.getCurrentMessageList()
       },
       chatDialogVisible: function(newvalue,oldvalue) {

@@ -467,6 +467,9 @@
             getActiveName() {
                 if(this.activeName == 7) {
                     this.workDialogVisible = true
+                    let div = document.getElementById('workflowDesign');
+                    var iMove = (document.body.scrollWidth-document.body.offsetWidth)/2
+                    window.scrollTo(iMove,0)
                 }
             },
             // 重写日历表显示的内容
@@ -667,7 +670,6 @@
     }
     .workflow-design {
         width: 100%;
-        /* background-color: #f5f5f7; */
         overflow: auto;
         position: absolute;
         bottom: 0;
