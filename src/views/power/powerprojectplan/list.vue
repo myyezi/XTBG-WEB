@@ -86,10 +86,11 @@
     <div class="division-line"></div>
     <div class="table-box">
       <el-table :data="list" style="width: 100%">
-        <el-table-column fixed label="操作" width="120">
+        <el-table-column fixed label="操作" width="180">
           <template fixed slot-scope="{ row, column, $index }">
               <el-button v-if="row.projectStatus == 1 || row.projectStatus == 2" v-show="showEditBtn" @click="edit(row.taskId)" type="text" size="small">编辑</el-button>
               <el-button v-if="row.projectStatus == 2" v-show="showFinishBtn" @click="finish(row.id)" type="text" size="small">完成</el-button>
+              <el-button v-if="row.projectStatus != 1" v-show="showRecordBtn" @click="record(row.id)" type="text" size="small">记录</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
@@ -105,7 +106,25 @@
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
     </div>
-
+    <el-dialog title="项目计划更改记录" :visible.sync="dialogVisible" width="60%" v-cloak>
+        <div class="app-container white-bg list-panel">
+            <div class="division-line"></div>
+            <div class="table-box">
+                <el-table :data="recordList" style="width: 100%">
+                    <el-table-column fixed label="操作" width="180">
+                        <template fixed slot-scope="{ row, column, $index }">
+                            <el-button @click="toChangeDetail(row.id)" type="text" size="small">查看</el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="updater" sortable show-overflow-tooltip min-width="80" label="修改人"></el-table-column>
+                    <el-table-column prop="updateTime" sortable show-overflow-tooltip min-width="80" label="修改时间"></el-table-column>
+                </el-table>
+                <el-pagination @size-change="handleSizeChange2" @current-change="handleCurrentChange2" :current-page=pageList.current  :page-size=pageList.size :total=pageList.total>
+                </el-pagination>
+            </div>
+          </div>
+          <span slot="footer" class="dialog-footer"> </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -124,8 +143,15 @@ export default {
         showAddBtn: this.getCurrentUserAuthority("/power/powerprojectplan/add"),
         showEditBtn: this.getCurrentUserAuthority("/power/powerprojectplan/edit"),
         showFinishBtn: this.getCurrentUserAuthority("/power/powerprojectplan/finish"),
+        showRecordBtn: this.getCurrentUserAuthority("/power/powerprojectplan/record"),
         projectTypeList : [],
         coDepartmentList : [],
+        recordList:[],
+        pageList:[],
+        dialogVisible:false,
+        pageC :1,
+        pageS :10,
+        projectId:"",
     }
   },
   mounted() {
@@ -158,7 +184,37 @@ export default {
               });
           }).catch(function() {
           });
+      },
+      record(projectId){
+          this.dialogVisible =true;
+          this.projectId = projectId;
+          this.pageC  = 1,
+          this.pageS  = 10,
+          this.getChangeRecordList();
+      },
+      getChangeRecordList(){
+          ajax.get('power/powerprojectplan/getPlanChangeList',{projectId:this.projectId,current:this.pageC,size:this.pageS}).then(rs => {
+              this.recordList = rs.records;
+              this.pageList =rs;
+          });
+      },
+
+      //切换页容量
+      handleSizeChange2(val) {
+          this.pageSize = val;
+          this.pageC = 1;
+          this.getChangeList();
+      },
+      //翻页
+      handleCurrentChange2(val) {
+          this.pageC = val;
+          this.getChangeList();
+      },
+      toChangeDetail(id){
+          let url = "/power/powerprojectplan/changedetail?id="+id;
+          this.toPage(url)
       }
+
   }
 }
 </script>
