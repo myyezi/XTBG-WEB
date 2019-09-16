@@ -25,7 +25,14 @@ const index = [
         hidden: true,
         component: () => import('@/views/power/powerprojectplan/detail'),
         meta: {title: '查看'}
-    }
+    },
+    {
+        path: '/power/powerprojectplan/changedetail',
+        name: 'powerprojectplanChangedetail',
+        hidden: true,
+        component: () => import('@/views/power/powerprojectplan/changedetail'),
+        meta: {title: '变更记录'}
+    },
 ];
 
 export default index

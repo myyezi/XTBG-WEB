@@ -158,6 +158,7 @@ export default {
             isApproval : 1,
             isUpload : 1,
         },
+        tempplanform : {},
         formData : {
             id : "",
             name : "",
@@ -188,6 +189,7 @@ export default {
         tempType : "",
         tempArr : [],
         showSaveDraftBtn : false,
+        isEdit : false,
         rules: {
             name: [
                 { required: true, message: '请输入工作内容', trigger: ['change','blur'] }
@@ -350,7 +352,8 @@ export default {
                   this.tasks.data.forEach((item) => {
                       if(data.id == item.id) {
                           this.powerprojectplanform = item;
-                          console.info("1111111111111111",this.powerprojectplanform);
+                          // 解除双向绑定，保留原始对象值
+                          this.tempplanform = JSON.parse(JSON.stringify(item));
                       }
                   });
               }
@@ -462,6 +465,7 @@ export default {
                                 }).then(rs => {
                                     if(rs.status === 0) {
                                         if(rs.data) {
+                                            this.projectId = rs.data[0].projectId;
                                             rs.data.forEach((item)=>{
                                                 item.start_date = item.planStartDate ? item.planStartDate : "";
                                                 item.end_date = item.planEndDate ? item.planEndDate : "";
@@ -520,6 +524,7 @@ export default {
                 newChild.start_date = this.powerprojectplanform.planStartDate;
                 newChild.end_date = this.powerprojectplanform.planEndDate;
                 if(this.operationType === 'add') {
+                    this.isEdit = true;
                     newChild.parent = 0;
                     newChild.level = 1;
                     this.contentList.forEach((item) => {
@@ -528,6 +533,7 @@ export default {
                         }
                     });
                 } else if (this.operationType === 'inserted'){
+                    this.isEdit = true;
                     newChild.parent = this.formData.id;
                     newChild.level = this.formData.level + 1;
                     newChild.nameType = this.formData.nameType;
@@ -541,7 +547,19 @@ export default {
                     if (this.tasks.data && this.tasks.data.length > 0){
                         this.dataArr.forEach((item,index) => {
                             if(item.id === this.powerprojectplanform.id) {
-                                this.dataArr.splice(index, 1);
+                                // 编辑操作，先删除，判断对象的值是否发生变化
+                                if (this.tempplanform.name != this.powerprojectplanform.name ||
+                                    this.tempplanform.period != this.powerprojectplanform.period ||
+                                    this.tempplanform.planStartDate != this.powerprojectplanform.planStartDate ||
+                                    this.tempplanform.planEndDate != this.powerprojectplanform.planEndDate ||
+                                    this.tempplanform.stage != this.powerprojectplanform.stage ||
+                                    this.tempplanform.principal != this.powerprojectplanform.principal ||
+                                    this.tempplanform.profession != this.powerprojectplanform.profession ||
+                                    this.tempplanform.isApproval != this.powerprojectplanform.isApproval ||
+                                    this.tempplanform.isUpload != this.powerprojectplanform.isUpload){
+                                    this.isEdit = true;
+                                    this.dataArr.splice(index, 1);
+                                }
                             }
                         });
                     }
@@ -569,6 +587,7 @@ export default {
             obj.data = this.dataArr;
             this.tasks = obj;
         } else if(this.operationType === 'deleted') {
+            this.isEdit = true;
             if (node && node.length > 0){
                 node.forEach((item, index) => {
                     if(item && item.id == data.id) {
@@ -592,7 +611,6 @@ export default {
             obj.data = this.dataArr;
             this.tasks = obj;
         } else {
-            console.info("22222222222222",data);
             this.$message({
                 message: '编辑成功',
                 type: 'success'
@@ -611,26 +629,31 @@ export default {
             this.$message.error('数据无效，请检查！');
             return;
         }
-        let newList = [];
-        let obj = {};
-        this.tasks.data.forEach((item) => {
-            obj = item;
-            newList.push(obj);
-        });
-        ajax.post('power/powerprojectplan', {
-            projectStatus : projectStatus,
-            tempType : this.tempType,
-            taskId : this.taskId,
-            projectId : this.projectId,
-            treeDataList : newList
-        }).then(rs => {
-            if (rs.status == 0) {
-                this.$message.success(rs.msg);
-                this._getTasksModel();
-            } else {
-                this.$message.error(rs.msg);
-            }
-        });
+        if (this.isEdit){
+            let newList = [];
+            let obj = {};
+            this.tasks.data.forEach((item) => {
+                obj = item;
+                newList.push(obj);
+            });
+            ajax.post('power/powerprojectplan', {
+                projectStatus : projectStatus,
+                tempType : this.tempType,
+                taskId : this.taskId,
+                projectId : this.projectId,
+                treeDataList : newList
+            }).then(rs => {
+                if (rs.status == 0) {
+                    this.$message.success(rs.msg);
+                    this._getTasksModel();
+                } else {
+                    this.$message.error(rs.msg);
+                }
+            });
+        }else{
+            this.$message.success("操作成功");
+        }
+
     },
 
   },

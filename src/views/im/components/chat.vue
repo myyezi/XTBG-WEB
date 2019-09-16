@@ -309,7 +309,7 @@
         let content = self.messageContent;
         if (content !== '' && content !== '\n') {
           if (content.length > 2000) {
-            self.openMessage('不能超过2000个字符');
+            self.$Message.error('不能超过2000个字符');
           } else {
             let currentMessage = {
               fromUserId:self.user.userId, //发送人id
