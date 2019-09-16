@@ -83,13 +83,15 @@
                   </el-select>
               </el-form-item>
               <el-form-item label="工期" prop="period">
-                  <el-input v-model="powerprojectplanform.period"></el-input>
+                  <!--<el-input v-model="powerprojectplanform.period" @change="setEndDate"></el-input>-->
+                  <el-input-number v-model="powerprojectplanform.period" @change="setEndDate" :min="1" :step="0.5" label="工期"></el-input-number>
               </el-form-item>
               <el-form-item label="开始时间" prop="planStartDate">
                   <el-date-picker
                       v-model="powerprojectplanform.planStartDate"
                       clearable
                       type="date"
+                      @change="setEndDate"
                       value-format="yyyy-MM-dd"
                       placeholder="选择开始时间">
                   </el-date-picker>
@@ -98,6 +100,7 @@
                   <el-date-picker
                       v-model="powerprojectplanform.planEndDate"
                       clearable
+                      disabled="disabled"
                       value-format="yyyy-MM-dd"
                       type="date"
                       placeholder="选择结束时间">
@@ -512,6 +515,20 @@ export default {
     clearValidate(formName) {
         if(this.$refs[formName]) {
             this.$refs[formName].clearValidate();
+        }
+    },
+
+    setEndDate(){
+        if (this.powerprojectplanform.planStartDate && this.powerprojectplanform.period){
+            let sDate = new Date(this.powerprojectplanform.planStartDate).getTime();
+            sDate = sDate + 1000*60*60*24*this.powerprojectplanform.period; //加减相差毫秒数
+            let eDate = new Date(sDate);
+            let preYear = eDate.getFullYear();
+            let preMonth = eDate.getMonth() + 1;
+            let preDay = eDate.getDate() - 1;
+            preMonth = (preMonth < 10) ? ("0" + preMonth) :preMonth;
+            preDay = (preDay < 10) ? ("0" + preDay) :preDay;
+            this.powerprojectplanform.planEndDate =  preYear + "-" +  preMonth + "-" + preDay;
         }
     },
 
