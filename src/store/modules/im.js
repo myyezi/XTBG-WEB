@@ -225,7 +225,7 @@ const im = {
         // 保存会话记录到内存
         addSession: function(state, session) {
           console.log(session)
-          if(session.draft) {
+          if(session.draft&&session.targetId) {
             let getSessionList = ChatListUtils.getSessionList(state.user.id);
             if(getSessionList&&getSessionList.length>0) {
                 getSessionList.forEach((item,index)=>{

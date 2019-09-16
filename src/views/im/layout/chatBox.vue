@@ -72,11 +72,13 @@ export default {
       filterText:function(newvalue,oldvalue) {
         if(newvalue) {
             let arr = []
-            this.sessionList.forEach((item,index)=>{
-              if(item.targetName.indexOf(newvalue)>=0 || item.content.content.indexOf(newvalue)>=0) {
-                  arr.push(item)
-              }
-            })
+            if(this.sessionList&&this.sessionList.length>0) {
+                this.sessionList.forEach((item,index)=>{
+                  if(item.targetName.indexOf(newvalue)>=0 || item.content.content.indexOf(newvalue)>=0) {
+                      arr.push(item)
+                  }
+                })
+            }
             this.sessionListCopy = arr
         } else {
             this.sessionListCopy = this.sessionList
@@ -92,11 +94,13 @@ export default {
               this.getSessionList()
           } else {
             let arr = []
-            newvalue.forEach((item,index)=>{
-              if(item.targetName.indexOf(this.filterText)>=0 || item.content.content.indexOf(this.filterText)>=0) {
-                  arr.push(item)
-              }
-            })
+            if(newvalue&&newvalue.length>0) {
+                newvalue.forEach((item,index)=>{
+                  if(item.targetName.indexOf(this.filterText)>=0 || item.content.content.indexOf(this.filterText)>=0) {
+                      arr.push(item)
+                  }
+                })
+            }
             this.sessionListCopy = arr
           }
         }
