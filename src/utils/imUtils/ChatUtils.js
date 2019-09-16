@@ -458,7 +458,7 @@ export const ChatListUtils = {
     let tempAllSessionList = [];
   
     // 放入缓存
-    this.setChatList(userId, tempAllSessionList);
+    this.setChatList(userId, {});
     this.setSessionList(userId, tempAllSessionList);
     return tempAllSessionList;
   }

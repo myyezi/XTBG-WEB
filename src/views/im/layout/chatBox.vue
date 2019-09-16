@@ -145,9 +145,11 @@ export default {
     },
     // 会话鼠标右键事件
     rightEvent(chat,e) {
-      this.sessionList.forEach(items => {
-        this.$set(items,'active',false);
-      });
+      if(this.sessionList&&this.sessionList.length>0) {
+        this.sessionList.forEach(items => {
+          this.$set(items,'active',false);
+        });
+      }
       if(chat === 1) {
           this.visibleBox = false
       } else {
