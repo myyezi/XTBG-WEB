@@ -333,6 +333,7 @@ export default {
           width: 75%;
           font-size: 1.1rem;
           color: #333;
+          height:1.1rem;
         }
       }
 

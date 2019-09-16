@@ -73,11 +73,12 @@ export function dateStr(date) {
       } 
   } else if (dates < new Date()){
       //之前
-      return '昨天';
       if (time >= 60 * 60 * 24) {
         // 超过1天
-        return dates.getFullYear() + '/' + ((dates.getMonth() + 1)< 10 ? '0' + (dates.getMonth() + 1) : (dates.getMonth() + 1)) + '/' + (dates.getDate()< 10 ? '0' + dates.getDate() : dates.getDate());
+        // return dates.getFullYear() + '/' + ((dates.getMonth() + 1)< 10 ? '0' + (dates.getMonth() + 1) : (dates.getMonth() + 1)) + '/' + (dates.getDate()< 10 ? '0' + dates.getDate() : dates.getDate());
+        return ((dates.getMonth() + 1)< 10 ? '0' + (dates.getMonth() + 1) : (dates.getMonth() + 1)) + '/' + (dates.getDate()< 10 ? '0' + dates.getDate() : dates.getDate());
       } 
+      return '昨天';
   }
 }
 
