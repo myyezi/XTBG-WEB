@@ -458,6 +458,155 @@
                         }
                     }
                 }
+                // workData:{
+                //     "type": "start",
+                //     "name": "发起人",
+                //     "nodeId": "sid-startevent",
+                //     "properties": {},
+                //     "childNode": {
+                //         "type": "route",
+                //         "prevId": "sid-startevent",
+                //         "nodeId": "6785_a90c",
+                //         "conditionNodes": [{
+                //             "name": "条件1",
+                //             "type": "condition",
+                //             "prevId": "6785_a90c",
+                //             "nodeId": "10b7_b7f1",
+                //             "properties": {
+                //                 "conditions": [{
+                //                     "type": "dingtalk_actioner_range_condition",
+                //                     "paramKey": "DDHolidayField-J2BWEN12__duration",
+                //                     "paramLabel": "时长（天）",
+                //                     "lowerBound": "",
+                //                     "upperBound": "",
+                //                     "unit": "天",
+                //                     "isEmpty": false,
+                //                     "key": "le",
+                //                     "boundEqual": "",
+                //                     "upperBoundEqual": "3"
+                //                 }]
+                //             },
+                //             "childNode": {
+                //                 "name": "主管审批",
+                //                 "type": "approver",
+                //                 "prevId": "10b7_b7f1",
+                //                 "nodeId": "8dd7_cef7",
+                //                 "properties": {
+                //                     "activateType": "ONE_BY_ONE",
+                //                     "agreeAll": false,
+                //                     "actionerRules": [{
+                //                         "type": "target_approval",
+                //                         "approvals": [{
+                //                             "employeeName": "刘东",
+                //                             "employeeId": "manager8808"
+                //                         }],
+                //                         "isEmpty": false
+                //                     }]
+                //                 },
+                //                 "childNode": {
+                //                     "name": "抄送人事",
+                //                     "type": "notifier",
+                //                     "prevId": "8dd7_cef7",
+                //                     "nodeId": "f98c_c19d",
+                //                     "properties": {
+                //                         "actionerRules": [{
+                //                             "select": ["allStaff"],
+                //                             "range": {
+                //                                 "allStaff": null
+                //                             },
+                //                             "multi": 1,
+                //                             "type": "target_select",
+                //                             "key": "manual_f98c_c19d_fe7f_8db7"
+                //                         }]
+                //                     }
+                //                 }
+                //             }
+                //         }, {
+                //             "name": "条件2",
+                //             "type": "condition",
+                //             "prevId": "6785_a90c",
+                //             "nodeId": "fe38_1368",
+                //             "properties": {
+                //                 "conditions": [{
+                //                     "type": "dingtalk_actioner_range_condition",
+                //                     "paramKey": "DDHolidayField-J2BWEN12__duration",
+                //                     "paramLabel": "时长（天）",
+                //                     "lowerBound": "",
+                //                     "upperBound": "",
+                //                     "unit": "天",
+                //                     "isEmpty": false,
+                //                     "key": "g",
+                //                     "boundEqual": "",
+                //                     "lowerBoundNotEqual": "3",
+                //                     "upperBoundEqual": ""
+                //                 }]
+                //             },
+                //             "childNode": {
+                //                 "name": "主管审批",
+                //                 "type": "approver",
+                //                 "prevId": "fe38_1368",
+                //                 "nodeId": "2398_bd5c",
+                //                 "properties": {
+                //                     "activateType": "ONE_BY_ONE",
+                //                     "agreeAll": false,
+                //                     "actionerRules": [{
+                //                         "autoUp": true,
+                //                         "isEmpty": false,
+                //                         "level": 1,
+                //                         "type": "target_management"
+                //                     }],
+                //                     "noneActionerAction": "admin"
+                //                 },
+                //                 "childNode": {
+                //                     "name": "经理审批",
+                //                     "type": "approver",
+                //                     "prevId": "2398_bd5c",
+                //                     "nodeId": "8b99_ff00",
+                //                     "properties": {
+                //                         "activateType": "ONE_BY_ONE",
+                //                         "agreeAll": false,
+                //                         "actionerRules": [{
+                //                             "type": "target_select",
+                //                             "multi": 1,
+                //                             "select": ["allStaff"],
+                //                             "range": {
+                //                                 "approvals": [],
+                //                                 "labels": [],
+                //                                 "allStaff": null
+                //                             },
+                //                             "key": "manual_8b99_ff00_2a3e_e821"
+                //                         }],
+                //                         "noneActionerAction": "admin"
+                //                     },
+                //                     "childNode": {
+                //                         "name": "抄送人事",
+                //                         "type": "notifier",
+                //                         "prevId": "8b99_ff00",
+                //                         "nodeId": "02c5_1487",
+                //                         "properties": {
+                //                             "actionerRules": [{
+                //                                 "type": "target_approval",
+                //                                 "approvals": [{
+                //                                     "employeeName": "刘东",
+                //                                     "employeeId": "manager8808"
+                //                                 }]
+                //                             }, {
+                //                                 "select": ["allStaff"],
+                //                                 "range": {
+                //                                     "allStaff": null
+                //                                 },
+                //                                 "multi": 1,
+                //                                 "type": "target_select",
+                //                                 "key": "manual_02c5_1487_4c57_d4bd"
+                //                             }]
+                //                         }
+                //                     }
+                //                 }
+                //             }
+                //         }],
+                //         "properties": {}
+                //     }
+                // }
             }
         },
         mounted() {
@@ -467,9 +616,12 @@
             getActiveName() {
                 if(this.activeName == 7) {
                     this.workDialogVisible = true
-                    let div = document.getElementById('workflowDesign');
-                    var iMove = (document.body.scrollWidth-document.body.offsetWidth)/2
-                    window.scrollTo(iMove,0)
+                    this.$nextTick(() => {
+                        let divs = document.getElementById('workflow');
+                        let div = document.getElementById('workflowDesign');
+                        let iMove = (div.scrollWidth-document.body.offsetWidth)/2
+                        divs.scrollTo(iMove,0)
+                    })
                 }
             },
             // 重写日历表显示的内容
@@ -659,12 +811,12 @@
     }
     .fd-nav-content {
         position: fixed;
-        top: 60px;
+        top: 56px;
         left: 0;
         right: 0;
         bottom: 0;
         z-index: 1;
-        overflow-x: hidden;
+        // overflow-x: hidden;
         overflow-y: auto;
         padding-bottom: 30px;
     }
@@ -686,7 +838,7 @@
             justify-content: center;
             flex-wrap: wrap;
             min-width: min-content;
-            background-color: #fff;
+            background-color: #f5f5f7;//背景色
             transform-origin: 0 0 0;
         }
     }

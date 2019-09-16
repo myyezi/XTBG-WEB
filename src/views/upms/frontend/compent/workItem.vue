@@ -1,10 +1,12 @@
 <template>
     <!-- item 主体开始 -->
-    <div class="node-wrap" v-if="workData.type=='start' || workData.type=='approver'">
+    <div class="node-wrap" v-if="workData.type=='start' || workData.type=='approver' || workData.type=='notifier'">
         <div class="node-wrap-box node_sid-startevent" :class="{'start-node':workData.type=='start'}">
             <div>
                 <div class="title">
-                    <span class="">{{workData.name}}</span>
+                    <span class="el-icon-user-solid" v-if="workData.type!='start'"></span>
+                    <span class="editable-title">{{workData.name}}</span>
+                    <i class="el-icon-close close"></i>
                 </div>
                 <div class="content">
                     <div class="text">所有人</div>

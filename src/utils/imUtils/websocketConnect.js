@@ -56,6 +56,8 @@ const websocketConnect = {
             id: ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):'0',
             type: ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):0,
         });
+        console.log(11111111111)
+        console.log(obj1)
         client.pubMessage(obj1,"MP")
 
         let obj2 = JSON.stringify({
@@ -92,6 +94,8 @@ const websocketConnect = {
                 id: ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):'0',
                 type: ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):0,
             });
+            console.log(2222222222222)
+            console.log(obj)
             client.pubMessage(obj,"MP")
         } else if (message.destinationName == "MS") {
             console.log(msg)
