@@ -287,8 +287,8 @@ methods: {
     },
 
     changeApproval(){
-        if (this.templateConfigForm.isApproval == 1){
-            this.templateConfigForm.isUpload = 1;
+        if (this.templateConfigForm.isApproval == 0){
+            this.templateConfigForm.isUpload = 0;
         }
     },
 
