@@ -39,7 +39,8 @@
     // height:800px;
     // padding: 50px 0;
     .editable-title {
-        line-height: 15px;
+        line-height: 16px;
+        height: 16px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -72,6 +73,15 @@
             background: #fff;
             border-radius: 4px;
             cursor: pointer;
+            &:hover {
+                border: 1px solid #3296fa;
+                .close {
+                    display:block;
+                }
+                .editable-title {
+                    border-bottom: 1px dashed #fff;      
+                }
+            }
             &::before{
                 content: "";
                 position: absolute;
@@ -83,7 +93,7 @@
                 border-style: solid;
                 border-width: 8px 6px 4px;
                 border-color: #cacaca transparent transparent;
-                background: #fff;
+                background: #f5f5f7; //背景色
             }
             &::after{
                 pointer-events: none;
@@ -113,6 +123,10 @@
                 text-align: left;
                 background: #ff943e;
                 border-radius: 4px 4px 0 0;
+                .el-icon-user-solid {
+                    font-size: 12px;
+                    margin-right: 5px;
+                }
             }
             .content {
                 position: relative;
@@ -134,6 +148,20 @@
                     font-size: 14px;
                     color: #979797;
                 }
+            }
+            .close {
+                display:none;
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 20px;
+                height: 20px;
+                font-size: 14px;
+                color: #fff;
+                border-radius: 50%;
+                text-align: center;
+                line-height: 20px;
             }
         }
         .start-node .content .text {
@@ -190,7 +218,7 @@
         position: relative;
         margin-top: 15px;
         .column—box {
-            background: #fff;
+            background: #f5f5f7;//背景色
             &::before{
                 content: "";
                 position: absolute;
@@ -247,6 +275,7 @@
         -webkit-box-flex: 1;
         flex-grow: 1;
         .btn {
+            cursor: pointer;
             outline: none;
             box-shadow: 0 2px 4px 0 rgba(0,0,0,.1);
             width: 30px;
@@ -261,13 +290,17 @@
                 color: #fff;
                 font-size: 16px;
             }
+            &:hover {
+                transform: scale(1.3);
+                box-shadow: 0 13px 27px 0 rgba(0,0,0,.1);
+            }
         }
     }
     .top-left-cover-line, .top-right-cover-line {
         position: absolute;
         height: 3px;
         width: 50%;
-        background-color: #fff;
+        background-color: #f5f5f7;//背景色
         top: -2px;
     }
     .top-left-cover-line,.bottom-left-cover-line{
@@ -280,7 +313,7 @@
         position: absolute;
         height: 3px;
         width: 50%;
-        background-color: #fff;
+        background-color: #f5f5f7;//背景色
         bottom: -2px;
     }
     .condition-node {
@@ -319,6 +352,17 @@
         border-radius: 4px;
         padding: 14px 19px;
         cursor: pointer;
+        &:hover {
+            border: 1px solid #3296fa;
+            .close {
+                display:block;
+            }
+            .title-wrapper {
+                .editable-title {
+                    border-bottom: 1px dashed #15bc83;      
+                }
+            }
+        }
         &::after {
             pointer-events: none;
             content: "";
@@ -354,6 +398,7 @@
             }
         }
         .close{
+            display:none;
             position: absolute;
             right: -10px;
             top: -10px;
