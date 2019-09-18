@@ -38,7 +38,7 @@
                     </el-table-column>
                     <el-table-column
                         prop="email"
-                        label="邮箱"
+                        label="员工状态"
                         show-overflow-tooltip>
                     </el-table-column>
                 </el-table>
