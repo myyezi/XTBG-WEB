@@ -445,6 +445,7 @@ export default {
                 if(rs.status === 0) {
                     if(rs.data) {
                         if (rs.data.length > 0){
+                            this.projectId = rs.data[0].projectId;
                             rs.data.forEach((item)=>{
                                 item.start_date = item.planStartDate;
                                 item.end_date = item.planEndDate;
@@ -700,7 +701,15 @@ export default {
                 }
             });
         }else{
-            this.$message.success("操作成功");
+            // 未做任何修改，只修改暂存状态为“进行中”
+            ajax.post('power/powerproject/operate',{projectId : this.projectId, projectStatus : 2}).then(rs => {
+                if (rs.status == 0) {
+                    this.$message.success(rs.msg);
+                    this._getTasksModel();
+                } else {
+                    this.$message.error(rs.msg);
+                }
+            });
         }
 
     },

@@ -128,7 +128,7 @@
                         template:function(obj){
                             let operateStr = "";
                             let approvelStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>申请完成</a>";
-                            let finishStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>完成</a>";
+                            let finishStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;' title='完 成'>完成</a>";
                             let hasApprovalStr = "<a style='display:inline-block;width:50px;height:100%;color: #999999;'>已申请</a>";
                             if (obj.currentStatus!=6 ){
                                 if (obj.isUpload == 1 && obj.isApproval == 1 && obj.fileNum > 0 && obj.currentStatus!=4){
@@ -263,9 +263,11 @@
                         }
                     });
                 }else if (data.operationType === 'approvefinish'){
+                    console.info("11111111111");
                     this.finishFormVisible = true;
                     this.id = data.id;
                 }else if(data.operationType === 'finish') {
+                    console.info("22222222222222222");
                     let that = this;
                     this.$confirm("确定完成该计划节点?" ,'提示', {
                         confirmButtonText: '确定',
