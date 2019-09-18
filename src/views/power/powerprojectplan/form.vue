@@ -543,26 +543,28 @@ export default {
                 if(this.operationType === 'add') {
                     this.isEdit = true;
                     newChild.parent = 0;
+                    newChild.parentId = 0;
                     newChild.level = 1;
                     this.contentList.forEach((item) => {
                         if (item.text == this.powerprojectplanform.name){
                             newChild.nameType = item.value;
                         }
                     });
+                    newChild.sortNum = this.getSortNum(newChild.parentId);
                 } else if (this.operationType === 'inserted'){
                     this.isEdit = true;
                     newChild.parent = this.formData.id;
-                    newChild.level = this.formData.level + 1;
-                    newChild.nameType = this.formData.nameType;
-                } else {
-                    // 获取工作内容类型
-                    this.contentList.forEach((item) => {
-                        if (item.text == this.powerprojectplanform.name){
-                            newChild.nameType = item.value;
+                    newChild.parentId = this.formData.id;
+                    this.dataArr.forEach((item) => {
+                        if (item.id == this.formData.id){
+                            newChild.nameType = item.nameType;
+                            newChild.level = item.level + 1;
                         }
                     });
+                    newChild.sortNum = this.getSortNum(newChild.parentId);
+                } else {
                     if (this.tasks.data && this.tasks.data.length > 0){
-                        this.dataArr.forEach((item,index) => {
+                        this.dataArr.forEach((item) => {
                             if(item.id === this.powerprojectplanform.id) {
                                 // 编辑操作，先删除，判断对象的值是否发生变化
                                 if (this.tempplanform.name != this.powerprojectplanform.name ||
@@ -574,14 +576,23 @@ export default {
                                     this.tempplanform.profession != this.powerprojectplanform.profession ||
                                     this.tempplanform.isApproval != this.powerprojectplanform.isApproval ||
                                     this.tempplanform.isUpload != this.powerprojectplanform.isUpload){
+                                    item.name = this.powerprojectplanform.name;
+                                    item.period = this.powerprojectplanform.period;
+                                    item.planStartDate = this.powerprojectplanform.planStartDate;
+                                    item.planEndDate = this.powerprojectplanform.planEndDate;
+                                    item.stage = this.powerprojectplanform.stage;
+                                    item.principal = this.powerprojectplanform.principal;
+                                    item.profession = this.powerprojectplanform.profession;
+                                    item.isApproval = this.powerprojectplanform.isApproval;
+                                    item.isUpload = this.powerprojectplanform.isUpload;
+
                                     this.isEdit = true;
-                                    this.dataArr.splice(index, 1);
+                                    // this.dataArr.splice(index, 1);
                                 }
                             }
                         });
                     }
                 }
-                //newChild.sortNum = this.getSortNum(newChild.parentId);
                 this.getNodeProcessing(newChild);
             } else {
                 return false;
@@ -589,7 +600,28 @@ export default {
         });
     },
 
-      // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
+    //获取序号
+    getSortNum(parentId){
+        if (this.dataArr.length == 0){
+            return 1;
+        }
+        let arr = [];
+        this.dataArr.forEach((item) => {
+          if (item.parentId == parentId){
+              arr.push(item.sortNum ? item.sortNum : 0);
+          }
+        });
+        if (arr.length == 0){
+          return 1;
+        }
+        arr.sort(function (a, b) {
+          return a-b;
+        });
+        let maxSortNum = arr[arr.length - 1];
+        return maxSortNum + 1;
+    },
+
+    // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
     getNodeProcessing(data,node) {
         if(this.operationType === 'add' || this.operationType === 'inserted') {
             data.id = new Date().getTime()
@@ -633,7 +665,7 @@ export default {
                 type: 'success'
             });
             this.dialogVisible = false;
-            this.dataArr.push(data);
+            //this.dataArr.push(data);
             let obj = {};
             this.isLoading = true;
             obj.data = this.dataArr;

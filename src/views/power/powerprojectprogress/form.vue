@@ -37,6 +37,25 @@
                 </el-table>
             </div>
         </el-dialog>
+
+        <el-dialog title="申请完成" :visible.sync="finishFormVisible" :class="{'dialog_animation_in':finishFormVisible,'dialog_animation_out':!finishFormVisible}" width="80">
+            <el-form :model="finishForm" :rules="rules" ref="finishForm" label-width="100px">
+                <el-form-item label="审批人" prop="stage">
+                    <el-input v-model="finishForm.principalText" placeholder="请选择审批人" readonly clearable>
+                        <el-button slot="append" icon="el-icon-search" @click="showEmployeeSelector = true"></el-button>
+                    </el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="finishFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="ok">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="800px">
+            <stop-upload></stop-upload>
+        </el-dialog>
+        <!-- 用户选择器 -->
+        <EmployeeListSelect :isShow="showEmployeeSelector" @selectedOnchange="selectedOnchangeHandle"></EmployeeListSelect>
     </div>
 </template>
 
@@ -48,24 +67,30 @@
     import "@/components/dhtmlx-gantt/codebase/locale/locale_cn"
     import Bus from "@/utils/eventBus.js"
     import StopUpload from '@/components/StopUpload/index'
+    import EmployeeListSelect from "@/components/EmployeeListSelect"
 
     export default {
         mixins: [tool, ruleTool],
-        components: {GanttAdd, StopUpload},
+        components: {GanttAdd, StopUpload, EmployeeListSelect},
         data() {
             let that = this;
             return {
                 dialogVisible : false,
+                dialogFormVisible : false,
                 fileFormVisible : false,
+                finishFormVisible : false,
                 projectTaskList : [],
                 stageList : [],
                 attachmentList : [],
+                finishForm : {},
                 id : "",
                 taskId : "",
                 projectId : "",
                 projectName : "",
                 tempArr : [],
                 uploadShow : false,
+                stopUploadShow : false,
+                showEmployeeSelector : false,
                 rules: {
                     name: [
                         { required: true, message: '请输入工作内容', trigger: ['change','blur'] }
@@ -79,7 +104,7 @@
                 headerTitle:[
                     {
                         name:"action",
-                        label:'执行操作',
+                        label:'关联文件',
                         align: "center",
                         width:'120',
                         template:function(obj){
@@ -97,7 +122,7 @@
                     },
                     {
                         name:"action",
-                        label:'关联文件',
+                        label:'执行操作',
                         align: "center",
                         width:'120',
                         template:function(obj){
@@ -236,7 +261,7 @@
                         }
                     });
                 }else if (data.operationType === 'approvefinish'){
-
+                    this.finishFormVisible = true;
                 }else if(data.operationType === 'finish') {
 
                 }
@@ -270,7 +295,9 @@
             downloadFile(data){
                 window.open(process.env.URL_API+data.path);
             },
+            selectedOnchangeHandle(){
 
+            },
             // 工程阶段字典
             getStageList() {
                 let type = "GCJD";
