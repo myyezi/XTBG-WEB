@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="选择员工" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" v-cloak>
+  <el-dialog title="选择员工" :visible.sync="dialogVisible" width="50%" :before-close="handleClose" v-cloak>
     <div class="app-container white-bg list-panel">
       <div class="opertion-box">
         <el-input v-model="searchParam.nameOrPhone" placeholder="请输入姓名或手机号" clearable class="zy_input" style="width:190px"></el-input>
@@ -14,9 +14,7 @@
             </template>
             </el-table-column>
             <el-table-column prop="name" fixed sortable show-overflow-tooltip min-width="120" label="姓名"></el-table-column>
-            <el-table-column prop="phone" sortable min-width="130" label="手机号"></el-table-column>
-            <el-table-column prop="account" sortable show-overflow-tooltip min-width="150" label="用户名"> </el-table-column>
-            <el-table-column prop="email" sortable show-overflow-tooltip min-width="150" label="邮箱"></el-table-column>
+            <el-table-column prop="account" sortable show-overflow-tooltip min-width="150" label="手机号"> </el-table-column>
             <el-table-column prop="organizations" sortable show-overflow-tooltip min-width="150" label="组织"></el-table-column>
             <el-table-column prop="roles" sortable show-overflow-tooltip min-width="150" label="角色"></el-table-column>
             <el-table-column prop="positions" sortable show-overflow-tooltip min-width="150" label="职位"></el-table-column>
@@ -40,7 +38,7 @@ export default {
   data() {
     return {
       isShowMore: false,
-      listUrl: "/upms/user",
+      listUrl: "/upms/employee",
       showSearch: false,
       selectedData: {},
       dialogVisible: false,

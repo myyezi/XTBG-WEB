@@ -37,6 +37,28 @@
                 </el-table>
             </div>
         </el-dialog>
+
+        <el-dialog title="申请完成" :visible.sync="finishFormVisible" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="80">
+            <el-form :model="extensionForm" :rules="rules" ref="ruleForm" label-width="100px">
+                <el-form-item label="延期日期" prop="extDate">
+                    <el-date-picker
+                        v-model="extensionForm.extDate"
+                        type="date"
+                        placeholder="选择延期日期" >
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="延期原因" prop="reason">
+                    <el-input type="textarea" class="overall_situation_input" v-model="extensionForm.reason" maxlength=200 show-word-limit  autocomplete="off" ></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="cancel">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="800px">
+            <stop-upload></stop-upload>
+        </el-dialog>
     </div>
 </template>
 
@@ -57,6 +79,7 @@
             return {
                 dialogVisible : false,
                 fileFormVisible : false,
+                finishFormVisible : false,
                 projectTaskList : [],
                 stageList : [],
                 attachmentList : [],
@@ -79,7 +102,7 @@
                 headerTitle:[
                     {
                         name:"action",
-                        label:'执行操作',
+                        label:'关联文件',
                         align: "center",
                         width:'120',
                         template:function(obj){
@@ -97,7 +120,7 @@
                     },
                     {
                         name:"action",
-                        label:'关联文件',
+                        label:'执行操作',
                         align: "center",
                         width:'120',
                         template:function(obj){

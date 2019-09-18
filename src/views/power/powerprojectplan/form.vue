@@ -593,7 +593,6 @@ export default {
                         });
                     }
                 }
-                console.info("111111111111111",newChild);
                 this.getNodeProcessing(newChild);
             } else {
                 return false;
@@ -686,7 +685,6 @@ export default {
                 obj = item;
                 newList.push(obj);
             });
-            console.info("222222222222222",newList);
             ajax.post('power/powerprojectplan', {
                 projectStatus : projectStatus,
                 tempType : this.tempType,
