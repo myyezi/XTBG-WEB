@@ -39,9 +39,9 @@
         </el-dialog>
 
         <el-dialog title="申请完成" :visible.sync="finishFormVisible" :class="{'dialog_animation_in':finishFormVisible,'dialog_animation_out':!finishFormVisible}" width="80">
-            <el-form :model="finishForm" :rules="rules" ref="finishForm" label-width="100px">
-                <el-form-item label="审批人" prop="stage">
-                    <el-input v-model="finishForm.principalText" placeholder="请选择审批人" readonly clearable>
+            <el-form :model="approvalFinishForm" :rules="rules" ref="ruleForm" label-width="100px">
+                <el-form-item label="审批人" prop="name">
+                    <el-input v-model="approvalFinishForm.name" placeholder="请选择审批人">
                         <el-button slot="append" icon="el-icon-search" @click="showEmployeeSelector = true"></el-button>
                     </el-input>
                 </el-form-item>
@@ -82,7 +82,7 @@
                 projectTaskList : [],
                 stageList : [],
                 attachmentList : [],
-                finishForm : {},
+                approvalFinishForm : {},
                 id : "",
                 taskId : "",
                 projectId : "",
@@ -93,7 +93,7 @@
                 showEmployeeSelector : false,
                 rules: {
                     name: [
-                        { required: true, message: '请输入工作内容', trigger: ['change','blur'] }
+                        { required: true, message: '请选择审批人', trigger: ['change','blur'] }
                     ],
                 },
                 tasks: {
@@ -111,7 +111,7 @@
                             let operateStr = "";
                             let uploadStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>";
                             let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>";
-                            if (obj.isUpload == 1 && obj.currentStatus != 4){
+                            if (obj.isUpload == 1 && obj.currentStatus != 4 && obj.currentStatus != 6){
                                 operateStr += uploadStr;
                             }
                             if (obj.fileNum > 0){
@@ -130,14 +130,16 @@
                             let approvelStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>申请完成</a>";
                             let finishStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>完成</a>";
                             let hasApprovalStr = "<a style='display:inline-block;width:50px;height:100%;color: #999999;'>已申请</a>";
-                            if (obj.isUpload == 1 && obj.isApproval == 1 && obj.fileNum > 0){
-                                operateStr += approvelStr;
-                            }
-                            if (obj.currentStatus == 4){
-                                operateStr += hasApprovalStr;
-                            }
-                            if (obj.isApproval == 0){
-                                operateStr += finishStr;
+                            if (obj.currentStatus!=6 ){
+                                if (obj.isUpload == 1 && obj.isApproval == 1 && obj.fileNum > 0 && obj.currentStatus!=4){
+                                    operateStr += approvelStr;
+                                }
+                                if (obj.currentStatus == 4){
+                                    operateStr += hasApprovalStr;
+                                }
+                                if (obj.isApproval == 0){
+                                    operateStr += finishStr;
+                                }
                             }
                             return operateStr;
                         }
@@ -262,8 +264,26 @@
                     });
                 }else if (data.operationType === 'approvefinish'){
                     this.finishFormVisible = true;
+                    this.id = data.id;
                 }else if(data.operationType === 'finish') {
-
+                    let that = this;
+                    this.$confirm("确定完成该计划节点?" ,'提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }).then(function() {
+                        ajax.post('power/powerprojectplan/finish', {
+                            planId : data.id,
+                        }).then(rs => {
+                            if (rs.status == 0) {
+                                that.$message.success(rs.msg);
+                                that._getTasksModel();
+                            } else {
+                                that.$message.error(rs.msg);
+                            }
+                        });
+                    }).catch(function() {
+                    });
                 }
             });
             this.getProjectTask();
@@ -295,8 +315,18 @@
             downloadFile(data){
                 window.open(process.env.URL_API+data.path);
             },
-            selectedOnchangeHandle(){
-
+            selectedOnchangeHandle(data){
+                this.approvalFinishForm = {};
+                this.showEmployeeSelector = false;
+                if (data) {
+                    let { idArr = [],nameArr = [] } = {};
+                    data.map(item => {
+                        idArr.push(item.id);
+                        nameArr.push(item.name);
+                    });
+                    this.approvalFinishForm.id = idArr.join(",");
+                    this.approvalFinishForm.name = nameArr.join(",");
+                }
             },
             // 工程阶段字典
             getStageList() {
@@ -366,109 +396,31 @@
             // 弹框“确定”操作
             ok(){
                 this.$refs['ruleForm'].validate((valid) => {
-                    if (valid) {
-                        let newChild = this.powerprojectplanform;
-                        newChild.text = this.powerprojectplanform.name;
-                        newChild.start_date = this.powerprojectplanform.planStartDate;
-                        newChild.end_date = this.powerprojectplanform.planEndDate;
-                        if(this.operationType === 'add') {
-                            newChild.parent = 0;
-                            newChild.level = 1;
-                        } else if (this.operationType === 'inserted'){
-                            newChild.parent = this.formData.id;
-                            newChild.level = this.formData.level + 1;
-                        } else {
-                            if (this.tasks.data && this.tasks.data.length > 0){
-                                this.dataArr.forEach((item,index) => {
-                                    if(item.id === this.powerprojectplanform.id) {
-                                        this.dataArr.splice(index, 1);
-                                    }
-                                });
-                            }
-                        }
-                        //newChild.sortNum = this.getSortNum(newChild.parentId);
-                        this.getNodeProcessing(newChild);
-                    } else {
-                        return false;
+                    if (!this.approvalFinishForm.id){
+                        this.$message.error("请选择正确的审批人");
+                        return;
                     }
-                });
-            },
-
-            // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
-            getNodeProcessing(data,node) {
-                if(this.operationType === 'add' || this.operationType === 'inserted') {
-                    data.id = new Date().getTime()
-                    this.$message({
-                        message: '新增成功',
-                        type: 'success'
-                    });
-                    this.dialogVisible = false;
-                    this.dataArr.push(data);
-                    let obj = {};
-                    this.isLoading = true;
-                    obj.data = this.dataArr;
-                    this.tasks = obj;
-                } else if(this.operationType === 'deleted') {
-                    if (node && node.length > 0){
-                        node.forEach((item, index) => {
-                            if(item && item.id == data.id) {
-                                node.splice(index, 1, null);
+                    let arrIds = this.approvalFinishForm.id.split(",");
+                    if (arrIds.length > 5){
+                        this.$message.error("最多支持选择5个审批人");
+                        return;
+                    }
+                    if (!valid) {
+                        this.$message.error("校验不通过，请检查输入项");
+                        return;
+                    }else{
+                        ajax.post('power/powerprojectplan/approvalFinish', {
+                            planId : this.id,
+                            approvalEmployeeId : this.approvalFinishForm.id
+                        }).then(rs => {
+                            if (rs.status == 0) {
+                                this.$message.success(rs.msg);
+                                this.finishFormVisible = false;
+                                this._getTasksModel();
                             } else {
-                                if (item && item.parent && item.parent == data.id) {
-                                    this.getNodeProcessing(item, node);
-                                }
+                                this.$message.error(rs.msg);
                             }
                         });
-                    }
-                    let newArray = [];
-                    this.dataArr.forEach((item) => {
-                        if (item){
-                            newArray.push(item)
-                        }
-                    });
-                    this.dataArr = newArray;
-                    let obj = {};
-                    this.isLoading = true;
-                    obj.data = this.dataArr;
-                    this.tasks = obj;
-                } else {
-                    this.$message({
-                        message: '编辑成功',
-                        type: 'success'
-                    });
-                    debugger;
-                    this.dialogVisible = false;
-                    this.dataArr.push(data);
-                    let obj = {};
-                    this.isLoading = true;
-                    obj.data = this.dataArr;
-                    this.tasks = obj;
-                }
-            },
-            //保存
-            submitForm(projectStatus) {
-                if (!this.taskId || this.tasks.data.length == 0){
-                    this.$message.error('数据无效，请检查！');
-                    return;
-                }
-                let newList = [];
-                let obj = {};
-                this.tasks.data.forEach((item) => {
-                    obj = item;
-                    newList.push(obj);
-                });
-                ajax.post('power/powerprojectplan', {
-                    projectStatus : projectStatus,
-                    tempType : this.tempType,
-                    taskId : this.taskId,
-                    projectId : this.projectId,
-                    treeDataList : newList
-                }).then(rs => {
-                    if (rs.status == 0) {
-                        this.$message.success(rs.msg);
-                        this._getTasksModel();
-                    } else {
-                        this.$message.error(rs.msg);
                     }
                 });
             },
