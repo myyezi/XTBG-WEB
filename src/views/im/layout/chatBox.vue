@@ -11,7 +11,7 @@
           <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionListCopy" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
             <a href="javascript:" :class="currentChat&&currentChat.targetId===chat.targetId?'active':''">
               <i v-if="chat.unReadCount&&chat.unReadCount>0" class="un_read_count">{{ chat.unReadCount }}</i>
-              <i class="icon-qun1 group_identification" v-if="chat.owner"></i>
+              <i class="icon-qun1 group_identification" v-if="chat.type==1"></i>
               <img :src="chat.portrait?chat.portrait:defaultPic">
               <b>{{ chat.targetName?chat.targetName:'test' }}</b>
               <span>{{ chat.serverTimestamp?dateStr(chat.serverTimestamp):''}}</span>
@@ -183,7 +183,6 @@ export default {
     getSessionList() {
       let self = this;
       let cacheSession = []
-      self.sessionList = [];
       self.filterText = ''
       // 从内存中获取会话记录
       cacheSession = self.$store.state.im.sessionList;
@@ -203,6 +202,7 @@ export default {
                   if(item.targetId == self.currentChat.targetId) {
                       flag = true
                       self.currentChat = item
+                      return
                   }
               })
           }
@@ -318,6 +318,8 @@ export default {
           text-overflow: ellipsis;
           font-weight: 600;
           top: 0.6rem;
+          white-space: nowrap;
+          width: 6rem;
         }
         span {
           position: absolute;

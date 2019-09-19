@@ -157,7 +157,7 @@
         groupUserList:[],
         accept:'.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.pdf,.exe,',
         imgFormat: "jpg,jpeg,png,gif",
-        fileFormat: "doc,docx,xls,xlsx,pdf,exe,txt,ppt,pptx,zip,rar",
+        // fileFormat: "doc,docx,xls,xlsx,pdf,exe,txt,ppt,pptx,zip,rar",
         videoFormat: "mp4,mov",
         audioFormat: "mp3,m4a",
         transform:transform,
@@ -264,12 +264,8 @@
           // 文件后缀
           let suffix = res.data.suffix;
           this.messageContent = JSON.stringify(res.data)
-          // 文件
-          if (self.fileFormat.indexOf(suffix) >=0) {
-            type = 5
-          }
           // 图片
-          else if (self.imgFormat.indexOf(suffix) >=0){
+          if (self.imgFormat.indexOf(suffix) >=0){
             type = 3
           }
           // 视频
@@ -279,6 +275,8 @@
           // 音频
           else if (self.audioFormat.indexOf(suffix) >=0){
             type = 2
+          } else {
+            type = 5 // 文件
           }
           this.mineSend(type)
         } else {
@@ -375,7 +373,7 @@
           let userInfoObj = {}
           let cacheMessagesObj = {}
           let cacheMessages = []
-          self.messageList = [];
+          // self.messageList = [];
           self.messageImgList = []
           self.messageContent = self.chat.draftContent?self.chat.draftContent:'' //获取草稿信息
           // 从内存中取用户信息
@@ -400,11 +398,7 @@
                 cacheMessages = cacheMessagesObj[self.chat.targetId];
             }
           }
-          if (cacheMessages) {
-            let objArr = {
-                obj:{},
-                subTopic:'MS'
-            }
+          if (cacheMessages&&cacheMessages.length>0) {
             let contents = {}
             let path = ''
             self.messageList = cacheMessages;
@@ -421,8 +415,6 @@
                 if(this.netStausType == 1) {
                     if(item.netStausType == 2) {
                       item.netStausType = 1
-                      objArr.obj = item
-                      // this.$store.commit('sendMessage', objArr); 
                     } 
                 } else if(this.netStausType == 2) {
                     if(!item.messageId&&item.netStausType!=2) {
@@ -431,6 +423,20 @@
                     } 
                 }
             })
+          } else {
+            let objArr = {
+                obj:{
+                  head:'0',
+                  count:100,
+                  conversation:{
+                      line:0,
+                      type:self.chat.type,
+                      targetId:self.chat.targetId
+                  }
+                },
+                subTopic:'LRM'
+            }
+            self.$store.commit('sendMessage', objArr);
           }
           this.scollBottom()
       },
@@ -482,7 +488,9 @@
         }
       },
       messageList :function(newvalue,oldvalue) {
-        this.getCurrentMessageList()
+        if(newvalue) {
+          this.getCurrentMessageList()
+        }
         this.scollBottom()
       },
       currentGroupUser :function(newvalue,oldvalue) {

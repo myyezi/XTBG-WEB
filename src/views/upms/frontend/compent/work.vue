@@ -1,35 +1,154 @@
 <template>
-    <div class="work-flow-item">
-        <!-- 判断流程是否是分支，是的话循环分支内部节点 -->
-        <!-- <div v-if="workData.type == 2" class="work-flow-conditionNodes">
-            <work-item v-if="workData.nextNode" :workData="workData.nextNode"></work-item>
-        </div> -->
-        <!-- item 主体开始 -->
-        <work-item :workData="workData"></work-item>
-        <!-- item 主体结束 -->
-        <!-- 判断流程是否存在nextNode，如果有则去递归，没有就结束 -->
-        <!-- <work-item :workData="workData.childNode" v-if="workData.childNode"></work-item> -->
-        <work v-if="workData.childNode&&JSON.stringify(workData.childNode) !== '{}'" :workData="workData.childNode">
-        </work>
+    <div class="box-scale" @click="transferStation({workData:workData,type:2})">
+        <!-- 流程主体开始 -->
+        <work-item 
+            :workData="workData"
+        ></work-item>
+        <!-- 流程主体开始 -->
+        <!-- 流程结束开始 -->
+        <div class="workflow-end-node">
+            <div class="end-node-text">流程结束</div>
+        </div>
+        <!-- 流程结束结束 -->
     </div>
 </template>
 <script>
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
     import workItem from './workItem'
+    import Bus from "@/utils/eventBus.js";
     export default {
-        name: 'work',
+        name: 'workFlow',
         components: {workItem},
         mixins: [tool, ruleTool],
-        props: ['workData'],
+        props: ['workFlowData'],
         data() {
             return {
+                workData:this.workFlowData,
+                oneWorkData:{},
+                workDataType:null,
+                childNode:''
             }
         },
         mounted() {
+            Bus.$on("transfer-station",data=>{
+                this.transferStation(data)
+            })
+            Bus.$on("work-add-pprover",data=>{
+                this.workAddApprover(data)
+            })
+            Bus.$on("work-add-notifier",data=>{
+                this.workAddNotifier(data)
+            })
+            Bus.$on("work-add-route",data=>{
+                this.workAddRoute(data)
+            })
         },
         methods: {
-            
+            transferStation(data) {
+                console.log(data)
+                console.log(this.workData)
+                if(data.type !== 2) {
+                    this.oneWorkData = data.workData
+                }
+                this.workDataType = data.type
+                let obj = Object.assign({}, this.workData)
+                this.workDataHandle(obj)
+                this.workData = Object.assign({}, obj);
+            },
+            // 修改节点名称input框展现隐藏处理
+            workDataHandle(data) {
+                if(data.type=='route') {
+                    if(data.conditionNodes&&data.conditionNodes.length>0) {
+                        data.conditionNodes.forEach((item,index)=>{
+                            if(item.properties&&JSON.stringify(item.properties) !== '{}') { 
+                                item.properties.editName = true
+                                if(this.workDataType!==2) {
+                                    if(item.nodeId == this.oneWorkData.nodeId) {
+                                        if(this.workDataType === 1) {
+                                            item.properties.editName = false
+                                        }
+                                        if(this.workDataType === 3) {
+                                            item.childNode = this.childNode
+                                            // this.workData = Object.assign({}, data);
+                                        }
+                                        return
+                                    }
+                                }
+                            }
+                            if(item.childNode&&JSON.stringify(item.childNode) !== '{}') {
+                                this.workDataHandle(item.childNode)
+                            }
+                        })
+                    }
+                    if(data.childNode&&JSON.stringify(data.childNode) !== '{}') {
+                        this.workDataHandle(data.childNode)
+                    }
+                } else {
+                    if(data.properties&&JSON.stringify(data.properties) !== '{}') { 
+                        data.properties.editName = true
+                        if(this.workDataType!==2) {
+                            if(data.nodeId == this.oneWorkData.nodeId) {
+                                if(this.workDataType === 1) {
+                                    data.properties.editName = false
+                                }
+                                if(this.workDataType === 3) {
+                                    if(this.oneWorkData.childNode) {
+                                        let obj = Object.assign({}, this.oneWorkData.childNode);
+                                        data.childNode = this.childNode
+                                        data.childNode.childNode = obj
+                                    } else {
+                                        data.childNode = this.childNode
+                                    }
+                                    // this.workData = Object.assign({}, data);
+                                }
+                                return
+                            }
+                        }
+                    }
+                    if(data.childNode&&JSON.stringify(data.childNode) !== '{}') {
+                        this.workDataHandle(data.childNode)
+                    }
+                }
+            },
+            // 添加审批人
+            workAddApprover(data) {
+                let oneWorkData = data.workData
+                let nodeId = this.generateUUID()
+                this.childNode = {
+                    name:"请选择审批人",
+                    type:"approver",
+                    prevId:oneWorkData.nodeId,
+                    nodeId:nodeId,
+                    properties:{
+                        editName:true
+                    }
+                }
+                this.transferStation({workData:oneWorkData,type:3})
+            },
+            // 添加抄送人
+            workAddNotifier(data) {
+                let oneWorkData = data.workData
+                let nodeId = this.generateUUID()
+            },
+            // 添加分支
+            workAddRoute(data) {
+                let oneWorkData = data.workData
+                let nodeId = this.generateUUID()
+            },
+            // 得到唯一流程id标示
+            generateUUID() {
+                var d = new Date().getTime();
+                if (window.performance && typeof window.performance.now === "function") {
+                    d += performance.now(); //高精度计时器
+                }
+                var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = (d + Math.random() * 16) % 16 | 0;
+                    d = Math.floor(d / 16);
+                    return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+                });
+                return uuid;
+            }
         }
     }
 </script>
@@ -49,7 +168,7 @@
             content: "";
             position: absolute;
             top: 0;
-            left: 0;
+            left: 16px;
             bottom: 0;
             right: 40px;
         }
@@ -74,12 +193,15 @@
             border-radius: 4px;
             cursor: pointer;
             &:hover {
-                border: 1px solid #3296fa;
                 .close {
                     display:block;
                 }
                 .editable-title {
                     border-bottom: 1px dashed #fff;      
+                }
+                &::after {
+                    border: 1px solid #3296fa;
+                    box-shadow: 0 0 6px 0 rgba(50,150,250,.3);
                 }
             }
             &::before{
@@ -106,7 +228,7 @@
                 z-index: 2;
                 border-radius: 4px;
                 border: 1px solid transparent;
-                transition: all .1s cubic-bezier(.645,.045,.355,1);
+                transition: all .1s ease-out;
                 box-shadow: 0 2px 5px 0 rgba(0,0,0,.1);
             }
             .title {
@@ -126,6 +248,13 @@
                 .el-icon-user-solid {
                     font-size: 12px;
                     margin-right: 5px;
+                }
+                input {
+                    width:139px;
+                    height: 20px;
+                    border-radius: 4px;
+                    border: 1px solid #DCDFE6;
+                    padding: 2px 5px;
                 }
             }
             .content {
@@ -262,7 +391,11 @@
         z-index: 1;
         display: inline-flex;
         align-items: center;
-        transition: all .3s cubic-bezier(.645,.045,.355,1);
+        transition: all .3s ease-out;
+        &:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,.1);
+        }
     }
     .add-node-btn {
         user-select: none;
@@ -285,7 +418,7 @@
             position: relative;
             border: none;
             line-height: 30px;
-            transition: all .3s cubic-bezier(.645,.045,.355,1);
+            transition: all .3s ease-out;
             .el-icon-plus {
                 color: #fff;
                 font-size: 16px;
@@ -353,7 +486,6 @@
         padding: 14px 19px;
         cursor: pointer;
         &:hover {
-            border: 1px solid #3296fa;
             .close {
                 display:block;
             }
@@ -361,6 +493,10 @@
                 .editable-title {
                     border-bottom: 1px dashed #15bc83;      
                 }
+            }
+            &::after{
+                border: 1px solid #3296fa;
+                box-shadow: 0 0 6px 0 rgba(50,150,250,.3);
             }
         }
         &::after {
@@ -374,7 +510,7 @@
             z-index: 2;
             border-radius: 4px;
             border: 1px solid transparent;
-            transition: all .1s cubic-bezier(.645,.045,.355,1);
+            transition: all .1s ease-out;
             box-shadow: 0 2px 5px 0 rgba(0,0,0,.1); 
         }
         .title-wrapper {
@@ -389,6 +525,13 @@
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
+            }
+            input {
+                width:110px;
+                height: 20px;
+                border-radius: 4px;
+                border: 1px solid #DCDFE6;
+                padding: 2px 5px;
             }
             .priority-title {
                 display: inline-block;
@@ -412,5 +555,66 @@
             z-index: 2;
         }
     } 
+}
+.work-flow-add-node-body {
+    display: flex;
+    width: 300px;
+    min-height: 160px;
+    align-items: center;
+    .add-node-item {
+        cursor: pointer;
+        text-align: center;
+        flex: 1;
+        color: #333;
+        .node-item-wrapper {
+            user-select: none;
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 5px;
+            background: #fff;
+            border: 1px solid #e2e2e2;
+            border-radius: 50%;
+            transition: all .3s ease-out;
+            i{
+                font-size: 35px;
+                line-height: 80px;
+            }
+            .el-icon-user-solid {
+                color:#ff943e
+            }
+            .el-icon-s-promotion {
+                color:#3296fa
+            }
+            .icon-unit {
+                color:#15bc83;
+                font-size: 30px;
+            }
+        }
+        &:hover {
+            outline: 0;
+            .node-item-wrapper {
+                background: #3296fa;
+                box-shadow: 0 10px 20px 0 rgba(50,150,250,.4);
+                i {
+                    color:#fff;
+                }
+            }
+        }
+    }
+}
+.workflow-end-node {
+    display:flex;
+    justify-content:center;
+    font-size:14px;
+    color:#999;
+    .end-node-text{
+        text-align: center;
+        width: 70px;
+        height: 70px;
+        border: 2px solid #909399;
+        line-height: 66px;
+        border-radius: 50%;
+    }
 }
 </style>

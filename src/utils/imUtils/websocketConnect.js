@@ -8,6 +8,8 @@ const IMTopic = {
     NotifyMessageTopic:'MN',//接收通知
     RecallMessageTopic: "MR",//撤回消息
     GetAllUserTopic: "UUI",//获取所有用户信息
+    GetUserChatTopic: "UGC",//获取会话
+    LoadRemoteMessagesTopic:"LRM",//获取初始化消息
     CreateGroupTopic: "GC",//创建群组
     GetGroupInfoTopic: "GGI",//获取群组
     GetGroupMemberTopic: "GGM",//获取群组成员
@@ -51,15 +53,6 @@ const websocketConnect = {
             console.log("subscribeTopic:", IMTopic[v]);
             client.subscribe(IMTopic[v], { qos: 1 });
         });
-        
-        let obj1 = JSON.stringify({
-            id: ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):'0',
-            type: ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):0,
-        });
-        console.log(11111111111)
-        console.log(obj1)
-        client.pubMessage(obj1,"MP")
-
         let obj2 = JSON.stringify({
             requestList: [{
                 target:objData.username,
@@ -68,11 +61,6 @@ const websocketConnect = {
             }]
         });
         client.pubMessage(obj2,"GGI")
-
-        let obj3 = JSON.stringify({
-            requestList: []
-        });
-        client.pubMessage(obj3,"UUI")
         console.log("connect success.");
     },
     //连接丢失
@@ -89,12 +77,13 @@ const websocketConnect = {
         console.log(msg);
         console.log(message.destinationName)
         if (message.destinationName == "MN") {
+            ChatListUtils.setLastMessageHead(objData.username,ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):(parseInt(msg.head)-1)+'')
+            ChatListUtils.setLastMessageType(objData.username,ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):msg.type)
             console.log(msg)
             let obj = JSON.stringify({
                 id: ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):'0',
                 type: ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):0,
             });
-            console.log(2222222222222)
             console.log(obj)
             client.pubMessage(obj,"MP")
         } else if (message.destinationName == "MS") {
@@ -118,8 +107,12 @@ const websocketConnect = {
                             });
                             client.pubMessage(obj,"GGI")
                         }
-                        if(item.conversation.topic!='GD') {
-                            if(item.conversation.topic!='GQ' || objData.username != item.fromUserId) {
+                        if(item.conversation.topic=='GD' && objData.username == item.fromUserId) {
+
+                        } else {
+                            if(item.conversation.topic=='GQ' && objData.username == item.fromUserId) {
+                                
+                            } else {
                                 store.commit('addMessage', item);
                                 store.commit('addSession', item);
                             }
@@ -154,9 +147,17 @@ const websocketConnect = {
         }  else if (message.destinationName == "UUI") {
             console.log(msg)
             store.commit('setUserFriendObj', msg.resultList);
+            let obj1 = JSON.stringify({
+                userId: objData.username,
+            });
+            client.pubMessage(obj1,"UGC")
         }  else if (message.destinationName == "GGI") {
             console.log(msg)
             store.commit('setChatGroupList', msg.infoList);
+            let obj3 = JSON.stringify({
+                requestList: []
+            });
+            client.pubMessage(obj3,"UUI")
         } else if (message.destinationName == "GGM") {
             console.log(msg);
             store.commit('setCurrentGroupUser', msg);
@@ -172,6 +173,53 @@ const websocketConnect = {
             client.groupOperation(msg)
         } else if (message.destinationName == "GKM") { 
 
+        } else if (message.destinationName == "LRM") { 
+            if(msg.messages.length>0) {
+                msg.messages.forEach((item,index)=> {
+                    if(item.conversation.type==1) {
+                        if(item.conversation.topic=='GD' && objData.username == item.fromUserId) {
+
+                        } else {
+                            if(item.conversation.topic=='GQ' && objData.username == item.fromUserId) {
+                                
+                            } else {
+                                store.commit('addMessage', item);
+                            }
+                        }
+                    } else {
+                        store.commit('addMessage', item);
+                    }
+                }) 
+            }
+        } else if (message.destinationName == "UGC") { 
+            let userObj = ChatListUtils.getUserFriendObj(objData.username);
+            let groupList = ChatListUtils.getGroupList(objData.username);
+            let groupObj = {}
+            groupList.forEach((item)=>{
+                groupObj[item.targetId] = {
+                    name:item.name,
+                    portrait:item.portrait,
+                }
+            })
+            if(msg.userChatInfoList && msg.userChatInfoList.length>0) {
+                let sessionList = []
+                msg.userChatInfoList.forEach((item)=>{
+                    sessionList.push({
+                        unReadCount:item.unreadMessageCount,
+                        portrait: item.type==1?groupObj[item.target]?groupObj[item.target].portrait:'':userObj[item.target]?userObj[item.target].portrait:'', // 接收人头像
+                        serverTimestamp: item.updateTime, // 发送时间
+                        targetName:item.type==1?groupObj[item.target]?groupObj[item.target].name:'':userObj[item.target]?userObj[item.target].name:'', //接收人名称
+                        targetId:item.target,
+                        type: item.type, //消息类别 0、单聊 1、群聊
+                        // 发送消息的内容属性
+                        content: {
+                            type:'', //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                            content:item.lastMessage
+                        },
+                    })
+                })
+                store.commit('setSessionList', sessionList);
+            }
         }
     },
     // 群处理 
