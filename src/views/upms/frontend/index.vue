@@ -127,7 +127,6 @@
     import ganttDetails from './ganttDetails'
     import ganttOpertion from './ganttOpertion'
     import workFlow from './compent/work'
-    import Bus from "@/utils/eventBus.js";
     export default {
         mixins: [tool, ruleTool],
         components: {Tinymce,UploadPanel,eleCalendar,treeTable,ganttDetails,ganttOpertion,workFlow},
@@ -170,9 +169,6 @@
                 weekReportList:weekReportList,
                 valueYear:new Date().getFullYear().toString(),
                 dialogFormVisible:false,
-                showNodeName:true,
-                oneWorkData:{},
-                workDataType:null,
                 workFlowData:{
                     "name": "发起人",
                     "nodeId": "sid-startevent",
@@ -489,11 +485,6 @@
         },
         mounted() {
             this.open();
-            Bus.$on("work-data-handle",data=>{
-                this.oneWorkData = data.workData
-                this.workDataType = 1
-                this.workDataHandle(this.workData)
-            });
         },
         methods: {
             getActiveName() {

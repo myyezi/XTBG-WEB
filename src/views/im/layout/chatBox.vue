@@ -163,9 +163,33 @@ export default {
       }
     },
     showChat(chat) {
-      this.currentChat = chat;
-      this.currentChat.unReadCount = 0
-      this.$store.commit('setReadCount', this.currentChat);
+      if(chat.type ==1) {
+        let groupList = ChatListUtils.getGroupList(this.user.userId);
+        let flag = false
+        groupList.forEach((item)=>{
+            if(item.targetId == chat.targetId) {
+                flag = true
+            }
+        })
+        if(flag) {
+            this.currentChat = chat;
+            this.currentChat.unReadCount = 0
+            this.$store.commit('setReadCount', this.currentChat);
+        } else {
+            this.$confirm('你已不存在该群', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$store.commit('delSession', chat);
+            }).catch(() => {
+            });
+        }
+      } else {
+        this.currentChat = chat;
+        this.currentChat.unReadCount = 0
+        this.$store.commit('setReadCount', this.currentChat);
+      }
     },
     // 删除当前会话
     deleteCurrent() {
@@ -202,14 +226,14 @@ export default {
                   if(item.targetId == self.currentChat.targetId) {
                       flag = true
                       self.currentChat = item
+                      self.showChat(self.currentChat)
                       return
                   }
               })
           }
           if(!flag) {
               self.currentChat = self.sessionList[0]
-              self.currentChat.unReadCount = 0
-              this.$store.commit('setReadCount', self.currentChat);
+              self.showChat(self.currentChat)
           }
       } else {
         self.currentChat = {}
@@ -341,7 +365,9 @@ export default {
           width: 75%;
           font-size: 1.1rem;
           color: #333;
-          height:1.1rem;
+          height:2rem;
+          line-height: 2rem;
+          display: flex;
         }
       }
 

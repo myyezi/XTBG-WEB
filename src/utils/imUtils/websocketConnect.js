@@ -53,14 +53,24 @@ const websocketConnect = {
             console.log("subscribeTopic:", IMTopic[v]);
             client.subscribe(IMTopic[v], { qos: 1 });
         });
-        let obj2 = JSON.stringify({
+        let obj1 = JSON.stringify({
             requestList: [{
                 target:objData.username,
                 type:2,
                 updateTime:0
             }]
         });
-        client.pubMessage(obj2,"GGI")
+        client.pubMessage(obj1,"GGI")
+
+        let obj2 = JSON.stringify({
+            requestList: []
+        });
+        client.pubMessage(obj2,"UUI")
+
+        let obj3 = JSON.stringify({
+            userId: objData.username,
+        });
+        client.pubMessage(obj3,"UGC")
         console.log("connect success.");
     },
     //连接丢失
@@ -147,17 +157,9 @@ const websocketConnect = {
         }  else if (message.destinationName == "UUI") {
             console.log(msg)
             store.commit('setUserFriendObj', msg.resultList);
-            let obj1 = JSON.stringify({
-                userId: objData.username,
-            });
-            client.pubMessage(obj1,"UGC")
         }  else if (message.destinationName == "GGI") {
             console.log(msg)
             store.commit('setChatGroupList', msg.infoList);
-            let obj3 = JSON.stringify({
-                requestList: []
-            });
-            client.pubMessage(obj3,"UUI")
         } else if (message.destinationName == "GGM") {
             console.log(msg);
             store.commit('setCurrentGroupUser', msg);
@@ -192,23 +194,23 @@ const websocketConnect = {
                 }) 
             }
         } else if (message.destinationName == "UGC") { 
-            let userObj = ChatListUtils.getUserFriendObj(objData.username);
-            let groupList = ChatListUtils.getGroupList(objData.username);
-            let groupObj = {}
-            groupList.forEach((item)=>{
-                groupObj[item.targetId] = {
-                    name:item.name,
-                    portrait:item.portrait,
-                }
-            })
+            // let userObj = ChatListUtils.getUserFriendObj(objData.username);
+            // let groupList = ChatListUtils.getGroupList(objData.username);
+            // let groupObj = {}
+            // groupList.forEach((item)=>{
+            //     groupObj[item.targetId] = {
+            //         name:item.name,
+            //         portrait:item.portrait,
+            //     }
+            // })
             if(msg.userChatInfoList && msg.userChatInfoList.length>0) {
                 let sessionList = []
                 msg.userChatInfoList.forEach((item)=>{
                     sessionList.push({
                         unReadCount:item.unreadMessageCount,
-                        portrait: item.type==1?groupObj[item.target]?groupObj[item.target].portrait:'':userObj[item.target]?userObj[item.target].portrait:'', // 接收人头像
+                        portrait: item.portrait?item.portrait:'', // 接收人头像
                         serverTimestamp: item.updateTime, // 发送时间
-                        targetName:item.type==1?groupObj[item.target]?groupObj[item.target].name:'':userObj[item.target]?userObj[item.target].name:'', //接收人名称
+                        targetName:item.name?item.name:'', //接收人名称
                         targetId:item.target,
                         type: item.type, //消息类别 0、单聊 1、群聊
                         // 发送消息的内容属性
