@@ -60,7 +60,7 @@ export default {
           if(row.outerHTML.indexOf('申请完成')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'approvefinish'});
           }
-          if(row.outerHTML.indexOf('完成')!=-1) {
+          if(row.outerHTML.indexOf('完 成')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'finish'});
           }
       });

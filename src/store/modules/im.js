@@ -157,9 +157,11 @@ const im = {
           if(message.fromUserId == state.user.id) {
             chatList = getChatList[message.conversation.targetId];
             if(message.serverTimestamp) {
+              let flag = false
               if(chatList&&chatList.length>0) {
                   chatList.forEach((item)=>{
-                    if(item.messageTag == message.messageTag) {
+                    if(message.messageTag&&item.messageTag == message.messageTag) {
+                      flag = true
                       item.serverTimestamp = message.serverTimestamp
                       item.messageId = message.messageId
                       if(item.netStausType) {
@@ -167,7 +169,14 @@ const im = {
                       }
                     }
                 })
+
+              } else {
+                chatList = []
               }
+              if(!flag) {
+                chatList.push(message);
+                getChatList[message.conversation.targetId] = chatList
+              } 
             } else {
               if(getChatList[message.conversation.targetId]) {
                 let flag = false 
@@ -224,7 +233,6 @@ const im = {
         },
         // 保存会话记录到内存
         addSession: function(state, session) {
-          console.log(session)
           if(session.draft&&session.targetId) {
             let getSessionList = ChatListUtils.getSessionList(state.user.id);
             if(getSessionList&&getSessionList.length>0) {
@@ -327,6 +335,8 @@ const im = {
         },
         setSessionList: function(state, sessionList) {
           state.sessionList = sessionList;
+          // 放入缓存
+          ChatListUtils.setSessionList(state.user.id, state.sessionList);
         },
         chatGroupListMap: function(state, chatGroupListMap) {
           state.chatGroupListMap = chatGroupListMap;

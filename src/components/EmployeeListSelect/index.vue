@@ -7,12 +7,8 @@
         <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
       </div>
       <div class="table-box">
-        <el-table :data="list" style="width: 100%" @row-dblclick="rowDblclickHandle">
-          <el-table-column fixed label="操作" width="100">
-            <template fixed slot-scope="{ row, column, $index }">
-              <el-button @click="selectedRow(row)" type="text" size="small">选择</el-button>
-            </template>
-            </el-table-column>
+        <el-table :data="list" style="width: 100%" ref="multipleTable">
+            <el-table-column fixed label="操作" type="selection" width="55"></el-table-column>
             <el-table-column prop="name" fixed sortable show-overflow-tooltip min-width="120" label="姓名"></el-table-column>
             <el-table-column prop="account" sortable show-overflow-tooltip min-width="150" label="手机号"> </el-table-column>
             <el-table-column prop="organizations" sortable show-overflow-tooltip min-width="150" label="组织"></el-table-column>
@@ -20,6 +16,10 @@
             <el-table-column prop="positions" sortable show-overflow-tooltip min-width="150" label="职位"></el-table-column>
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount"></el-pagination>
+        <div style="margin-top: 20px">
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button @click="ok">确定</el-button>
+        </div>
       </div>
     </div>
   </el-dialog>
@@ -40,8 +40,9 @@ export default {
       isShowMore: false,
       listUrl: "/upms/employee",
       showSearch: false,
-      selectedData: {},
+      selectedData: [],
       dialogVisible: false,
+      multipleSelection:[],
     }
   },
   watch: {
@@ -56,17 +57,13 @@ export default {
     //this.getList();
   },
   methods: {
-    selectedRow(row) {
-      this.selectedData = row;
-      this.emit();
-    },
     handleClose() {
-      this.selectedData = {};
+      this.selectedData = [];
       this.emit();
     },
-    rowDblclickHandle(row) {
-      this.selectedData = row;
-      this.emit();
+    ok(){
+        this.selectedData = this.$refs.multipleTable.selection;
+        this.emit();
     },
     emit() {
       this.$emit("selectedOnchange", this.selectedData);
