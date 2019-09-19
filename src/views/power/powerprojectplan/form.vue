@@ -74,7 +74,7 @@
       </div>
     </el-form>
 
-    <el-dialog title="项目计划信息" :visible.sync="dialogVisible" :class="{'dialog_animation_in':dialogVisible,'dialog_animation_out':!dialogVisible}" width="35%">
+    <el-dialog title="项目计划信息" :visible.sync="dialogVisible" :before-close="beforeClose" width="35%">
           <el-form :model="powerprojectplanform" :rules="rules" ref="ruleForm" label-width="120px">
               <el-form-item label="工作内容" prop="name">
                   <el-input v-show="!showContent" v-model.trim="powerprojectplanform.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
@@ -82,14 +82,22 @@
                       <el-option v-for="e in contentList"  :key="e.value" :label="e.text" :value="e.text" ></el-option >
                   </el-select>
               </el-form-item>
+              <el-form-item label="所属阶段" prop="stage">
+                  <el-select v-model="powerprojectplanform.stage" placeholder="请选择所属阶段" clearable>
+                      <el-option v-for="e in stageList"  :key="e.value" :label="e.text" :value="e.value" ></el-option>
+                  </el-select>
+              </el-form-item>
               <el-form-item label="工期" prop="period">
-                  <el-input v-model="powerprojectplanform.period"></el-input>
+                  <!--<el-input v-model="powerprojectplanform.period" @change="setEndDate"></el-input>-->
+                  <el-input-number v-model="powerprojectplanform.period" @change="setEndDate()" :min="1" :step="0.5" label="工期"></el-input-number>
               </el-form-item>
               <el-form-item label="开始时间" prop="planStartDate">
                   <el-date-picker
                       v-model="powerprojectplanform.planStartDate"
                       clearable
                       type="date"
+                      :picker-options="expireTimeOption"
+                      @change="setEndDate"
                       value-format="yyyy-MM-dd"
                       placeholder="选择开始时间">
                   </el-date-picker>
@@ -97,16 +105,11 @@
               <el-form-item label="结束时间" prop="planEndDate">
                   <el-date-picker
                       v-model="powerprojectplanform.planEndDate"
-                      clearable
-                      value-format="yyyy-MM-dd"
+                      disabled
                       type="date"
+                      value-format="yyyy-MM-dd"
                       placeholder="选择结束时间">
                   </el-date-picker>
-              </el-form-item>
-              <el-form-item label="所属阶段" prop="stage">
-                  <el-select v-model="powerprojectplanform.stage" placeholder="请选择所属阶段" clearable>
-                      <el-option v-for="e in stageList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
-                  </el-select>
               </el-form-item>
               <el-form-item label="负责人" prop="principal">
                   <el-input v-model="powerprojectplanform.principalText" placeholder="请选择负责人" readonly clearable>
@@ -117,16 +120,16 @@
                   <el-input v-model.trim="powerprojectplanform.profession" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
               </el-form-item>
               <el-form-item label="是否审批" prop="isApproval">
-                  <el-radio v-model="powerprojectplanform.isApproval" :label="1">是</el-radio>
-                  <el-radio v-model="powerprojectplanform.isApproval" :label="0">否</el-radio>
+                  <el-radio v-model="powerprojectplanform.isApproval" :label="1" @change="changeApproval">是</el-radio>
+                  <el-radio v-model="powerprojectplanform.isApproval" :label="0" @change="changeApproval">否</el-radio>
               </el-form-item>
               <el-form-item label="是否上传文件" prop="isUpload">
-                  <el-radio v-model="powerprojectplanform.isUpload" :label="1">是</el-radio>
-                  <el-radio v-model="powerprojectplanform.isUpload" :label="0">否</el-radio>
+                  <el-radio v-model="powerprojectplanform.isUpload" :label="1" @change="changeUpload">是</el-radio>
+                  <el-radio v-model="powerprojectplanform.isUpload" :label="0" @change="changeUpload">否</el-radio>
               </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogVisible = false;">取 消</el-button>
+              <el-button @click="cancel">取 消</el-button>
               <el-button type="primary" @click="ok">确 定</el-button>
           </div>
     </el-dialog>
@@ -153,6 +156,11 @@ export default {
   data() {
     let that = this;
     return {
+        expireTimeOption:{
+            disabledDate(time){
+                return time.getTime() <= Date.now();
+            }
+        },
         powerprojecttaskForm : {},
         powerprojectplanform : {
             isApproval : 1,
@@ -199,10 +207,10 @@ export default {
                 { validator: formRule.money, message: '工期格式不正确', trigger: 'blur' }
             ],
             planStartDate: [
-                { required: true, message: '请选择开始时间', trigger: ['blur'] }
+                { required: true, message: '请选择开始时间', trigger: ['change','blur'] }
             ],
             planEndDate: [
-                { required: true, message: '请选择结束时间', trigger: ['blur'] }
+                { required: true, message: '请选择结束时间', trigger: ['change','blur'] }
             ],
             stage: [
                 { required: true, message: '请选择所属阶段', trigger: ['change','blur'] }
@@ -226,9 +234,16 @@ export default {
                 align: "center",
                 width:'150',
                 template:function(obj){
-                    return "<a style='display:inline-block;width:50px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>"+
-                        "<a style='display:inline-block;width:50px;height:100%;'><img src='"+editImg+"' title='编辑' style='vertical-align: middle;'/></a>"+
-                        "<a style='display:inline-block;width:50px;height:100%;'><img src='"+deletedImg+"' title='删除' style='vertical-align: middle;'/></a>"
+                    let str = "";
+                    let addStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>";
+                    let updateStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+editImg+"' title='编辑' style='vertical-align: middle;'/></a>"
+                    let delStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+deletedImg+"' title='删除' style='vertical-align: middle;'/></a>"
+                    if (obj.currentStatus != 4){
+                        str = addStr + updateStr + delStr;
+                    }else{
+                        str = addStr
+                    }
+                    return str;
                 }
             },
             {
@@ -306,6 +321,38 @@ export default {
                 width:'75',
                 template : function(obj){
                     return obj.isUpload == 1 ? '是':'否'
+                }
+            },
+            {
+                name:'currentStatusText',
+                label:'当前状态',
+                align: "center",
+                width:'75',
+                template : function(obj){
+                    let str = "";
+                    switch(obj.currentStatus) {
+                        case 1:
+                            str = "未开始";
+                            break;
+                        case 2:
+                            str = "进行中";
+                            break;
+                        case 3:
+                            str = "延期";
+                            break;
+                        case 4:
+                            str = "待审核";
+                            break;
+                        case 5:
+                            str = "不合格";
+                            break;
+                        case 6:
+                            str = "已完成";
+                            break;
+                        default:
+                            str = "";
+                    }
+                    return str;
                 }
             },
         ]
@@ -442,6 +489,7 @@ export default {
                 if(rs.status === 0) {
                     if(rs.data) {
                         if (rs.data.length > 0){
+                            this.projectId = rs.data[0].projectId;
                             rs.data.forEach((item)=>{
                                 item.start_date = item.planStartDate;
                                 item.end_date = item.planEndDate;
@@ -507,11 +555,42 @@ export default {
             this.tasks = obj;
         }
     },
+    beforeClose(){
+        this.clearValidate('ruleForm');
+        this.dialogVisible = false;
+    },
 
       // 清楚弹窗内容以及警告信息
     clearValidate(formName) {
+        this.powerprojectplanform = {};
         if(this.$refs[formName]) {
             this.$refs[formName].clearValidate();
+        }
+    },
+
+    setEndDate(){
+        if (this.powerprojectplanform.planStartDate && this.powerprojectplanform.period){
+            let sDate = new Date(this.powerprojectplanform.planStartDate).getTime();
+            sDate = sDate + 1000*60*60*24*this.powerprojectplanform.period; //加减相差毫秒数
+            let eDate = new Date(sDate);
+            let preYear = eDate.getFullYear();
+            let preMonth = eDate.getMonth() + 1;
+            let preDay = eDate.getDate() - 1;
+            preMonth = (preMonth < 10) ? ("0" + preMonth) :preMonth;
+            preDay = (preDay < 10) ? ("0" + preDay) :preDay;
+            let ed = preYear + "-" +  preMonth + "-" + preDay;
+            this.$set(this.powerprojectplanform, 'planEndDate', ed);
+        }
+    },
+
+    changeApproval(){
+        if (this.powerprojectplanform.isApproval == 0){
+          this.powerprojectplanform.isUpload = 0;
+        }
+    },
+    changeUpload(){
+        if (this.powerprojectplanform.isUpload == 1){
+          this.powerprojectplanform.isApproval = 1;
         }
     },
 
@@ -526,26 +605,28 @@ export default {
                 if(this.operationType === 'add') {
                     this.isEdit = true;
                     newChild.parent = 0;
+                    newChild.parentId = 0;
                     newChild.level = 1;
                     this.contentList.forEach((item) => {
                         if (item.text == this.powerprojectplanform.name){
                             newChild.nameType = item.value;
                         }
                     });
+                    newChild.sortNum = this.getSortNum(newChild.parentId);
                 } else if (this.operationType === 'inserted'){
                     this.isEdit = true;
                     newChild.parent = this.formData.id;
-                    newChild.level = this.formData.level + 1;
-                    newChild.nameType = this.formData.nameType;
-                } else {
-                    // 获取工作内容类型
-                    this.contentList.forEach((item) => {
-                        if (item.text == this.powerprojectplanform.name){
-                            newChild.nameType = item.value;
+                    newChild.parentId = this.formData.id;
+                    this.dataArr.forEach((item) => {
+                        if (item.id == this.formData.id){
+                            newChild.nameType = item.nameType;
+                            newChild.level = item.level + 1;
                         }
                     });
+                    newChild.sortNum = this.getSortNum(newChild.parentId);
+                } else {
                     if (this.tasks.data && this.tasks.data.length > 0){
-                        this.dataArr.forEach((item,index) => {
+                        this.dataArr.forEach((item) => {
                             if(item.id === this.powerprojectplanform.id) {
                                 // 编辑操作，先删除，判断对象的值是否发生变化
                                 if (this.tempplanform.name != this.powerprojectplanform.name ||
@@ -557,22 +638,56 @@ export default {
                                     this.tempplanform.profession != this.powerprojectplanform.profession ||
                                     this.tempplanform.isApproval != this.powerprojectplanform.isApproval ||
                                     this.tempplanform.isUpload != this.powerprojectplanform.isUpload){
+                                    item.name = this.powerprojectplanform.name;
+                                    item.period = this.powerprojectplanform.period;
+                                    item.planStartDate = this.powerprojectplanform.planStartDate;
+                                    item.planEndDate = this.powerprojectplanform.planEndDate;
+                                    item.stage = this.powerprojectplanform.stage;
+                                    item.principal = this.powerprojectplanform.principal;
+                                    item.profession = this.powerprojectplanform.profession;
+                                    item.isApproval = this.powerprojectplanform.isApproval;
+                                    item.isUpload = this.powerprojectplanform.isUpload;
+
                                     this.isEdit = true;
-                                    this.dataArr.splice(index, 1);
+                                    // this.dataArr.splice(index, 1);
                                 }
                             }
                         });
                     }
                 }
-                //newChild.sortNum = this.getSortNum(newChild.parentId);
                 this.getNodeProcessing(newChild);
             } else {
                 return false;
             }
         });
     },
+    cancel(){
+        this.dialogVisible = false;
+        this.clearValidate('ruleForm');
+    },
 
-      // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
+    //获取序号
+    getSortNum(parentId){
+        if (this.dataArr.length == 0){
+            return 1;
+        }
+        let arr = [];
+        this.dataArr.forEach((item) => {
+          if (item.parentId == parentId){
+              arr.push(item.sortNum ? item.sortNum : 0);
+          }
+        });
+        if (arr.length == 0){
+          return 1;
+        }
+        arr.sort(function (a, b) {
+          return a-b;
+        });
+        let maxSortNum = arr[arr.length - 1];
+        return maxSortNum + 1;
+    },
+
+    // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
     getNodeProcessing(data,node) {
         if(this.operationType === 'add' || this.operationType === 'inserted') {
             data.id = new Date().getTime()
@@ -616,7 +731,7 @@ export default {
                 type: 'success'
             });
             this.dialogVisible = false;
-            this.dataArr.push(data);
+            //this.dataArr.push(data);
             let obj = {};
             this.isLoading = true;
             obj.data = this.dataArr;
@@ -651,7 +766,15 @@ export default {
                 }
             });
         }else{
-            this.$message.success("操作成功");
+            // 未做任何修改，只修改暂存状态为“进行中”
+            ajax.post('power/powerproject/operate',{projectId : this.projectId, projectStatus : 2}).then(rs => {
+                if (rs.status == 0) {
+                    this.$message.success(rs.msg);
+                    this._getTasksModel();
+                } else {
+                    this.$message.error(rs.msg);
+                }
+            });
         }
 
     },

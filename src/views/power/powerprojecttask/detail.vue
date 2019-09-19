@@ -380,8 +380,13 @@ export default {
               this.attachmentTaskList =rs.data;
           });
       },
-      download(row){
-          window.open(process.env.URL_API+row.path);
+
+      download(data){
+          //下载
+              let fileName = data.name;
+              let filePath = data.path;
+              let param = "fileName=" + fileName + "&" + "filePath=" +filePath;
+              location.href = encodeURI(this.exportUrl("file/download/downloadFile?" + param));
       }
   },
 

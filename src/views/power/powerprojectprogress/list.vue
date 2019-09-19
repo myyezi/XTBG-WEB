@@ -73,7 +73,7 @@
       <el-table :data="list" style="width: 100%">
         <el-table-column fixed label="操作" width="150">
           <template fixed slot-scope="{ row, column, $index }">
-            <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="operate(row.id, 2)" type="text" size="small">开启</el-button>
+            <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="operate(row.id)" type="text" size="small">开启</el-button>
             <el-button v-show="showProgressBtn" v-if="row.projectStatus==2 && row.isExtension==0" @click="edit(row.taskId)" type="text" size="small">执行</el-button>
             <el-button v-show="showStopBtn"  v-if="row.projectStatus==2 && row.isExtension==0" @click="stop(row)" type="text" size="small">申请延期</el-button>
           </template>
@@ -84,8 +84,10 @@
         <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
         <el-table-column prop="coDepartmentText" sortable show-overflow-tooltip min-width="100" label="协办部门"></el-table-column>
         <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="100" label="项目经理"></el-table-column>
+        <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="100" label="开始时间"></el-table-column>
+        <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="100" label="结束时间"></el-table-column>
         <el-table-column prop="projectStatusText" sortable show-overflow-tooltip min-width="100" label="项目状态"></el-table-column>
-          <el-table-column prop="approvalStatusText" sortable show-overflow-tooltip min-width="100" label="延期审批状态"></el-table-column>
+        <el-table-column prop="approvalStatusText" sortable show-overflow-tooltip min-width="100" label="延期审批状态"></el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
@@ -177,17 +179,16 @@ export default {
           this.$refs['ruleForm'].validate((valid) => {
               if (valid) {
                   data.reason =this.extensionForm.reason;
-                  data.extDate =this.extensionForm.extDate
-                  data.projectId =  this.saveForm.id
-                  data.approver= this.saveForm.manager
+                  data.extDate =this.extensionForm.extDate;
+                  data.projectId =  this.saveForm.id;
+                  data.approver= this.saveForm.manager;
                   ajax.post('power/powerprojectextension', data).then(rs => {
                       if (rs.status == 0) {
-                          this.$message
-                              .success(rs.msg);
-                          this.close();
+                          this.dialogFormVisible = false;
+                          this.$message.success(rs.msg);
+                          this.getList();
                       } else {
-                          this.$message
-                              .error(rs.msg);
+                          this.$message.error(rs.msg);
                       }
                   });
               } else {
@@ -195,15 +196,15 @@ export default {
               }
           });
       },
-      operate(projectId, projectStatus){
+      // 开启项目
+      operate(projectId){
           let that = this;
-          let message = projectStatus == 2 ? "确定开启该项目?" : "确定暂停该项目?"
-          this.$confirm(message ,'提示', {
+          this.$confirm("确定开启该项目?" ,'提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning',
           }).then(function() {
-              ajax.post('power/powerproject/operate',{projectId : projectId, projectStatus : projectStatus}).then(rs => {
+              ajax.post('power/powerproject/operate',{projectId : projectId, projectStatus : 2}).then(rs => {
                   if (rs.status == 0) {
                       that.getList();
                       that.$message.success(rs.msg);

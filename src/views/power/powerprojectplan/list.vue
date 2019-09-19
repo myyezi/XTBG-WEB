@@ -93,7 +93,13 @@
               <el-button v-if="row.projectStatus != 1" v-show="showRecordBtn" @click="record(row.id)" type="text" size="small">记录</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
+        <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号">
+            <template slot-scope="scope">
+                <el-button type="text" size="small" @click="toProjectDetail(scope.row.taskId)">
+                    {{scope.row.code}}
+                </el-button>
+            </template>
+        </el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
         <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
@@ -212,6 +218,10 @@ export default {
       },
       toChangeDetail(id){
           let url = "/power/powerprojectplan/changedetail?id="+id;
+          this.toPage(url)
+      },
+      toProjectDetail(taskId){
+          let url = "/power/powerprojecttask/detail/"+taskId;
           this.toPage(url)
       }
 
