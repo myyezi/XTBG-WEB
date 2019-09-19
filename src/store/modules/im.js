@@ -274,7 +274,7 @@ const im = {
                           sessionObj.targetName = item.name
                       }
                   })
-                  sessionObj.content.content =  userObj[session.fromUserId].name + ':  ' + sessionObj.content.content
+                  sessionObj.content.content =  userObj[session.fromUserId].name + ':' + sessionObj.content.content
                 } else {
                   sessionObj.targetId = session.fromUserId
                   sessionObj.portrait = userObj[session.fromUserId].portrait

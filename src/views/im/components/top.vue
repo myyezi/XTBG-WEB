@@ -37,7 +37,7 @@
 <style lang="scss">
     @import '../../../styles/imCss/theme';
     .im-top {
-        height: 50px;
+        height: 3rem;
         padding: 0.5rem;
         position: absolute;
         z-index: 2;

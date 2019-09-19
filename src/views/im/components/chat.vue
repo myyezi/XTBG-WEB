@@ -529,8 +529,8 @@
         flex: 1;
         // display: flex;
         // flex-direction: column;
-        margin-top: 4rem;
-        height: calc(100% - 4rem);
+        margin-top: 3rem;
+        height: calc(100% - 3rem);
     }
 
     .im-chat-top {
@@ -539,7 +539,7 @@
         padding: 0 0 0 10px;
         font-size: 1.6rem;
         font-weight: bold;
-        height: 40px;
+        height: 30px;
         .menu {
             color: $color-default;
             display: inline-block;
@@ -583,7 +583,7 @@
         flex: 1;
         display: flex;
         flex-direction: row;
-        height: calc(100% - 40px);
+        height: calc(100% - 30px);
 
         .im-chat-main-left {
             flex: 4;
