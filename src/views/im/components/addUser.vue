@@ -97,8 +97,8 @@
             })
             let notifyContent = {
                 type:1,
-                content:this.user.name+'拉取了' + userNameString + '进群',
-                pushContent:this.user.name+'拉取了'+ userNameString + '进群',
+                content:this.user.name+'拉取了' + userNameString.substring(0,userNameString.length-1)  + '进群',
+                pushContent:this.user.name+'拉取了'+ userNameString.substring(0,userNameString.length-1) + '进群',
             }
             let obj ={
                 groupId:this.chat.targetId,

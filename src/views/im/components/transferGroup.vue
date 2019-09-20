@@ -90,6 +90,14 @@
                     }
                     console.log(objArr)
                     this.$store.commit('sendMessage', objArr);
+                    this.groupUserList.forEach((item)=>{
+                        if(item.type=2) {
+                            item.type=0
+                        }
+                        if(this.checkList[0] == item.memberId) {
+                            item.type=2
+                        }
+                    })
                     this.updateSession()
                 }).catch(() => {
                 });

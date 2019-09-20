@@ -148,9 +148,9 @@ export default {
     .user_tree {
         background: #f8f8f8;
         padding-top: 20px;
-        margin: 0 auto;
+        margin: 0 0 0 70px;
         height: 520px;
-        width: 300px;
+        min-width: 300px;
         overflow: auto;
         .custom-tree-node{
             img {
@@ -165,6 +165,9 @@ export default {
               line-height: 26px;
             }
         }
+    }
+    .el-form-item__content {
+        line-height:40px;
     }
 }
 </style>

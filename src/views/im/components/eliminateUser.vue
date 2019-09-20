@@ -85,8 +85,8 @@
                     let groupId = ''
                     let notifyContent = {
                         type:1,
-                        content:this.user.name+'将' + userNameString +'移除了群聊',
-                        pushContent:this.user.name+'将' + userNameString +'移除了群聊',
+                        content:this.user.name+'将' + userNameString.substring(0,userNameString.length-1) +'移除了群聊',
+                        pushContent:this.user.name+'将' + userNameString.substring(0,userNameString.length-1) +'移除了群聊',
                     }
                     let obj ={
                         groupId:this.chat.targetId,
