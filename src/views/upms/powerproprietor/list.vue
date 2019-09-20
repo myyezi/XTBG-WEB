@@ -80,7 +80,7 @@
 <script>
     import ajax from '@/utils/request'
     import {tool} from '@/utils/common'
-    import CitySelectPanel from '@/components/CitySelect/index'
+    import CitySelectPanel from '@/components/CitySelect/index2'
 
     export default {
         name: 'PowerProprietor',
@@ -103,7 +103,16 @@
         methods: {
             getListBefore(params) {
                 if (this.searchParam.districtId) {
-                    params.districtId = this.searchParam.districtId[2];
+                    console.log(this.searchParam.districtId)
+                    if(this.searchParam.districtId[2]) {
+                        params.districtId = this.searchParam.districtId[2];
+                    } else if(this.searchParam.districtId[1]) {
+                        params.cityId = this.searchParam.districtId[1]
+                        params.districtId = ''
+                    } else {
+                        params.provinceId = this.searchParam.districtId[0]
+                        params.districtId = ''
+                    }
                 } else {
                     params.districtId = '';
                 }

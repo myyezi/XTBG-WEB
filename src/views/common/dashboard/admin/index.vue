@@ -173,6 +173,7 @@
                 projectName:'进行中',
                 projectNameList: [],
                 projectList:[],
+                // listUrl: "power/powerprojecttask?projectStatus=2",
                 listUrl: "power/powerproject?projectStatus=2",
                 projectNum0:0,
                 projectNum1:0,
