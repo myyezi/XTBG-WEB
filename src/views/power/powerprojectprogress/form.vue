@@ -31,7 +31,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称"></el-table-column>
-                    <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小"></el-table-column>
+                    <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小(KB)"></el-table-column>
                     <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="上传人"></el-table-column>
                     <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="上传时间"></el-table-column>
                 </el-table>
@@ -111,7 +111,7 @@
                             let operateStr = "";
                             let uploadStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>";
                             let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>";
-                            if (obj.isUpload == 1 && obj.currentStatus != 4 && obj.currentStatus != 6){
+                            if (obj.isUpload == 1 && obj.currentStatus != 4){
                                 operateStr += uploadStr;
                             }
                             if (obj.fileNum > 0){
@@ -131,7 +131,7 @@
                             let finishStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;' title='完 成'>完成</a>";
                             let hasApprovalStr = "<a style='display:inline-block;width:50px;height:100%;color: #999999;'>已申请</a>";
                             if (obj.currentStatus!=6 ){
-                                if (obj.isUpload == 1 && obj.isApproval == 1 && obj.fileNum > 0 && obj.currentStatus!=4){
+                                if (obj.isApproval == 1 && obj.fileNum > 0 && obj.currentStatus!=4){
                                     operateStr += approvelStr;
                                 }
                                 if (obj.currentStatus == 4){
@@ -263,11 +263,9 @@
                         }
                     });
                 }else if (data.operationType === 'approvefinish'){
-                    console.info("11111111111");
                     this.finishFormVisible = true;
                     this.id = data.id;
                 }else if(data.operationType === 'finish') {
-                    console.info("22222222222222222");
                     let that = this;
                     this.$confirm("确定完成该计划节点?" ,'提示', {
                         confirmButtonText: '确定',
@@ -413,7 +411,8 @@
                     }else{
                         ajax.post('power/powerprojectplan/approvalFinish', {
                             planId : this.id,
-                            approvalEmployeeId : this.approvalFinishForm.id
+                            approvalEmployeeId : this.approvalFinishForm.id,
+                            taskId : this.taskId
                         }).then(rs => {
                             if (rs.status == 0) {
                                 this.$message.success(rs.msg);
