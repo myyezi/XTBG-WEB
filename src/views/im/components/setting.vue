@@ -70,7 +70,7 @@
             <div slot="title">
                 <span > 转移群聊 </span>
             </div>
-            <transfer-group @close-add-user="closeAddUser" :groupUserList="groupUserLists" :chat="chats" v-if="showTransferUser"></transfer-group>
+            <transfer-group @close-add-user="closeAddUser" :groupUserList="groupUserList" :chat="chats" v-if="showTransferUser"></transfer-group>
         </el-dialog>
         <el-dialog :visible.sync="showEliminateUser" width="600px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_user">
             <div slot="title">

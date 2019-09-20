@@ -3,91 +3,75 @@
         <el-collapse v-model="openCollapse">
             <el-collapse-item title="外出管理" name="1">
                 <div class="flex-panel detail-box">
-                                      <div class="detail-item">
-                      <label class="control-label">主键</label>
-                      <div class="input-group">
-                        <span>{{id}}</span>
-                      </div>
+                    <div class="detail-item">
+                        <label class="control-label">地址</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.address}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">所属管理公司(组织表管理公司id)</label>
-                      <div class="input-group">
-                        <span>{{companyId}}</span>
-                      </div>
+                    <div class="detail-item">
+                        <label class="control-label">开始时间</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.startTime}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">地址</label>
-                      <div class="input-group">
-                        <span>{{address}}</span>
-                      </div>
+                    <div class="detail-item">
+                        <label class="control-label">结束时间</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.endTime}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">开始时间</label>
-                      <div class="input-group">
-                        <span>{{startTime}}</span>
-                      </div>
+                    <div class="detail-item">
+                        <label class="control-label">外出时长（天）</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.outTime}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">结束时间</label>
-                      <div class="input-group">
-                        <span>{{endTime}}</span>
-                      </div>
+                    <div class="detail-item">
+                        <label class="control-label">出行方式</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.typeText}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">外出时长（天）</label>
-                      <div class="input-group">
-                        <span>{{outTime}}</span>
-                      </div>
+
+                    <div class="detail-item">
+                        <label class="control-label">状态</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.approvalStatusText}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">出行方式(1-公共交通 2-出租车 3-自驾  4-公司车辆)</label>
-                      <div class="input-group">
-                        <span>{{type}}</span>
-                      </div>
+
+                    <div class="detail-item">
+                        <label class="control-label">申请人</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.creater}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">事由</label>
-                      <div class="input-group">
-                        <span>{{reason}}</span>
-                      </div>
+                    <div class="detail-item">
+                        <label class="control-label">修改人</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.updater}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">状态(1-审批中，2-已通过  3-已驳回 4-已作废)</label>
-                      <div class="input-group">
-                        <span>{{approvalStatus}}</span>
-                      </div>
+                    <div class="detail-item">
+                        <label class="control-label">申请时间</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.createTime}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">数据状态(0-删除，1-正常)</label>
-                      <div class="input-group">
-                        <span>{{status}}</span>
-                      </div>
+                    <div class="detail-item">
+                        <label class="control-label">修改时间</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.updateTime}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">申请人</label>
-                      <div class="input-group">
-                        <span>{{creater}}</span>
-                      </div>
+                    <div class="detail-item big">
+                        <label class="control-label">事由</label>
+                        <div class="input-group">
+                            <span>{{admoutForm.reason}}</span>
+                        </div>
                     </div>
-                                      <div class="detail-item">
-                      <label class="control-label">修改人</label>
-                      <div class="input-group">
-                        <span>{{updater}}</span>
-                      </div>
-                    </div>
-                                      <div class="detail-item">
-                      <label class="control-label">申请时间</label>
-                      <div class="input-group">
-                        <span>{{createTime}}</span>
-                      </div>
-                    </div>
-                                      <div class="detail-item">
-                      <label class="control-label">修改时间</label>
-                      <div class="input-group">
-                        <span>{{updateTime}}</span>
-                      </div>
-                    </div>
-                                  </div>
+                </div>
             </el-collapse-item>
         </el-collapse>
     </div>
@@ -103,7 +87,7 @@
         mixins: [tool],
         data() {
             return {
-                newCarForm: {},
+                admoutForm: {},
                 openCollapse: ["1"],//默认打开的面板
             }
         },

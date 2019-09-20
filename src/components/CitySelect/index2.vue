@@ -3,6 +3,7 @@
         <el-cascader
             :options="options"
             v-model="cityId"
+            :props="{checkStrictly: true }"
             clearable
             @change="handleChange">
         </el-cascader>

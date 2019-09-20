@@ -4,10 +4,16 @@
             <el-collapse-item title="请假管理" name="1">
                 <div class="flex-panel detail-box">
                     <div class="detail-item">
-                      <label class="control-label">请假类型</label>
+                      <label class="control-label">申请人</label>
                       <div class="input-group">
-                        <span>{{admleaveForm.type}}</span>
+                        <span>{{admleaveForm.creater}}</span>
                       </div>
+                    </div>
+                    <div class="detail-item">
+                        <label class="control-label">请假类型</label>
+                        <div class="input-group">
+                            <span>{{admleaveForm.type}}</span>
+                        </div>
                     </div>
                     <div class="detail-item">
                       <label class="control-label">开始时间</label>
@@ -28,22 +34,28 @@
                       </div>
                     </div>
                     <div class="detail-item">
-                      <label class="control-label">事由</label>
-                      <div class="input-group">
-                        <span>{{admleaveForm.reason}}</span>
-                      </div>
-                    </div>
-                    <div class="detail-item">
-                      <label class="control-label">申请人</label>
-                      <div class="input-group">
-                        <span>{{admleaveForm.creater}}</span>
-                      </div>
+                        <label class="control-label">请假状态</label>
+                        <div class="input-group">
+                            <span>{{admleaveForm.creater}}</span>
+                        </div>
                     </div>
                     <div class="detail-item">
                       <label class="control-label">申请时间</label>
                       <div class="input-group">
                         <span>{{admleaveForm.createTime}}</span>
                       </div>
+                    </div>
+                    <!--<div class="detail-item">
+                        <label class="control-label">附件信息</label>
+                        <div class="input-group">
+                            <span>查看</span>
+                        </div>
+                    </div>-->
+                    <div class="detail-item big">
+                        <label class="control-label">请假事由</label>
+                        <div class="input-group">
+                            <span>{{admleaveForm.reason}}</span>
+                        </div>
                     </div>
                 </div>
             </el-collapse-item>

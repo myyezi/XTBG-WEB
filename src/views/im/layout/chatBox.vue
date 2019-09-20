@@ -179,7 +179,10 @@ export default {
             this.$confirm('你已不存在该群', '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
-              type: 'warning'
+              type: 'warning',
+              showClose:false,
+              showCancelButton:false,
+              closeOnClickModal:false
             }).then(() => {
               this.$store.commit('delSession', chat);
             }).catch(() => {
@@ -193,12 +196,33 @@ export default {
     },
     // 删除当前会话
     deleteCurrent() {
+      let objArr = {
+          obj:{
+            removeTargetList:[this.rightSeleteChat.targetId],
+          },
+          subTopic:'UDC'
+      }
+      console.log(objArr)
+      this.$store.commit('sendMessage', objArr);
       this.$store.commit('delSession', this.rightSeleteChat);
       this.visibleBox = false
       this.getSessionList()
     },
     // 删除所有会话
     deleteAll() {
+      let arr = []
+      if(this.sessionList&&this.sessionList.length>0) {
+        this.sessionList.forEach(items => {
+          arr.push(items.targetId)
+        });
+      }
+      let objArr = {
+          obj:{
+            removeTargetList:arr,
+          },
+          subTopic:'UDC'
+      }
+      this.$store.commit('sendMessage', objArr);
       this.$store.commit('delAllSession');
       this.visibleBox = false
       this.getSessionList()

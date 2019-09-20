@@ -8,6 +8,7 @@ const IMTopic = {
     NotifyMessageTopic:'MN',//接收通知
     RecallMessageTopic: "MR",//撤回消息
     GetAllUserTopic: "UUI",//获取所有用户信息
+    DelUserChatTopic: "UDC",//删除会话
     GetUserChatTopic: "UGC",//获取会话
     LoadRemoteMessagesTopic:"LRM",//获取初始化消息
     CreateGroupTopic: "GC",//创建群组
@@ -30,6 +31,7 @@ const websocketConnect = {
         client.onMessageDelivered = this.onMessageDelivered;
         client.pubMessage = this.pubMessage;
         client.groupOperation = this.groupOperation
+        client.messageOperation = this.messageOperation
         client.connect({
             userName: data.username,
             password: data.token,
@@ -60,17 +62,17 @@ const websocketConnect = {
                 updateTime:0
             }]
         });
-        client.pubMessage(obj1,"GGI")
+        client.pubMessage(obj1,IMTopic.GetGroupInfoTopic)
 
         let obj2 = JSON.stringify({
             requestList: []
         });
-        client.pubMessage(obj2,"UUI")
+        client.pubMessage(obj2,IMTopic.GetAllUserTopic)
 
         let obj3 = JSON.stringify({
             userId: objData.username,
         });
-        client.pubMessage(obj3,"UGC")
+        client.pubMessage(obj3,IMTopic.GetUserChatTopic)
         console.log("connect success.");
     },
     //连接丢失
@@ -83,27 +85,27 @@ const websocketConnect = {
     },
     // 接受消息
     onMessageArrived: function(message) {
+        if(message.destinationName==IMTopic.DelUserChatTopic) {
+            return
+        } 
         let msg = JSON.parse(message.payloadString);
         console.log(msg);
         console.log(message.destinationName)
-        if (message.destinationName == "MN") {
+        if (message.destinationName == IMTopic.NotifyMessageTopic) {
             ChatListUtils.setLastMessageHead(objData.username,ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):(parseInt(msg.head)-1)+'')
             ChatListUtils.setLastMessageType(objData.username,ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):msg.type)
-            console.log(msg)
             let obj = JSON.stringify({
                 id: ChatListUtils.getLastMessageHead(objData.username)?ChatListUtils.getLastMessageHead(objData.username):'0',
                 type: ChatListUtils.getLastMessageType(objData.username)?ChatListUtils.getLastMessageType(objData.username):0,
             });
             console.log(obj)
             client.pubMessage(obj,"MP")
-        } else if (message.destinationName == "MS") {
-            console.log(msg)
+        } else if (message.destinationName == IMTopic.SendMessageTopic) {
             store.commit('addMessage', msg);
             store.commit('addSession', msg);
         }else if (message.destinationName == "MP") {
             ChatListUtils.setLastMessageHead(objData.username,msg.head)
             ChatListUtils.setLastMessageType(objData.username,msg.type)
-            console.log(msg)
             if(msg.messages.length>0) {
                 msg.messages.forEach((item,index)=> {
                     if(item.conversation.type==1) {
@@ -115,12 +117,12 @@ const websocketConnect = {
                                     updateTime:0
                                 }]
                             });
-                            client.pubMessage(obj,"GGI")
+                            client.pubMessage(obj,IMTopic.GetGroupInfoTopic)
                         }
-                        if(item.conversation.topic=='GD' && objData.username == item.fromUserId) {
+                        if(item.conversation.topic==IMTopic.DismissGroupTopic && objData.username == item.fromUserId) {
 
                         } else {
-                            if(item.conversation.topic=='GQ' && objData.username == item.fromUserId) {
+                            if(item.conversation.topic==IMTopic.QuitGroupTopic && objData.username == item.fromUserId) {
                                 
                             } else {
                                 store.commit('addMessage', item);
@@ -145,7 +147,7 @@ const websocketConnect = {
                     // }
                 }) 
             }
-        } else if (message.destinationName == "GC") {
+        } else if (message.destinationName == IMTopic.CreateGroupTopic) {
             let obj = JSON.stringify({
                 requestList: [{
                     target:objData.username,
@@ -153,36 +155,37 @@ const websocketConnect = {
                     updateTime:0
                 }]
             });
-            client.pubMessage(obj,"GGI")
-        }  else if (message.destinationName == "UUI") {
-            console.log(msg)
+            client.pubMessage(obj,IMTopic.GetGroupInfoTopic)
+            let obj1 = JSON.stringify({
+                userId: objData.username,
+            });
+            client.pubMessage(obj1,IMTopic.GetUserChatTopic)
+        }  else if (message.destinationName == IMTopic.GetAllUserTopic) {
             store.commit('setUserFriendObj', msg.resultList);
-        }  else if (message.destinationName == "GGI") {
-            console.log(msg)
+        }  else if (message.destinationName == IMTopic.GetGroupInfoTopic) {
             store.commit('setChatGroupList', msg.infoList);
-        } else if (message.destinationName == "GGM") {
-            console.log(msg);
+        } else if (message.destinationName == IMTopic.GetGroupMemberTopic) {
             store.commit('setCurrentGroupUser', msg);
-        } else if (message.destinationName == "GAM") { 
-
-        } else if (message.destinationName == "GMI") {
-            console.log(msg)
-        } else if (message.destinationName == "GD") { 
+        } else if (message.destinationName == IMTopic.AddGroupMemberTopic) { 
+            client.messageOperation(msg,IMTopic.AddGroupMemberTopic)
+        } else if (message.destinationName == IMTopic.ModifyGroupInfoTopic) {
+            client.messageOperation(msg,IMTopic.ModifyGroupInfoTopic)
+        } else if (message.destinationName == IMTopic.DismissGroupTopic) { 
             client.groupOperation({groupId:msg})
-        } else if (message.destinationName == "GTG") {
-
-        } else if (message.destinationName == "GQ") { 
+        } else if (message.destinationName == IMTopic.TransferGroupTopic) {
+            client.messageOperation(msg,IMTopic.TransferGroupTopic)
+        } else if (message.destinationName == IMTopic.QuitGroupTopic) { 
             client.groupOperation(msg)
-        } else if (message.destinationName == "GKM") { 
-
-        } else if (message.destinationName == "LRM") { 
+        } else if (message.destinationName == IMTopic.KickoffGroupMemberTopic) { 
+            client.messageOperation(msg,IMTopic.KickoffGroupMemberTopic)
+        } else if (message.destinationName == IMTopic.LoadRemoteMessagesTopic) { 
             if(msg.messages.length>0) {
                 msg.messages.forEach((item,index)=> {
                     if(item.conversation.type==1) {
-                        if(item.conversation.topic=='GD' && objData.username == item.fromUserId) {
+                        if(item.conversation.topic==IMTopic.DismissGroupTopic && objData.username == item.fromUserId) {
 
                         } else {
-                            if(item.conversation.topic=='GQ' && objData.username == item.fromUserId) {
+                            if(item.conversation.topic==IMTopic.QuitGroupTopic && objData.username == item.fromUserId) {
                                 
                             } else {
                                 store.commit('addMessage', item);
@@ -193,16 +196,7 @@ const websocketConnect = {
                     }
                 }) 
             }
-        } else if (message.destinationName == "UGC") { 
-            // let userObj = ChatListUtils.getUserFriendObj(objData.username);
-            // let groupList = ChatListUtils.getGroupList(objData.username);
-            // let groupObj = {}
-            // groupList.forEach((item)=>{
-            //     groupObj[item.targetId] = {
-            //         name:item.name,
-            //         portrait:item.portrait,
-            //     }
-            // })
+        } else if (message.destinationName == IMTopic.GetUserChatTopic) { 
             if(msg.userChatInfoList && msg.userChatInfoList.length>0) {
                 let sessionList = []
                 msg.userChatInfoList.forEach((item)=>{
@@ -212,6 +206,7 @@ const websocketConnect = {
                         serverTimestamp: item.updateTime, // 发送时间
                         targetName:item.name?item.name:'', //接收人名称
                         targetId:item.target,
+                        owner:item.owner,
                         type: item.type, //消息类别 0、单聊 1、群聊
                         // 发送消息的内容属性
                         content: {
@@ -222,6 +217,8 @@ const websocketConnect = {
                 })
                 store.commit('setSessionList', sessionList);
             }
+        } else if (message.destinationName == IMTopic.DelUserChatTopic) { 
+
         }
     },
     // 群处理 
@@ -241,6 +238,30 @@ const websocketConnect = {
         store.commit('delSession', {targetId:msg.groupId});
         store.commit('setChatGroupList', arr);
     },
+    // 会话和消息处理
+    messageOperation: function(msg,topic) {
+        console.log(msg)
+        let obj = JSON.stringify({
+            userId: objData.username,
+        });
+        client.pubMessage(obj,IMTopic.GetUserChatTopic)
+        let currentMessage = {
+            fromUserId:objData.username, //发送人id
+            serverTimestamp: new Date().getTime(), // 发送时间
+            // 发送消息的内容属性
+            content: {
+                type:1, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
+                content:msg.notifyContent.content // 发送消息内容
+            },
+            // 发送消息的会话属性
+            conversation: {
+                targetId: msg.groupId, //接收人id
+                type: msg.notifyContent.type,//消息类别 0、单聊 1、群聊
+                topic: topic
+            }
+        };
+        store.commit('addMessage', currentMessage);
+    },
     // 发送消息成功后回调
     onMessageDelivered: function(message) {
         console.log("pub message" + message.payloadString);
@@ -248,7 +269,7 @@ const websocketConnect = {
     // 发送消息
     pubMessage(message,subTopic) {
         if(!subTopic) {
-            subTopic='MS'
+            subTopic=IMTopic.SendMessageTopic
         }
         var message = new Paho.MQTT.Message(message);
         message.destinationName = subTopic;

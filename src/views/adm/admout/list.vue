@@ -1,10 +1,10 @@
 <template>
     <div class="app-container white-bg list-panel" v-cloak>
         <div class="opertion-box">
-            <el-input v-model="searchParam.zy_input" placeholder="请输入员工姓名或手机号" clearable class="zy_input" style="width:190px"></el-input>
+            <el-input v-model="searchParam.keyWord" placeholder="请输入员工姓名或手机号" clearable class="zy_input" style="width:190px"></el-input>
             <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
             <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
-            <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
+            <el-button type="primary" icon="el-icon-refresh" size="small" @click="createTime=[];resetList()">重置</el-button>
             <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
         </div>
         <!-- 展开更多查询开始 -->
@@ -15,11 +15,11 @@
                     <div class="form-group">
                         <label class="control-label">出行方式</label>
                         <div class="input-group">
-                            <el-select v-model="searchParam.source" clearable placeholder="请选择出行方式">
-                                <el-option  label="委托书" value="1"></el-option>
-                                <el-option  label="招标书" value="2"></el-option>
-                                <el-option  label="电话委托" value="3"></el-option>
-                                <el-option  label="其他" value="4"></el-option>
+                            <el-select v-model="searchParam.type" clearable placeholder="请选择出行方式">
+                                <el-option  label="公共交通" value="1"></el-option>
+                                <el-option  label="出租车" value="2"></el-option>
+                                <el-option  label="自驾" value="3"></el-option>
+                                <el-option  label="公司车辆" value="4"></el-option>
                             </el-select>
                         </div>
                     </div>
@@ -27,14 +27,28 @@
                     <div class="form-group">
                         <label class="control-label">审批状态</label>
                         <div class="input-group">
-                            <el-input v-model="searchParam.approvalStatus" placeholder="请输入状态(1-审批中，2-已通过 3-已驳回 4-已作废)"></el-input>
+                            <el-select v-model="searchParam.approvalStatus" clearable placeholder="请选择审批状态">
+                                <el-option  label="审批中" value="1"></el-option>
+                                <el-option  label="已通过" value="2"></el-option>
+                                <el-option  label="已驳回" value="3"></el-option>
+                                <el-option  label="已作废" value="4"></el-option>
+                            </el-select>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="control-label">申请时间</label>
                         <div class="input-group">
-                            <el-input v-model="searchParam.createTime" placeholder="请输入申请时间"></el-input>
+                            <el-date-picker
+                                v-model="createTime"
+                                type="daterange"
+                                :editable="false"
+                                range-separator="至"
+                                start-placeholder="开始日期"
+                                end-placeholder="结束日期"
+                                value-format="yyyy-MM-dd HH:mm:ss "
+                            >
+                            </el-date-picker>
                         </div>
                     </div>
 
@@ -44,6 +58,11 @@
         <div class="division-line"></div>
         <div class="table-box">
             <el-table :data="list" style="width: 100%">
+                <el-table-column fixed label="操作" width="120">
+                    <template fixed slot-scope="{ row, column, $index }">
+                        <el-button  @click="toDetail(row)" type="text" size="small">详情</el-button>
+                    </template>
+                </el-table-column>
                                 <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="出行方式"></el-table-column>
                                 <el-table-column prop="outTime" sortable show-overflow-tooltip min-width="100" label="外出时长(天)"></el-table-column>
                                 <el-table-column prop="reason" sortable show-overflow-tooltip min-width="100" label="外出事由"></el-table-column>
@@ -77,13 +96,23 @@
                 isShowMore:false,
                 listUrl: "adm/admout",
                 showSearch: false,
+                createTime:[],
             }
         },
         mounted() {
             this.getList();
         },
         methods: {
-
+            //处理条件查询的时间问题
+            getListBefore(params) {
+                if (this.createTime) {
+                    params.createTimeStart = this.createTime[0];
+                    params.createTimeEnd = this.createTime[1];
+                } else {
+                    params.createTimeStart = '';
+                    params.createTimeEnd = '';
+                }
+            },
         }
     }
 </script>
