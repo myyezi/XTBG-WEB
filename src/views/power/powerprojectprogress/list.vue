@@ -181,6 +181,7 @@ export default {
                   data.reason =this.extensionForm.reason;
                   data.extDate =this.extensionForm.extDate;
                   data.projectId =  this.saveForm.id;
+                  data.taskId = this.save.taskId
                   data.approver= this.saveForm.manager;
                   ajax.post('power/powerprojectextension', data).then(rs => {
                       if (rs.status == 0) {

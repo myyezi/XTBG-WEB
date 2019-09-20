@@ -238,7 +238,7 @@ export default {
                     let addStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>";
                     let updateStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+editImg+"' title='编辑' style='vertical-align: middle;'/></a>"
                     let delStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+deletedImg+"' title='删除' style='vertical-align: middle;'/></a>"
-                    if (obj.currentStatus != 4){
+                    if (obj.currentStatus != 4 && obj.currentStatus != 6){
                         str = addStr + updateStr + delStr;
                     }else{
                         str = addStr

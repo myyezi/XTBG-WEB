@@ -48,7 +48,7 @@
       <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="800px"  v-cloak>
           <el-tabs  type="card" @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
               <el-tab-pane label="用户" name="second">
-                <tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll"></tree-two>
+                <tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll" :attendanceGroupId="attendanceGroupId"></tree-two>
               </el-tab-pane>
               <div style="text-align: center;">
                   <el-button type="primary" @click="submitForm()">保存</el-button>
@@ -150,7 +150,7 @@ export default {
           this.attendanceGroupId=row.id
           this.companyId = row.companyId
           this.params =  row.id;
-          this.getOrganizationList();
+         // this.getOrganizationList();
           this.getOrganizationUserList();
          // this.getGroupUserListBycompany();
       },
@@ -160,7 +160,7 @@ export default {
           this.memberList =[];
           this.dialogFormVisible = true ;
           this.attendanceGroupId = row.id;
-          ajax.get('personnel/personnelattendancegroupuser/getList/' + this.attendanceGroupId).then(rs => {
+          ajax.get('personnel/personnelattendancegroupuser/getList' , {attendanceGroupId:this.attendanceGroupId}).then(rs => {
               this.memberList = rs;
           });
       },
@@ -172,7 +172,7 @@ export default {
 
       //已经设置考情的人员回显
       getOrganizationUserList(){
-          ajax.get('personnel/personnelattendancegroupuser/getList/' + this.attendanceGroupId).then(rs => {
+          ajax.get('personnel/personnelattendancegroupuser/getList' ,{companyId:this.companyId}).then(rs => {
               this.selectionAll = rs;
               console.log(this.selectionAll)
           });
