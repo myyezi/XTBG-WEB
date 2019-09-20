@@ -56,7 +56,7 @@
                     res.data.forEach(function (bean) {
                         if (bean.id) {
                             var data = {
-                                id: bean.id,
+                                value: bean.id,
                                 label: bean.label,
                                 children: bean.children
                             }

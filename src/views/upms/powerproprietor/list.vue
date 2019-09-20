@@ -10,7 +10,13 @@
         </div>
         <!-- 展开更多查询开始 -->
         <el-collapse-transition>
-            <div class="search-box" v-show="isShowMore">              
+            <div class="search-box" v-show="isShowMore">
+                <div class="form-group">
+                    <label class="control-label">联系人</label>
+                    <div class="input-group input-groups">
+                        <el-input v-model="searchParam.nameOrPhone" placeholder="请输入联系人姓名或手机号"></el-input>
+                    </div>
+                </div>
                 <div class="form-box">
                     <div class="form-group">
                         <label class="control-label">地区</label>
