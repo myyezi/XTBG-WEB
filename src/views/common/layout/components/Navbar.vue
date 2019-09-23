@@ -116,7 +116,10 @@
             changeCompany() {
                 ajax.get('upms/user/changeCustomCompany/'+ this.companyId).then(response => {
                     this.$store.commit('SET_MENU', [])
-                    location.reload();
+                    this.$store.commit('SET_RELOAD', true)
+                    localStorage.setItem("isReload", true);
+                    this.$store.dispatch('delAllViews')
+                    location.reload()
                 })
             },
 
@@ -128,6 +131,7 @@
             },
             logout() {
                 this.$store.dispatch('LogOut').then(() => {
+                    localStorage.clear();
                     location.reload() // 为了重新实例化vue-router对象 避免bug
                 })
             },
