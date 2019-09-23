@@ -123,14 +123,14 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="计划信息" name="projectPlanInfoTab" >
                     <template>
-                        <div class="app-container white-bg list-panel" v-cloak style="height: calc(100vh - 120px);padding:10px">
+                        <div class="app-container white-bg" v-cloak style="padding:10px">
                             <div class="container clearfix">
                                 <gantt-add
                                     ref="gantt"
                                     class="left-container"
                                     v-if="isLoading"
                                     :tasks="tasks"
-                                    :headerTitle="headerTitle" style="height: 500px">
+                                    :headerTitle="headerTitle">
                                 </gantt-add>
                             </div>
                         </div>
