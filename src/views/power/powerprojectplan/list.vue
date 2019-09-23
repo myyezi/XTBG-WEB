@@ -59,6 +59,32 @@
               <div class="form-group">
                   <label class="control-label">开始时间</label>
                   <div class="input-group">
+                      <el-date-picker
+                          v-model="startTime"
+                          type="daterange"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          value-format="yyyy-MM-dd">
+                      </el-date-picker>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label class="control-label">结束时间</label>
+                  <div class="input-group">
+                      <el-date-picker
+                          v-model="endTime"
+                          type="daterange"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          value-format="yyyy-MM-dd">
+                      </el-date-picker>
+                  </div>
+              </div>
+              <!--<div class="form-group">
+                  <label class="control-label">开始时间</label>
+                  <div class="input-group">
                           <el-date-picker
                               v-model="searchParam.startTime"
                               clearable
@@ -79,7 +105,7 @@
                           placeholder="请选择结束时间">
                       </el-date-picker>
                   </div>
-              </div>
+              </div>-->
           </div>
       </div>
     </el-collapse-transition>
@@ -158,6 +184,8 @@ export default {
         pageC :1,
         pageS :10,
         projectId:"",
+        startTime:[],
+        endTime:[],
     }
   },
   mounted() {
@@ -165,6 +193,22 @@ export default {
       this.getDict();
   },
   methods: {
+      getListBefore(params) {
+          if (this.startTime) {
+              params.startTimeStart = this.startTime[0];
+              params.startTimeEnd = this.startTime[1];
+          } else {
+              params.startTimeStart = '';
+              params.startTimeEnd = '';
+          }
+          if (this.endTime) {
+              params.endTimeStart = this.endTime[0];
+              params.endTimeEnd = this.endTime[1];
+          } else {
+              params.endTimeStart = '';
+              params.endTimeEnd = '';
+          }
+      },
       // 获取字典
       getDict() {
           let types = 'XMLX,XBBM';
