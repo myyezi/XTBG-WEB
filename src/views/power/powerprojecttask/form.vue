@@ -141,7 +141,12 @@ export default {
     return {
       uploadUrl: process.env.BASE_API + "file/upload/multipart",
       saveList: [],
-      powerprojecttaskForm: {proprietorContactId:''},
+      powerprojecttaskForm: {
+          proprietorContactId:'',
+          adress:'',
+          longitude:'',
+          latitude:''
+      },
       typeOptions: [],
       designOptions:[],
       ProprietorList:[],

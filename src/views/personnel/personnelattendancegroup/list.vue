@@ -46,9 +46,9 @@
       </el-pagination>
     </div>
       <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="800px"  v-cloak>
-          <el-tabs  type="card" @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
+          <el-tabs   @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
               <el-tab-pane label="用户" name="second">
-                <tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll" :attendanceGroupId="attendanceGroupId"></tree-two>
+                <tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll" :attendanceGroupId="attendanceGroupId" :selectionAllDisable="selectionAllDisable"></tree-two>
               </el-tab-pane>
               <div style="text-align: center;">
                   <el-button type="primary" @click="submitForm()">保存</el-button>
@@ -108,7 +108,8 @@ export default {
       companyId:'',
       groupUserListByCompany:[],
       dialogFormVisible:false,
-      memberList:[]
+      memberList:[],
+      selectionAllDisable:[],
     }
   },
   mounted() {
@@ -152,6 +153,7 @@ export default {
           this.params =  row.id;
          // this.getOrganizationList();
           this.getOrganizationUserList();
+          this.getOrganizationUserDisableList();
          // this.getGroupUserListBycompany();
       },
 
@@ -170,9 +172,17 @@ export default {
           });
       },
 
+      //已经设置非该考勤组的考情的人员置灰
+      getOrganizationUserDisableList(){
+          ajax.get('personnel/personnelattendancegroupuser/getList' ,{companyId:this.companyId}).then(rs => {
+              this.selectionAllDisable = rs;
+              console.log(this.selectionAllDisable)
+          });
+      },
+
       //已经设置考情的人员回显
       getOrganizationUserList(){
-          ajax.get('personnel/personnelattendancegroupuser/getList' ,{companyId:this.companyId}).then(rs => {
+          ajax.get('personnel/personnelattendancegroupuser/getList' ,{attendanceGroupId:this.attendanceGroupId}).then(rs => {
               this.selectionAll = rs;
               console.log(this.selectionAll)
           });
