@@ -75,7 +75,7 @@
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="operate(row.id)" type="text" size="small">开启</el-button>
             <el-button v-show="showProgressBtn" v-if="row.projectStatus==2 && row.isExtension==0" @click="edit(row.taskId)" type="text" size="small">执行</el-button>
-            <el-button v-show="showStopBtn"  v-if="row.projectStatus==2 && row.isExtension==0" @click="stop(row)" type="text" size="small">申请延期</el-button>
+            <el-button v-show="showExtensionBtn"  v-if="row.projectStatus==2 && row.isExtension==0" @click="stop(row)" type="text" size="small">申请延期</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="code" sortable shonpm w-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
@@ -135,7 +135,7 @@ export default {
       listUrl: "power/powerproject",
       showSearch: false,
       showStartBtn: this.getCurrentUserAuthority("/power/powerprojectprogress/start"),
-      showStopBtn: this.getCurrentUserAuthority("/power/powerprojectprogress/stop"),
+      showExtensionBtn: this.getCurrentUserAuthority("/power/powerprojectprogress/extension"),
       showProgressBtn: this.getCurrentUserAuthority("/power/powerprojectprogress/progress"),
       typeOptions:[],
       coDepartmentOptions:[],
