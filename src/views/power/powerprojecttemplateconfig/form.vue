@@ -239,6 +239,7 @@ methods: {
             this.projectTypeList = rs.XMLX;
             this.stageList = rs.GCJD;
             this.contentList = rs.GZNR;
+            console.info("111111111",this.projectTypeList);
         });
     },
     onChangeProjectType(){
@@ -393,6 +394,7 @@ methods: {
     ok() {
         this.$refs['ruleForm'].validate((valid) => {
             if (valid) {
+                debugger;
                 let newChild = this.templateConfigForm;
                 if(this.operationType === 'add') {
                     // 新增传父级id
@@ -404,7 +406,7 @@ methods: {
                 }
 
                 // 获取工作内容类型
-                if (this.isAddFirst || this.formData.parentId == "0"){
+                if (this.isAddFirst){
                     this.contentList.forEach((item) => {
                         if (item.text == this.templateConfigForm.name){
                             newChild.nameType = item.value;
