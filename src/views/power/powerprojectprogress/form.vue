@@ -3,6 +3,10 @@
         <div style="padding:10px 0">
             <span style="font-size: 14px;color: #8C8C8C; font-weight: bold;">项目名称：{{projectName}}</span>
         </div>
+        <el-radio-group v-model="isOpen" style="padding:10px 0px 10px;">
+            <el-radio :label="false" @change="changeOpen">收起</el-radio>
+            <el-radio :label="true" @change="changeOpen">展开</el-radio>
+        </el-radio-group>
         <div class="container clearfix">
             <gantt-add
                 ref="gantt"
@@ -88,6 +92,7 @@
                 projectId : "",
                 projectName : "",
                 tempArr : [],
+                isOpen : true,
                 uploadShow : false,
                 stopUploadShow : false,
                 showEmployeeSelector : false,
@@ -251,17 +256,8 @@
                     this.id = data.id;
                 }else if (data.operationType === 'view'){
                     this.fileFormVisible = true;
-                    // 获取项目任务书对象
-                    ajax.get('power/powerprojectattachment/',{sourceId : data.id, projectId : this.projectId}).then(rs => {
-                        if (rs.status === 0){
-                            this.attachmentList = rs.data;
-                        }else{
-                            this.$message({
-                                message: rs.msg,
-                                type: 'error'
-                            });
-                        }
-                    });
+                    // 获取项目文件
+                    this.getAttachmentList(data.id);
                 }else if (data.operationType === 'approvefinish'){
                     this.finishFormVisible = true;
                     this.id = data.id;
@@ -290,8 +286,21 @@
             this.getStageList();
         },
         methods: {
+            getAttachmentList(id){
+                ajax.get('power/powerprojectattachment/',{sourceId : id, projectId : this.projectId}).then(rs => {
+                    if (rs.status === 0){
+                        this.attachmentList = rs.data;
+                    }else{
+                        this.$message({
+                            message: rs.msg,
+                            type: 'error'
+                        });
+                    }
+                });
+            },
             // 上传成功回调
             getResFile(file){
+                debugger;
                 ajax.post('power/powerprojectattachment', {
                     sourceId : this.id,
                     projectId : this.projectId,
@@ -309,11 +318,31 @@
             },
 
             delFile(data){
+                let that = this;
+                this.$confirm('确定删除该文件?' ,'提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }).then(function() {
+                    ajax.delete('power/powerprojectattachment/'+data.id).then(rs => {
+                        if (rs.status == 0) {
+                            that.$message.success(rs.msg);
+                            that.getAttachmentList(data.id);
+                        } else {
+                            that.$message.error(rs.msg);
+                        }
+                    });
+                }).catch(function() {
+                });
 
             },
 
             downloadFile(data){
-                window.open(process.env.URL_API+data.path);
+                // window.open(process.env.URL_API+data.path);
+                let fileName = data.name;
+                let filePath = data.path;
+                let param = "fileName=" + fileName + "&" + "filePath=" +filePath;
+                location.href = encodeURI(this.exportUrl("power/powerprojectplan/downLoadFile?" + param));
             },
             selectedOnchangeHandle(data){
                 this.approvalFinishForm = {};
@@ -327,6 +356,9 @@
                     this.approvalFinishForm.id = idArr.join(",");
                     this.approvalFinishForm.name = nameArr.join(",");
                 }
+            },
+            changeOpen(){
+                this._getTasksModel();
             },
             // 工程阶段字典
             getStageList() {
@@ -370,7 +402,7 @@
                                         item.end_date = item.planEndDate;
                                         item.text = item.name;
                                         item.parent = item.parentId;
-                                        item.open = true;
+                                        item.open = this.isOpen;
                                     });
                                     obj.data = rs.data;
                                     this.tasks = obj;

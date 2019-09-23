@@ -51,6 +51,10 @@
             </div>
           </el-collapse-item>
           <el-collapse-item title="计划信息" name="2">
+              <el-radio-group v-model="isOpen" style="padding:10px 0px 10px;">
+                  <el-radio :label="false" @change="changeOpen">收起</el-radio>
+                  <el-radio :label="true" @change="changeOpen">展开</el-radio>
+              </el-radio-group>
               <template>
                   <div class="app-container white-bg list-panel" v-cloak style="height: calc(100vh - 120px);padding:10px">
                       <div class="container clearfix">
@@ -181,6 +185,7 @@ export default {
             isUpload : null
         },
         openCollapse: ["1","2"],
+        isOpen : true,
         planDisabled : true,
         dialogVisible : false,
         showUserSelector : false,
@@ -232,12 +237,12 @@ export default {
                 name:"action",
                 label:'操作<img src="static/add.png" style="width:16px;height:16px;margin: -2px 5px 0;vertical-align: middle;cursor: pointer;" data-column-id="addNode"/>',
                 align: "center",
-                width:'150',
+                width:'120',
                 template:function(obj){
                     let str = "";
-                    let addStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>";
-                    let updateStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+editImg+"' title='编辑' style='vertical-align: middle;'/></a>"
-                    let delStr = "<a style='display:inline-block;width:50px;height:100%;'><img src='"+deletedImg+"' title='删除' style='vertical-align: middle;'/></a>"
+                    let addStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>";
+                    let updateStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+editImg+"' title='编辑' style='vertical-align: middle;'/></a>"
+                    let delStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+deletedImg+"' title='删除' style='vertical-align: middle;'/></a>"
                     if (obj.currentStatus != 4 && obj.currentStatus != 6){
                         str = addStr + updateStr + delStr;
                     }else{
@@ -472,6 +477,9 @@ export default {
             this.powerprojecttaskForm = [];
         }
     },
+    changeOpen(){
+        this._getTasksModel();
+    },
 
     //选择负责人
     selectedOnchangeHandle(data) {
@@ -495,7 +503,7 @@ export default {
                                 item.end_date = item.planEndDate;
                                 item.text = item.name;
                                 item.parent = item.parentId;
-                                item.open = true;
+                                item.open = this.isOpen;
                             });
                             let obj = {};
                             this.isLoading = true;
@@ -519,7 +527,7 @@ export default {
                                                 item.end_date = item.planEndDate ? item.planEndDate : "";
                                                 item.text = item.name;
                                                 item.parent = item.parentId;
-                                                item.open = true;
+                                                item.open = this.isOpen;
                                             });
                                             let obj = {};
                                             this.isLoading = true;
