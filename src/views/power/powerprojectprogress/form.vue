@@ -140,7 +140,7 @@
                             let finishStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;' title='完 成'>完成</a>";
                             let hasApprovalStr = "<a style='display:inline-block;width:50px;height:100%;color: #999999;'>已申请</a>";
                             if (obj.currentStatus!=6 ){
-                                if (obj.isApproval == 1 && obj.fileNum > 0 && obj.currentStatus!=4){
+                                if ((obj.isApproval == 1 && obj.fileNum > 0 && obj.currentStatus!=4) || (obj.isApproval == 1 && obj.isUpload == 0 && obj.currentStatus!=4)){
                                     operateStr += approvelStr;
                                 }
                                 if (obj.currentStatus == 4){
