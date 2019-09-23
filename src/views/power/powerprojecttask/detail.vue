@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-panel">
+  <div class="detail-panel project_task_count">
     <el-collapse v-model="openCollapse">
       <el-collapse-item title="项目任务书" name="1">
         <div class="flex-panel detail-box">
@@ -120,7 +120,7 @@
         </div>
       </el-collapse-item>
 
-        <el-tabs v-model="activeName" @tab-click="handleClick" style="margin-left: 25px" >
+        <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="计划信息" name="projectPlanInfoTab" >
                     <template>
                         <div class="app-container white-bg list-panel" v-cloak style="height: calc(100vh - 120px);padding:10px">
@@ -392,3 +392,14 @@ export default {
 
 }
 </script>
+<style lang="scss">
+  .project_task_count {
+    .el-tabs__nav {
+        margin-left: 20px;
+    }
+    .el-tabs__item {
+        border-radius: 15px;
+        margin: 13px 0;
+    }
+  }
+</style>

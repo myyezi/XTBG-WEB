@@ -9,6 +9,7 @@
                 :default-active="$route.path"
                 :collapse="isCollapse"
                 :background-color="sidebarColor"
+                :unique-opened="true"
                 text-color="rgb(191, 203, 217)"
                 active-text-color="#fff">
                 <sidebar-item v-for="(route,index) in menu" :key="index" :item="route"

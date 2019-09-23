@@ -386,12 +386,12 @@ export default {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          width: 75%;
+          width: 12rem;
           font-size: 1.1rem;
           color: #333;
           height:2rem;
           line-height: 2rem;
-          display: flex;
+          // display: flex;
         }
       }
 
@@ -433,9 +433,6 @@ export default {
               top: 0.5rem;
               left: 0.3rem;
               z-index: 99999999999;
-          }
-          p {
-            width: 12rem;
           }
         }
 

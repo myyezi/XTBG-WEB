@@ -44,6 +44,10 @@ export default {
 
 <style lang="scss">
 .faces_count {
+    .el-tabs__item {
+      margin: 0;
+      border-radius: 0;
+    }
     .el-tabs__item.is-active{
         background-color: #e4e7ed;
         border-bottom: none;
