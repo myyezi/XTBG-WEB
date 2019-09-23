@@ -35,7 +35,11 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称"></el-table-column>
-                    <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小(KB)"></el-table-column>
+                    <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小">
+                        <template slot-scope="scope">
+                            {{bytesToSize(scope.row.size)}}
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="上传人"></el-table-column>
                     <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="上传时间"></el-table-column>
                 </el-table>
@@ -300,7 +304,6 @@
             },
             // 上传成功回调
             getResFile(file){
-                debugger;
                 ajax.post('power/powerprojectattachment', {
                     sourceId : this.id,
                     projectId : this.projectId,
@@ -315,6 +318,14 @@
                         this.$message.error(rs.msg);
                     }
                 });
+            },
+
+            bytesToSize(bytes) {
+                if (bytes === 0) return '0 B';
+                var k = 1000, // or 1024
+                    sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+                    i = Math.floor(Math.log(bytes) / Math.log(k));
+                return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
             },
 
             delFile(data){
