@@ -194,7 +194,7 @@
             <el-tab-pane label="项目成员" name="projectMemberInfoTab">
                 <el-table border :data="memberList" style="width: 100%">
                     <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="成员名称"></el-table-column>
-                    <el-table-column prop="phone" sortable show-overflow-tooltip min-width="100" label="手机号"></el-table-column>
+                    <el-table-column prop="account" sortable show-overflow-tooltip min-width="100" label="手机号"></el-table-column>
                     <el-table-column prop="profession" sortable show-overflow-tooltip min-width="300" label="专业"></el-table-column>
                 </el-table>
             </el-tab-pane>
@@ -312,7 +312,7 @@ export default {
           } else if(tab.name == 'projectJcInfoTab') {
               this.getProjectAttachmentList(2)
           }else if(tab.name == 'projectCpInfoTab') {
-              this.getProjectAttachmentList(3)
+              this.getProjectAttachmentList(4)
           }else if(tab.name =='projectTaskInfoTab'){
               this.getAttachmentList();
           }

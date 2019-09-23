@@ -66,7 +66,7 @@
     export default {
         name: 'tree-panel',
         mixins: [tool],
-        props: ['selectionAll','url','attendanceGroupId'],
+        props: ['selectionAll','url','attendanceGroupId','selectionAllDisable'],
         data() {
             return {
                 placeholder: "请输入名称过滤",
@@ -105,9 +105,9 @@
         },
         methods: {
             checkSelectable(row){
-                for (let i = 0; i <this.selectionAll.length ; i++) {
-                    if (this.selectionAll[i].employeeId == row.employeeId) {
-                        if (this.attendanceGroupId != this.selectionAll[i].attendanceGroupId) {
+                for (let i = 0; i <this.selectionAllDisable.length ; i++) {
+                    if (this.selectionAllDisable[i].employeeId == row.employeeId) {
+                        if (this.attendanceGroupId != this.selectionAllDisable[i].attendanceGroupId) {
                             return false;
                         }
                     }
@@ -116,9 +116,9 @@
             },
 
             tableRowClassName({row, rowIndex}) {
-                for (let i = 0; i <this.selectionAll.length ; i++) {
-                    if (this.selectionAll[i].employeeId == row.employeeId) {
-                        if (this.attendanceGroupId != this.selectionAll[i].attendanceGroupId) {
+                for (let i = 0; i <this.selectionAllDisable.length ; i++) {
+                    if (this.selectionAllDisable[i].employeeId == row.employeeId) {
+                        if (this.attendanceGroupId != this.selectionAllDisable[i].attendanceGroupId) {
                             return 'warning-row';
                         }
                     }
