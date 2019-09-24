@@ -27,13 +27,13 @@
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
             <el-button v-show="showDelBtn" @click="delGroup(row)" type="text" size="small">删除</el-button>
-            <el-button v-show="showAddBtn" @click="setGroup(row)" type="text" size="small">考勤对象设置</el-button>
+            <el-button v-show="showSetBtn" @click="setGroup(row)" type="text" size="small">考勤对象设置</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="规则名称"></el-table-column>
           <el-table-column  label="组成员" width="260">
           <template  slot-scope="{ row, column, $index }">
-              <el-button @click="look(row)" type="text" size="small">查看</el-button>
+              <el-button v-show="showQueryBtn" @click="look(row)" type="text" size="small">查看</el-button>
           </template>
           </el-table-column>
         <el-table-column prop="companyName" sortable show-overflow-tooltip min-width="100" label="所属管理公司"></el-table-column>
@@ -92,6 +92,8 @@ export default {
       showAddBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/save"),
       showEditBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/edit"),
       showDelBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/del"),
+      showSetBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/set"),
+      showQueryBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/query"),
       member:'查看',
       dialogVisible:false,
       defaultProps: {
