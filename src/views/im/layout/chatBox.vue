@@ -121,14 +121,12 @@ export default {
     netStaus: {
       get: function() {
         return this.$store.state.im.netStaus;
-      },
-      set: function(netStaus) {
-        this.$store.commit('updateNet', netStaus);
       }
     }
   },
   methods: {
     updateNet() {
+        this.$store.commit('setSessionList', []);
         this.$store.commit('setMessageListMap', {});
         this.$store.dispatch('getWebsocket', {
             ip: process.env.BASE_IP,
