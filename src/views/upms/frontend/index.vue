@@ -99,10 +99,19 @@
                 <tree-table></tree-table>
             </el-tab-pane>
             <el-tab-pane label="甘特图预览" name="5">
-              <gantt-details></gantt-details>
+                <gantt-details></gantt-details>
             </el-tab-pane>
             <!-- <el-tab-pane label="甘特图操作" name="6">
               <gantt-opertion></gantt-opertion>
+            </el-tab-pane> -->
+            <!-- <el-tab-pane label="流程设置" name="7">
+                <el-dialog title="流程设置" :visible.sync="workDialogVisible"  :fullscreen="true" :append-to-body="true">
+                    <div class="fd-nav-content">
+                        <div class="workflow-design">
+                            <work-flow :workFlowData="workFlowData"></work-flow>
+                        </div>
+                    </div>
+                </el-dialog>
             </el-tab-pane> -->
         </el-tabs>
         <el-dialog title="收货地址" :visible.sync="dialogFormVisible"  width="80%">
