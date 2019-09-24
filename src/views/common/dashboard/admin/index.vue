@@ -363,5 +363,8 @@
     .project_stauts4 {
         background:#AD8CF5;
     }
+    .project_stauts4 {
+        background:#AD8CF5;
+    }
 </style>
 
