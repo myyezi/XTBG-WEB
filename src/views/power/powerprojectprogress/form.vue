@@ -348,6 +348,7 @@
                         if (rs.status == 0) {
                             that.$message.success(rs.msg);
                             that.getAttachmentList(data.id);
+                            that._getTasksModel();
                         } else {
                             that.$message.error(rs.msg);
                         }

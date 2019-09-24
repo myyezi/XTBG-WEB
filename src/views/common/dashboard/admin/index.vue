@@ -3,36 +3,20 @@
         <div class="el-row">
             <div class="el-col el-col-15">
                 <div class="el-card box-card is-always-shadow">
-                    <!--<div class="el-card__header home-card-heard">
-                        <div class="home_title clearfix">
-                            &lt;!&ndash;<p class="clearfix"><img src="../../../../styles/img/xx.png" /><span>消息中心</span></p>&ndash;&gt;
-                            &lt;!&ndash;<el-button type="text" style="float:right;padding:5px;border: 1px solid #3ab7c7;color:#246a73;" @click="moreMessage()">更多</el-button>&ndash;&gt;
-                            <p class="clearfix"><img src="../../../../styles/img/xx.png" /><span>代办</span></p>
-                        </div>
-                    </div>-->
- 
                     <div class="el-card__body home-card-body">
                         <el-tabs v-model="activeName" @tab-click="handleClick">
                         <el-tab-pane label="待办" name="doTaskTab">
-                            <!--<el-table border :data="bigEventList" style="width: 100%; height: 466px">
-                                <el-table-column prop="projectCode" sortable show-overflow-tooltip min-width="100" label="项目编号">
-                                    <template slot-scope="scope">
-                                        <el-button type="text" size="small" @click="toBigEventDetail(scope.row)">
-                                            {{scope.row.projectCode}}
-                                        </el-button>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column prop="projectName" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
-                                <el-table-column prop="projectType" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
-                                <el-table-column prop="description" sortable show-overflow-tooltip min-width="300" label="事件描述"></el-table-column>
-                                <el-table-column prop="updater" sortable show-overflow-tooltip min-width="50" label="提交人"></el-table-column>
-                                <el-table-column prop="eventDate" sortable show-overflow-tooltip min-width="50" label="事件日期"></el-table-column>
-                            </el-table>-->
                             <el-table border :data="doTaskList" style="width: 100%; height: 406px">
                                 <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
-                                <el-table-column prop="typeText" label="事项名称" width="150"></el-table-column>
-                                <el-table-column prop="projectName" label="事项内容" width="250"></el-table-column>
-                                <el-table-column prop="content" show-overflow-tooltip label="类型"></el-table-column>
+                                <el-table-column label="操作" width="100">
+                                    <template fixed slot-scope="{ row, column, $index }">
+                                        <!--<el-button v-show="showApprovalBtn" @click="approval(row.id)" type="text" size="small">审批</el-button>-->
+                                        <el-button @click="approval(row.id)" type="text" size="small">审批</el-button>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="name" label="事项名称" width="150"></el-table-column>
+                                <el-table-column prop="content" label="事项内容" width="250"></el-table-column>
+                                <el-table-column prop="taskType" show-overflow-tooltip label="类型">事项审批</el-table-column>
                                 <el-table-column prop="createTime" label="发布时间" width="200"></el-table-column>
                             </el-table>
                         </el-tab-pane>
@@ -42,7 +26,7 @@
                                 <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
                                 <el-table-column prop="typeText" label="事项名称" width="150"></el-table-column>
                                 <el-table-column prop="projectName" label="事项内容" width="250"></el-table-column>
-                                <el-table-column prop="content" show-overflow-tooltip label="类型"></el-table-column>
+                                <el-table-column prop="content" show-overflow-tooltip label="类型">事项审批</el-table-column>
                                 <el-table-column prop="createTime" label="发布时间" width="200"></el-table-column>
                             </el-table>
                         </el-tab-pane>
@@ -50,6 +34,51 @@
                     </div>
                 </div>
             </div>
+
+
+<!--
+            <el-dialog width="600px" class="full-input" :visible.sync="show" :title="title">
+                <el-form :model="editForm" ref="editForm" label-position="top" label-width="100px">
+                    <el-form-item label="上级组织" prop="parentId" v-if="parentShow" :rules="rules.required('请选择上级组织')">
+                        <tree-select v-model="editForm.parentId" placeholder="请选择" type="one" ref="parentTree"
+                                     url="upms/organization/getOrganizationTree" :disabled-id="parentDisabledArr" :params="params"></tree-select>
+
+                    </el-form-item>
+                    <el-form-item label="组织名称" prop="name" :rules="rules.required('请输入组织名称')">
+                        <el-input v-model="editForm.name" placeholder="请输入" maxlength="30"></el-input>
+                    </el-form-item>
+                    <el-form-item label="组织属性" prop="type" :rules="rules.required('请选择组织属性')">
+
+                        <tree-select v-model="editForm.type" placeholder="请选择" type="one" ref="typeTree"
+                                     url="upms/organization/typeTree" :params="params"
+                                     :disabled-id="disabledArray"></tree-select>
+
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="add">保存</el-button>
+                    <el-button @click="close">返回</el-button>
+                </div>
+            </el-dialog>
+-->
+
+
+            <el-dialog title="待办-审批" width="800px" :visible.sync="approvalDialogVisible" :append-to-body="true" class="el-dialog__body">
+                <el-form :model="approvalForm" :rules="rules" ref="approvalForm" label-position="top" label-width="100px">
+                    <el-form-item label="是否通过" prop="approvalStatus">
+                        <el-radio v-model="approvalForm.approvalStatus" label="2">通过</el-radio>
+                        <el-radio v-model="approvalForm.approvalStatus" label="3">不通过</el-radio>
+                    </el-form-item>
+                    <el-form-item label="通知内容" prop="reason" v-if="approvalForm.approvalStatus == 3">
+                        <!--<el-input type="textarea" v-model="noticeForm.content" placeholder="请输入通知" maxlength=20 clearable></el-input>-->
+                        <el-input type="textarea" v-model="approvalForm.reason" placeholder="请输入原因" maxlength=200 clearable></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="submitApprovalForm('approvalForm')">保存</el-button>
+                    <el-button @click="approvalDialogVisible = false">返回</el-button>
+                </div>
+            </el-dialog>
 
             <div class="el-col el-col-9" style="width: calc(37.5% - 10px);margin: 0 0 10px 10px;">
                 <div class="el-card box-card is-always-shadow">
@@ -59,6 +88,7 @@
                             <el-dropdown split-button  size="mini" @command="handleClick1" style="float:right;">
                                 {{projectName}}
                                 <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item :disabled="projectName==='全部'" command="0">全部</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='进行中'" command="2">进行中</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='已暂停'" command="3">已暂停</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='已完成'" command="4">已完成</el-dropdown-item>
@@ -84,7 +114,7 @@
                                 <span @click="getProjectListByStatus(1)" style="color: #FFA600"><i class="project_stauts2"></i>暂存（{{projectNum1}}）</span>
                                 <span @click="getProjectListByStatus(2)" style="color: #41C0D0"><i class="project_stauts3"></i>进行中（{{projectNum2}}）</span>
                                 <span @click="getProjectListByStatus(3)" style="color: #AD8CF5"><i class="project_stauts4"></i>已暂停（{{projectNum3}}）</span>
-                                <span @click="getProjectListByStatus(3)" style="color: #AD8C00"><i class="project_stauts4"></i>已完成（{{projectNum3}}）</span>
+                                <span @click="getProjectListByStatus(4)" style="color: #AD8C00"><i class="project_stauts5"></i>已完成（{{projectNum4}}）</span>
                             </div>
                         </div>
                     </div>
@@ -112,6 +142,7 @@
                                     <span v-if="scope.row.projectStatus == 1" style="color: #FFA600;font-size: 13px;">{{scope.row.projectStatusText}}</span>
                                     <span v-if="scope.row.projectStatus == 2" style="color: #41C0D0;font-size: 13px;">{{scope.row.projectStatusText}}</span>
                                     <span v-if="scope.row.projectStatus == 3" style="color: #AD8CF5;font-size: 13px;">{{scope.row.projectStatusText}}</span>
+                                    <span v-if="scope.row.projectStatus == 4" style="color: #AD8C00;font-size: 13px;">{{scope.row.projectStatusText}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="项目名称">
@@ -122,8 +153,9 @@
                                 </template>
                             </el-table-column>
                             <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
-                            <el-table-column prop="planStartDate" sortable show-overflow-tooltip min-width="100" label="计划开工日期"></el-table-column>
-                            <el-table-column prop="planEndDate" sortable show-overflow-tooltip min-width="100" label="计划完工日期"></el-table-column>
+                            <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="100" label="计划开工日期"></el-table-column>
+                            <!--<el-table-column prop="planEndDate" sortable show-overflow-tooltip min-width="100" label="计划完工日期"></el-table-column>-->
+                            <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="100" label="计划完工日期"></el-table-column>
                         </el-table>
                         <el-pagination
                             @size-change="handleSizeChange"
@@ -142,12 +174,12 @@
 </template>
 <script>
     import ajax from '@/utils/request'
-    import {tool} from '@/utils/common'
+    import {tool, ruleTool} from '@/utils/common'
     import VeMap from './components/map'
 
     export default {
         name: 'DashboardAdmin',
-        mixins: [tool],
+        mixins: [tool, ruleTool],
         components: {
             VeMap
         },
@@ -156,23 +188,36 @@
                 area: true
             }
             return {
+                approvalForm: {},
+                approvalDialogVisible: false,
                 activeName: "doTaskTab",
                 doTaskList: [],
                 hisTaskList: [],
                 inputSearch:'',
-                projectName:'进行中',
+                projectName:'全部',
                 projectNameList: [],
                 projectList:[],
                 // listUrl: "power/powerprojecttask?projectStatus=2",
-                listUrl: "power/powerproject?projectStatus=2",
+                listUrl: "power/powerproject",
                 projectNum0:0,
                 projectNum1:0,
                 projectNum2:0,
                 projectNum3:0,
+                projectNum4:0,
                 tableData: [],
                 vMapData:[],
-                projectStatus:2,
-                projectNameArr:['进行中','已暂停','已完成']
+                projectStatus:'0',
+                projectNameArr:['全部', '进行中','已暂停','已完成'],
+
+                // showApprovalBtn: this.getCurrentUserAuthority("/powerprojectapproval/save"),
+                rules: {
+                    approvalStatus: [
+                        {required: true, message: '请选择审批状态', trigger: ['blur']}
+                    ],
+                    reason: [
+                        {required: true, message: '请输入审批原因', trigger: ['blur']}
+                    ],
+                }
             }
         },
         computed: {},
@@ -187,14 +232,44 @@
         },
         methods: {
 
+            getMessageList() {
+                ajax.get('/power/powerprojectapproval/getDoTaskList?size=9').then(rs => {
+                    this.doTaskList = rs;
+                });
+            },
             handleClick(tab, event) {
                 if(tab.name == 'doTaskTab') {
                     this.getMessageList()
                 } else if (tab.name == 'hisTaskTab') {
-                    ajax.get('/power/powerprojectapproval?size=9').then(rs => {
+                    ajax.get('/power/powerprojectapproval/getDoTaskList?size=9').then(rs => {
                         this.hisTaskList = rs.records;
                     });
                 }
+            },
+
+            approval(id) {
+                console.log(id)
+                this.approvalDialogVisible = true
+                this.approvalForm.id = id
+            },
+            //保存
+            submitApprovalForm(form) {
+                var data = this.approvalForm;
+                this.$refs[form].validate((valid) => {
+                    if (!valid) {
+                        this.$message.error('校验不通过，请检查输入项');
+                        return;
+                    }
+                    ajax.post('power/powerprojectapproval', data).then(rs => {
+                        if (rs.status == 0) {
+                            this.$message.success(rs.msg);
+                            this.approvalDialogVisible = false
+                            this.getMessageList()
+                        } else {
+                            this.$message.error(rs.msg);
+                        }
+                    });
+                });
             },
 
             // 根据项目状态获取所有项目(2-进行中，3-已暂停，4-已完成)
@@ -209,15 +284,17 @@
             getProjectCountByStatus() {
                 ajax.get('/power/powerproject/getProjectCountByStatus').then(rs => {
                     this.projectNum0 = rs.data.allCount
-                    this.projectNum1 = rs.data.startCount
-                    this.projectNum2 = rs.data.goCount
-                    this.projectNum3 = rs.data.endCount
+                    this.projectNum1 = rs.data.status1
+                    this.projectNum2 = rs.data.status2
+                    this.projectNum3 = rs.data.status3
+                    this.projectNum4 = rs.data.status4
                 });
             },
             getProjectListByname() {
                 ajax.get('/power/powerproject',{
                     projectStatus:'',
-                    name: this.inputSearch
+                    keyWords: this.inputSearch
+                    // name: this.inputSearch
                 }).then(rs => {
                     this.list = rs.records
                     this.listCount = rs.total
@@ -234,11 +311,7 @@
             moreMessage() {
                 this.$router.push({path: '/upms/message'})
             },
-            getMessageList() {
-                ajax.get('/power/powerprojectapproval/getDoTasks1.id,List?size=9').then(rs => {
-                    this.doTaskList = rs.records;
-                });
-            },
+
             handleClick1(data) {
                 this.projectStatus = parseInt(data)
                 this.projectName = this.projectNameArr[(this.projectStatus - 1)]
@@ -265,7 +338,7 @@
             toIndexProject(row) {
                 console.log(row)
                 this.$router.push({
-                    path: '/power/powerprojecttask/detail/'+ row.id,
+                    path: '/power/powerprojecttask/detail/'+ row.taskId,
                     // query: {id:row.id}
                 })
             },
@@ -361,6 +434,9 @@
     }
     .project_stauts4 {
         background:#AD8CF5;
+    }
+    .project_stauts5 {
+        background:#AD8C00;
     }
 </style>
 
