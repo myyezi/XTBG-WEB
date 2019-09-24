@@ -160,7 +160,7 @@
                 portrait:self.groupPortrait
             })
             this.treeDataList = this.organizationList.concat(myGroupList)
-            this.getFriendList()
+            // this.getFriendList()
         },
         // 得到好友列表
         getFriendList() {
