@@ -3,36 +3,14 @@
         <div class="el-row">
             <div class="el-col el-col-15">
                 <div class="el-card box-card is-always-shadow">
-                    <!--<div class="el-card__header home-card-heard">
-                        <div class="home_title clearfix">
-                            &lt;!&ndash;<p class="clearfix"><img src="../../../../styles/img/xx.png" /><span>消息中心</span></p>&ndash;&gt;
-                            &lt;!&ndash;<el-button type="text" style="float:right;padding:5px;border: 1px solid #3ab7c7;color:#246a73;" @click="moreMessage()">更多</el-button>&ndash;&gt;
-                            <p class="clearfix"><img src="../../../../styles/img/xx.png" /><span>代办</span></p>
-                        </div>
-                    </div>-->
- 
                     <div class="el-card__body home-card-body">
                         <el-tabs v-model="activeName" @tab-click="handleClick">
                         <el-tab-pane label="待办" name="doTaskTab">
-                            <!--<el-table border :data="bigEventList" style="width: 100%; height: 466px">
-                                <el-table-column prop="projectCode" sortable show-overflow-tooltip min-width="100" label="项目编号">
-                                    <template slot-scope="scope">
-                                        <el-button type="text" size="small" @click="toBigEventDetail(scope.row)">
-                                            {{scope.row.projectCode}}
-                                        </el-button>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column prop="projectName" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
-                                <el-table-column prop="projectType" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
-                                <el-table-column prop="description" sortable show-overflow-tooltip min-width="300" label="事件描述"></el-table-column>
-                                <el-table-column prop="updater" sortable show-overflow-tooltip min-width="50" label="提交人"></el-table-column>
-                                <el-table-column prop="eventDate" sortable show-overflow-tooltip min-width="50" label="事件日期"></el-table-column>
-                            </el-table>-->
                             <el-table border :data="doTaskList" style="width: 100%; height: 406px">
                                 <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
-                                <el-table-column prop="typeText" label="事项名称" width="150"></el-table-column>
-                                <el-table-column prop="projectName" label="事项内容" width="250"></el-table-column>
-                                <el-table-column prop="content" show-overflow-tooltip label="类型"></el-table-column>
+                                <el-table-column prop="name" label="事项名称" width="150"></el-table-column>
+                                <el-table-column prop="content" label="事项内容" width="250"></el-table-column>
+                                <el-table-column prop="taskType" show-overflow-tooltip label="类型">事项审批</el-table-column>
                                 <el-table-column prop="createTime" label="发布时间" width="200"></el-table-column>
                             </el-table>
                         </el-tab-pane>
@@ -42,8 +20,8 @@
                                 <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
                                 <el-table-column prop="typeText" label="事项名称" width="150"></el-table-column>
                                 <el-table-column prop="projectName" label="事项内容" width="250"></el-table-column>
-                                <el-table-column prop="content" show-overflow-tooltip label="类型"></el-table-column>
-                                <el-table-column prop="createTime" label="发布时间" width="200"></el-table-column>
+                                <el-table-column prop="content" show-overflow-tooltip label="类型">事项审批</el-table-column>
+                                <!--<el-table-column prop="createTime" label="发布时间" width="200"></el-table-column>-->
                             </el-table>
                         </el-tab-pane>
                     </el-tabs>
@@ -59,6 +37,7 @@
                             <el-dropdown split-button  size="mini" @command="handleClick1" style="float:right;">
                                 {{projectName}}
                                 <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item :disabled="projectName==='全部'" command="0">全部</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='进行中'" command="2">进行中</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='已暂停'" command="3">已暂停</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='已完成'" command="4">已完成</el-dropdown-item>
@@ -84,7 +63,7 @@
                                 <span @click="getProjectListByStatus(1)" style="color: #FFA600"><i class="project_stauts2"></i>暂存（{{projectNum1}}）</span>
                                 <span @click="getProjectListByStatus(2)" style="color: #41C0D0"><i class="project_stauts3"></i>进行中（{{projectNum2}}）</span>
                                 <span @click="getProjectListByStatus(3)" style="color: #AD8CF5"><i class="project_stauts4"></i>已暂停（{{projectNum3}}）</span>
-                                <span @click="getProjectListByStatus(3)" style="color: #AD8C00"><i class="project_stauts4"></i>已完成（{{projectNum3}}）</span>
+                                <span @click="getProjectListByStatus(4)" style="color: #AD8C00"><i class="project_stauts5"></i>已完成（{{projectNum4}}）</span>
                             </div>
                         </div>
                     </div>
@@ -160,19 +139,20 @@
                 doTaskList: [],
                 hisTaskList: [],
                 inputSearch:'',
-                projectName:'进行中',
+                projectName:'全部',
                 projectNameList: [],
                 projectList:[],
                 // listUrl: "power/powerprojecttask?projectStatus=2",
-                listUrl: "power/powerproject?projectStatus=2",
+                listUrl: "power/powerproject",
                 projectNum0:0,
                 projectNum1:0,
                 projectNum2:0,
                 projectNum3:0,
+                projectNum4:0,
                 tableData: [],
                 vMapData:[],
-                projectStatus:2,
-                projectNameArr:['进行中','已暂停','已完成']
+                projectStatus:'0',
+                projectNameArr:['全部', '进行中','已暂停','已完成']
             }
         },
         computed: {},
@@ -187,11 +167,16 @@
         },
         methods: {
 
+            getMessageList() {
+                ajax.get('/power/powerprojectapproval/getDoTaskList?size=9').then(rs => {
+                    this.doTaskList = rs;
+                });
+            },
             handleClick(tab, event) {
                 if(tab.name == 'doTaskTab') {
                     this.getMessageList()
                 } else if (tab.name == 'hisTaskTab') {
-                    ajax.get('/power/powerprojectapproval?size=9').then(rs => {
+                    ajax.get('/power/powerprojectapproval/getDoTaskList?size=9').then(rs => {
                         this.hisTaskList = rs.records;
                     });
                 }
@@ -209,15 +194,17 @@
             getProjectCountByStatus() {
                 ajax.get('/power/powerproject/getProjectCountByStatus').then(rs => {
                     this.projectNum0 = rs.data.allCount
-                    this.projectNum1 = rs.data.startCount
-                    this.projectNum2 = rs.data.goCount
-                    this.projectNum3 = rs.data.endCount
+                    this.projectNum1 = rs.data.status1
+                    this.projectNum2 = rs.data.status2
+                    this.projectNum3 = rs.data.status3
+                    this.projectNum4 = rs.data.status4
                 });
             },
             getProjectListByname() {
                 ajax.get('/power/powerproject',{
                     projectStatus:'',
-                    name: this.inputSearch
+                    keyWords: this.inputSearch
+                    // name: this.inputSearch
                 }).then(rs => {
                     this.list = rs.records
                     this.listCount = rs.total
@@ -234,11 +221,7 @@
             moreMessage() {
                 this.$router.push({path: '/upms/message'})
             },
-            getMessageList() {
-                ajax.get('/power/powerprojectapproval/getDoTasks1.id,List?size=9').then(rs => {
-                    this.doTaskList = rs.records;
-                });
-            },
+
             handleClick1(data) {
                 this.projectStatus = parseInt(data)
                 this.projectName = this.projectNameArr[(this.projectStatus - 1)]
@@ -361,6 +344,9 @@
     }
     .project_stauts4 {
         background:#AD8CF5;
+    }
+    .project_stauts5 {
+        background:#AD8C00;
     }
 </style>
 
