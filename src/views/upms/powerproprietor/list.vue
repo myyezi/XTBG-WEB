@@ -64,7 +64,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog width="800px" :visible.sync="contactDialogVisible" :append-to-body="true" class="el-dialog__body">
+        <el-dialog width="800px" :visible.sync="contactDialogVisible" :append-to-body="true">
             <el-table ref="multipleTable" :data="contactList" tooltip-effect="dark" style="width: 100%">
                 <el-table-column prop="name" label="联系人" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="post" label="联系人职务" show-overflow-tooltip></el-table-column>
@@ -127,10 +127,4 @@
     }
 </script>
 <style>
-    .el-dialog__body{
-        padding-top: 0px;
-        padding-left: 0px;
-        padding-bottom: 0px;
-        padding-right: 0px;
-    }
 </style>
