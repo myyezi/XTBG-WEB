@@ -9,21 +9,10 @@
                             &lt;!&ndash;<el-button type="text" style="float:right;padding:5px;border: 1px solid #3ab7c7;color:#246a73;" @click="moreMessage()">更多</el-button>&ndash;&gt;
                             <p class="clearfix"><img src="../../../../styles/img/xx.png" /><span>代办</span></p>
                         </div>
-                    </div>
- 
-                    <div class="el-card__body">
-                        <el-table
-                            :data="tableData"
-                            style="width: 100%"
-                            height="400">
-                            <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
-                            <el-table-column prop="typeText" label="事项名称" width="150"></el-table-column>
-                            <el-table-column prop="projectName" label="事项内容" width="250"></el-table-column>
-                            <el-table-column prop="content" show-overflow-tooltip label="类型"></el-table-column>
-                            <el-table-column prop="createTime" label="发布时间" width="200"></el-table-column>
-                        </el-table>
                     </div>-->
-                    <el-tabs v-model="activeName" @tab-click="handleClick">
+ 
+                    <div class="el-card__body home-card-body">
+                        <el-tabs v-model="activeName" @tab-click="handleClick">
                         <el-tab-pane label="待办" name="doTaskTab">
                             <!--<el-table border :data="bigEventList" style="width: 100%; height: 466px">
                                 <el-table-column prop="projectCode" sortable show-overflow-tooltip min-width="100" label="项目编号">
@@ -39,7 +28,7 @@
                                 <el-table-column prop="updater" sortable show-overflow-tooltip min-width="50" label="提交人"></el-table-column>
                                 <el-table-column prop="eventDate" sortable show-overflow-tooltip min-width="50" label="事件日期"></el-table-column>
                             </el-table>-->
-                            <el-table border :data="doTaskList" style="width: 100%; height: 466px">
+                            <el-table border :data="doTaskList" style="width: 100%; height: 406px">
                                 <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
                                 <el-table-column prop="typeText" label="事项名称" width="150"></el-table-column>
                                 <el-table-column prop="projectName" label="事项内容" width="250"></el-table-column>
@@ -49,7 +38,7 @@
                         </el-tab-pane>
 
                         <el-tab-pane label="已办" name="hisTaskTab">
-                            <el-table border :data="hisTaskList" style="width: 100%; height: 466px">
+                            <el-table border :data="hisTaskList" style="width: 100%; height: 406px">
                                 <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
                                 <el-table-column prop="typeText" label="事项名称" width="150"></el-table-column>
                                 <el-table-column prop="projectName" label="事项内容" width="250"></el-table-column>
@@ -58,6 +47,7 @@
                             </el-table>
                         </el-tab-pane>
                     </el-tabs>
+                    </div>
                 </div>
             </div>
 
@@ -303,6 +293,15 @@
     }
 </script>
 <style lang="scss">
+    .home-card-heard {
+        border-bottom: 1px solid #fff;
+        height: 60px;
+    }
+    .home-card-body {
+        .el-tabs__item {
+            margin: 13px 0;
+        }
+    }
     .home_title {
         p {
             float:left;

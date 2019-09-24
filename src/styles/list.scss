@@ -14,6 +14,18 @@
     .el-button--text {
         color: #4781fe;
     }
+    .home-card-heard {
+        background: #f3fefd;
+        border-bottom:1px solid #f3fefd;
+        height: 60px;
+        .el-button-group {
+            .el-button {
+                background: #f3fefd;
+                border: 1px solid #3ab7c7;
+                color:#246a73;
+            }
+        }
+    }
 }
 .list-panel .opertion-box {
     width: calc(100% - 40px);
@@ -197,14 +209,22 @@
         min-height: initial;
     }
     .list-panel .table-box {
-        margin-top: 0;
+        margin-top: 15px;
         padding-left: 0;
         padding-right: 0;
+    }
+    .list-panel .opertion-box {
+        margin:0;
+        width:100%;
     }
     .list-panel .search-box {
         padding-left: 0;
         padding-right: 0;
-        background: transparent;
+        width:100%;
+        margin:0 0 10px;
+    }
+    .list-panel .division-line {
+        margin:0;
     }
 }
 
