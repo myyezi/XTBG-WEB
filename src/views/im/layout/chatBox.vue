@@ -129,6 +129,7 @@ export default {
   },
   methods: {
     updateNet() {
+        this.$store.commit('setMessageListMap', {});
         this.$store.dispatch('getWebsocket', {
             ip: process.env.BASE_IP,
             port: process.env.BASE_HOST,
