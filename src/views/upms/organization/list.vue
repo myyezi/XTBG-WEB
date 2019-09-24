@@ -13,7 +13,7 @@
         </div>
         <div class="tree_two_count_right" v-loading="isLoading">
             <span style="font-size: 16px; display: block;margin:25px 0 10px;" v-if="checkData.name">{{checkData.name}}
-                <el-select v-if="checkData.name" v-model="userStatus" filterable clearable style="width: 200px; left: 200px" @change="getUserList()">
+                <el-select v-if="checkData.name" v-model="userStatus" multiple filterable clearable style="width: 200px; left: 200px" @change="getUserList()">
                     <el-option label="试用期" :value="1"></el-option>
                     <el-option label="正式员工" :value="2"></el-option>
                     <el-option label="离职" :value="3"></el-option>
@@ -90,7 +90,7 @@
                 isClickNode: false,
                 tableData:[],
                 checkData:{},
-                userStatus: '',// 搜索关键字
+                userStatus: new Array(1,2),// 搜索关键字
             }
         },
         methods: {
@@ -104,7 +104,8 @@
                 });
             },
             getUserList() {
-                ajax.get('upms/organization/getOrganizationUserList/' + this.checkData.id, {userStatus: this.userStatus}).then(rs => {
+                console.log(this.userStatus)
+                ajax.get('upms/organization/getOrganizationUserList/' + this.checkData.id, {userStatus: this.userStatus.join(',')}).then(rs => {
                     this.tableData = rs.data;
                 });
             },

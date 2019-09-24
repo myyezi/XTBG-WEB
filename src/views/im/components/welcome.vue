@@ -167,7 +167,7 @@ export default {
         }
     }
     .el-form-item__content {
-        line-height:40px;
+        line-height:30px;
     }
 }
 </style>
