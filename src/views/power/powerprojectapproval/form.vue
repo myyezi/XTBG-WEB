@@ -104,21 +104,17 @@ export default {
     //保存
     submitForm(form) {
       var data = this.powerprojectapprovalForm;
-      this.$refs\[form]
-        .validate((valid) => {
+      this.$refs[form].validate((valid) => {
           if (!valid) {
-            this.$message
-              .error('校验不通过，请检查输入项');
+            this.$message.error('校验不通过，请检查输入项');
             return;
           }
           ajax.post('project/powerprojectapproval', data).then(rs => {
             if (rs.status == 0) {
-              this.$message
-                .success(rs.msg);
+              this.$message.success(rs.msg);
               this.close();
             } else {
-              this.$message
-                .error(rs.msg);
+              this.$message.error(rs.msg);
             }
           });
         });

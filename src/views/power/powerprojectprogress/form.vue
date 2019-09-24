@@ -313,10 +313,19 @@
                 }).then(rs => {
                     if (rs.status == 0) {
                         this.$message.success(rs.msg);
+                        this.updateCurrentStatus();
                         this._getTasksModel();
                     } else {
                         this.$message.error(rs.msg);
                     }
+                });
+            },
+
+           //修改项目节点状态
+            updateCurrentStatus(){
+                ajax.post('power/powerprojectplan/loading/'+ this.id
+                ).then(rs => {
+                    this._getTasksModel();
                 });
             },
 
