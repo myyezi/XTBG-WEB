@@ -332,6 +332,7 @@ const im = {
         },
         setMessageListMap: function(state, messageListMap) {
           state.messageListMap = messageListMap;
+          ChatListUtils.setChatList(state.user.id, state.messageListMap);
         },
         setSessionList: function(state, sessionList) {
           state.sessionList = sessionList;
