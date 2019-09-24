@@ -64,7 +64,7 @@
 
 
             <el-dialog title="待办-审批" width="800px" :visible.sync="approvalDialogVisible" :append-to-body="true" class="el-dialog__body">
-                <el-form :model="approvalForm" ref="approvalForm" label-position="top" label-width="100px">
+                <el-form :model="approvalForm" :rules="rules" ref="approvalForm" label-position="top" label-width="100px">
                     <el-form-item label="是否通过" prop="approvalStatus">
                         <el-radio v-model="approvalForm.approvalStatus" label="2">通过</el-radio>
                         <el-radio v-model="approvalForm.approvalStatus" label="3">不通过</el-radio>
@@ -210,12 +210,14 @@
                 projectNameArr:['全部', '进行中','已暂停','已完成'],
 
                 // showApprovalBtn: this.getCurrentUserAuthority("/powerprojectapproval/save"),
-                approvalStatus: [
-                    { required: true, message: '请选择审批状态', trigger: ['blur'] }
-                ],
-                reason: [
-                    { required: true, message: '请输入审批原因', trigger: ['blur'] }
-                ],
+                rules: {
+                    approvalStatus: [
+                        {required: true, message: '请选择审批状态', trigger: ['blur']}
+                    ],
+                    reason: [
+                        {required: true, message: '请输入审批原因', trigger: ['blur']}
+                    ],
+                }
             }
         },
         computed: {},
