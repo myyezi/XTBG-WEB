@@ -56,7 +56,7 @@
                   <el-radio :label="true" @change="changeOpen">展开</el-radio>
               </el-radio-group>
               <template>
-                  <div class="app-container white-bg list-panel" v-cloak style="height: calc(100vh - 120px);padding:10px">
+                  <div class="app-container white-bg" v-cloak style="padding:10px">
                       <div class="container clearfix">
                           <gantt-add
                               ref="gantt"
