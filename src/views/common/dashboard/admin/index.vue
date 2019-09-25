@@ -10,7 +10,6 @@
                                 <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
                                 <el-table-column label="操作" width="100">
                                     <template fixed slot-scope="{ row, column, $index }">
-                                        <!--<el-button v-show="showApprovalBtn" @click="approval(row.id)" type="text" size="small">审批</el-button>-->
                                         <el-button v-if="row.type != 3" @click="approval(row.id, row.type)" type="text" size="small">审批</el-button>
                                         <el-button v-else @click="approval(row.id, row.type)" type="text" size="small">签收</el-button>
                                     </template>
@@ -48,34 +47,6 @@
                 </div>
             </div>
 
-
-<!--
-            <el-dialog width="600px" class="full-input" :visible.sync="show" :title="title">
-                <el-form :model="editForm" ref="editForm" label-position="top" label-width="100px">
-                    <el-form-item label="上级组织" prop="parentId" v-if="parentShow" :rules="rules.required('请选择上级组织')">
-                        <tree-select v-model="editForm.parentId" placeholder="请选择" type="one" ref="parentTree"
-                                     url="upms/organization/getOrganizationTree" :disabled-id="parentDisabledArr" :params="params"></tree-select>
-
-                    </el-form-item>
-                    <el-form-item label="组织名称" prop="name" :rules="rules.required('请输入组织名称')">
-                        <el-input v-model="editForm.name" placeholder="请输入" maxlength="30"></el-input>
-                    </el-form-item>
-                    <el-form-item label="组织属性" prop="type" :rules="rules.required('请选择组织属性')">
-
-                        <tree-select v-model="editForm.type" placeholder="请选择" type="one" ref="typeTree"
-                                     url="upms/organization/typeTree" :params="params"
-                                     :disabled-id="disabledArray"></tree-select>
-
-                    </el-form-item>
-                </el-form>
-                <div slot="footer" class="dialog-footer">
-                    <el-button type="primary" @click="add">保存</el-button>
-                    <el-button @click="close">返回</el-button>
-                </div>
-            </el-dialog>
--->
-
-
             <el-dialog title="待办-审批" width="400px" :visible.sync="approvalDialogVisible" :append-to-body="true" class="el-dialog__body">
                 <el-form :model="approvalForm" :rules="rules" ref="approvalForm" label-position="top" label-width="100px">
                     <el-form-item label="是否通过" prop="approvalStatus">
@@ -101,7 +72,7 @@
                             <el-dropdown split-button  size="mini" @command="handleClick1" style="float:right;">
                                 {{projectName}}
                                 <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item :disabled="projectName==='全部'" command="0">全部</el-dropdown-item>
+                                    <el-dropdown-item :disabled="projectName==='全部'" command="1">全部</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='进行中'" command="2">进行中</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='已暂停'" command="3">已暂停</el-dropdown-item>
                                     <el-dropdown-item :disabled="projectName==='已完成'" command="4">已完成</el-dropdown-item>
@@ -219,7 +190,7 @@
                 projectNum4:0,
                 tableData: [],
                 vMapData:[],
-                projectStatus:'0',
+                projectStatus:'1',
                 projectNameArr:['全部', '进行中','已暂停','已完成'],
 
                 // showApprovalBtn: this.getCurrentUserAuthority("/powerprojectapproval/save"),
@@ -271,6 +242,7 @@
                         let data = {}
                         data.id = id
                         data.signStatus = 2
+                        data.signTime = 'qianshou'
                         ajax.post('power/powerprojecttask', data).then(rs => {
                             if (rs.status == 0) {
                                 this.$message.success(rs.msg);
