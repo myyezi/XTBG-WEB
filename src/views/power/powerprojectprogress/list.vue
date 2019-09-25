@@ -71,11 +71,13 @@
     <div class="division-line"></div>
     <div class="table-box">
       <el-table :data="list" style="width: 100%">
-        <el-table-column fixed label="操作" width="150">
+        <el-table-column fixed label="操作" width="180">
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showStartBtn" v-if="row.projectStatus==3" @click="operate(row.id)" type="text" size="small">开启</el-button>
             <el-button v-show="showProgressBtn" v-if="row.projectStatus==2 && row.isExtension==0" @click="edit(row.taskId)" type="text" size="small">执行</el-button>
             <el-button v-show="showExtensionBtn"  v-if="row.projectStatus==2 && row.isExtension==0" @click="stop(row)" type="text" size="small">申请延期</el-button>
+            <!--<el-button v-show="showExtensionHisBtn" @click="getExtensionHis(row)" type="text" size="small">延期记录</el-button>-->
+            <el-button @click="getExtensionHis(row)" type="text" size="small">延期记录</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="code" sortable shonpm w-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
@@ -113,6 +115,19 @@
       <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="800px">
           <stop-upload></stop-upload>
       </el-dialog>
+
+      <el-dialog width="1200px" :visible.sync="showExtensionHisDialogVisible" :append-to-body="true">
+          <el-table ref="multipleTable" :data="showExtensionHisList" tooltip-effect="dark" style="width: 100%">
+              <el-table-column prop="extDate" sortable show-overflow-tooltip min-width="100" label="延期日期"></el-table-column>
+              <el-table-column prop="reason" sortable show-overflow-tooltip min-width="100" label="延期原因"></el-table-column>
+              <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="申请人"></el-table-column>
+              <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="申请时间"></el-table-column>
+              <el-table-column prop="approvalStatusText" sortable show-overflow-tooltip min-width="100" label="审批状态"></el-table-column>
+              <el-table-column prop="approver" sortable show-overflow-tooltip min-width="100" label="审批人"></el-table-column>
+              <el-table-column prop="approvalReason" sortable show-overflow-tooltip min-width="100" label="审批原因"></el-table-column>
+              <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100" label="审批时间"></el-table-column>
+          </el-table>
+      </el-dialog>
   </div>
 </template>
 
@@ -130,12 +145,15 @@ export default {
       searchParam: {
       },
       stopUploadShow:false,
+        showExtensionHisDialogVisible: false,
+        showExtensionHisList: [],
       extDate:'',
       isShowMore: false,
       listUrl: "power/powerproject",
       showSearch: false,
       showStartBtn: this.getCurrentUserAuthority("/power/powerprojectprogress/start"),
       showExtensionBtn: this.getCurrentUserAuthority("/power/powerprojectprogress/extension"),
+      showExtensionHisBtn: this.getCurrentUserAuthority("/power/powerprojectprogress/showExtensionHis"),
       showProgressBtn: this.getCurrentUserAuthority("/power/powerprojectprogress/progress"),
       typeOptions:[],
       coDepartmentOptions:[],
@@ -155,6 +173,14 @@ export default {
       this.getDict();
   },
   methods: {
+
+      getExtensionHis(row) {
+          this.showExtensionHisDialogVisible = true
+          ajax.get('power/powerprojectextension?projectId='+ row.id).then(rs => {
+              this.showExtensionHisList = rs.records;
+          });
+      },
+
       getListBefore(params) {
           params.initStatus = 1;
       },
