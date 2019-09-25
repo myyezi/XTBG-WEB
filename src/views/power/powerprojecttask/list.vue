@@ -16,13 +16,13 @@
           <div class="form-group">
             <label class="control-label">下达人</label>
             <div class="input-group">
-              <el-input v-model="searchParam.creater" placeholder="请输入员工姓名或手机号"></el-input>
+              <el-input v-model="searchParam.creater" placeholder="请输入员工姓名或手机号" clearable></el-input>
             </div>
           </div>
           <div class="form-group">
             <label class="control-label">签收人</label>
             <div class="input-group">
-              <el-input v-model="searchParam.signer" placeholder="请输入员工姓名或手机号"></el-input>
+              <el-input v-model="searchParam.signer" placeholder="请输入员工姓名或手机号" clearable></el-input>
             </div>
           </div>
           <div class="form-group">
