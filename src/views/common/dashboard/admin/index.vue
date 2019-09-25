@@ -11,10 +11,17 @@
                                 <el-table-column label="操作" width="100">
                                     <template fixed slot-scope="{ row, column, $index }">
                                         <!--<el-button v-show="showApprovalBtn" @click="approval(row.id)" type="text" size="small">审批</el-button>-->
-                                        <el-button @click="approval(row.id)" type="text" size="small">审批</el-button>
+                                        <el-button v-if="row.type != 3" @click="approval(row.id, row.type)" type="text" size="small">审批</el-button>
+                                        <el-button v-else @click="approval(row.id, row.type)" type="text" size="small">签收</el-button>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="name" label="事项名称" width="150"></el-table-column>
+                                <el-table-column prop="name" label="事项名称" width="150">
+                                    <template slot-scope="scope">
+                                        <el-button type="text" size="small" @click="toIndexProject(scope.row)">
+                                            {{scope.row.name}}
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
                                 <el-table-column prop="content" label="事项内容" width="250"></el-table-column>
                                 <el-table-column prop="taskType" show-overflow-tooltip label="类型">事项审批</el-table-column>
                                 <el-table-column prop="createTime" label="发布时间" width="200"></el-table-column>
@@ -24,9 +31,15 @@
                         <el-tab-pane label="已办" name="hisTaskTab">
                             <el-table border :data="hisTaskList" style="width: 100%; height: 406px">
                                 <el-table-column label="序号" fixed type="index" width="50"></el-table-column>
-                                <el-table-column prop="typeText" label="事项名称" width="150"></el-table-column>
-                                <el-table-column prop="projectName" label="事项内容" width="250"></el-table-column>
-                                <el-table-column prop="content" show-overflow-tooltip label="类型">事项审批</el-table-column>
+                                <el-table-column prop="name" label="事项名称" width="150">
+                                    <template slot-scope="scope">
+                                        <el-button type="text" size="small" @click="toIndexProject(scope.row)">
+                                            {{scope.row.name}}
+                                        </el-button>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column prop="content" label="事项内容" width="250"></el-table-column>
+                                <el-table-column prop="taskType" show-overflow-tooltip label="类型">事项审批</el-table-column>
                                 <el-table-column prop="createTime" label="发布时间" width="200"></el-table-column>
                             </el-table>
                         </el-tab-pane>
@@ -63,13 +76,13 @@
 -->
 
 
-            <el-dialog title="待办-审批" width="800px" :visible.sync="approvalDialogVisible" :append-to-body="true" class="el-dialog__body">
+            <el-dialog title="待办-审批" width="400px" :visible.sync="approvalDialogVisible" :append-to-body="true" class="el-dialog__body">
                 <el-form :model="approvalForm" :rules="rules" ref="approvalForm" label-position="top" label-width="100px">
                     <el-form-item label="是否通过" prop="approvalStatus">
                         <el-radio v-model="approvalForm.approvalStatus" label="2">通过</el-radio>
                         <el-radio v-model="approvalForm.approvalStatus" label="3">不通过</el-radio>
                     </el-form-item>
-                    <el-form-item label="通知内容" prop="reason" v-if="approvalForm.approvalStatus == 3">
+                    <el-form-item label="审批原因" prop="reason" v-if="approvalForm.approvalStatus == 3">
                         <!--<el-input type="textarea" v-model="noticeForm.content" placeholder="请输入通知" maxlength=20 clearable></el-input>-->
                         <el-input type="textarea" v-model="approvalForm.reason" placeholder="请输入原因" maxlength=200 clearable></el-input>
                     </el-form-item>
@@ -241,16 +254,34 @@
                 if(tab.name == 'doTaskTab') {
                     this.getMessageList()
                 } else if (tab.name == 'hisTaskTab') {
-                    ajax.get('/power/powerprojectapproval/getDoTaskList?size=9').then(rs => {
-                        this.hisTaskList = rs.records;
+                    ajax.get('/power/powerprojectapproval/getHisTaskList?size=9').then(rs => {
+                        this.hisTaskList = rs;
                     });
                 }
             },
 
-            approval(id) {
-                console.log(id)
-                this.approvalDialogVisible = true
-                this.approvalForm.id = id
+            approval(id, type) {
+                if(type != 3) {
+                    console.log(id, type)
+                    this.approvalDialogVisible = true
+                    this.approvalForm.id = id
+                    this.approvalForm.type = type
+                } else {
+                    this.$confirm("确认签收吗？").then(_ => {
+                        let data = {}
+                        data.id = id
+                        data.signStatus = 2
+                        ajax.post('power/powerprojecttask', data).then(rs => {
+                            if (rs.status == 0) {
+                                this.$message.success(rs.msg);
+                                this.getMessageList()
+                            } else {
+                                this.$message.error(rs.msg);
+                            }
+                        });
+                    }).catch(_ => {
+                    });
+                }
             },
             //保存
             submitApprovalForm(form) {
@@ -260,15 +291,27 @@
                         this.$message.error('校验不通过，请检查输入项');
                         return;
                     }
-                    ajax.post('power/powerprojectapproval', data).then(rs => {
-                        if (rs.status == 0) {
-                            this.$message.success(rs.msg);
-                            this.approvalDialogVisible = false
-                            this.getMessageList()
-                        } else {
-                            this.$message.error(rs.msg);
-                        }
-                    });
+                    if(data.type == 1) {
+                        ajax.post('power/powerprojectapproval', data).then(rs => {
+                            if (rs.status == 0) {
+                                this.$message.success(rs.msg);
+                                this.approvalDialogVisible = false
+                                this.getMessageList()
+                            } else {
+                                this.$message.error(rs.msg);
+                            }
+                        });
+                    } else if(data.type == 2) {
+                        ajax.post('power/powerprojectextension/approval', data).then(rs => {
+                            if (rs.status == 0) {
+                                this.$message.success(rs.msg);
+                                this.approvalDialogVisible = false
+                                this.getMessageList()
+                            } else {
+                                this.$message.error(rs.msg);
+                            }
+                        });
+                    }
                 });
             },
 
