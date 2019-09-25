@@ -21,6 +21,7 @@
                     </li>
                       <li @click="isChatBox=true;isUserBox=false;isChatGroupBox=false">
                           <i class="el-icon-chat-round left-bar_icon" :class="{'left-bar_icon_active':isChatBox}" ></i>
+                          <el-badge class="message_number" :value="unReadNum" v-if="unReadNum>0"/>
                       </li>
                       <li @click="isUserBox=true;isChatBox=false;isChatGroupBox=false;">
                           <i class="icon-tongxunlu left-bar_icon" :class="{'left-bar_icon_active':isUserBox}"></i>
@@ -52,6 +53,23 @@ export default {
     ...mapGetters([
       'user',
     ]),
+    sessionList: {
+        get: function() {
+            return this.$store.state.im.sessionList;
+        }
+    }
+  },
+  watch:{
+      sessionList :function(newvalue,oldvalue) {
+          if(newvalue&&newvalue.length>0) {
+              this.unReadNum = 0
+              newvalue.forEach((item)=>{
+                  this.unReadNum += item.unReadCount
+              })
+          } else {
+              this.unReadNum = 0
+          }
+      },
   },
   data() {
     return {
@@ -62,7 +80,8 @@ export default {
       isUserBox: false,
       isChatBox: true,
       isChatGroupBox: false,
-      chat:{}
+      chat:{},
+      unReadNum:0,
     };
   },
   methods: {
@@ -165,6 +184,10 @@ export default {
           &:hover {
             color: $color-write;
           }
+        }
+        .message_number {
+            left: 15px;
+            top: -25px;
         }
         .left-bar_icon_active {
           color: $color-write;
