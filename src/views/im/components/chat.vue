@@ -10,8 +10,7 @@
                     <ul>
                         <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=4">
                             <div class="im-chat-user">
-                                <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
-                                <img v-else :src="allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
+                                <img :src="allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
                                 <cite v-if="item.fromUserId == user.userId"><i v-if="item.serverTimestamp">{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
                                 <cite v-else>{{ allUserInfoObj[item.fromUserId].name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
@@ -32,7 +31,7 @@
                 <ul v-show="visibleBox" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
                   <li @click.stop="withdrawMessage" :style="{color:isTimeOut?'#999':'#333'}">撤回消息<span v-if="isTimeOut">(已超过两分钟)</span></li>
               </ul>
-                <div class="im-chat-footer">
+                <div class="im-chat-footer" v-if="chat.type !== 7">
                     <div class="im-chat-tool">
                         <el-popover
                           placement="top"
@@ -424,19 +423,21 @@
                 }
             })
           } else {
-            let objArr = {
-                obj:{
-                  head:'0',
-                  count:100,
-                  conversation:{
-                      line:0,
-                      type:self.chat.type,
-                      targetId:self.chat.targetId
-                  }
-                },
-                subTopic:'LRM'
+            if(self.chat.serverTimestamp) {
+              let objArr = {
+                  obj:{
+                    head:'0',
+                    count:100,
+                    conversation:{
+                        line:0,
+                        type:self.chat.type,
+                        targetId:self.chat.targetId
+                    }
+                  },
+                  subTopic:'LRM'
+              }
+              self.$store.commit('sendMessage', objArr);
             }
-            self.$store.commit('sendMessage', objArr);
           }
           this.scollBottom()
       },
@@ -666,7 +667,7 @@
                               text-overflow:ellipsis;//让超出的用...实现
                               white-space:nowrap;//禁止换行
                               overflow:hidden;//超出的隐藏
-                              width: 350px;
+                              max-width: 350px;
                             }
                             .el-icon-download {
                                 float: left;

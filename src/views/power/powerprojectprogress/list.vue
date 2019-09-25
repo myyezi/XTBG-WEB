@@ -5,7 +5,7 @@
         <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
-      <el-button type="primary" icon="el-icon-refresh" size="small" @click="stopUploadShow = true">测试</el-button>
+<!--      <el-button type="primary" icon="el-icon-refresh" size="small" @click="stopUploadShow = true">测试</el-button>-->
     </div>
     <!-- 展开更多查询开始 -->
     <el-collapse-transition>
@@ -15,21 +15,21 @@
           <div class="form-group">
             <label class="control-label">项目类型</label>
             <div class="input-group">
-                <el-select v-model="searchParam.type" clearable placeholder="请选择项目类型">
+                <el-select v-model="searchParam.projectType" clearable placeholder="请选择项目类型">
                     <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value">
                     </el-option>
                 </el-select>
             </div>
           </div>
-          <div class="form-group">
-            <label class="control-label">设计阶段</label>
-            <div class="input-group">
-                <el-select v-model="searchParam.type" clearable placeholder="请选择项目类型">
-                    <el-option v-for="item in gcjdOptions" :key="item.value" :label="item.text" :value="item.value">
-                    </el-option>
-                </el-select>
-            </div>
-          </div>
+<!--          <div class="form-group">-->
+<!--            <label class="control-label">设计阶段</label>-->
+<!--            <div class="input-group">-->
+<!--                <el-select v-model="searchParam.stage" clearable placeholder="请选择设计阶段">-->
+<!--                    <el-option v-for="item in gcjdOptions" :key="item.value" :label="item.text" :value="item.value">-->
+<!--                    </el-option>-->
+<!--                </el-select>-->
+<!--            </div>-->
+<!--          </div>-->
           <div class="form-group">
             <label class="control-label">任务依据</label>
             <div class="input-group">
@@ -44,16 +44,18 @@
           <div class="form-group">
             <label class="control-label">项目状态</label>
             <div class="input-group">
-                <el-select v-model="searchParam.source" clearable placeholder="请选择项目状态">
-                    <el-option  label="进行中" value="1"></el-option>
-                    <el-option  label="已暂停" value="2"></el-option>
+                <el-select v-model="searchParam.projectStatus" placeholder="请选择项目状态" clearable>
+                    <el-option  label="暂存" :value="1"></el-option>
+                    <el-option  label="进行中" :value="2"></el-option>
+                    <el-option  label="已暂停" :value="3"></el-option>
+                    <el-option  label="已完成" :value="4"></el-option>
                 </el-select>
             </div>
           </div>
           <div class="form-group">
             <label class="control-label">协办部门</label>
             <div class="input-group">
-                <el-select v-model="searchParam.type" clearable placeholder="请选择协办部门">
+                <el-select v-model="searchParam.coDepartment" clearable placeholder="请选择协办部门">
                  <el-option v-for="item in coDepartmentOptions" :key="item.value" :label="item.text" :value="item.value">
                 </el-option>
             </el-select>
@@ -62,7 +64,7 @@
           <div class="form-group">
             <label class="control-label">项目经理</label>
             <div class="input-group">
-              <el-input v-model="searchParam.principal" placeholder="请输入负责人"></el-input>
+              <el-input v-model="searchParam.manager" placeholder="请输入项目经理" clearable></el-input>
             </div>
           </div>
         </div>

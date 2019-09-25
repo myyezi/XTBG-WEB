@@ -107,6 +107,7 @@ const websocketConnect = {
             ChatListUtils.setLastMessageHead(objData.username,msg.head)
             ChatListUtils.setLastMessageType(objData.username,msg.type)
             if(msg.messages.length>0) {
+                let userObj = ChatListUtils.getUserFriendObj(objData.username);
                 msg.messages.forEach((item,index)=> {
                     if(item.conversation.type==1) {
                         if(index == 0) {
@@ -130,8 +131,19 @@ const websocketConnect = {
                             }
                         }
                     } else {
-                        store.commit('addMessage', item);
-                        store.commit('addSession', item);
+                        if(!userObj[item.fromUserId]) {
+                            let obj2 = JSON.stringify({
+                                requestList: []
+                            });
+                            client.pubMessage(obj2,IMTopic.GetAllUserTopic)
+                            let obj1 = JSON.stringify({
+                                userId: objData.username,
+                            });
+                            client.pubMessage(obj1,IMTopic.GetUserChatTopic)
+                        } else {
+                            store.commit('addMessage', item);
+                            store.commit('addSession', item);
+                        }
                     }
                     // 首先，让我们检查我们是否有权限发出通知
                     // 如果没有，我们就请求获得权限
