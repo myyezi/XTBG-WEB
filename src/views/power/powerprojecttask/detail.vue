@@ -142,8 +142,8 @@
                     <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="收资名称"></el-table-column>
                     <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="上传人"></el-table-column>
                     <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="上传时间"></el-table-column>
-                    <el-table-column prop="projectName" sortable show-overflow-tooltip min-width="100" label="审核人"></el-table-column>
-                    <el-table-column prop="projectType" sortable show-overflow-tooltip min-width="100" label="审核时间"></el-table-column>
+                    <el-table-column prop="approver" sortable show-overflow-tooltip min-width="100" label="审核人"></el-table-column>
+                    <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100" label="审核时间"></el-table-column>
                     <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                         <template fixed slot-scope="{ row, column, $index }">
                             <el-button  @click="download(row)" type="text" size="small">下载</el-button>
@@ -156,8 +156,8 @@
                     <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称"></el-table-column>
                     <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="上传人"></el-table-column>
                     <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="上传时间"></el-table-column>
-                    <el-table-column prop="projectName" sortable show-overflow-tooltip min-width="100" label="审核人"></el-table-column>
-                    <el-table-column prop="projectType" sortable show-overflow-tooltip min-width="100" label="审核时间"></el-table-column>
+                    <el-table-column prop="approver" sortable show-overflow-tooltip min-width="100" label="审核人"></el-table-column>
+                    <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100" label="审核时间"></el-table-column>
                     <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                         <template fixed slot-scope="{ row, column, $index }">
                             <el-button  @click="download(row)" type="text" size="small">下载</el-button>
@@ -170,8 +170,8 @@
                     <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="成品名称"></el-table-column>
                     <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="上传人"></el-table-column>
                     <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="上传时间"></el-table-column>
-                    <el-table-column prop="projectName" sortable show-overflow-tooltip min-width="100" label="审核人"></el-table-column>
-                    <el-table-column prop="projectType" sortable show-overflow-tooltip min-width="100" label="审核时间"></el-table-column>
+                    <el-table-column prop="approver" sortable show-overflow-tooltip min-width="100" label="审核人"></el-table-column>
+                    <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100" label="审核时间"></el-table-column>
                     <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                         <template fixed slot-scope="{ row, column, $index }">
                             <el-button  @click="download(row)" type="text" size="small">下载</el-button>

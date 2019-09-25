@@ -10,7 +10,8 @@
         <ul class="user-list">
           <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionListCopy" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
             <a href="javascript:" :class="currentChat&&currentChat.targetId===chat.targetId?'active':''">
-              <i v-if="chat.unReadCount&&chat.unReadCount>0" class="un_read_count">{{ chat.unReadCount }}</i>
+              <el-badge class="message_number" :value="chat.unReadCount" v-if="chat.unReadCount&&chat.unReadCount>0"/>
+              <!-- <i v-if="chat.unReadCount&&chat.unReadCount>0" class="un_read_count">{{ chat.unReadCount }}</i> -->
               <i class="icon-qun1 group_identification" v-if="chat.type==1"></i>
               <img :src="chat.portrait?chat.portrait:defaultPic">
               <b>{{ chat.targetName?chat.targetName:'test' }}</b>
@@ -105,6 +106,11 @@ export default {
           }
         }
       },
+      chatGroupList:function(newvalue,oldvalue) {
+        if(newvalue) {
+            this.getSessionList()
+        } 
+      },
   },
   computed: {
     ...mapGetters([
@@ -122,6 +128,11 @@ export default {
       get: function() {
         return this.$store.state.im.netStaus;
       }
+    },
+    chatGroupList: {
+        get: function() {
+          return this.$store.state.im.chatGroupList;
+        }
     }
   },
   methods: {
@@ -405,7 +416,11 @@ export default {
           height: 100%;
           color: $color-default;
           position: relative;
-
+          .message_number {
+            left: 60px;
+            top: 5px;
+            z-index: 99;
+          }
           .un_read_count {
             display: inline-block;
             width: 1.6rem;
