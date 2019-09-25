@@ -13,7 +13,7 @@
                 ref="tree"
                 class="user_tree">
                 <span class="custom-tree-node clearfix" slot-scope="{ node, data }">
-                    <img :src="chatObj.portrait?chatObj.portrait:defaultPic" v-if="data.type === 1">
+                    <img :src="data.portrait?data.portrait:defaultPic" v-if="data.type === 1">
                     <span>{{ node.label }}</span>
                 </span>
             </el-tree>
@@ -27,9 +27,9 @@
                 <el-form-item label="手机号码:">
                   <span>{{chatObj.phone?chatObj.phone:'暂无'}}</span>
                 </el-form-item>
-                <el-form-item label="部门:">
+                <!-- <el-form-item label="部门:">
                   <span>{{chatObj.userOrganizations?chatObj.userOrganizations:'暂无'}}</span>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label-width="30px" class="clearfix">
                   <el-button size="small" @click="back" style="margin:0 10px 0 0;float:left">返回</el-button>
                   <el-button size="small" type="primary" @click="onSubmit" style="float:left">发消息</el-button>
@@ -158,6 +158,7 @@ export default {
               width:26px;
               height:26px;
               margin-right:5px;
+              border-radius: 50%;
             }
             span {
               float:left;
@@ -168,6 +169,9 @@ export default {
     }
     .el-form-item__content {
         line-height:30px;
+    }
+    .el-tree-node__content {
+        height:30px
     }
 }
 </style>

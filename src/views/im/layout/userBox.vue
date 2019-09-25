@@ -12,7 +12,7 @@
                     class="organization_tree">
                     <span class="custom-tree-node clearfix" slot-scope="{ node, data }">
                         <!-- <el-tooltip class="item" effect="dark" :content="node.label" placement="top-start"> -->
-                            <img :src="data.portrait?data.portrait:defaultPic" alt="头像" >
+                            <img :src="data.portrait?data.portrait:defaultPic" alt="头像" v-if="data.portrait">
                             <span>{{ node.label }}</span>
                         <!-- </el-tooltip> -->
                     </span>
@@ -132,7 +132,11 @@
             ajax.get('/upms/organization/companyTree').then(rs => {
                 if(rs.status === 0) {
                     this.organizationList = rs.data
-                    this.organizationList[0].portrait = this.companyPortrait
+                    if(this.organizationList&&this.organizationList.length>0) {
+                        this.organizationList.forEach((item)=>{
+                            item.portrait = this.companyPortrait
+                        })
+                    }
                 }
                 this.getGroupList()
             });
