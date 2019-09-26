@@ -10,9 +10,9 @@
                     <ul>
                         <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=4">
                             <div class="im-chat-user">
-                                <img :src="allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
+                                <img :src="allUserInfoObj[item.fromUserId]&&allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
                                 <cite v-if="item.fromUserId == user.userId"><i v-if="item.serverTimestamp">{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
-                                <cite v-else>{{ allUserInfoObj[item.fromUserId].name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
+                                <cite v-else>{{ allUserInfoObj[item.fromUserId]&&allUserInfoObj[item.fromUserId].name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
                             <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
                                 <i class="el-icon-loading" v-if="!item.messageId&&item.netStausType==1"></i>
@@ -23,15 +23,48 @@
                             <!-- <div class="im-chat-cxfs" v-if="item.netStausType==2" @click="resendMessage(item)">重新发送</div> -->
                         </li>
                         <li v-else class="group_system_chat">
-                          <span>{{ formatDateTime(new Date(item.serverTimestamp)) }}</span>
-                          <p>{{item.content.content}}</p>
+                          <div v-if="item.content.type==100">
+                              <div class="im-chat-user">
+                                  <img :src="allUserInfoObj[item.fromUserId]&&allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
+                                  <cite v-if="item.fromUserId == user.userId"><i v-if="item.serverTimestamp">{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
+                                  <cite v-else>{{ notifyTypeObj[JSON.parse(item.content.content).notifyType]}}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
+                              </div>
+                              <div class="im-chat-text">
+                                <el-card class="box-card">
+                                  <div class="job_notifications_title">
+                                    {{JSON.parse(item.content.content).title}}
+                                  </div>
+                                  <div class="job_notifications_time" v-if="JSON.parse(item.content.content).notifyType==1">
+                                    {{JSON.parse(item.content.content).attendanceDate}}
+                                  </div>
+                                  <div class="job_notifications_name">
+                                    <div v-if="JSON.parse(item.content.content).notifyType==1">
+                                      <span>班次时间：</span>
+                                      {{JSON.parse(item.content.content).attendanceDate + "&nbsp;&nbsp;" +JSON.parse(item.content.content).dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).attendanceType==1?"上班":"下班")}}
+                                    </div>
+                                    <div v-else>
+                                      <span>项目名称：</span>
+                                      {{JSON.parse(item.content.content).projectName}}
+                                    </div>
+                                  </div>
+                                  <div class="job_notifications_count">
+                                    <div v-if="JSON.parse(item.content.content).notifyType==1"><span>打卡地点：</span>{{JSON.parse(item.content.content).adress}}</div>
+                                    <div v-else><span>审批内容：</span>{{JSON.parse(item.content.content).reason}}</div>
+                                  </div>
+                                </el-card>
+                              </div>
+                          </div>
+                          <div v-else class="group_system_notifications">
+                              <span>{{ formatDateTime(new Date(item.serverTimestamp)) }}</span>
+                              <p>{{item.content.content}}</p>
+                          </div>
                         </li>
                     </ul>
                 </div>
                 <ul v-show="visibleBox" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
                   <li @click.stop="withdrawMessage" :style="{color:isTimeOut?'#999':'#333'}">撤回消息<span v-if="isTimeOut">(已超过两分钟)</span></li>
               </ul>
-                <div class="im-chat-footer" v-if="chat.type !== 7">
+                <div class="im-chat-footer" v-if="chat.type !== 2">
                     <div class="im-chat-tool">
                         <el-popover
                           placement="top"
@@ -66,7 +99,7 @@
                 <span v-show="!isSetting"> {{ chat.targetName }}</span>
                 <span v-show="isSetting"> 群设置</span>
               </div>
-              <setting :chat="chat" :groupUserList="currentGroupUser"  v-if="showHistory&&isSetting"></setting>
+              <setting :chat="chat" :groupUserList="currentGroupUser"  v-if="showHistory&&isSetting" :allUserInfoObj="allUserInfoObj"></setting>
               <chat-history :chat="chat" :messageList="messageList" :messageImgList="messageImgList" :allUserInfoObj="allUserInfoObj" v-if="showHistory&&!isSetting"></chat-history>
         </el-dialog>
         <!-- 大图预览 -->
@@ -167,7 +200,12 @@
         },
         previewerImgList:[],//预览的图片集合
         messageImgList:[],//所有的图片消息图片的集合
-        allUserInfoObj:{} //所有用户信息
+        allUserInfoObj:{}, //所有用户信息
+        notifyTypeObj:{
+          1:'考情打卡',
+          2:'申请',
+          3:'审批'
+        }
       };
     },
     props: ['chat','chatDialogVisible'],
@@ -541,6 +579,13 @@
         font-size: 1.6rem;
         font-weight: bold;
         height: 30px;
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 500px;
+          display: inline-block;
+        }
         .menu {
             color: $color-default;
             display: inline-block;
@@ -774,6 +819,34 @@
                 }
             }
             .group_system_chat {
+              .im-chat-text {
+                  width: 25rem;
+                  padding: 0;
+                  &:after {
+                      border-color: #fff transparent transparent;
+                  }
+                  .job_notifications_title {
+                      // text-align: center;
+                      font-size: 15px;
+                      margin-bottom: 5px;
+                      color: #fb9034;
+                  }
+                  .job_notifications_time {
+                      font-size: 12px;
+                      margin-bottom: 5px;
+                  }
+                  .job_notifications_name {
+                    span {
+                      color:#999
+                    }
+                  }
+                  .job_notifications_count {
+                    span {
+                      color:#999
+                    }
+                  }
+              }
+              .group_system_notifications {
                 text-align: center;
                 span {
                     font-size:12px;
@@ -784,7 +857,8 @@
                     margin-top: 5px;
                     color: #333;
                 }
-            }
+              }
+        }
         }
 
         .contextmenu {

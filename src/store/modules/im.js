@@ -29,11 +29,17 @@ const im = {
         // 未读消息
         messageCount:0,
         // 网络状态
-        netStaus:''
+        netStaus:'',
+        // 登录状态
+        loginStaus:true
       },
       mutations: {
         updateNet:function(state, net) {
           state.netStaus = net;
+        },
+        updateLoginStaus:function(state, net) {
+          console.log(net)
+          state.loginStaus = net;
         },
         setCurrentUser: function(state, user) {
           user.id = user.userId
