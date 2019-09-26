@@ -49,7 +49,11 @@
                                   </div>
                                   <div class="job_notifications_count">
                                     <div v-if="JSON.parse(item.content.content).notifyType==1"><span>打卡地点：</span>{{JSON.parse(item.content.content).adress}}</div>
-                                    <div v-else><span>审批内容：</span>{{JSON.parse(item.content.content).reason}}</div>
+                                    <div v-else><span v-if="JSON.parse(item.content.content).notifyType==2">申请原因：</span><span v-else>审批结果：</span>{{JSON.parse(item.content.content).reason}}</div>
+                                  </div>
+                                  <div class="job_notifications_result" v-if="JSON.parse(item.content.content).notifyType==3">
+                                    <span v-if="JSON.parse(item.content.content).approvalStatus==2" style="color:#14d41b">同意</span>
+                                    <span v-if="JSON.parse(item.content.content).approvalStatus==3" style="color:#ff0404">不同意</span>
                                   </div>
                                 </el-card>
                               </div>
