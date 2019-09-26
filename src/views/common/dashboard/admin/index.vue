@@ -274,6 +274,7 @@
                             }
                         });
                     } else if(data.type == 2) {
+                        data.approvalReason = data.reason
                         ajax.post('power/powerprojectextension/approval', data).then(rs => {
                             if (rs.status == 0) {
                                 this.$message.success(rs.msg);
