@@ -20,6 +20,7 @@ const IMTopic = {
     TransferGroupTopic : "GTG",// 转移群
     DismissGroupTopic : "GD",// 解散群
     QuitGroupTopic : "GQ",// 退出群
+    QuitLogin : "LT",// 退出
 };
 
 const websocketConnect = {
@@ -231,6 +232,9 @@ const websocketConnect = {
             }
         } else if (message.destinationName == IMTopic.DelUserChatTopic) { 
 
+        } else if (message.destinationName == IMTopic.QuitLogin) { 
+            console.log("su123123213")
+            store.commit('updateLoginStaus', false);
         }
     },
     // 群处理 

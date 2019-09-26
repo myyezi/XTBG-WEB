@@ -25,10 +25,28 @@ export default {
     messageCount() {
       return this.$store.state.im.messageCount;
     },
+    loginStaus: {
+      get: function() {
+        return this.$store.state.im.netStaus;
+      }
+    },
   },
   watch: {
     messageCount: function () {
       this.aplayAudio()
+    },
+    loginStaus: function (newvalue,oldvalue) {
+      console.log(newvalue)
+      if(!newvalue) {
+        this.$message({
+          message: '该账号在其它地方登陆了！',
+          type: 'warning'
+        });
+        this.$store.dispatch('LogOut').then(() => {
+            localStorage.clear();
+            location.reload() // 为了重新实例化vue-router对象 避免bug
+        })
+      }
     }
   },
   methods: {

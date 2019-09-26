@@ -7,7 +7,7 @@
             <el-radio :label="false" @change="changeOpen">收起</el-radio>
             <el-radio :label="true" @change="changeOpen">展开</el-radio>
         </el-radio-group>
-        <div class="container clearfix">
+        <div class="clearfix">
             <gantt-add
                 ref="gantt"
                 class="left-container"

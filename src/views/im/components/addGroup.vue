@@ -225,12 +225,16 @@
       height: 500px;
       width: 329px;
       overflow: auto;
+      .el-tree-node__content {
+          height:30px
+      }
       .custom-tree-node{
           img {
             float:left;
             width:26px;
             height:26px;
             margin-right:5px;
+            border-radius: 50%;
           }
           span {
             float:left;
