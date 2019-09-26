@@ -244,6 +244,10 @@
                     span {
                         float:left;
                         margin: 10px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        width: 13.5rem;
                     }
                 }
                 .el-tree-node__children {

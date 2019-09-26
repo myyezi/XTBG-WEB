@@ -579,6 +579,13 @@
         font-size: 1.6rem;
         font-weight: bold;
         height: 30px;
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 500px;
+          display: inline-block;
+        }
         .menu {
             color: $color-default;
             display: inline-block;

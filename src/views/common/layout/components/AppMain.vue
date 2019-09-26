@@ -12,6 +12,7 @@
 
 <script>
 import IMChat from '@/views/im/index2.vue';
+import {removeToken} from '@/utils/cookie' // 验权
 export default {
   name: 'AppMain',
   components: { IMChat },
@@ -27,7 +28,7 @@ export default {
     },
     loginStaus: {
       get: function() {
-        return this.$store.state.im.netStaus;
+        return this.$store.state.im.loginStaus;
       }
     },
   },
@@ -36,16 +37,22 @@ export default {
       this.aplayAudio()
     },
     loginStaus: function (newvalue,oldvalue) {
-      console.log(newvalue)
       if(!newvalue) {
-        this.$message({
-          message: '该账号在其它地方登陆了！',
-          type: 'warning'
-        });
-        this.$store.dispatch('LogOut').then(() => {
+        removeToken()
+        this.$confirm('你的账号已在其它地方登录！需退出重新登录！！！', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          showClose:false,
+          showCancelButton:false,
+          closeOnClickModal:false
+        }).then(() => {
+          this.$store.dispatch('LogOut').then(() => {
             localStorage.clear();
             location.reload() // 为了重新实例化vue-router对象 避免bug
-        })
+          })
+        }).catch(() => {
+        });
       }
     }
   },

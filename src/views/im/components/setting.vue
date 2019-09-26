@@ -15,7 +15,7 @@
             </div>
             <div class="im_chat_setting_title_right clearfix">
                 <span v-if="!showEdit">{{chats.targetName}}</span>
-                <input v-else v-model="chats.targetName" @click.stop=''/>
+                <input v-else v-model="chats.targetName" @click.stop='' maxlength="30"/>
                 <!-- <span>内部群</span> -->
                 <i class="el-icon-edit" title="编辑群名称" @click.stop="showEdit=!showEdit" v-if="chats.owner == this.user.userId"></i>
             </div>
@@ -305,6 +305,10 @@
                     height: 26px;
                     line-height: 26px;
                     margin-right: 5px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    width: 450px;
                 }
                 span:nth-child(2) {
                     float: left;
@@ -321,6 +325,7 @@
                     border: 1px solid #DCDFE6;
                     border-radius: 4px;
                     padding:5px;
+                    width: 450px;
                 }
                 .el-icon-edit {
                     cursor: pointer;

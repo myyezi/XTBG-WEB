@@ -79,6 +79,7 @@
         onSubmit() {
             let groupMembers = []
             let userNameString = ''
+            let memberIdArr = []
             this.seleteUserList.forEach((item)=>{
                 let flag = false
                 this.groupUserListCopy.forEach((items)=>{
@@ -87,12 +88,15 @@
                     }
                 })
                 if(!flag) {
-                    groupMembers.push({
-                        memberId:item.id,
-                        alias:item.name,
-                        type:0
-                    })
-                    userNameString += item.name +','
+                    if(memberIdArr.indexOf(item.id)<0) {
+                        memberIdArr.push(item.id)
+                        groupMembers.push({
+                            memberId:item.id,
+                            alias:item.name,
+                            type:0
+                        })
+                        userNameString += item.name +','
+                    }
                 }
             })
             let notifyContent = {
