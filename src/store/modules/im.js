@@ -266,7 +266,7 @@ const im = {
                 // 发送消息的内容属性
                 content: {
                     type:session.content.type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
-                    content:session.content.type==1?session.content.content:session.content.type==2?'语音':session.content.type==3?'图片':session.content.type==4?'定位':session.content.type==5?'文件':'视频'// 发送消息内容
+                    content:(session.content.type==1||session.content.type==100)?session.content.content:session.content.type==2?'语音':session.content.type==3?'图片':session.content.type==4?'定位':session.content.type==5?'文件':'视频'// 发送消息内容
                 },
               }
               // 是否本人发的消息
@@ -283,8 +283,8 @@ const im = {
                   sessionObj.content.content =  userObj[session.fromUserId].name + ':' + sessionObj.content.content
                 } else {
                   sessionObj.targetId = session.fromUserId
-                  sessionObj.portrait = userObj[session.fromUserId].portrait
-                  sessionObj.targetName = userObj[session.fromUserId].name
+                  sessionObj.portrait = session.conversation.type==2?'':userObj[session.fromUserId].portrait
+                  sessionObj.targetName = session.conversation.type==2?'':userObj[session.fromUserId].name
                 }
               } else {
                 sessionObj.content.content =  state.user.name + ':' + sessionObj.content.content
@@ -300,7 +300,7 @@ const im = {
                     flag = true
                     indexs = index
                     if(sessionObj.content.content) {
-                      item.content.content = sessionObj.content.content;
+                      item.content.content = sessionObj.type==2?JSON.parse(sessionObj.content.content).title:sessionObj.content.content;
                       item.content.type = sessionObj.content.type;
                     }
                     if(sessionObj.serverTimestamp) {
