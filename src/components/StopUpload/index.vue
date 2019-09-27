@@ -88,6 +88,9 @@ export default {
             attrs: {
                 // accept: ACCEPT_CONFIG.getAll()
             },
+            params:{
+                sourceId:''
+            }
         }
     },
     components: {},
@@ -97,6 +100,7 @@ export default {
             return this.$refs.uploader.uploader;
         }
     },
+    props: ['sourceId'],
     methods: {
         onFileAdded(file) {
             console.log(file)
@@ -135,6 +139,9 @@ export default {
                 resfile.name = file.name;
                 resfile.size = file.size;
                 resfile.path = res.data.path;
+                if(resfile.sourceId) {
+                    resfile.sourceId = res.data.sourceId
+                }
             }
             this.$emit('func', resfile);
         },
@@ -146,6 +153,7 @@ export default {
             })
         },
         computeMD5Success(md5, file) {
+            this.params.sourceId = this.sourceId
             // 将自定义参数直接加载uploader实例的opts上
             Object.assign(this.uploader.opts, {
                 query: {
