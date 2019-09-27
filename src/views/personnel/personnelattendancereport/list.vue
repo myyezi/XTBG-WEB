@@ -52,7 +52,7 @@
         <el-table-column prop="early" sortable show-overflow-tooltip min-width="100" label="早退次数"></el-table-column>
         <el-table-column prop="nopunches" sortable show-overflow-tooltip min-width="100" label="未打卡次数"></el-table-column>
         <el-table-column prop="completion" sortable show-overflow-tooltip min-width="100" label="旷工次数"></el-table-column>
-        <el-table-column prop="overtime" sortable show-overflow-tooltip min-width="100" label="加班时长"></el-table-column>
+<!--        <el-table-column prop="overtime" sortable show-overflow-tooltip min-width="100" label="加班时长"></el-table-column>-->
         <el-table-column prop="organizationName" sortable show-overflow-tooltip min-width="100" label="组织"></el-table-column>
           <el-table-column prop="companyName" sortable show-overflow-tooltip min-width="150" label="所属管理公司"></el-table-column>
       </el-table>
