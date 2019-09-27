@@ -109,7 +109,6 @@
               <el-form-item label="结束时间" prop="planEndDate">
                   <el-date-picker
                       v-model="powerprojectplanform.planEndDate"
-                      disabled
                       type="date"
                       value-format="yyyy-MM-dd"
                       placeholder="选择结束时间">
@@ -390,14 +389,23 @@ export default {
               this.showContent = true;
               this.operationType = "add";
           }else if (data.operationType === 'inserted'){
-              this.powerprojectplanform = {
-                  isApproval : 1,
-                  isUpload : 1
-              };
-              this.dialogVisible = true;
-              this.showContent = false;
-              this.formData.id = data.id;
-              this.operationType = "inserted";
+              console.log(data)
+              ajax.get('power/powerprojectplan/' + data.id).then(rs => {
+                  if(rs.data.level >= 3) {
+                      this.$message.error("最多只能添加到三级节点");
+                      return false
+                  }
+
+                  this.powerprojectplanform = {
+                      isApproval : 1,
+                      isUpload : 1
+                  };
+                  this.dialogVisible = true;
+                  this.showContent = false;
+                  this.formData.id = data.id;
+                  this.operationType = "inserted";
+              });
+
           }else if (data.operationType === 'updated'){
               this.operationType = "updated";
               if (this.tasks.data && this.tasks.data.length > 0){
@@ -587,6 +595,7 @@ export default {
             preMonth = (preMonth < 10) ? ("0" + preMonth) :preMonth;
             preDay = (preDay < 10) ? ("0" + preDay) :preDay;
             let ed = preYear + "-" +  preMonth + "-" + preDay;
+            // alert(ed)
             this.$set(this.powerprojectplanform, 'planEndDate', ed);
         }
     },
