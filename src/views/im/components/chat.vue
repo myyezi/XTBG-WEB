@@ -35,21 +35,28 @@
                                     {{JSON.parse(item.content.content).title}}
                                   </div>
                                   <div class="job_notifications_time" v-if="JSON.parse(item.content.content).notifyType==1">
-                                    {{JSON.parse(item.content.content).attendanceDate}}
+                                    {{JSON.parse(item.content.content).workMessageContent.attendanceDate}}
                                   </div>
                                   <div class="job_notifications_name">
                                     <div v-if="JSON.parse(item.content.content).notifyType==1">
                                       <span>班次时间：</span>
-                                      {{JSON.parse(item.content.content).attendanceDate + "&nbsp;&nbsp;" +JSON.parse(item.content.content).dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).attendanceType==1?"上班":"下班")}}
+                                      {{JSON.parse(item.content.content).workMessageContent.attendanceDate + "&nbsp;&nbsp;" +JSON.parse(item.content.content).workMessageContent.dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).workMessageContent.attendanceType==1?"上班":"下班")}}
                                     </div>
                                     <div v-else>
                                       <span>项目名称：</span>
-                                      {{JSON.parse(item.content.content).projectName}}
+                                      {{JSON.parse(item.content.content).workMessageContent.projectName}}
                                     </div>
                                   </div>
                                   <div class="job_notifications_count">
-                                    <div v-if="JSON.parse(item.content.content).notifyType==1"><span>打卡地点：</span>{{JSON.parse(item.content.content).adress}}</div>
-                                    <div v-else><span v-if="JSON.parse(item.content.content).notifyType==2">申请原因：</span><span v-else>审批结果：</span>{{JSON.parse(item.content.content).reason}}</div>
+                                    <div v-if="JSON.parse(item.content.content).notifyType==1">
+                                      <span>打卡地点：</span>
+                                      {{JSON.parse(item.content.content).workMessageContent.adress}}
+                                    </div>
+                                    <div v-else>
+                                      <span v-if="JSON.parse(item.content.content).notifyType==2">申请原因：</span>
+                                      <span v-else>审批结果：</span>
+                                      {{JSON.parse(item.content.content).reason}}
+                                    </div>
                                   </div>
                                   <div class="job_notifications_result" v-if="JSON.parse(item.content.content).notifyType==3">
                                     <span v-if="JSON.parse(item.content.content).approvalStatus==2" style="color:#14d41b">同意</span>
@@ -206,7 +213,7 @@
         messageImgList:[],//所有的图片消息图片的集合
         allUserInfoObj:{}, //所有用户信息
         notifyTypeObj:{
-          1:'考情打卡',
+          1:'考勤打卡',
           2:'申请',
           3:'审批'
         }

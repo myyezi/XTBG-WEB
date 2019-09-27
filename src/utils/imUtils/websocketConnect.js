@@ -131,6 +131,9 @@ const websocketConnect = {
                                 store.commit('addSession', item);
                             }
                         }
+                    } else if(item.conversation.type==2) {
+                        store.commit('addMessage', item);
+                        store.commit('addSession', item);
                     } else {
                         if(!userObj[item.fromUserId]) {
                             let obj2 = JSON.stringify({
