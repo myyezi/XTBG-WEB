@@ -101,7 +101,7 @@ export default {
             return this.$refs.uploader.uploader;
         }
     },
-    props: ['sourceId'],
+    props: ['sourceId','projectId'],
     methods: {
         onFileAdded(file) {
             console.log(file)
