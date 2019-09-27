@@ -101,10 +101,13 @@ export default {
             return this.$refs.uploader.uploader;
         }
     },
-    props: ['sourceId','projectId'],
+    props: ['sourceId','projectId','nodeName'],
     methods: {
         onFileAdded(file) {
             console.log(file)
+            if(this.nodeName) {
+                file.nodeName = this.nodeName
+            }
             FileMd5(file, (file, md5) => {
                 this.computeMD5Success(md5, file)
             });

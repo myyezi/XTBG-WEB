@@ -18,7 +18,8 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 import VueQuillEditor from 'vue-quill-editor'
 import { dateStr, formatDateTime } from '@/utils/imUtils/ChatUtils.js';
-import uploader from 'vue-simple-uploader'
+// import uploader from 'vue-simple-uploader'
+import uploader from '@/components/StopUpload/big-uploader'
 Vue.prototype.formatDateTime = formatDateTime;
 Vue.prototype.dateStr = dateStr;
 Vue.use(uploader)
