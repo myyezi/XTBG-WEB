@@ -17,7 +17,7 @@
             </gantt-add>
         </div>
         <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
-            <stop-upload @func="getResFile"></stop-upload>
+            <stop-upload @func="getResFile" :sourceId = this.id></stop-upload>
         </el-dialog>
 
         <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="200" height="800px">
@@ -304,8 +304,9 @@
             },
             // 上传成功回调
             getResFile(file){
+                console.log(file)
                 ajax.post('power/powerprojectattachment', {
-                    sourceId : this.id,
+                    sourceId : file.sourceId,
                     projectId : this.projectId,
                     name : file.name,
                     size : file.size,
