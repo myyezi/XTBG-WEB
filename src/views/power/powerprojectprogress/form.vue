@@ -17,7 +17,7 @@
             </gantt-add>
         </div>
         <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
-            <stop-upload @func="getResFile" :sourceId = this.id></stop-upload>
+            <stop-upload @func="getResFile" :sourceId = this.id :projectId = this.projectId :nodeName = projectNodeName ></stop-upload>
         </el-dialog>
 
         <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="200" height="800px">
@@ -95,6 +95,7 @@
                 taskId : "",
                 projectId : "",
                 projectName : "",
+                projectNodeName:"",
                 tempArr : [],
                 isOpen : true,
                 uploadShow : false,
@@ -256,8 +257,8 @@
             }
             Bus.$on("task-updated", data => {
                 if(data.operationType === 'upload') {
-                    this.uploadShow = true;
                     this.id = data.id;
+                    this.getProjectNodeName();
                 }else if (data.operationType === 'view'){
                     this.fileFormVisible = true;
                     // 获取项目文件
@@ -307,7 +308,7 @@
                 console.log(file)
                 ajax.post('power/powerprojectattachment', {
                     sourceId : file.sourceId,
-                    projectId : this.projectId,
+                    projectId : file.projectId,
                     name : file.name,
                     size : file.size,
                     path : file.path
@@ -327,6 +328,18 @@
                 ajax.post('power/powerprojectplan/loading/'+ this.id
                 ).then(rs => {
                     this._getTasksModel();
+                });
+            },
+
+            //修改项目节点状态
+            getProjectNodeName(){
+                ajax.get('power/powerprojectplan/'+ this.id
+                ).then(rs => {
+                    this.uploadShow = true;
+                    if(rs.data && rs.data.name) {
+                        this.projectNodeName = rs.data.name;
+                        this._getTasksModel();
+                    }
                 });
             },
 

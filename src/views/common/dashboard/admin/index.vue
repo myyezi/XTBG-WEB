@@ -94,11 +94,11 @@
                         <div class="home_title">
                             <p class="clearfix"><img src="../../../../styles/img/dt.png" /> <span>项目状态一览表</span></p>
                             <div class="home_project_stauts clearfix">
-                                <span @click="getProjectListByStatus()" style="color: #666666"><i class="project_stauts1"></i>全部（{{projectNum0}}）</span>
-                                <span @click="getProjectListByStatus(1)" style="color: #FFA600"><i class="project_stauts2"></i>暂存（{{projectNum1}}）</span>
-                                <span @click="getProjectListByStatus(2)" style="color: #41C0D0"><i class="project_stauts3"></i>进行中（{{projectNum2}}）</span>
-                                <span @click="getProjectListByStatus(3)" style="color: #AD8CF5"><i class="project_stauts4"></i>已暂停（{{projectNum3}}）</span>
-                                <span @click="getProjectListByStatus(4)" style="color: #AD8C00"><i class="project_stauts5"></i>已完成（{{projectNum4}}）</span>
+                                <span v-model="searchParam.projectStatus" @click="getProjectListByStatus()" style="color: #666666"><i class="project_stauts1"></i>全部（{{projectNum0}}）</span>
+                                <span v-model="searchParam.projectStatus" @click="getProjectListByStatus(1)" style="color: #FFA600"><i class="project_stauts2"></i>暂存（{{projectNum1}}）</span>
+                                <span v-model="searchParam.projectStatus" @click="getProjectListByStatus(2)" style="color: #41C0D0"><i class="project_stauts3"></i>进行中（{{projectNum2}}）</span>
+                                <span v-model="searchParam.projectStatus" @click="getProjectListByStatus(3)" style="color: #AD8CF5"><i class="project_stauts4"></i>已暂停（{{projectNum3}}）</span>
+                                <span v-model="searchParam.projectStatus" @click="getProjectListByStatus(4)" style="color: #AD8C00"><i class="project_stauts5"></i>已完成（{{projectNum4}}）</span>
                             </div>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                             <!--<el-table-column prop="planEndDate" sortable show-overflow-tooltip min-width="100" label="计划完工日期"></el-table-column>-->
                             <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="100" label="计划完工日期"></el-table-column>
                         </el-table>
-                        <el-pagination
+                        <!--<el-pagination
                             @size-change="handleSizeChange"
                             @current-change="handleCurrentChange"
                             :current-page="page"
@@ -149,6 +149,13 @@
                             :page-size="pageSize"
                             :layout="pageLayout"
                             :total="listCount">
+                        </el-pagination>-->
+                        <el-pagination
+                            @size-change="handleSizeChange2"
+                            @current-change="handleCurrentChange2"
+                            :current-page=pageList.current
+                            :page-size=pageList.size
+                            :total=pageList.total>
                         </el-pagination>
                     </div>
                 </div>
@@ -172,6 +179,8 @@
                 area: true
             }
             return {
+                pageList:[],
+
                 approvalForm: {},
                 approvalDialogVisible: false,
                 activeName: "doTaskTab",
@@ -190,7 +199,7 @@
                 projectNum4:0,
                 tableData: [],
                 vMapData:[],
-                projectStatus:'1',
+                projectStatus:'',
                 projectNameArr:['全部', '进行中','已暂停','已完成'],
 
                 // showApprovalBtn: this.getCurrentUserAuthority("/powerprojectapproval/save"),
@@ -201,14 +210,20 @@
                     reason: [
                         {required: true, message: '请输入审批原因', trigger: ['blur']}
                     ],
-                }
+                },
+
+                pageC :1,
+                pageS :10,
+                beforeStatus : '',
+
             }
         },
         computed: {},
         created () {
         },
         mounted() {
-            this.getList();
+            // this.getList();
+            this.getProjectListByStatus()
             this.getMessageList();
             this.getMapProjectList();
             this.getProjectCountByStatus();
@@ -317,15 +332,19 @@
                 });
             },
             getProjectListByStatus(status) {
-                ajax.get('/power/powerproject',{
-                    projectStatus:status
-                }).then(rs => {
+                console.log("this.beforeStatus="+ this.beforeStatus)
+                console.log("this.status="+ status)
+                if(this.beforeStatus != status) {
+                    this.pageC = 1
+                }
+                ajax.get('/power/powerproject',{projectStatus:status,current:this.pageC,size:this.pageS}).then(rs => {
                     this.list = rs.records
                     this.listCount = rs.total
+                    this.pageList = rs
+                    this.pages = rs.pages
+                    this.projectStatus = status
+                    this.beforeStatus = rs.projectStatus
                 });
-            },
-            moreMessage() {
-                this.$router.push({path: '/upms/message'})
             },
 
             handleClick1(data) {
@@ -358,26 +377,19 @@
                     // query: {id:row.id}
                 })
             },
-            forwardDetail(id, type, content) {
-                if(type == 1) {
-                    ajax.get('core/projectreportweekly/getWeeklyByNow').then(rs => {
-                        if("第"+ rs.data.period +"期" == content) {
-                            this.$router.push({
-                                path: '/core/projectreportweekly/edit',
-                                query: {id:id}
-                            })
-                        } else {
-                            this.$router.push({
-                                path: '/core/projectreportweekly/detail/'+id,
-                            })
-                        }
-                    });
-                } else if(type == 2) {
-                    this.$router.push({
-                        path: '/core/projectbigevent/detail/'+id,
-                    })
-                }
-            }
+
+
+            //切换页容量
+            handleSizeChange2(val) {
+                this.pageSize = val;
+                this.pageC = 1;
+                this.getProjectListByStatus(this.projectStatus);
+            },
+            //翻页
+            handleCurrentChange2(val) {
+                this.pageC = val;
+                this.getProjectListByStatus(this.projectStatus);
+            },
         }
     }
 </script>
