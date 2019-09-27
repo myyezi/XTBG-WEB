@@ -5,8 +5,8 @@ export const tool = {
     data() {
         return {
             searchParam: {},
-            pageSize: 15,
-            pageSizeSetting: [15, 20, 40, 100],
+            pageSize: 10,
+            pageSizeSetting: [10, 20, 40, 100],
             page: 1,// 当前页
             listCount: 1,
             listUrl: "",
