@@ -39,6 +39,7 @@ export default {
     loginStaus: function (newvalue,oldvalue) {
       if(!newvalue) {
         removeToken()
+        localStorage.clear();
         this.$confirm('你的账号已在其它地方登录！需退出重新登录！！！', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
