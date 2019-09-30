@@ -174,6 +174,9 @@ const im = {
                         item.netStausType = 1
                       }
                     }
+                    if(message.messageId&&item.messageId == message.messageId) {
+                      flag = true
+                    }
                 })
 
               } else {
