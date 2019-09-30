@@ -284,7 +284,7 @@ const im = {
                 } else {
                   sessionObj.targetId = session.fromUserId
                   sessionObj.portrait = session.conversation.type==2?'':userObj[session.fromUserId].portrait
-                  sessionObj.targetName = session.conversation.type==2?'':userObj[session.fromUserId].name
+                  sessionObj.targetName = userObj[session.fromUserId].name
                 }
               } else {
                 sessionObj.content.content =  state.user.name + ':' + sessionObj.content.content
