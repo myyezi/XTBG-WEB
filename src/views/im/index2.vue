@@ -98,7 +98,6 @@ export default {
     getSessionList(data) {
       let self = this;
       let cacheSession = []
-      self.sessionList = [];
       // 从内存中获取会话记录
       cacheSession = self.$store.state.im.sessionList;
       if(!cacheSession||cacheSession.length === 0) {
