@@ -109,28 +109,34 @@ const websocketConnect = {
             ChatListUtils.setLastMessageType(objData.username,msg.type)
             if(msg.messages.length>0) {
                 let userObj = ChatListUtils.getUserFriendObj(objData.username);
+                let groupList = ChatListUtils.getGroupList(objData.username);
                 msg.messages.forEach((item,index)=> {
+                    let flag = false
                     if(item.conversation.type==1) {
-                        if(index == 0) {
-                            let obj = JSON.stringify({
-                                requestList: [{
-                                    target:objData.username,
-                                    type:2,
-                                    updateTime:0
-                                }]
-                            });
-                            client.pubMessage(obj,IMTopic.GetGroupInfoTopic)
+                        // 群操作（除了聊天消息）
+                        if(item.conversation.topic && item.conversation.topic != IMTopic.SendMessageTopic) {
+                            groupList.forEach((items,indexs)=> {
+                                if(item.targetId == items.targetId) {
+                                    flag = true
+                                }
+                            })
+                            if(!flag) {
+                                let obj = JSON.stringify({
+                                    requestList: [{
+                                        target:objData.username,
+                                        type:2,
+                                        updateTime:0
+                                    }]
+                                });
+                                client.pubMessage(obj,IMTopic.GetGroupInfoTopic)
+                            }
                         }
-                        if(item.conversation.topic==IMTopic.DismissGroupTopic && objData.username == item.fromUserId) {
-
-                        } else {
-                            if(item.conversation.topic==IMTopic.QuitGroupTopic && objData.username == item.fromUserId) {
-                                
-                            } else {
+                        if(item.conversation.topic != IMTopic.DismissGroupTopic || objData.username != item.fromUserId) {
+                            if(item.conversation.topic != IMTopic.QuitGroupTopic || objData.username != item.fromUserId) {
                                 store.commit('addMessage', item);
                                 store.commit('addSession', item);
                             }
-                        }
+                        } 
                     } else if(item.conversation.type==2) {
                         store.commit('addMessage', item);
                         store.commit('addSession', item);

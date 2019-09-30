@@ -239,7 +239,12 @@ export default {
                 width:'120',
                 template:function(obj){
                     let str = "";
-                    let addStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>";
+                    let addStr = "";
+                    if(obj.level>2){
+                        addStr = "";
+                    }else{
+                        addStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>";
+                    }
                     let updateStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+editImg+"' title='编辑' style='vertical-align: middle;'/></a>"
                     let delStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+deletedImg+"' title='删除' style='vertical-align: middle;'/></a>"
                     if (obj.currentStatus != 4 && obj.currentStatus != 6){
