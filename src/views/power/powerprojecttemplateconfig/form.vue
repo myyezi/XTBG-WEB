@@ -397,7 +397,6 @@ methods: {
     ok() {
         this.$refs['ruleForm'].validate((valid) => {
             if (valid) {
-                debugger;
                 let newChild = this.templateConfigForm;
                 if(this.operationType === 'add') {
                     // 新增传父级id
