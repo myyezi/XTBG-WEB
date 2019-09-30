@@ -149,6 +149,9 @@ mounted() {
                     text: "新增",
                     onclick: this.onAdd,
                     formatter: item => {
+                        if(item.level>2){
+                            return "";
+                        }
                         return "<img src='" + this.addImg + "' title='新增' style='margin-right:15px;vertical-align: middle;'/>";
                     }
                 },
