@@ -47,6 +47,12 @@
                                       {{JSON.parse(item.content.content).workMessageContent.projectName}}
                                     </div>
                                   </div>
+                                  <!-- <div class="job_notifications_name" v-if="JSON.parse(item.content.content).notifyType==3">
+                                    <div>
+                                      <span>审批时间：</span>
+                                      {{formatDateTime(new Date(JSON.parse(item.content.content).timestamp))}}
+                                    </div>
+                                  </div> -->
                                   <div class="job_notifications_count">
                                     <div v-if="JSON.parse(item.content.content).notifyType==1">
                                       <span>打卡地点：</span>
@@ -54,13 +60,13 @@
                                     </div>
                                     <div v-else>
                                       <span v-if="JSON.parse(item.content.content).notifyType==2">申请原因：</span>
-                                      <span v-else>审批结果：</span>
+                                      <span v-else>审批内容：</span>
                                       {{JSON.parse(item.content.content).reason}}
                                     </div>
                                   </div>
-                                  <div class="job_notifications_result" v-if="JSON.parse(item.content.content).notifyType==3">
-                                    <span v-if="JSON.parse(item.content.content).approvalStatus==2" style="color:#14d41b">同意</span>
-                                    <span v-if="JSON.parse(item.content.content).approvalStatus==3" style="color:#ff0404">不同意</span>
+                                  <div class="job_notifications_result" v-if="JSON.parse(item.content.content).notifyType==3">审批结果：
+                                    <span v-if="JSON.parse(item.content.content).workMessageContent.approvaStatus==2" style="color:#14d41b">同意</span>
+                                    <span v-if="JSON.parse(item.content.content).workMessageContent.approvaStatus==3" style="color:#ff0404">不同意</span>
                                   </div>
                                 </el-card>
                               </div>
@@ -855,6 +861,9 @@
                     span {
                       color:#999
                     }
+                  }
+                  .job_notifications_result {
+                    color:#999
                   }
               }
               .group_system_notifications {

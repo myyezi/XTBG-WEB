@@ -25,7 +25,8 @@
                 <el-table :data="attachmentList" style="width: 100%;height: 500px;">
                     <el-table-column fixed label="操作" width="120">
                         <template fixed slot-scope="{ row, column, $index }">
-                            <el-button v-show="true" @click="delFile(row)" type="text" size="small">删除</el-button>
+<!--                            状态为待审批转态不能删除-->
+                            <el-button v-show="currentStatus!=4" @click="delFile(row)" type="text" size="small">删除</el-button>
                             <el-button v-show="true" @click="downloadFile(row)" type="text" size="small">下载</el-button>
                         </template>
                     </el-table-column>
@@ -101,6 +102,7 @@
                 uploadShow : false,
                 stopUploadShow : false,
                 showEmployeeSelector : false,
+                currentStatus:'',
                 rules: {
                     name: [
                         { required: true, message: '请选择审批人', trigger: ['change','blur'] }
@@ -119,6 +121,7 @@
                         width:'120',
                         template:function(obj){
                             let operateStr = "";
+                            this.currentStatus = obj.currentStatus;
                             let uploadStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>";
                             let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>";
                             if (obj.isUpload == 1 && obj.currentStatus != 4){
@@ -261,6 +264,8 @@
                     this.getProjectNodeName();
                 }else if (data.operationType === 'view'){
                     this.fileFormVisible = true;
+                    console.log(data)
+                    this.getProjectPlanStatus(data.id);
                     // 获取项目文件
                     this.getAttachmentList(data.id);
                 }else if (data.operationType === 'approvefinish'){
@@ -338,6 +343,17 @@
                     this.uploadShow = true;
                     if(rs.data && rs.data.name) {
                         this.projectNodeName = rs.data.name;
+                        this._getTasksModel();
+                    }
+                });
+            },
+
+
+            //获取项目节点当前状态
+            getProjectPlanStatus(id){
+                ajax.get('power/powerprojectplan/'+ id).then(rs => {
+                    if(rs.data ) {
+                        this.currentStatus = rs.data.currentStatus;
                         this._getTasksModel();
                     }
                 });
