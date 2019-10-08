@@ -1,25 +1,36 @@
 <template>
-    <div class="box-scale" @click="transferStation({workData:workData,type:2})">
-        <!-- 流程主体开始 -->
-        <work-item 
-            :workData="workData"
-        ></work-item>
-        <!-- 流程主体开始 -->
-        <!-- 流程结束开始 -->
-        <div class="workflow-end-node">
-            <div class="end-node-text">流程结束</div>
+    <div class="fd-nav-content">
+        <div class="workflow-design" id="workflow">
+            <div class="workflow-zoom">
+                <i class="el-icon-remove-outline" @click="changeSize('small')"></i>
+                <span>{{zoomSize}}%</span>
+                <i class="el-icon-circle-plus-outline" @click="changeSize('big')"></i>
+            </div>
+            <div class="box-scale" @click="transferStation({workData:workData,type:2})" :style="{ transform: 'scale('+transformSize+')' }" id="workflowDesign">
+                <!-- 流程主体开始 -->
+                <work-item 
+                    :workData="workData"
+                ></work-item>
+                <!-- 流程主体开始 -->
+                <!-- 流程结束开始 -->
+                <div class="workflow-end-node">
+                    <div class="end-node-text">流程结束</div>
+                </div>
+                <setting ref="setting" :drawerTitle="drawerTitle"></setting>
+                <!-- 流程结束结束 -->
+            </div>
         </div>
-        <!-- 流程结束结束 -->
     </div>
 </template>
 <script>
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
     import workItem from './workItem'
+    import setting from './setting'
     import Bus from "@/utils/eventBus.js";
     export default {
         name: 'workFlow',
-        components: {workItem},
+        components: {workItem,setting},
         mixins: [tool, ruleTool],
         props: ['workFlowData'],
         data() {
@@ -27,10 +38,14 @@
                 workData:this.workFlowData,
                 oneWorkData:{},
                 workDataType:null,
-                childNode:''
+                childNode:'',
+                drawerTitle:'',
+                transformSize:1,
+                zoomSize:100
             }
         },
         mounted() {
+            this.initLocation()
             Bus.$on("transfer-station",data=>{
                 this.transferStation(data)
             })
@@ -43,8 +58,35 @@
             Bus.$on("work-add-route",data=>{
                 this.workAddRoute(data)
             })
+            Bus.$on("setting-count",data=>{
+                console.log(data)
+                this.$refs.setting.open()
+                this.drawerTitle = data.workData.name
+            })
         },
         methods: {
+            // 初始化流程图居中
+            initLocation() {
+                this.$nextTick(() => {
+                    let divs = document.getElementById('workflow');
+                    let div = document.getElementById('workflowDesign');
+                    let iMove = (div.scrollWidth-document.body.offsetWidth)/2
+                    divs.scrollTo(iMove,0)
+                })
+            },
+            changeSize(type) {
+                if(type == 'big') {
+                    if(this.zoomSize < 300) {
+                        this.transformSize += 0.1
+                        this.zoomSize += 10
+                    }
+                } else {
+                    if(this.zoomSize > 50) {
+                        this.transformSize -= 0.1
+                        this.zoomSize -= 10
+                    }
+                }
+            },
             transferStation(data) {
                 console.log(data)
                 console.log(this.workData)
@@ -116,7 +158,7 @@
                 let oneWorkData = data.workData
                 let nodeId = this.generateUUID()
                 this.childNode = {
-                    name:"请选择审批人",
+                    name:"审批人",
                     type:"approver",
                     prevId:oneWorkData.nodeId,
                     nodeId:nodeId,
@@ -153,6 +195,60 @@
     }
 </script>
 <style lang="scss">
+.fd-nav-content {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    // overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 30px;
+}
+.workflow-design {
+    width: 100%;
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: #f5f5f7;
+    .workflow-zoom {
+        display: flex;
+        position: fixed;
+        align-items: center;
+        justify-content: space-between;
+        height: 40px;
+        width: 125px;
+        right: 40px;
+        margin-top: 10px;
+        z-index: 10;
+        i {
+            font-size: 27px;
+            cursor: pointer;
+        }
+        span {
+            font-size: 15px;
+        }
+    }
+    .box-scale {
+        transform: scale(1);
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        // height: 100%;
+        padding: 50px 0;
+        align-items: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+        min-width: min-content;
+        background-color: #f5f5f7;//背景色
+        // transform-origin: 0 0 0;
+        transform-origin: 50% 0px 0px;
+    }
+}
 .work-flow-item{
     width: 100%;
     // height:800px;
