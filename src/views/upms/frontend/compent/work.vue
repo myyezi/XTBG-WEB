@@ -16,7 +16,7 @@
                 <div class="workflow-end-node">
                     <div class="end-node-text">流程结束</div>
                 </div>
-                <setting ref="setting" :drawerTitle="drawerTitle"></setting>
+                <setting ref="setting" :drawerTitle="drawerTitle" :drawerType="drawerType"></setting>
                 <!-- 流程结束结束 -->
             </div>
         </div>
@@ -40,6 +40,7 @@
                 workDataType:null,
                 childNode:'',
                 drawerTitle:'',
+                drawerType:'',
                 transformSize:1,
                 zoomSize:100
             }
@@ -62,6 +63,7 @@
                 console.log(data)
                 this.$refs.setting.open()
                 this.drawerTitle = data.workData.name
+                this.drawerType = data.workData.type
             })
         },
         methods: {

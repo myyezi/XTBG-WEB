@@ -5,7 +5,17 @@
         :visible.sync="drawerShow"
         size="360px">
         <el-tabs v-model="activeName">
-            <el-tab-pane label="用户管理" name="first">
+            <el-tab-pane label="设置发起人" name="first" v-if="drawerType == 'start'">
+                <el-form label-width="80px" class="drawer_form">
+            
+                </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="设置审批人" name="first" v-if="drawerType == 'approver'">
+                <el-form label-width="80px" class="drawer_form">
+            
+                </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="设置抄送人" name="first" v-if="drawerType == 'notifier'">
                 <el-form label-width="80px" class="drawer_form">
             
                 </el-form>
@@ -21,7 +31,7 @@
 <script>
 import { mapState } from 'vuex'
 export default {
-    props: ['drawerTitle'],
+    props: ['drawerTitle','drawerType'],
     data () {
         return {
         drawerShow:false,
