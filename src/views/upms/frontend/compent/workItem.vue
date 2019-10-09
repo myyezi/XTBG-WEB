@@ -15,8 +15,10 @@
                         <input v-else v-model="workData.name" @click.stop=''/>
                         <i class="el-icon-close close"></i>
                     </div>
-                    <div class="content">
-                        <div class="text">所有人</div>
+                    <div class="content" @click="settingCount(workData)">
+                        <div class="text" v-if="workData.type=='start'">请选择发起人</div>
+                        <div class="text" v-if="workData.type=='approver'">请选择审批人</div>
+                        <div class="text" v-if="workData.type=='notifier'">请选择抄送人</div>
                         <i class="anticon el-icon-arrow-right"></i>
                     </div>
                 </div>
@@ -177,6 +179,9 @@
             addRoute(data) {
                 Bus.$emit("work-add-route",{workData:data}); 
             },
+            settingCount(data) {
+                Bus.$emit("setting-count",{workData:data});
+            }
         }
     }
 </script>

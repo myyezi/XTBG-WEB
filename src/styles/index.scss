@@ -193,6 +193,26 @@ input[type="number"]{
 .overall_situation_inputS .el-input__inner{
     padding-right:45px;
 }
+.el-drawer__header {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px !important;
+    border-bottom: 1px solid #dcdfe6;
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 0 !important;
+    box-sizing: border-box;
+}
+.drawer_footer {
+    position: absolute;
+    bottom: 0;
+    height: 70px;
+    line-height: 70px;
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #dcdfe6;
+    box-sizing: border-box;
+}
 // .dialog_animation_in {
 //     height:100%;
 //     animation:dialog-fade-in 0.5s ease-in-out;
