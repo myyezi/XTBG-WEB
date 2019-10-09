@@ -60,12 +60,6 @@ export default {
         .el-tabs__item {
             padding: 5px 15px !important;
         }
-        // .el-tabs--top .el-tabs__item.is-top:last-child {
-        //     padding-right: 0 !important;
-        // }
-        // .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-        //     padding-left: 0 !important;
-        // }
         .el-tabs__item.is-active {
             color: #409eff;
             background-color: #fff;
