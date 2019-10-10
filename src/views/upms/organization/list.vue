@@ -129,7 +129,7 @@
                 } else {
                     this.title = [opt.data.name] + " - 新增下级";
                     this.parentShow = false;
-                    this.$set(this.editForm, "companyId", [opt.data.companyId]);
+                    //this.$set(this.editForm, "companyId", opt.data.companyId);
                     this.$set(this.editForm, "parentId", [opt.data.id]);
                     this.$set(this.editForm, "type", '');
 
