@@ -110,7 +110,18 @@
                 ajax.get('upms/organization/getCompanyByUserId').then(result => {
                     this.companys = result.data;
                     console.log(this.user.managementCompanyId);
-                    this.companyId = this.user.managementCompanyId;
+                    this.companys.forEach(item=>{
+                        if(item.id==this.user.managementCompanyId){
+                            this.companyId = item.id;
+                            return;
+                        }
+                        console.log("getCompanys:",item);
+                    });
+                    if(!this.companyId&&this.companys.length>0){
+                        this.companyId = this.companys[0].id;
+                        this.changeCompany();
+                    }
+                    //this.companyId = this.user.managementCompanyId;
                 });
             },
             changeCompany() {
@@ -120,6 +131,12 @@
                     localStorage.setItem("isReload", true);
                     this.$store.dispatch('delAllViews')
                     location.reload()
+                }).catch(error => {
+                    console.log(error);
+                    //this.$message.error(error.msg);
+                    setTimeout(function () {
+                        location.reload()
+                    }, 3000);
                 })
             },
 

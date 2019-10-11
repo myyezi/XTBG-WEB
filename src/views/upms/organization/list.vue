@@ -13,7 +13,7 @@
         </div>
         <div class="tree_two_count_right" v-loading="isLoading">
             <span style="font-size: 16px; display: block;margin:25px 0 10px;" v-if="checkData.name">{{checkData.name}}
-                <el-select v-if="checkData.name" v-model="userStatus" multiple filterable clearable style="width: 200px; left: 200px" @change="getUserList()">
+                <el-select v-if="checkData.name" v-model="userStatus" multiple collapse-tags filterable clearable style="width: 200px; left: 200px" @change="getUserList()">
                     <el-option label="试用期" :value="1"></el-option>
                     <el-option label="正式员工" :value="2"></el-option>
                     <el-option label="离职" :value="3"></el-option>
@@ -111,6 +111,7 @@
             },
             open(opt) {
                 this.disabledArray = [];
+                this.editForm = {};
                 let isEdit = false;
                 if (opt.state == 1) {
                     this.title = "编辑组织";
@@ -128,6 +129,7 @@
                 } else {
                     this.title = [opt.data.name] + " - 新增下级";
                     this.parentShow = false;
+                    //this.$set(this.editForm, "companyId", opt.data.companyId);
                     this.$set(this.editForm, "parentId", [opt.data.id]);
                     this.$set(this.editForm, "type", '');
 
@@ -237,7 +239,7 @@
 
                 disabledArray.push(data.id);
                 disabledArray.push("10");
-                disabledArray.push("20");
+                //disabledArray.push("20");
 
                 this.disabledArray = disabledArray;
             },

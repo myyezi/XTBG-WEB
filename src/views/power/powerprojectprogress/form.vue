@@ -377,7 +377,7 @@
                     ajax.delete('power/powerprojectattachment/'+data.id).then(rs => {
                         if (rs.status == 0) {
                             that.$message.success(rs.msg);
-                            that.getAttachmentList(data.id);
+                            that.getAttachmentList(data.sourceId);
                             that._getTasksModel();
                         } else {
                             that.$message.error(rs.msg);

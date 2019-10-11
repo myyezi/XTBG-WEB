@@ -100,7 +100,6 @@
                       v-model="powerprojectplanform.planStartDate"
                       clearable
                       type="date"
-                      :picker-options="expireTimeOption"
                       @change="setEndDate"
                       value-format="yyyy-MM-dd"
                       placeholder="选择开始时间">
