@@ -38,7 +38,9 @@
                       <el-option  label="委托书" value="1"></el-option>
                       <el-option  label="招标书" value="2"></el-option>
                       <el-option  label="电话委托" value="3"></el-option>
-                      <el-option  label="其他" value="4"></el-option>
+                      <el-option  label="中标通知书" value="4"></el-option>
+                      <el-option  label="合同" value="5"></el-option>
+                      <el-option  label="其他" value="6"></el-option>
                   </el-select>
             </el-form-item>
             <el-form-item label="相关设计" prop="relatedDesign">
