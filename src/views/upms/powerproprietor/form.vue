@@ -74,7 +74,7 @@
                         <el-table-column label="单位" min-width="200" >
                             <template slot-scope="{row,$index}">
                                 <el-form-item :prop="'contactList.' + $index + '.company'" >
-                                    <el-input v-model="row.company" placeholder="" :maxlength="20" show-word-limit clearable></el-input>
+                                    <el-input v-model="row.company" placeholder="" :maxlength="50" show-word-limit clearable></el-input>
                                 </el-form-item>
                             </template>
                         </el-table-column>
