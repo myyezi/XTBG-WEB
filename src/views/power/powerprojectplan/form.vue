@@ -78,7 +78,7 @@
       </div>
     </el-form>
 
-    <el-dialog title="项目计划信息" :visible.sync="dialogVisible" :before-close="beforeClose" width="35%">
+    <el-dialog title="项目计划信息" v-dialogDrag :visible.sync="dialogVisible" :before-close="beforeClose" width="35%" top="100px">
           <el-form :model="powerprojectplanform" :rules="rules" ref="ruleForm" label-width="120px">
               <el-form-item label="工作内容" prop="name">
                   <el-input v-show="!showContent" v-model.trim="powerprojectplanform.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>

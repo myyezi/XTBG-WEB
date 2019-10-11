@@ -50,9 +50,9 @@
                                 </el-form-item>
                             </template>
                         </el-table-column>
-                        <el-table-column label="邮箱" min-width="200" label-class-name="required">
+                        <el-table-column label="邮箱" min-width="200" >
                             <template slot-scope="{row,$index}">
-                                <el-form-item :prop="'contactList.' + $index + '.email'" :rules="rules.required('请输入邮箱')">
+                                <el-form-item :prop="'contactList.' + $index + '.email'" >
                                     <el-input v-model="row.email" placeholder="" :maxlength="50" show-word-limit clearable></el-input>
                                 </el-form-item>
                             </template>
@@ -64,10 +64,17 @@
                                 </el-form-item>
                             </template>
                         </el-table-column>
-                        <el-table-column label="部门" min-width="200" label-class-name="required">
+                        <el-table-column label="部门" min-width="200" >
                             <template slot-scope="{row,$index}">
-                                <el-form-item :prop="'contactList.' + $index + '.department'" :rules="rules.required('请输入部门')">
+                                <el-form-item :prop="'contactList.' + $index + '.department'" >
                                     <el-input v-model="row.department" placeholder="" :maxlength="20" show-word-limit clearable></el-input>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="单位" min-width="200" >
+                            <template slot-scope="{row,$index}">
+                                <el-form-item :prop="'contactList.' + $index + '.company'" >
+                                    <el-input v-model="row.company" placeholder="" :maxlength="20" show-word-limit clearable></el-input>
                                 </el-form-item>
                             </template>
                         </el-table-column>

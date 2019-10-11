@@ -62,19 +62,19 @@
                 nowDate: new Date().format('yyyy-MM-dd'),
                 nowText: this.getDateText(),
                 nowTime: new Date().format('hh:mm'),
-                messagePic:require('@/styles/img/message1.png'),
-                skinPic:require('@/styles/img/skin1.png'),
-                communicationPic:require('@/styles/img/communication1.png'),
+                messagePic:require('@/styles/img/message.png'),
+                skinPic:require('@/styles/img/skin.png'),
+                communicationPic:require('@/styles/img/communication.png'),
                 colorList: [
-                    {sidebarColor:'#304156',navbarColor:'#fff',logColor:'#304156',sizeColor:'#333',backgroundImg:require('@/styles/img/skin_img.png')},
+                    {sidebarColor:'#1d9389',navbarColor:'#29c9bb',logColor:'#24bbae',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img.png')},
                     {sidebarColor:'#242e44',navbarColor:'#4781fe',logColor:'#3567d1',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img1.png')},
                     {sidebarColor:'#8873c2',navbarColor:'#ac8ed8',logColor:'#7964b1',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img2.png')},
                     {sidebarColor:'#2c4230',navbarColor:'#50833b',logColor:'#3f682e',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img3.png')},
                     {sidebarColor:'#061c46',navbarColor:'#5c66d4',logColor:'#444eb5',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img4.png')},
                     {sidebarColor:'#3b4966',navbarColor:'#45c8dc',logColor:'#34a2b3',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img5.png')},
                 ],
-                navbarColor:'#fff',
-                sizeColor:'#333'
+                navbarColor:'#29c9bb',
+                sizeColor:'#fff'
             }
         },
         components: { UpdPassword, Breadcrumb, Hamburger ,IMChat},
