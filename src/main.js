@@ -10,7 +10,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import '@/utils/util'
-
+import './directives'
 import '@/icons' // icon
 import '@/permission' // permission control
 import 'quill/dist/quill.core.css'

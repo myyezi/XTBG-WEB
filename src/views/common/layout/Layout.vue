@@ -18,8 +18,8 @@
         name: 'layout',
         data(){
             return {
-                sidebarColor:'#304156',
-                logColor:'#304156'
+                sidebarColor:'#1d9389',
+                logColor:'#24bbae '
             }
         },
         components: {
