@@ -35,7 +35,7 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="选择范围">
+                        <!-- <el-form-item label="选择范围">
                             <el-select v-model="optionalRangeValue" placeholder="请选择">
                                 <el-option
                                     v-for="item in optionalRange"
@@ -52,7 +52,7 @@
                                 <el-button type="primary" icon="el-icon-plus" v-if="approverForm.peopleList.length==0">添加角色</el-button>
                                 <el-button type="primary" icon="el-icon-edit" v-else>修改角色</el-button>
                             </div>
-                        </el-form-item>
+                        </el-form-item> -->
                     </div>
                     <div v-if="approverForm.redio==3">
                         <el-select v-model="formContactsValue" placeholder="请选择">

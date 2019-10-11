@@ -17,7 +17,7 @@
                     </div>
                     <div class="right-div">
                         <div class="right-div-form">
-                            <div id="frmLogin">
+                            <div id="frmLogin" @keyup.enter="login">
                                     <div class="title_sm">
                                         协同办公系统登录
                                     </div>
