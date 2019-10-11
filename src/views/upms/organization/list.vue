@@ -13,7 +13,7 @@
         </div>
         <div class="tree_two_count_right" v-loading="isLoading">
             <span style="font-size: 16px; display: block;margin:25px 0 10px;" v-if="checkData.name">{{checkData.name}}
-                <el-select v-if="checkData.name" v-model="userStatus" multiple filterable clearable style="width: 200px; left: 200px" @change="getUserList()">
+                <el-select v-if="checkData.name" v-model="userStatus" multiple collapse-tags filterable clearable style="width: 200px; left: 200px" @change="getUserList()">
                     <el-option label="试用期" :value="1"></el-option>
                     <el-option label="正式员工" :value="2"></el-option>
                     <el-option label="离职" :value="3"></el-option>

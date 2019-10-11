@@ -271,7 +271,8 @@
                         data.createTime = ''
                         data.updateTime = ''
                         console.log(data)
-                        if(data.roles == "[null]") {
+                        alert(data.roles.indexOf("null"))
+                        if(data.roles.indexOf("null") != -1) {
                             data.roles = "[]"
                         }
                         ajax.post('upms/employee', data).then(rs => {
