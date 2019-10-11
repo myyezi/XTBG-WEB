@@ -9,14 +9,14 @@
             <div class="box-scale" @click="transferStation({workData:workData,type:2})" :style="{ transform: 'scale('+transformSize+')' }" id="workflowDesign">
                 <!-- 流程主体开始 -->
                 <work-item 
-                    :workData="workData"
+                    :workData="workData[0]"
                 ></work-item>
                 <!-- 流程主体开始 -->
                 <!-- 流程结束开始 -->
                 <div class="workflow-end-node">
                     <div class="end-node-text">流程结束</div>
                 </div>
-                <setting ref="setting" :drawerTitle="drawerTitle"></setting>
+                <setting ref="setting" :drawerTitle="drawerTitle" :drawerType="drawerType"></setting>
                 <!-- 流程结束结束 -->
             </div>
         </div>
@@ -40,6 +40,7 @@
                 workDataType:null,
                 childNode:'',
                 drawerTitle:'',
+                drawerType:'',
                 transformSize:1,
                 zoomSize:100
             }
@@ -62,6 +63,7 @@
                 console.log(data)
                 this.$refs.setting.open()
                 this.drawerTitle = data.workData.name
+                this.drawerType = data.workData.type
             })
         },
         methods: {
@@ -341,7 +343,7 @@
                 text-align: left;
                 background: #ff943e;
                 border-radius: 4px 4px 0 0;
-                .el-icon-user-solid {
+                .el-icon-user-solid,.el-icon-s-promotion {
                     font-size: 12px;
                     margin-right: 5px;
                 }
@@ -352,6 +354,9 @@
                     border: 1px solid #DCDFE6;
                     padding: 2px 5px;
                 }
+            }
+            .notifier_title {
+                background: #3296fa;
             }
             .content {
                 position: relative;

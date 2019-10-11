@@ -40,11 +40,17 @@
                                   <div class="job_notifications_name">
                                     <div v-if="JSON.parse(item.content.content).notifyType==1">
                                       <span>班次时间：</span>
-                                      {{JSON.parse(item.content.content).workMessageContent.attendanceDate + "&nbsp;&nbsp;" +JSON.parse(item.content.content).workMessageContent.dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).workMessageContent.attendanceType==1?"上班":"下班")}}
+                                      {{JSON.parse(item.content.content).workMessageContent.dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).workMessageContent.attendanceType==1?"上班":"下班")}}
                                     </div>
                                     <div v-else>
-                                      <span>项目名称：</span>
-                                      {{JSON.parse(item.content.content).workMessageContent.projectName}}
+                                      <div v-if="JSON.parse(item.content.content).workMessageContent.projectName">
+                                          <span>项目名称：</span>
+                                          {{JSON.parse(item.content.content).workMessageContent.projectName}}
+                                      </div>
+                                      <div v-if="JSON.parse(item.content.content).workMessageContent.projectPlanName">
+                                          <span>节点名称：</span>
+                                          {{JSON.parse(item.content.content).workMessageContent.projectPlanName}}
+                                      </div>
                                     </div>
                                   </div>
                                   <!-- <div class="job_notifications_name" v-if="JSON.parse(item.content.content).notifyType==3">

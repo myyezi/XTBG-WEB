@@ -174,14 +174,38 @@
                 weekReportList:weekReportList,
                 valueYear:new Date().getFullYear().toString(),
                 dialogFormVisible:false,
-                workFlowData:{
-                    "name": "发起人",
-                    "nodeId": "sid-startevent",
-                    "type": "start",
-                    "properties": {
-                        "editName":false,
+                workFlowData:[
+                    {
+                        name: "发起人",
+                        nodeId: "sid-startevent",
+                        type: "start",
+                        properties: {
+                            editName:false,
+                        },
+                        childNode:[
+                            {
+                                name: "审批人",
+                                nodeId: "",
+                                prevId:'',
+                                type: "approver",
+                                properties: {
+                                    editName:true,
+                                },
+                                childNode:[
+                                    {
+                                        name: "抄送人",
+                                        nodeId: "",
+                                        prevId:"",
+                                        type: "notifier",
+                                        properties: {
+                                            editName:true,
+                                        },
+                                    }
+                                ]
+                            }
+                        ]
                     }
-                }
+                ]
                 // workFlowData:{
                 //     "name": "发起人",
                 //     "nodeId": "sid-startevent",

@@ -4,8 +4,9 @@
         <div class="node-wrap" v-if="workData.type=='start' || workData.type=='approver' || workData.type=='notifier'">
             <div class="node-wrap-box node_sid-startevent" :class="{'start-node':workData.type=='start'}">
                 <div>
-                    <div class="title">
-                        <i class="el-icon-user-solid" v-if="workData.type!='start'"></i>
+                    <div class="title" :class="{'notifier_title':workData.type =='notifier'}">
+                        <i class="el-icon-user-solid" v-if="workData.type == 'approver'"></i>
+                        <i class="el-icon-s-promotion" v-if="workData.type == 'notifier'"></i>
                         <span 
                             :class="{'editable-title':workData.type!='start'}" 
                             v-if="workData.type=='start'||(workData.properties&&workData.properties.editName)" 
@@ -146,7 +147,8 @@
         </div>
         <!-- item 主体结束 -->
         <!-- 判断流程是否存在nextNode，如果有则去递归，没有就结束 -->
-        <work-item v-if="workData.childNode&&JSON.stringify(workData.childNode) !== '{}'" :workData="workData.childNode" />
+        <!-- <work-item v-if="workData.childNode&&JSON.stringify(workData.childNode) !== '{}'" :workData="workData.childNode" /> -->
+        <work-item v-if="workData.childNode&&JSON.stringify(workData.childNode[0]) !== '{}'" :workData="workData.childNode[0]" />
     </div>
 </template>
 <script>
