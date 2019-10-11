@@ -106,11 +106,7 @@
             </el-tab-pane> -->
             <!-- <el-tab-pane label="流程设置" name="7">
                 <el-dialog title="流程设置" :visible.sync="workDialogVisible"  :fullscreen="true" :append-to-body="true">
-                    <div class="fd-nav-content">
-                        <div class="workflow-design">
-                            <work-flow :workFlowData="workFlowData"></work-flow>
-                        </div>
-                    </div>
+                    <work-flow :workFlowData="workFlowData" v-if="workDialogVisible"></work-flow>
                 </el-dialog>
             </el-tab-pane> -->
         </el-tabs>
@@ -499,12 +495,6 @@
             getActiveName() {
                 if(this.activeName == 7) {
                     this.workDialogVisible = true
-                    this.$nextTick(() => {
-                        let divs = document.getElementById('workflow');
-                        let div = document.getElementById('workflowDesign');
-                        let iMove = (div.scrollWidth-document.body.offsetWidth)/2
-                        divs.scrollTo(iMove,0)
-                    })
                 }
             },
             // 重写日历表显示的内容
@@ -691,41 +681,6 @@
         color: #333;
         font-weight: bold;
         font-size: 16px;
-    }
-    .fd-nav-content {
-        position: fixed;
-        top: 56px;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1;
-        // overflow-x: hidden;
-        overflow-y: auto;
-        padding-bottom: 30px;
-    }
-    .workflow-design {
-        width: 100%;
-        overflow: auto;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        top: 0;
-        background: #f5f5f7;
-        .box-scale {
-            transform: scale(1);
-            display: inline-block;
-            position: relative;
-            width: 100%;
-            height: 100%;
-            padding: 54.5px 0;
-            align-items: flex-start;
-            justify-content: center;
-            flex-wrap: wrap;
-            min-width: min-content;
-            background-color: #f5f5f7;//背景色
-            transform-origin: 0 0 0;
-        }
     }
 </style>
 

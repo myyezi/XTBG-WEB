@@ -111,6 +111,7 @@
             },
             open(opt) {
                 this.disabledArray = [];
+                this.editForm = {};
                 let isEdit = false;
                 if (opt.state == 1) {
                     this.title = "编辑组织";
@@ -128,6 +129,7 @@
                 } else {
                     this.title = [opt.data.name] + " - 新增下级";
                     this.parentShow = false;
+                    //this.$set(this.editForm, "companyId", opt.data.companyId);
                     this.$set(this.editForm, "parentId", [opt.data.id]);
                     this.$set(this.editForm, "type", '');
 
@@ -237,7 +239,7 @@
 
                 disabledArray.push(data.id);
                 disabledArray.push("10");
-                disabledArray.push("20");
+                //disabledArray.push("20");
 
                 this.disabledArray = disabledArray;
             },

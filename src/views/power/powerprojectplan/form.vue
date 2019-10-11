@@ -91,7 +91,7 @@
                       <el-option v-for="e in stageList"  :key="e.value" :label="e.text" :value="e.value" ></el-option>
                   </el-select>
               </el-form-item>
-              <el-form-item label="工期" prop="period">
+              <el-form-item label="工期" prop="period" class="projectplan_period">
                   <!--<el-input v-model="powerprojectplanform.period" @change="setEndDate"></el-input>-->
                   <el-input-number v-model="powerprojectplanform.period" @change="setEndDate()" :min="1" :step="0.5" label="工期"></el-input-number>
               </el-form-item>
@@ -763,7 +763,7 @@ export default {
       //保存
     submitForm(projectStatus) {
         if (!this.taskId || this.tasks.data.length == 0){
-            this.$message.error('数据无效，请检查！');
+            this.$message.error('请制定项目计划信息！');
             return;
         }
         if (this.isEdit){
@@ -806,7 +806,7 @@ export default {
 </script>
 
 
-<style>
+<style lang="scss">
     html, body {
         height: 100%;
         margin: 0;
@@ -867,5 +867,11 @@ export default {
 
     .select-task-prompt h2{
         color: #d9d9d9;
+    }
+    .projectplan_period {
+        .el-input__inner {
+            height: 40px;
+            line-height: 40px;
+        }
     }
 </style>
