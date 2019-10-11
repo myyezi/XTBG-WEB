@@ -271,7 +271,6 @@
                         data.createTime = ''
                         data.updateTime = ''
                         console.log(data)
-                        alert(data.roles.indexOf("null"))
                         if(data.roles.indexOf("null") != -1) {
                             data.roles = "[]"
                         }
