@@ -116,16 +116,10 @@ export default {
                 label:'角色',
                 value:3
             }],
-            formContactsValue:'',
+            formContactsValue:1,
             formContactsOptions:[{
-                label:'全公司',
+                label:'工作委托人',
                 value:1
-            },{
-                label:'指定成员',
-                value:2
-            },{
-                label:'角色',
-                value:3
             }]
         }
     },
