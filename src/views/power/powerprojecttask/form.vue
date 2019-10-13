@@ -110,7 +110,6 @@
                   :before-remove="beforeRemove"
                   :on-success="handleChange"
                    multiple
-                  :limit="3"
                   :on-exceed="handleExceed"
                   :file-list="saveList">
                   <el-button size="small" type="primary" >上传附件</el-button>
