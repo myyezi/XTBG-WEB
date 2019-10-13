@@ -129,6 +129,9 @@
                   <el-radio v-model="powerprojectplanform.isUpload" :label="1" @change="changeUpload">是</el-radio>
                   <el-radio v-model="powerprojectplanform.isUpload" :label="0" @change="changeUpload">否</el-radio>
               </el-form-item>
+              <el-form-item label="备注" class="remark">
+                  <el-input type="textarea" v-model="powerprojectplanform.remark" placeholder="请输入备注" clearable maxlength="500" class="overall_situation_input_icon"></el-input>
+              </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
               <el-button @click="cancel">取 消</el-button>
