@@ -269,7 +269,7 @@
                             data.attachment = JSON.stringify(this.attachment);
                         }
                         else {
-                            data.attachment ="";
+                            data.attachment ="[]";
                         }
                         data.createTime = ''
                         data.updateTime = ''
