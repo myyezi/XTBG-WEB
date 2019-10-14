@@ -137,7 +137,7 @@
                     </template>
 
                 </el-tab-pane>
-                <el-tab-pane label="勘察收资" name="projectSzInfoTab">
+                <el-tab-pane label="前期阶段" name="projectSzInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
                                          label="收资名称"></el-table-column>
@@ -156,7 +156,7 @@
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="卷册设计" name="projectJcInfoTab">
+                <el-tab-pane label="立项阶段" name="projectJcInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
                                          label="卷册名称"></el-table-column>
@@ -175,7 +175,7 @@
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="项目内审" name="projectNsInfoTab">
+                <el-tab-pane label="初设阶段" name="projectNsInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
                                          label="卷册名称"></el-table-column>
@@ -194,7 +194,7 @@
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="项目审查" name="projectScInfoTab">
+                <el-tab-pane label="施工图阶段" name="projectScInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
                                          label="卷册名称"></el-table-column>
@@ -213,45 +213,7 @@
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="图纸出版" name="projectCbInfoTab">
-                    <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
-                                         label="成品名称"></el-table-column>
-                        <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100"
-                                         label="上传人"></el-table-column>
-                        <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100"
-                                         label="上传时间"></el-table-column>
-                        <el-table-column prop="approver" sortable show-overflow-tooltip min-width="100"
-                                         label="审核人"></el-table-column>
-                        <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100"
-                                         label="审核时间"></el-table-column>
-                        <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
-                            <template fixed slot-scope="{ row, column, $index }">
-                                <el-button @click="download(row)" type="text" size="small">下载</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </el-tab-pane>
-                <el-tab-pane label="技术交底" name="projectJdInfoTab">
-                    <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
-                                         label="成品名称"></el-table-column>
-                        <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100"
-                                         label="上传人"></el-table-column>
-                        <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100"
-                                         label="上传时间"></el-table-column>
-                        <el-table-column prop="approver" sortable show-overflow-tooltip min-width="100"
-                                         label="审核人"></el-table-column>
-                        <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100"
-                                         label="审核时间"></el-table-column>
-                        <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
-                            <template fixed slot-scope="{ row, column, $index }">
-                                <el-button @click="download(row)" type="text" size="small">下载</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </el-tab-pane>
-                <el-tab-pane label="设计变更" name="projectBgInfoTab">
+                <el-tab-pane label="竣工图阶段" name="projectCbInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
                                          label="成品名称"></el-table-column>
@@ -416,11 +378,7 @@
                 }
                 else if (tab.name == 'projectCbInfoTab') {
                     this.getProjectAttachmentList(5)
-                } else if (tab.name == 'projectJdInfoTab') {
-                    this.getProjectAttachmentList(6)
-                } else if (tab.name == 'projectBgInfoTab') {
-                    this.getProjectAttachmentList(7)
-                } else if (tab.name == 'projectTaskInfoTab') {
+                }  else if (tab.name == 'projectTaskInfoTab') {
                     this.getAttachmentList();
                 }
             },
