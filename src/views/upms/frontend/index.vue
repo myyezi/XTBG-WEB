@@ -106,7 +106,7 @@
             </el-tab-pane> -->
             <!-- <el-tab-pane label="流程设置" name="7">
                 <el-dialog title="流程设置" :visible.sync="workDialogVisible"  :fullscreen="true" :append-to-body="true">
-                    <work-flow :workFlowData="workFlowData" v-if="workDialogVisible"></work-flow>
+                    <work-flow :workFlowData="workFlowData[0]" v-if="workDialogVisible"></work-flow>
                 </el-dialog>
             </el-tab-pane> -->
         </el-tabs>
@@ -185,8 +185,8 @@
                         childNode:[
                             {
                                 name: "审批人",
-                                nodeId: "",
-                                prevId:'',
+                                nodeId: "702c_daec",
+                                prevId: "",
                                 type: "approver",
                                 properties: {
                                     editName:true,
@@ -194,8 +194,8 @@
                                 childNode:[
                                     {
                                         name: "抄送人",
-                                        nodeId: "",
-                                        prevId:"",
+                                        nodeId: "f701_e579",
+                                        prevId: "",
                                         type: "notifier",
                                         properties: {
                                             editName:true,

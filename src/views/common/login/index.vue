@@ -19,7 +19,7 @@
                         <div class="right-div-form">
                             <div id="frmLogin" @keyup.enter="login">
                                     <div class="title_sm">
-                                        云上文书
+                                        云上文书智能管理平台
                                     </div>
                                     <el-input v-model="account" auto-complete="off"
                                         type="text" class="form-control nborder icon-input user" maxlength="20"
