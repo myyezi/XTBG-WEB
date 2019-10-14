@@ -167,6 +167,13 @@
         },
         mounted() {
         },
+        destroyed() {
+            Bus.$off("transfer-station")
+            Bus.$off("work-add-pprover")
+            Bus.$off("work-add-notifier")
+            Bus.$off("work-add-route")
+            Bus.$off("setting-count")
+        },
         methods: {
             showInput(data) {
                 Bus.$emit("transfer-station",{workData:data,type:1}); 

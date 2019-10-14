@@ -9,14 +9,14 @@
             <div class="box-scale" @click="transferStation({workData:workData,type:2})" :style="{ transform: 'scale('+transformSize+')' }" id="workflowDesign">
                 <!-- 流程主体开始 -->
                 <work-item 
-                    :workData="workData[0]"
+                    :workData="workData"
                 ></work-item>
                 <!-- 流程主体开始 -->
                 <!-- 流程结束开始 -->
                 <div class="workflow-end-node">
                     <div class="end-node-text">流程结束</div>
                 </div>
-                <setting ref="setting" :drawerTitle="drawerTitle" :drawerType="drawerType"></setting>
+                <work-setting ref="setting" :drawerTitle="drawerTitle" :drawerType="drawerType"></work-setting>
                 <!-- 流程结束结束 -->
             </div>
         </div>
@@ -26,11 +26,11 @@
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
     import workItem from './workItem'
-    import setting from './setting'
+    import workSetting from './setting'
     import Bus from "@/utils/eventBus.js";
     export default {
         name: 'workFlow',
-        components: {workItem,setting},
+        components: {workItem,workSetting},
         mixins: [tool, ruleTool],
         props: ['workFlowData'],
         data() {
@@ -90,8 +90,6 @@
                 }
             },
             transferStation(data) {
-                console.log(data)
-                console.log(this.workData)
                 if(data.type !== 2) {
                     this.oneWorkData = data.workData
                 }
@@ -120,16 +118,17 @@
                                     }
                                 }
                             }
-                            if(item.childNode&&JSON.stringify(item.childNode) !== '{}') {
-                                this.workDataHandle(item.childNode)
+                            if(item.childNode&&JSON.stringify(item.childNode[0]) !== '{}') {
+                                this.workDataHandle(item.childNode[0])
                             }
                         })
                     }
-                    if(data.childNode&&JSON.stringify(data.childNode) !== '{}') {
-                        this.workDataHandle(data.childNode)
+                    if(data.childNode&&JSON.stringify(data.childNode[0]) !== '{}') {
+                        this.workDataHandle(data.childNode[0])
                     }
                 } else {
                     if(data.properties&&JSON.stringify(data.properties) !== '{}') { 
+                        console.log(data)
                         data.properties.editName = true
                         if(this.workDataType!==2) {
                             if(data.nodeId == this.oneWorkData.nodeId) {
@@ -146,12 +145,11 @@
                                     }
                                     // this.workData = Object.assign({}, data);
                                 }
-                                return
                             }
                         }
                     }
-                    if(data.childNode&&JSON.stringify(data.childNode) !== '{}') {
-                        this.workDataHandle(data.childNode)
+                    if(data.childNode&&JSON.stringify(data.childNode[0]) !== '{}') {
+                        this.workDataHandle(data.childNode[0])
                     }
                 }
             },
