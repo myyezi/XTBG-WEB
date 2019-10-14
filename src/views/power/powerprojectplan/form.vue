@@ -727,24 +727,27 @@ export default {
             this.tasks = obj;
         } else if(this.operationType === 'deleted') {
             this.isEdit = true;
-            if (node && node.length > 0){
-                node.forEach((item, index) => {
-                    if(item && item.id == data.id) {
-                        node.splice(index, 1, null);
-                    } else {
-                        if (item && item.parent && item.parent == data.id) {
-                            this.getNodeProcessing(item, node);
-                        }
-                    }
-                });
-            }
-            let newArray = [];
-            this.dataArr.forEach((item) => {
-                if (item){
-                    newArray.push(item)
-                }
-            });
-            this.dataArr = newArray;
+            var newNodes = this.loopDeleteNode(data,node);
+            console.log(newNodes);
+            //return;
+            // if (node && node.length > 0){
+            //     node.forEach((item, index) => {
+            //         if(item && item.id == data.id) {
+            //             node.splice(index, 1, null);
+            //         } else {
+            //             if (item && item.parent && item.parent == data.id) {
+            //                 this.getNodeProcessing(item, node);
+            //             }
+            //         }
+            //     });
+            // }
+            // let newArray = [];
+            // this.dataArr.forEach((item) => {
+            //     if (item){
+            //         newArray.push(item)
+            //     }
+            // });
+            this.dataArr = newNodes;
             let obj = {};
             this.isLoading = true;
             obj.data = this.dataArr;
@@ -760,6 +763,27 @@ export default {
             this.isLoading = true;
             obj.data = this.dataArr;
             this.tasks = obj;
+        }
+    },
+    loopDeleteNode(data,nodes){
+        var deleteArr = [];
+        this.getDeteleNodeArr(data,nodes,deleteArr);
+        for (var i = 0; i < nodes.length; i++) {
+            var item = nodes[i];
+        　　if (item && deleteArr.indexOf(item.id)>-1) {
+                nodes.splice(i--, 1); // 将使后面的元素依次前移，数组长度减1
+        　　}
+        }
+        return nodes;
+    },
+    getDeteleNodeArr(data,nodes,deleteArr){
+        for (var i = 0; i < nodes.length; i++) {
+            var item = nodes[i];
+        　　if (item && item.id == data.id) {
+                deleteArr.push(item.id);
+        　　}else if(item && item.parent && item.parent == data.id){
+                this.getDeteleNodeArr(item,nodes,deleteArr);
+            }
         }
     },
       //保存
