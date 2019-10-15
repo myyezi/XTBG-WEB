@@ -112,6 +112,12 @@
                         </div>
                     </div>
                     <div class="detail-item big">
+                        <label class="control-label">项目地址</label>
+                        <div class="input-group">
+                            <span>{{powerprojecttaskForm.adress}}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item big">
                         <label class="control-label">备注</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.remark}}</span>
