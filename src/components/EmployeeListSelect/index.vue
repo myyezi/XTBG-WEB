@@ -16,11 +16,11 @@
             <el-table-column prop="positions" sortable show-overflow-tooltip min-width="150" label="职位"></el-table-column>
         </el-table>
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount"></el-pagination>
-        <div style="margin-top: 20px">
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button @click="ok">确定</el-button>
-        </div>
       </div>
+    </div>
+    <div slot="footer" class="dialog-footer">
+        <el-button @click="emit">取消</el-button>
+        <el-button type="primary" @click="ok">确定</el-button>
     </div>
   </el-dialog>
 </template>
