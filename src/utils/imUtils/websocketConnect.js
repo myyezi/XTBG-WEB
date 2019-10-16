@@ -156,6 +156,20 @@ const websocketConnect = {
                             store.commit('addSession', item);
                         }
                     }
+                    let content = '';
+                    if (item.content.type == 2) {
+                        content = '[语音]';
+                    } else if (item.content.type == 3) {
+                        content = '[图片]';
+                    } else if (item.content.type == 4) {
+                        content = '[定位]';
+                    } else if (item.content.type == 5) {
+                        content = '[文件]';
+                    } else if (item.content.type == 6) {
+                        content = '[视频]';
+                    } else if (item.content.type == 1){
+                        content = item.content.content;
+                    }
                     const notify =  new Notify({
                         effect: 'flash',
                         interval: 1000,
@@ -174,7 +188,7 @@ const websocketConnect = {
                     // notify.setTitle()
                     notify.notify({
                         title: '新消息',
-                        body: item.content.content
+                        body: content
                     });
                     // 首先，让我们检查我们是否有权限发出通知
                     // 如果没有，我们就请求获得权限
