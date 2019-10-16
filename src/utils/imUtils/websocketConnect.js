@@ -1,5 +1,6 @@
 import store from '@/store'
 import {ChatListUtils,ErrorType,popNotice} from '@/utils/imUtils/ChatUtils'
+import Notify from '@wcjiang/notify';
 let client;
 let objData;
 
@@ -155,6 +156,26 @@ const websocketConnect = {
                             store.commit('addSession', item);
                         }
                     }
+                    const notify =  new Notify({
+                        effect: 'flash',
+                        interval: 1000,
+                        message: '有消息拉！',
+                        audio:{
+                            file: '../../../static/audio/msg.mp3'
+                        },
+                        notification:{
+                            title: '通知！',
+                            body:'您来了一条新消息'
+                        }
+                    })
+                    notify.player();
+                    // notify.setTitle(true) 
+                    // notify.setTitle('有新消息！');
+                    // notify.setTitle()
+                    notify.notify({
+                        title: '新消息',
+                        body: item.content.content
+                    });
                     // 首先，让我们检查我们是否有权限发出通知
                     // 如果没有，我们就请求获得权限
                     // if (window.Notification && window.Notification.permission !== "granted") {

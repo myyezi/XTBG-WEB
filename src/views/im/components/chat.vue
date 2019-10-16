@@ -593,6 +593,7 @@
         // flex-direction: column;
         margin-top: 3rem;
         height: calc(100% - 3rem);
+        min-height: 0;
     }
 
     .im-chat-top {
