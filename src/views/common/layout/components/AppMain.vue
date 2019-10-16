@@ -5,7 +5,7 @@
         <router-view :key="key" />
       </keep-alive>
     </transition>
-    <audio ref="mmAudio" src="../../../../../static/audio/msg.mp3"></audio>
+    <!-- <audio ref="mmAudio" src="../../../../../static/audio/msg.mp3"></audio> -->
     <!-- <IMChat></IMChat> -->
   </section>
 </template>
@@ -34,7 +34,7 @@ export default {
   },
   watch: {
     messageCount: function () {
-      this.aplayAudio()
+      // this.aplayAudio()
     },
     loginStaus: function (newvalue,oldvalue) {
       if(!newvalue) {
@@ -58,9 +58,9 @@ export default {
     }
   },
   methods: {
-    aplayAudio () {
-      this.$nextTick(() => this.$refs.mmAudio.play())
-    }
+    // aplayAudio () {
+    //   this.$nextTick(() => this.$refs.mmAudio.play())
+    // }
   }
 }
 </script>
