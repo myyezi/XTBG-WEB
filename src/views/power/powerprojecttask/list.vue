@@ -206,8 +206,6 @@ export default {
       },*/
       //处理条件查询的时间问题
       getListBefore(params) {
-          console.log(66666666666)
-          console.log(this.$refs.organization)
           if (this.searchParam.relatedDesign) {
               params.relatedDesign = this.searchParam.relatedDesign.join(',');
           }
