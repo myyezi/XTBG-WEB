@@ -428,14 +428,16 @@
         this.showHistory = true
       },
       // 得到当前点击会话框的聊天信息
-      getCurrentMessageList() {
+      getCurrentMessageList(type) {
           let self = this;
           let userInfoObj = {}
           let cacheMessagesObj = {}
           let cacheMessages = []
           // self.messageList = [];
           self.messageImgList = []
-          self.messageContent = self.chat.draftContent?self.chat.draftContent:'' //获取草稿信息
+          if(type!==1) {
+            self.messageContent = self.chat.draftContent?self.chat.draftContent:'' //获取草稿信息
+          } 
           // 从内存中取用户信息
           userInfoObj = self.$store.state.im.userFriendObj
           if(JSON.stringify(userInfoObj) == '{}') {
@@ -551,7 +553,7 @@
       },
       messageList :function(newvalue,oldvalue) {
         if(newvalue) {
-          this.getCurrentMessageList()
+          this.getCurrentMessageList(1)
         }
         this.scollBottom()
       },
