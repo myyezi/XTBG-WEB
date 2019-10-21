@@ -125,11 +125,9 @@
                   </el-button>
               </template>
           </el-table-column>
-        <el-table-column prop="name" sortable show-overflow-tooltip min-width="150" label="项目名称"></el-table-column>
+        <el-table-column prop="name" sortable show-overflow-tooltip min-width="180" label="项目名称"></el-table-column>
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
         <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
-        <el-table-column prop="coDepartmentText" sortable show-overflow-tooltip min-width="100" label="协办部门"></el-table-column>
-        <el-table-column prop="relatedDesignText" sortable show-overflow-tooltip min-width="100" label="相关设计"></el-table-column>
         <el-table-column prop="signStatusText" sortable show-overflow-tooltip min-width="80" label="签收状态"></el-table-column>
         <el-table-column prop="manager" sortable show-overflow-tooltip min-width="80" label="项目经理"></el-table-column>
         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="120" label="下达时间"></el-table-column>
