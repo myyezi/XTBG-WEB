@@ -35,12 +35,12 @@
                                     {{JSON.parse(item.content.content).title}}
                                   </div>
                                   <div class="job_notifications_time" v-if="JSON.parse(item.content.content).notifyType==1">
-                                    {{JSON.parse(item.content.content).workMessageContent.attendanceDate}}
+                                    {{JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(5,7)+'月'+JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(8,10)+'日'}}
                                   </div>
                                   <div class="job_notifications_name">
                                     <div v-if="JSON.parse(item.content.content).notifyType==1">
                                       <span>班次时间：</span>
-                                      {{JSON.parse(item.content.content).workMessageContent.dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).workMessageContent.attendanceType==1?"上班":"下班")}}
+                                      {{JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(5,10)+"&nbsp;&nbsp;" +JSON.parse(item.content.content).workMessageContent.dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).workMessageContent.attendanceType==1?"上班":"下班")}}
                                     </div>
                                     <div v-else>
                                       <div v-if="JSON.parse(item.content.content).workMessageContent.projectName">
