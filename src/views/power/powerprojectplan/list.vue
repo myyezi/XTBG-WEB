@@ -114,7 +114,7 @@
     <div class="division-line"></div>
     <div class="table-box">
       <el-table :data="list" style="width: 100%">
-        <el-table-column fixed label="操作" width="180">
+        <el-table-column fixed label="操作" width="150">
           <template fixed slot-scope="{ row, column, $index }">
               <el-button v-if="row.projectStatus == 1 || row.projectStatus == 2" v-show="showEditBtn" @click="edit(row.taskId)" type="text" size="small">编辑</el-button>
               <el-button v-if="row.projectStatus == 2" v-show="showFinishBtn" @click="finish(row.id)" type="text" size="small">完成</el-button>
@@ -128,12 +128,10 @@
                 </el-button>
             </template>
         </el-table-column>
-        <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
+        <el-table-column prop="name" sortable show-overflow-tooltip min-width="180" label="项目名称"></el-table-column>
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
-        <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
-        <el-table-column prop="coDepartmentText" sortable show-overflow-tooltip min-width="100" label="协办部门"></el-table-column>
-        <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="100" label="项目经理"></el-table-column>
-        <el-table-column prop="projectStatusText" sortable show-overflow-tooltip min-width="100" label="项目状态"></el-table-column>
+        <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="120" label="项目经理"></el-table-column>
+        <el-table-column prop="projectStatusText" sortable show-overflow-tooltip min-width="80" label="项目状态"></el-table-column>
         <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="100" label="开始时间"></el-table-column>
         <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="100" label="结束时间"></el-table-column>
       </el-table>
