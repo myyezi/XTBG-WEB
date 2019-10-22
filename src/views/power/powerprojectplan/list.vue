@@ -132,8 +132,8 @@
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
         <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="120" label="项目经理"></el-table-column>
         <el-table-column prop="projectStatusText" sortable show-overflow-tooltip min-width="80" label="项目状态"></el-table-column>
-        <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="100" label="开始时间"></el-table-column>
-        <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="100" label="结束时间"></el-table-column>
+        <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="80" label="开始时间"></el-table-column>
+        <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="80" label="结束时间"></el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
