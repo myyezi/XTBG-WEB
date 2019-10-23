@@ -34,14 +34,10 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="任务依据" prop="source">
-                  <el-select v-model="powerprojecttaskForm.source" clearable placeholder="请选择任务依据">
-                      <el-option  label="委托书" value="1"></el-option>
-                      <el-option  label="招标书" value="2"></el-option>
-                      <el-option  label="电话委托" value="3"></el-option>
-                      <el-option  label="中标通知书" value="4"></el-option>
-                      <el-option  label="合同" value="5"></el-option>
-                      <el-option  label="其他" value="6"></el-option>
-                  </el-select>
+                <el-select v-model="powerprojecttaskForm.source"  placeholder="请选择任务依据">
+                    <el-option v-for="item in sourceOptions" :key="item.value" :label="item.text" :value="item.value">
+                    </el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="相关设计" prop="relatedDesign">
                 <el-select v-model="powerprojecttaskForm.relatedDesign" multiple filterable default-first-option placeholder="请选择相关设计">
@@ -113,7 +109,6 @@
                   :on-exceed="handleExceed"
                   :file-list="saveList">
                   <el-button size="small" type="primary" >上传附件</el-button>
-<!--                  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
               </el-upload>
           </div>
         </el-collapse-item>
@@ -149,6 +144,7 @@ export default {
           latitude:''
       },
       typeOptions: [],
+      sourceOptions:[],
       designOptions:[],
       ProprietorList:[],
       coDepartmentOptions:[],
@@ -239,11 +235,12 @@ export default {
 
       // 获取字典
       getDict() {
-       let r = 'XMLX,XBBM';
+       let r = 'XMLX,XBBM,RWYJ';
           ajax.get("upms/dict/allType/"+r).then(rs => {
               this.typeOptions = rs.XMLX;
               // this.designOptions = rs.XGSJ
               this.coDepartmentOptions = rs.XBBM;
+              this.sourceOptions = rs.RWYJ;
           });
       },
 

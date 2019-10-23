@@ -37,13 +37,9 @@
           <div class="form-group">
             <label class="control-label">任务依据</label>
             <div class="input-group">
-                <el-select v-model="searchParam.source" clearable placeholder="请选择任务依据">
-                    <el-option  label="委托书" value="1"></el-option>
-                    <el-option  label="招标书" value="2"></el-option>
-                    <el-option  label="电话委托" value="3"></el-option>
-                    <el-option  label="中标通知书" value="4"></el-option>
-                    <el-option  label="合同" value="5"></el-option>
-                    <el-option  label="其他" value="6"></el-option>
+                <el-select v-model="searchParam.source"  placeholder="请选择任务依据">
+                    <el-option v-for="item in sourceOptions" :key="item.value" :label="item.text" :value="item.value">
+                    </el-option>
                 </el-select>
             </div>
           </div>
@@ -176,6 +172,7 @@ export default {
         designOptions: [],
         ProprietorList: [],
         coDepartmentOptions: [],
+        sourceOptions:[],
         ContactList: [],
         companyList:[],
         userList: [],
@@ -206,7 +203,6 @@ export default {
       },*/
       //处理条件查询的时间问题
       getListBefore(params) {
-          console.log(66666666666)
           console.log(this.$refs.organization)
           if (this.searchParam.relatedDesign) {
               params.relatedDesign = this.searchParam.relatedDesign.join(',');
@@ -231,10 +227,11 @@ export default {
       },
       // 获取字典
       getDict() {
-          let r = 'XMLX,XBBM';
+          let r = 'XMLX,XBBM,RWYJ';
           ajax.get("upms/dict/allType/"+r).then(rs => {
               this.typeOptions = rs.XMLX;
               this.coDepartmentOptions = rs.XBBM;
+              this.sourceOptions = rs.RWYJ;
           });
       },
 
