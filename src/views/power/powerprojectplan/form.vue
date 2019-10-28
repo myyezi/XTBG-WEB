@@ -129,6 +129,10 @@
                   <el-radio v-model="powerprojectplanform.isUpload" :label="1" @change="changeUpload">是</el-radio>
                   <el-radio v-model="powerprojectplanform.isUpload" :label="0" @change="changeUpload">否</el-radio>
               </el-form-item>
+              <el-form-item label="是否获取位置" prop="isPosition">
+                  <el-radio v-model="powerprojectplanform.isPosition" :label="1" @change="changePosition">是</el-radio>
+                  <el-radio v-model="powerprojectplanform.isPosition" :label="0" @change="changePosition">否</el-radio>
+              </el-form-item>
               <el-form-item label="备注" class="remark">
                   <el-input type="textarea" v-model="powerprojectplanform.remark" placeholder="请输入备注" clearable maxlength="500" class="overall_situation_input_icon" show-word-limit></el-input>
               </el-form-item>
@@ -170,6 +174,7 @@ export default {
         powerprojectplanform : {
             isApproval : 1,
             isUpload : 1,
+            isPosition :1
         },
         tempplanform : {},
         formData : {
@@ -183,7 +188,8 @@ export default {
             stage : null,
             principal : "",
             isApproval : null,
-            isUpload : null
+            isUpload : null,
+            isPosition : null
         },
         openCollapse: ["1","2"],
         isOpen : true,
@@ -335,6 +341,15 @@ export default {
                 }
             },
             {
+                name:'isPosition',
+                label:'是否获取位置',
+                align: "center",
+                width:'75',
+                template : function(obj){
+                    return obj.isPosition == 1 ? '是':'否'
+                }
+            },
+            {
                 name:'currentStatusText',
                 label:'当前状态',
                 align: "center",
@@ -390,7 +405,8 @@ export default {
           if(data.operationType === 'add') {
               this.powerprojectplanform = {
                   isApproval : 1,
-                  isUpload : 1
+                  isUpload : 1,
+                  isPosition :1
               };
               this.dialogVisible = true;
               this.showContent = true;
@@ -405,7 +421,8 @@ export default {
 
                   this.powerprojectplanform = {
                       isApproval : 1,
-                      isUpload : 1
+                      isUpload : 1,
+                      isPosition :1
                   };
                   this.dialogVisible = true;
                   this.showContent = false;
@@ -632,6 +649,11 @@ export default {
           this.powerprojectplanform.isApproval = 1;
         }
     },
+    changePosition(){
+          if (this.templateConfigForm.isPosition == 1){
+              this.templateConfigForm.isPosition = 1;
+          }
+      },
 
     // 弹框“确定”操作
     ok(){
@@ -676,7 +698,8 @@ export default {
                                     this.tempplanform.principal != this.powerprojectplanform.principal ||
                                     this.tempplanform.profession != this.powerprojectplanform.profession ||
                                     this.tempplanform.isApproval != this.powerprojectplanform.isApproval ||
-                                    this.tempplanform.isUpload != this.powerprojectplanform.isUpload){
+                                    this.tempplanform.isUpload != this.powerprojectplanform.isUpload  ||
+                                    this.tempplanform.isPosition != this.powerprojectplanform.isPosition){
                                     item.name = this.powerprojectplanform.name;
                                     item.period = this.powerprojectplanform.period;
                                     item.planStartDate = this.powerprojectplanform.planStartDate;
@@ -686,7 +709,7 @@ export default {
                                     item.profession = this.powerprojectplanform.profession;
                                     item.isApproval = this.powerprojectplanform.isApproval;
                                     item.isUpload = this.powerprojectplanform.isUpload;
-
+                                    item.isPosition = this.powerprojectplanform.isPosition;
                                     this.isEdit = true;
                                     // this.dataArr.splice(index, 1);
                                 }
