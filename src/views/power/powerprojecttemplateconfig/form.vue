@@ -47,9 +47,13 @@
                     <el-radio v-model="templateConfigForm.isApproval" :label="1" @change="changeApproval">是</el-radio>
                     <el-radio v-model="templateConfigForm.isApproval" :label="0" @change="changeApproval">否</el-radio>
                 </el-form-item>
-                <el-form-item label="是否上传文件" prop="indexScore">
+                <el-form-item label="是否上传文件" prop="isUpload">
                     <el-radio v-model="templateConfigForm.isUpload" :label="1" @change="changeUpload">是</el-radio>
                     <el-radio v-model="templateConfigForm.isUpload" :label="0" @change="changeUpload">否</el-radio>
+                </el-form-item>
+                <el-form-item label="是否获取位置" prop="isPosition">
+                    <el-radio v-model="templateConfigForm.isPosition" :label="1" @change="changePosition">是</el-radio>
+                    <el-radio v-model="templateConfigForm.isPosition" :label="0" @change="changePosition">否</el-radio>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -73,6 +77,7 @@ export default {
         templateConfigForm : {
             isApproval : 1,
             isUpload : 1,
+            isPosition : 1
         },
         formData : {
             name : "",
@@ -81,7 +86,8 @@ export default {
             profession : "",
             stage : null,
             isApproval : null,
-            isUpload : null
+            isUpload : null,
+            isPosition :null
         },
         projectTypeList : [],
         stageList : [],
@@ -228,6 +234,16 @@ mounted() {
                 return item.isUpload==1?'是':'否'
             }
         },
+        {
+            title: "是否获取位置",
+            field: "isPosition",
+            width: 120,
+            align: "center",
+            isCutOut:true,
+            formatter: item => {
+                return item.isPosition==1?'是':'否'
+            }
+        }
     ];
     if (this.operateType == 'edit'){
         this.getDragTree();
@@ -302,6 +318,12 @@ methods: {
         }
     },
 
+    changePosition(){
+        if (this.templateConfigForm.isPosition == 1){
+            this.templateConfigForm.isPosition = 1;
+        }
+    },
+
     // 增加一级节点
     onAddFirst() {
         this.onAdd(1)
@@ -310,6 +332,7 @@ methods: {
     },
     // 增加节点
     onAdd(data) {
+        debugger
         this.showContent = false;
         if (!this.projectType){
             this.$message.error('请先选择项目类型！');
@@ -342,6 +365,7 @@ methods: {
             stage : data.stage,
             isApproval : data.isApproval,
             isUpload : data.isUpload,
+            isPosition :data.isPosition
         };
         this.dialogFormVisible = true;
     },
@@ -387,7 +411,8 @@ methods: {
             profession : "",
             stage : null,
             isApproval : 1,
-            isUpload : 1
+            isUpload : 1,
+            isPosition :1
         }
         if(this.$refs[formName]) {
             this.$refs[formName].clearValidate();
@@ -490,6 +515,7 @@ methods: {
             this.formData.stage = data.stage;
             this.formData.isApproval = data.isApproval;
             this.formData.isUpload = data.isUpload;
+            this.formData.isPosition = data.isPosition;
         }
     },
     //保存
