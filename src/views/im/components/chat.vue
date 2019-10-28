@@ -35,12 +35,12 @@
                                     {{JSON.parse(item.content.content).title}}
                                   </div>
                                   <div class="job_notifications_time" v-if="JSON.parse(item.content.content).notifyType==1">
-                                    {{JSON.parse(item.content.content).workMessageContent.attendanceDate}}
+                                    {{JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(5,7)+'月'+JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(8,10)+'日'}}
                                   </div>
                                   <div class="job_notifications_name">
                                     <div v-if="JSON.parse(item.content.content).notifyType==1">
                                       <span>班次时间：</span>
-                                      {{JSON.parse(item.content.content).workMessageContent.dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).workMessageContent.attendanceType==1?"上班":"下班")}}
+                                      {{JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(5,10)+"&nbsp;&nbsp;" +JSON.parse(item.content.content).workMessageContent.dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).workMessageContent.attendanceType==1?"上班":"下班")}}
                                     </div>
                                     <div v-else>
                                       <div v-if="JSON.parse(item.content.content).workMessageContent.projectName">
@@ -428,14 +428,16 @@
         this.showHistory = true
       },
       // 得到当前点击会话框的聊天信息
-      getCurrentMessageList() {
+      getCurrentMessageList(type) {
           let self = this;
           let userInfoObj = {}
           let cacheMessagesObj = {}
           let cacheMessages = []
           // self.messageList = [];
           self.messageImgList = []
-          self.messageContent = self.chat.draftContent?self.chat.draftContent:'' //获取草稿信息
+          if(type!==1) {
+            self.messageContent = self.chat.draftContent?self.chat.draftContent:'' //获取草稿信息
+          } 
           // 从内存中取用户信息
           userInfoObj = self.$store.state.im.userFriendObj
           if(JSON.stringify(userInfoObj) == '{}') {
@@ -551,7 +553,7 @@
       },
       messageList :function(newvalue,oldvalue) {
         if(newvalue) {
-          this.getCurrentMessageList()
+          this.getCurrentMessageList(1)
         }
         this.scollBottom()
       },
@@ -593,6 +595,7 @@
         // flex-direction: column;
         margin-top: 3rem;
         height: calc(100% - 3rem);
+        min-height: 0;
     }
 
     .im-chat-top {

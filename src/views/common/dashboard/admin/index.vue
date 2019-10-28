@@ -324,7 +324,7 @@
             getProjectListByname() {
                 ajax.get('/power/powerproject',{
                     projectStatus:'',
-                    keyWords: this.inputSearch
+                    keyWord: this.inputSearch
                     // name: this.inputSearch
                 }).then(rs => {
                     this.list = rs.records

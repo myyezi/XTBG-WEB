@@ -510,7 +510,21 @@ export default {
         }
     },
     changeOpen(){
-        this._getTasksModel();
+        // this._getTasksModel();
+        if(this.tasks.data&&this.tasks.data.length>0) {
+            let dataArr = []
+            let obj = {
+                data: [],
+                links: []
+            };
+            this.tasks.data.forEach((item)=>{
+                item.$open = this.isOpen
+                item.open = this.isOpen;
+                dataArr.push(item)
+            });
+            obj.data = dataArr
+            this.tasks = obj
+        }
     },
 
     //选择负责人
@@ -544,6 +558,7 @@ export default {
                             this.dataArr = rs.data;
                             this.tempType = "edit";
                             this.showSaveDraftBtn = false;
+                            console.log(this.tasks)
                         }else{
                             // 根据项目类型复制模板数据到项目计划
                             if (this.powerprojecttaskForm.type){

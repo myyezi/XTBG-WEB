@@ -1,5 +1,5 @@
 <template>
-    <div class="global-uploader">
+    <div class="global-uploader" v-loading="loading">
         <uploader
             ref="uploader"
             :options="options"
@@ -38,6 +38,7 @@ export default {
     name: "StopUpload",
     data() {
         return {
+            loading: false,
             files:[],
             tableData: [],
             uploading: false,
@@ -108,6 +109,7 @@ export default {
             if(this.nodeName) {
                 file.nodeName = this.nodeName
             }
+            this.loading = true
             FileMd5(file, (file, md5) => {
                 this.computeMD5Success(md5, file)
             });
@@ -174,6 +176,7 @@ export default {
             })
             file.uniqueIdentifier = md5;
             file.md5 = md5;
+            this.loading = false
             file.resume();
         },
     }

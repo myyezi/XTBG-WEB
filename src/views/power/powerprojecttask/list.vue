@@ -121,17 +121,9 @@
                   </el-button>
               </template>
           </el-table-column>
-        <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
-        <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
-        <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
-        <el-table-column prop="coDepartmentText" sortable show-overflow-tooltip min-width="100" label="协办部门"></el-table-column>
-        <el-table-column prop="relatedDesignText" sortable show-overflow-tooltip min-width="100" label="相关设计"></el-table-column>
-        <el-table-column prop="signStatusText" sortable show-overflow-tooltip min-width="80" label="签收状态"></el-table-column>
+        <el-table-column prop="name" sortable show-overflow-tooltip min-width="180" label="项目名称"></el-table-column>
+        <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="80" label="项目类型"></el-table-column>
         <el-table-column prop="manager" sortable show-overflow-tooltip min-width="80" label="项目经理"></el-table-column>
-        <el-table-column prop="companyText" sortable show-overflow-tooltip min-width="180" label="所属管理公司"></el-table-column>
-        <el-table-column prop="signer" sortable show-overflow-tooltip min-width="100" label="签收人"></el-table-column>
-        <el-table-column prop="signTime" sortable show-overflow-tooltip min-width="120" label="签收时间"></el-table-column>
-        <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="下达人"></el-table-column>
         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="120" label="下达时间"></el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
@@ -203,7 +195,6 @@ export default {
       },*/
       //处理条件查询的时间问题
       getListBefore(params) {
-          console.log(this.$refs.organization)
           if (this.searchParam.relatedDesign) {
               params.relatedDesign = this.searchParam.relatedDesign.join(',');
           }
