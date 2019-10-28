@@ -156,14 +156,12 @@
             'location.lng': {
                 handler() {
                     this.drawLocation()
-                },
-                deep: true
+                }
             },
             'location.lat': {
                 handler() {
                     this.drawLocation()
-                },
-                deep: true
+                }
             },
             addressDetail(val) {
                 this.getInitialization(val)
