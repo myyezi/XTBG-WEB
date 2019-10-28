@@ -94,7 +94,7 @@
 
         <!-- 位置选择弹框----------------------->
         <el-dialog title="站点位置" :visible.sync="dialogPositionVisible" :append-to-body="true" width="70%">
-            <baidu-map @selectLocation="selectLocation" v-model="position"></baidu-map>
+            <baidu-map @selectLocation="selectLocation" v-model="position" :addressDetail="powerproprietorForm"></baidu-map>
         </el-dialog>
     </div>
 </template>
@@ -127,7 +127,7 @@
                         {required: true, message: '请输入地区', trigger: ['blur']}
                     ],
                     address: [
-                        {required: true, message: '请输入详细地址', trigger: ['blur']}
+                        {required: true, message: '请输入详细地址', trigger: ['blur','change']}
                     ],
                     adress: [
                         {required: true, message: '请输入详细地址', trigger: ['blur']}
