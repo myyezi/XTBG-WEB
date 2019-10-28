@@ -10,8 +10,9 @@
         <ul class="user-list">
           <li class="user" :class="{'user_active':chat.active}" v-for="(chat,index) in sessionListCopy" :key="index" @click="showChat(chat)" @contextmenu.prevent="rightEvent(chat,$event)">
             <a href="javascript:" :class="currentChat&&currentChat.targetId===chat.targetId?'active':''">
-              <i v-if="chat.unReadCount&&chat.unReadCount>0" class="un_read_count">{{ chat.unReadCount }}</i>
-              <i class="icon-qun1 group_identification" v-if="chat.owner"></i>
+              <el-badge class="message_number" :value="chat.unReadCount" v-if="chat.unReadCount&&chat.unReadCount>0"/>
+              <!-- <i v-if="chat.unReadCount&&chat.unReadCount>0" class="un_read_count">{{ chat.unReadCount }}</i> -->
+              <i class="icon-qun1 group_identification" v-if="chat.type==1"></i>
               <img :src="chat.portrait?chat.portrait:defaultPic">
               <b>{{ chat.targetName?chat.targetName:'test' }}</b>
               <span>{{ chat.serverTimestamp?dateStr(chat.serverTimestamp):''}}</span>
@@ -105,6 +106,11 @@ export default {
           }
         }
       },
+      chatGroupList:function(newvalue,oldvalue) {
+        if(newvalue) {
+            this.getSessionList()
+        } 
+      },
   },
   computed: {
     ...mapGetters([
@@ -121,14 +127,18 @@ export default {
     netStaus: {
       get: function() {
         return this.$store.state.im.netStaus;
-      },
-      set: function(netStaus) {
-        this.$store.commit('updateNet', netStaus);
       }
+    },
+    chatGroupList: {
+        get: function() {
+          return this.$store.state.im.chatGroupList;
+        }
     }
   },
   methods: {
     updateNet() {
+        // this.$store.commit('setSessionList', []);
+        this.$store.commit('setMessageListMap', {});
         this.$store.dispatch('getWebsocket', {
             ip: process.env.BASE_IP,
             port: process.env.BASE_HOST,
@@ -163,18 +173,66 @@ export default {
       }
     },
     showChat(chat) {
-      this.currentChat = chat;
-      this.currentChat.unReadCount = 0
-      this.$store.commit('setReadCount', this.currentChat);
+      if(chat.type ==1) {
+        let groupList = ChatListUtils.getGroupList(this.user.userId);
+        let flag = false
+        groupList.forEach((item)=>{
+            if(item.targetId == chat.targetId) {
+                flag = true
+            }
+        })
+        if(flag) {
+            this.currentChat = chat;
+            this.currentChat.unReadCount = 0
+            this.$store.commit('setReadCount', this.currentChat);
+        } else {
+            this.$confirm('你已不存在该群', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning',
+              showClose:false,
+              showCancelButton:false,
+              closeOnClickModal:false
+            }).then(() => {
+              this.$store.commit('delSession', chat);
+            }).catch(() => {
+            });
+        }
+      } else {
+        this.currentChat = chat;
+        this.currentChat.unReadCount = 0
+        this.$store.commit('setReadCount', this.currentChat);
+      }
     },
     // 删除当前会话
     deleteCurrent() {
+      let objArr = {
+          obj:{
+            removeTargetList:[this.rightSeleteChat.targetId],
+          },
+          subTopic:'UDC'
+      }
+      console.log(objArr)
+      this.$store.commit('sendMessage', objArr);
       this.$store.commit('delSession', this.rightSeleteChat);
       this.visibleBox = false
       this.getSessionList()
     },
     // 删除所有会话
     deleteAll() {
+      let arr = []
+      if(this.sessionList&&this.sessionList.length>0) {
+        this.sessionList.forEach(items => {
+          arr.push(items.targetId)
+        });
+      }
+      let objArr = {
+          obj:{
+            removeTargetList:arr,
+          },
+          subTopic:'UDC'
+      }
+      this.$store.commit('sendMessage', objArr);
       this.$store.commit('delAllSession');
       this.visibleBox = false
       this.getSessionList()
@@ -183,7 +241,6 @@ export default {
     getSessionList() {
       let self = this;
       let cacheSession = []
-      self.sessionList = [];
       self.filterText = ''
       // 从内存中获取会话记录
       cacheSession = self.$store.state.im.sessionList;
@@ -203,13 +260,14 @@ export default {
                   if(item.targetId == self.currentChat.targetId) {
                       flag = true
                       self.currentChat = item
+                      self.showChat(self.currentChat)
+                      return
                   }
               })
           }
           if(!flag) {
               self.currentChat = self.sessionList[0]
-              self.currentChat.unReadCount = 0
-              this.$store.commit('setReadCount', self.currentChat);
+              self.showChat(self.currentChat)
           }
       } else {
         self.currentChat = {}
@@ -318,6 +376,8 @@ export default {
           text-overflow: ellipsis;
           font-weight: 600;
           top: 0.6rem;
+          white-space: nowrap;
+          width: 6rem;
         }
         span {
           position: absolute;
@@ -336,10 +396,12 @@ export default {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          width: 75%;
+          width: 12rem;
           font-size: 1.1rem;
           color: #333;
-          height:1.1rem;
+          height:2rem;
+          line-height: 2rem;
+          // display: flex;
         }
       }
 
@@ -354,7 +416,11 @@ export default {
           height: 100%;
           color: $color-default;
           position: relative;
-
+          .message_number {
+            left: 60px;
+            top: 5px;
+            z-index: 99;
+          }
           .un_read_count {
             display: inline-block;
             width: 1.6rem;
@@ -381,9 +447,6 @@ export default {
               top: 0.5rem;
               left: 0.3rem;
               z-index: 99999999999;
-          }
-          p {
-            width: 12rem;
           }
         }
 

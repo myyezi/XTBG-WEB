@@ -32,7 +32,16 @@ router.beforeEach((to, from, next) => {
                                 router.addRoutes(store.getters.authRouters)
                                 if(res.data&&res.data.length>0) {
                                     store.commit('SET_NOMENU', false)
-                                    next({...to, replace: true});
+                                    if (to.path === '/default'){
+                                        next({path: '/'})
+                                    } else {
+                                        if (localStorage.getItem("isReload")){
+                                            localStorage.setItem("isReload", false);
+                                            next({path: '/'})
+                                        } else {
+                                            next({...to, replace: true});
+                                        }
+                                    }
                                 } else {
                                     store.commit('SET_MENU', [{
                                         path: "/default/index",

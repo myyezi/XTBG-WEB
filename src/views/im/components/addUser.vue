@@ -79,6 +79,7 @@
         onSubmit() {
             let groupMembers = []
             let userNameString = ''
+            let memberIdArr = []
             this.seleteUserList.forEach((item)=>{
                 let flag = false
                 this.groupUserListCopy.forEach((items)=>{
@@ -87,18 +88,21 @@
                     }
                 })
                 if(!flag) {
-                    groupMembers.push({
-                        memberId:item.id,
-                        alias:item.name,
-                        type:0
-                    })
-                    userNameString += item.name +','
+                    if(memberIdArr.indexOf(item.id)<0) {
+                        memberIdArr.push(item.id)
+                        groupMembers.push({
+                            memberId:item.id,
+                            alias:item.name,
+                            type:0
+                        })
+                        userNameString += item.name +','
+                    }
                 }
             })
             let notifyContent = {
                 type:1,
-                content:this.user.name+'拉取了' + userNameString + '进群',
-                pushContent:this.user.name+'拉取了'+ userNameString + '进群',
+                content:this.user.name+'拉取了' + userNameString.substring(0,userNameString.length-1)  + '进群',
+                pushContent:this.user.name+'拉取了'+ userNameString.substring(0,userNameString.length-1) + '进群',
             }
             let obj ={
                 groupId:this.chat.targetId,
@@ -151,12 +155,16 @@
       margin: 20px auto 0;
       height: 500px;
       overflow: auto;
+      .el-tree-node__content {
+        height:30px
+      }
       .custom-tree-node{
           img {
             float:left;
             width:26px;
             height:26px;
             margin-right:5px;
+            border-radius: 50%;
           }
           span {
             float:left;

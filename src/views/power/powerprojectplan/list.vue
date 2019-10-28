@@ -2,7 +2,7 @@
   <div class="app-container white-bg list-panel" v-cloak>
     <div class="opertion-box">
       <el-button v-show="showAddBtn" type="primary" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建</el-button>
-      <el-input v-model="searchParam.keyWords" placeholder="请输入项目名称或者编号" clearable class="zy_input" style="width:190px"></el-input>
+      <el-input v-model="searchParam.keyWord" placeholder="请输入项目名称或者编号" clearable class="zy_input" style="width:190px"></el-input>
       <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
@@ -26,7 +26,9 @@
                           <el-option  label="委托书" :value="1"></el-option>
                           <el-option  label="招投标" :value="2"></el-option>
                           <el-option  label="电话委托" :value="3"></el-option>
-                          <el-option  label="其他" :value="4"></el-option>
+                          <el-option  label="中标通知书" value="4"></el-option>
+                          <el-option  label="合同" value="5"></el-option>
+                          <el-option  label="其他" value="6"></el-option>
                       </el-select>
                   </div>
               </div>
@@ -59,6 +61,32 @@
               <div class="form-group">
                   <label class="control-label">开始时间</label>
                   <div class="input-group">
+                      <el-date-picker
+                          v-model="startTime"
+                          type="daterange"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          value-format="yyyy-MM-dd">
+                      </el-date-picker>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label class="control-label">结束时间</label>
+                  <div class="input-group">
+                      <el-date-picker
+                          v-model="endTime"
+                          type="daterange"
+                          range-separator="至"
+                          start-placeholder="开始日期"
+                          end-placeholder="结束日期"
+                          value-format="yyyy-MM-dd">
+                      </el-date-picker>
+                  </div>
+              </div>
+              <!--<div class="form-group">
+                  <label class="control-label">开始时间</label>
+                  <div class="input-group">
                           <el-date-picker
                               v-model="searchParam.startTime"
                               clearable
@@ -79,29 +107,33 @@
                           placeholder="请选择结束时间">
                       </el-date-picker>
                   </div>
-              </div>
+              </div>-->
           </div>
       </div>
     </el-collapse-transition>
     <div class="division-line"></div>
     <div class="table-box">
       <el-table :data="list" style="width: 100%">
-        <el-table-column fixed label="操作" width="180">
+        <el-table-column fixed label="操作" width="150">
           <template fixed slot-scope="{ row, column, $index }">
               <el-button v-if="row.projectStatus == 1 || row.projectStatus == 2" v-show="showEditBtn" @click="edit(row.taskId)" type="text" size="small">编辑</el-button>
               <el-button v-if="row.projectStatus == 2" v-show="showFinishBtn" @click="finish(row.id)" type="text" size="small">完成</el-button>
               <el-button v-if="row.projectStatus != 1" v-show="showRecordBtn" @click="record(row.id)" type="text" size="small">记录</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
-        <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="项目名称"></el-table-column>
+        <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号">
+            <template slot-scope="scope">
+                <el-button type="text" size="small" @click="toProjectDetail(scope.row.taskId)">
+                    {{scope.row.code}}
+                </el-button>
+            </template>
+        </el-table-column>
+        <el-table-column prop="name" sortable show-overflow-tooltip min-width="180" label="项目名称"></el-table-column>
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
-        <el-table-column prop="sourceText" sortable show-overflow-tooltip min-width="100" label="任务依据"></el-table-column>
-        <el-table-column prop="coDepartmentText" sortable show-overflow-tooltip min-width="100" label="协办部门"></el-table-column>
-        <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="100" label="项目经理"></el-table-column>
-        <el-table-column prop="projectStatusText" sortable show-overflow-tooltip min-width="100" label="项目状态"></el-table-column>
-        <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="100" label="开始时间"></el-table-column>
-        <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="100" label="结束时间"></el-table-column>
+        <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="120" label="项目经理"></el-table-column>
+        <el-table-column prop="projectStatusText" sortable show-overflow-tooltip min-width="80" label="项目状态"></el-table-column>
+        <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="80" label="开始时间"></el-table-column>
+        <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="80" label="结束时间"></el-table-column>
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
@@ -152,6 +184,8 @@ export default {
         pageC :1,
         pageS :10,
         projectId:"",
+        startTime:[],
+        endTime:[],
     }
   },
   mounted() {
@@ -159,6 +193,22 @@ export default {
       this.getDict();
   },
   methods: {
+      getListBefore(params) {
+          if (this.startTime) {
+              params.startTimeStart = this.startTime[0];
+              params.startTimeEnd = this.startTime[1];
+          } else {
+              params.startTimeStart = '';
+              params.startTimeEnd = '';
+          }
+          if (this.endTime) {
+              params.endTimeStart = this.endTime[0];
+              params.endTimeEnd = this.endTime[1];
+          } else {
+              params.endTimeStart = '';
+              params.endTimeEnd = '';
+          }
+      },
       // 获取字典
       getDict() {
           let types = 'XMLX,XBBM';
@@ -212,6 +262,10 @@ export default {
       },
       toChangeDetail(id){
           let url = "/power/powerprojectplan/changedetail?id="+id;
+          this.toPage(url)
+      },
+      toProjectDetail(taskId){
+          let url = "/power/powerprojecttask/detail/"+taskId;
           this.toPage(url)
       }
 

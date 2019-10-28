@@ -51,8 +51,12 @@
             </div>
           </el-collapse-item>
           <el-collapse-item title="计划信息" name="2">
+              <el-radio-group v-model="isOpen" style="padding:10px 0px 10px;">
+                  <el-radio :label="false" @change="changeOpen">收起</el-radio>
+                  <el-radio :label="true" @change="changeOpen">展开</el-radio>
+              </el-radio-group>
               <template>
-                  <div class="app-container white-bg list-panel" v-cloak style="height: calc(100vh - 120px);padding:10px">
+                  <div class="app-container white-bg" v-cloak style="padding:10px">
                       <div class="container clearfix">
                           <gantt-add
                               ref="gantt"
@@ -74,7 +78,7 @@
       </div>
     </el-form>
 
-    <el-dialog title="项目计划信息" :visible.sync="dialogVisible" :class="{'dialog_animation_in':dialogVisible,'dialog_animation_out':!dialogVisible}" width="35%">
+    <el-dialog title="项目计划信息" v-dialogDrag :visible.sync="dialogVisible" :before-close="beforeClose" width="35%" top="100px">
           <el-form :model="powerprojectplanform" :rules="rules" ref="ruleForm" label-width="120px">
               <el-form-item label="工作内容" prop="name">
                   <el-input v-show="!showContent" v-model.trim="powerprojectplanform.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
@@ -82,9 +86,14 @@
                       <el-option v-for="e in contentList"  :key="e.value" :label="e.text" :value="e.text" ></el-option >
                   </el-select>
               </el-form-item>
-              <el-form-item label="工期" prop="period">
+              <el-form-item label="所属阶段" prop="stage">
+                  <el-select v-model="powerprojectplanform.stage" placeholder="请选择所属阶段" clearable>
+                      <el-option v-for="e in stageList"  :key="e.value" :label="e.text" :value="e.value" ></el-option>
+                  </el-select>
+              </el-form-item>
+              <el-form-item label="工期" prop="period" class="projectplan_period">
                   <!--<el-input v-model="powerprojectplanform.period" @change="setEndDate"></el-input>-->
-                  <el-input-number v-model="powerprojectplanform.period" @change="setEndDate" :min="1" :step="0.5" label="工期"></el-input-number>
+                  <el-input-number v-model="powerprojectplanform.period" @change="setEndDate()" :min="1" :step="0.5" label="工期"></el-input-number>
               </el-form-item>
               <el-form-item label="开始时间" prop="planStartDate">
                   <el-date-picker
@@ -99,17 +108,10 @@
               <el-form-item label="结束时间" prop="planEndDate">
                   <el-date-picker
                       v-model="powerprojectplanform.planEndDate"
-                      clearable
-                      disabled="disabled"
-                      value-format="yyyy-MM-dd"
                       type="date"
+                      value-format="yyyy-MM-dd"
                       placeholder="选择结束时间">
                   </el-date-picker>
-              </el-form-item>
-              <el-form-item label="所属阶段" prop="stage">
-                  <el-select v-model="powerprojectplanform.stage" placeholder="请选择所属阶段" clearable>
-                      <el-option v-for="e in stageList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
-                  </el-select>
               </el-form-item>
               <el-form-item label="负责人" prop="principal">
                   <el-input v-model="powerprojectplanform.principalText" placeholder="请选择负责人" readonly clearable>
@@ -120,16 +122,19 @@
                   <el-input v-model.trim="powerprojectplanform.profession" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
               </el-form-item>
               <el-form-item label="是否审批" prop="isApproval">
-                  <el-radio v-model="powerprojectplanform.isApproval" :label="1">是</el-radio>
-                  <el-radio v-model="powerprojectplanform.isApproval" :label="0">否</el-radio>
+                  <el-radio v-model="powerprojectplanform.isApproval" :label="1" @change="changeApproval">是</el-radio>
+                  <el-radio v-model="powerprojectplanform.isApproval" :label="0" @change="changeApproval">否</el-radio>
               </el-form-item>
               <el-form-item label="是否上传文件" prop="isUpload">
-                  <el-radio v-model="powerprojectplanform.isUpload" :label="1">是</el-radio>
-                  <el-radio v-model="powerprojectplanform.isUpload" :label="0">否</el-radio>
+                  <el-radio v-model="powerprojectplanform.isUpload" :label="1" @change="changeUpload">是</el-radio>
+                  <el-radio v-model="powerprojectplanform.isUpload" :label="0" @change="changeUpload">否</el-radio>
+              </el-form-item>
+              <el-form-item label="备注" class="remark">
+                  <el-input type="textarea" v-model="powerprojectplanform.remark" placeholder="请输入备注" clearable maxlength="500" class="overall_situation_input_icon" show-word-limit></el-input>
               </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-              <el-button @click="dialogVisible = false;">取 消</el-button>
+              <el-button @click="cancel">取 消</el-button>
               <el-button type="primary" @click="ok">确 定</el-button>
           </div>
     </el-dialog>
@@ -156,6 +161,11 @@ export default {
   data() {
     let that = this;
     return {
+        expireTimeOption:{
+            disabledDate(time){
+                return time.getTime() <= Date.now();
+            }
+        },
         powerprojecttaskForm : {},
         powerprojectplanform : {
             isApproval : 1,
@@ -176,6 +186,7 @@ export default {
             isUpload : null
         },
         openCollapse: ["1","2"],
+        isOpen : true,
         planDisabled : true,
         dialogVisible : false,
         showUserSelector : false,
@@ -202,10 +213,10 @@ export default {
                 { validator: formRule.money, message: '工期格式不正确', trigger: 'blur' }
             ],
             planStartDate: [
-                { required: true, message: '请选择开始时间', trigger: ['blur'] }
+                { required: true, message: '请选择开始时间', trigger: ['change','blur'] }
             ],
             planEndDate: [
-                { required: true, message: '请选择结束时间', trigger: ['blur'] }
+                { required: true, message: '请选择结束时间', trigger: ['change','blur'] }
             ],
             stage: [
                 { required: true, message: '请选择所属阶段', trigger: ['change','blur'] }
@@ -227,11 +238,23 @@ export default {
                 name:"action",
                 label:'操作<img src="static/add.png" style="width:16px;height:16px;margin: -2px 5px 0;vertical-align: middle;cursor: pointer;" data-column-id="addNode"/>',
                 align: "center",
-                width:'150',
+                width:'120',
                 template:function(obj){
-                    return "<a style='display:inline-block;width:50px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>"+
-                        "<a style='display:inline-block;width:50px;height:100%;'><img src='"+editImg+"' title='编辑' style='vertical-align: middle;'/></a>"+
-                        "<a style='display:inline-block;width:50px;height:100%;'><img src='"+deletedImg+"' title='删除' style='vertical-align: middle;'/></a>"
+                    let str = "";
+                    let addStr = "";
+                    if(obj.level>2){
+                        addStr = "";
+                    }else{
+                        addStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>";
+                    }
+                    let updateStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+editImg+"' title='编辑' style='vertical-align: middle;'/></a>"
+                    let delStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+deletedImg+"' title='删除' style='vertical-align: middle;'/></a>"
+                    if (obj.currentStatus != 4 && obj.currentStatus != 6){
+                        str = addStr + updateStr + delStr;
+                    }else{
+                        str = addStr
+                    }
+                    return str;
                 }
             },
             {
@@ -311,6 +334,38 @@ export default {
                     return obj.isUpload == 1 ? '是':'否'
                 }
             },
+            {
+                name:'currentStatusText',
+                label:'当前状态',
+                align: "center",
+                width:'75',
+                template : function(obj){
+                    let str = "";
+                    switch(obj.currentStatus) {
+                        case 1:
+                            str = "未开始";
+                            break;
+                        case 2:
+                            str = "进行中";
+                            break;
+                        case 3:
+                            str = "延期";
+                            break;
+                        case 4:
+                            str = "待审核";
+                            break;
+                        case 5:
+                            str = "不合格";
+                            break;
+                        case 6:
+                            str = "已完成";
+                            break;
+                        default:
+                            str = "";
+                    }
+                    return str;
+                }
+            },
         ]
     }
   },
@@ -341,14 +396,23 @@ export default {
               this.showContent = true;
               this.operationType = "add";
           }else if (data.operationType === 'inserted'){
-              this.powerprojectplanform = {
-                  isApproval : 1,
-                  isUpload : 1
-              };
-              this.dialogVisible = true;
-              this.showContent = false;
-              this.formData.id = data.id;
-              this.operationType = "inserted";
+              console.log(data)
+              ajax.get('power/powerprojectplan/' + data.id).then(rs => {
+                  if(rs.data.level >= 3) {
+                      this.$message.error("最多只能添加到三级节点");
+                      return false
+                  }
+
+                  this.powerprojectplanform = {
+                      isApproval : 1,
+                      isUpload : 1
+                  };
+                  this.dialogVisible = true;
+                  this.showContent = false;
+                  this.formData.id = data.id;
+                  this.operationType = "inserted";
+              });
+
           }else if (data.operationType === 'updated'){
               this.operationType = "updated";
               if (this.tasks.data && this.tasks.data.length > 0){
@@ -428,6 +492,23 @@ export default {
             this.powerprojecttaskForm = [];
         }
     },
+    changeOpen(){
+        // this._getTasksModel();
+        if(this.tasks.data&&this.tasks.data.length>0) {
+            let dataArr = []
+            let obj = {
+                data: [],
+                links: []
+            };
+            this.tasks.data.forEach((item)=>{
+                item.$open = this.isOpen
+                item.open = this.isOpen;
+                dataArr.push(item)
+            });
+            obj.data = dataArr
+            this.tasks = obj
+        }
+    },
 
     //选择负责人
     selectedOnchangeHandle(data) {
@@ -445,12 +526,13 @@ export default {
                 if(rs.status === 0) {
                     if(rs.data) {
                         if (rs.data.length > 0){
+                            this.projectId = rs.data[0].projectId;
                             rs.data.forEach((item)=>{
                                 item.start_date = item.planStartDate;
                                 item.end_date = item.planEndDate;
                                 item.text = item.name;
                                 item.parent = item.parentId;
-                                item.open = true;
+                                item.open = this.isOpen;
                             });
                             let obj = {};
                             this.isLoading = true;
@@ -459,6 +541,7 @@ export default {
                             this.dataArr = rs.data;
                             this.tempType = "edit";
                             this.showSaveDraftBtn = false;
+                            console.log(this.tasks)
                         }else{
                             // 根据项目类型复制模板数据到项目计划
                             if (this.powerprojecttaskForm.type){
@@ -474,7 +557,7 @@ export default {
                                                 item.end_date = item.planEndDate ? item.planEndDate : "";
                                                 item.text = item.name;
                                                 item.parent = item.parentId;
-                                                item.open = true;
+                                                item.open = this.isOpen;
                                             });
                                             let obj = {};
                                             this.isLoading = true;
@@ -510,9 +593,14 @@ export default {
             this.tasks = obj;
         }
     },
+    beforeClose(){
+        this.clearValidate('ruleForm');
+        this.dialogVisible = false;
+    },
 
       // 清楚弹窗内容以及警告信息
     clearValidate(formName) {
+        this.powerprojectplanform = {};
         if(this.$refs[formName]) {
             this.$refs[formName].clearValidate();
         }
@@ -528,7 +616,20 @@ export default {
             let preDay = eDate.getDate() - 1;
             preMonth = (preMonth < 10) ? ("0" + preMonth) :preMonth;
             preDay = (preDay < 10) ? ("0" + preDay) :preDay;
-            this.powerprojectplanform.planEndDate =  preYear + "-" +  preMonth + "-" + preDay;
+            let ed = preYear + "-" +  preMonth + "-" + preDay;
+            // alert(ed)
+            this.$set(this.powerprojectplanform, 'planEndDate', ed);
+        }
+    },
+
+    changeApproval(){
+        if (this.powerprojectplanform.isApproval == 0){
+          this.powerprojectplanform.isUpload = 0;
+        }
+    },
+    changeUpload(){
+        if (this.powerprojectplanform.isUpload == 1){
+          this.powerprojectplanform.isApproval = 1;
         }
     },
 
@@ -599,6 +700,10 @@ export default {
             }
         });
     },
+    cancel(){
+        this.dialogVisible = false;
+        this.clearValidate('ruleForm');
+    },
 
     //获取序号
     getSortNum(parentId){
@@ -637,24 +742,27 @@ export default {
             this.tasks = obj;
         } else if(this.operationType === 'deleted') {
             this.isEdit = true;
-            if (node && node.length > 0){
-                node.forEach((item, index) => {
-                    if(item && item.id == data.id) {
-                        node.splice(index, 1, null);
-                    } else {
-                        if (item && item.parent && item.parent == data.id) {
-                            this.getNodeProcessing(item, node);
-                        }
-                    }
-                });
-            }
-            let newArray = [];
-            this.dataArr.forEach((item) => {
-                if (item){
-                    newArray.push(item)
-                }
-            });
-            this.dataArr = newArray;
+            var newNodes = this.loopDeleteNode(data,node);
+            console.log(newNodes);
+            //return;
+            // if (node && node.length > 0){
+            //     node.forEach((item, index) => {
+            //         if(item && item.id == data.id) {
+            //             node.splice(index, 1, null);
+            //         } else {
+            //             if (item && item.parent && item.parent == data.id) {
+            //                 this.getNodeProcessing(item, node);
+            //             }
+            //         }
+            //     });
+            // }
+            // let newArray = [];
+            // this.dataArr.forEach((item) => {
+            //     if (item){
+            //         newArray.push(item)
+            //     }
+            // });
+            this.dataArr = newNodes;
             let obj = {};
             this.isLoading = true;
             obj.data = this.dataArr;
@@ -672,10 +780,31 @@ export default {
             this.tasks = obj;
         }
     },
+    loopDeleteNode(data,nodes){
+        var deleteArr = [];
+        this.getDeteleNodeArr(data,nodes,deleteArr);
+        for (var i = 0; i < nodes.length; i++) {
+            var item = nodes[i];
+        　　if (item && deleteArr.indexOf(item.id)>-1) {
+                nodes.splice(i--, 1); // 将使后面的元素依次前移，数组长度减1
+        　　}
+        }
+        return nodes;
+    },
+    getDeteleNodeArr(data,nodes,deleteArr){
+        for (var i = 0; i < nodes.length; i++) {
+            var item = nodes[i];
+        　　if (item && item.id == data.id) {
+                deleteArr.push(item.id);
+        　　}else if(item && item.parent && item.parent == data.id){
+                this.getDeteleNodeArr(item,nodes,deleteArr);
+            }
+        }
+    },
       //保存
     submitForm(projectStatus) {
         if (!this.taskId || this.tasks.data.length == 0){
-            this.$message.error('数据无效，请检查！');
+            this.$message.error('请制定项目计划信息！');
             return;
         }
         if (this.isEdit){
@@ -700,7 +829,15 @@ export default {
                 }
             });
         }else{
-            this.$message.success("操作成功");
+            // 未做任何修改，只修改暂存状态为“进行中”
+            ajax.post('power/powerproject/operate',{projectId : this.projectId, projectStatus : 2}).then(rs => {
+                if (rs.status == 0) {
+                    this.$message.success(rs.msg);
+                    this._getTasksModel();
+                } else {
+                    this.$message.error(rs.msg);
+                }
+            });
         }
 
     },
@@ -710,7 +847,7 @@ export default {
 </script>
 
 
-<style>
+<style lang="scss">
     html, body {
         height: 100%;
         margin: 0;
@@ -771,5 +908,11 @@ export default {
 
     .select-task-prompt h2{
         color: #d9d9d9;
+    }
+    .projectplan_period {
+        .el-input__inner {
+            height: 40px;
+            line-height: 40px;
+        }
     }
 </style>

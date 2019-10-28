@@ -27,13 +27,13 @@
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
             <el-button v-show="showDelBtn" @click="delGroup(row)" type="text" size="small">删除</el-button>
-            <el-button v-show="showAddBtn" @click="setGroup(row)" type="text" size="small">考勤对象设置</el-button>
+            <el-button v-show="showSetBtn" @click="setGroup(row)" type="text" size="small">考勤对象设置</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="规则名称"></el-table-column>
           <el-table-column  label="组成员" width="260">
           <template  slot-scope="{ row, column, $index }">
-              <el-button @click="look(row)" type="text" size="small">查看</el-button>
+              <el-button v-show="showQueryBtn" @click="look(row)" type="text" size="small">查看</el-button>
           </template>
           </el-table-column>
         <el-table-column prop="companyName" sortable show-overflow-tooltip min-width="100" label="所属管理公司"></el-table-column>
@@ -46,9 +46,9 @@
       </el-pagination>
     </div>
       <el-dialog title="考勤对象设置" :visible.sync="dialogVisible" width="800px"  v-cloak>
-          <el-tabs  type="card" @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
+          <el-tabs   @tab-click="handleClick" v-model="activeName" v-if="dialogVisible">
               <el-tab-pane label="用户" name="second">
-                <tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll"></tree-two>
+                <tree-two :url= "`upms/organization/treeNode/${this.companyId}`" ref="two" :selectionAll="selectionAll" :attendanceGroupId="attendanceGroupId" :selectionAllDisable="selectionAllDisable"></tree-two>
               </el-tab-pane>
               <div style="text-align: center;">
                   <el-button type="primary" @click="submitForm()">保存</el-button>
@@ -92,6 +92,8 @@ export default {
       showAddBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/save"),
       showEditBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/edit"),
       showDelBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/del"),
+      showSetBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/set"),
+      showQueryBtn: this.getCurrentUserAuthority("/personnel/personnelattendancegroup/query"),
       member:'查看',
       dialogVisible:false,
       defaultProps: {
@@ -108,7 +110,8 @@ export default {
       companyId:'',
       groupUserListByCompany:[],
       dialogFormVisible:false,
-      memberList:[]
+      memberList:[],
+      selectionAllDisable:[],
     }
   },
   mounted() {
@@ -150,8 +153,9 @@ export default {
           this.attendanceGroupId=row.id
           this.companyId = row.companyId
           this.params =  row.id;
-          this.getOrganizationList();
+         // this.getOrganizationList();
           this.getOrganizationUserList();
+          this.getOrganizationUserDisableList();
          // this.getGroupUserListBycompany();
       },
 
@@ -160,7 +164,7 @@ export default {
           this.memberList =[];
           this.dialogFormVisible = true ;
           this.attendanceGroupId = row.id;
-          ajax.get('personnel/personnelattendancegroupuser/getList/' + this.attendanceGroupId).then(rs => {
+          ajax.get('personnel/personnelattendancegroupuser/getList' , {attendanceGroupId:this.attendanceGroupId}).then(rs => {
               this.memberList = rs;
           });
       },
@@ -170,9 +174,17 @@ export default {
           });
       },
 
+      //已经设置非该考勤组的考情的人员置灰
+      getOrganizationUserDisableList(){
+          ajax.get('personnel/personnelattendancegroupuser/getList' ,{companyId:this.companyId}).then(rs => {
+              this.selectionAllDisable = rs;
+              console.log(this.selectionAllDisable)
+          });
+      },
+
       //已经设置考情的人员回显
       getOrganizationUserList(){
-          ajax.get('personnel/personnelattendancegroupuser/getList/' + this.attendanceGroupId).then(rs => {
+          ajax.get('personnel/personnelattendancegroupuser/getList' ,{attendanceGroupId:this.attendanceGroupId}).then(rs => {
               this.selectionAll = rs;
               console.log(this.selectionAll)
           });

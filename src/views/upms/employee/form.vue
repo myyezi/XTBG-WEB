@@ -268,10 +268,13 @@
                         if (this.attachment && this.attachment.length > 0) {
                             data.attachment = JSON.stringify(this.attachment);
                         }
+                        else {
+                            data.attachment ="[]";
+                        }
                         data.createTime = ''
                         data.updateTime = ''
                         console.log(data)
-                        if(data.roles == "[null]") {
+                        if(data.roles.indexOf("null") != -1) {
                             data.roles = "[]"
                         }
                         ajax.post('upms/employee', data).then(rs => {

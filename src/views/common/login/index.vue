@@ -17,9 +17,9 @@
                     </div>
                     <div class="right-div">
                         <div class="right-div-form">
-                            <div id="frmLogin">
+                            <div id="frmLogin" @keyup.enter="login">
                                     <div class="title_sm">
-                                        协同办公系统登录
+                                        云上文书智能管控平台
                                     </div>
                                     <el-input v-model="account" auto-complete="off"
                                         type="text" class="form-control nborder icon-input user" maxlength="20"

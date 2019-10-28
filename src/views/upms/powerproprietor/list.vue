@@ -10,7 +10,13 @@
         </div>
         <!-- 展开更多查询开始 -->
         <el-collapse-transition>
-            <div class="search-box" v-show="isShowMore">              
+            <div class="search-box" v-show="isShowMore">
+                <div class="form-group">
+                    <label class="control-label">联系人</label>
+                    <div class="input-group input-groups">
+                        <el-input v-model="searchParam.nameOrPhone" placeholder="请输入联系人姓名或手机号"></el-input>
+                    </div>
+                </div>
                 <div class="form-box">
                     <div class="form-group">
                         <label class="control-label">地区</label>
@@ -58,7 +64,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog width="800px" :visible.sync="contactDialogVisible" :append-to-body="true" class="el-dialog__body">
+        <el-dialog width="800px" :visible.sync="contactDialogVisible" :append-to-body="true">
             <el-table ref="multipleTable" :data="contactList" tooltip-effect="dark" style="width: 100%">
                 <el-table-column prop="name" label="联系人" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="post" label="联系人职务" show-overflow-tooltip></el-table-column>
@@ -74,7 +80,7 @@
 <script>
     import ajax from '@/utils/request'
     import {tool} from '@/utils/common'
-    import CitySelectPanel from '@/components/CitySelect/index'
+    import CitySelectPanel from '@/components/CitySelect/index2'
 
     export default {
         name: 'PowerProprietor',
@@ -97,7 +103,16 @@
         methods: {
             getListBefore(params) {
                 if (this.searchParam.districtId) {
-                    params.districtId = this.searchParam.districtId[2];
+                    console.log(this.searchParam.districtId)
+                    if(this.searchParam.districtId[2]) {
+                        params.districtId = this.searchParam.districtId[2];
+                    } else if(this.searchParam.districtId[1]) {
+                        params.cityId = this.searchParam.districtId[1]
+                        params.districtId = ''
+                    } else {
+                        params.provinceId = this.searchParam.districtId[0]
+                        params.districtId = ''
+                    }
                 } else {
                     params.districtId = '';
                 }
@@ -112,10 +127,4 @@
     }
 </script>
 <style>
-    .el-dialog__body{
-        padding-top: 0px;
-        padding-left: 0px;
-        padding-bottom: 0px;
-        padding-right: 0px;
-    }
 </style>

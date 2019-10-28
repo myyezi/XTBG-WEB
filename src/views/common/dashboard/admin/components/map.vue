@@ -1,7 +1,7 @@
 
 <template>
     <div class="map_count">
-        <div class="map_title"><span>宜昌市</span></div>
+        <div class="map_title"><span>湖北省</span></div>
         <div class="map">
             <div id="container"></div>
         </div>
@@ -15,6 +15,7 @@
     import echarts from 'echarts'
     export default {
         components: {},
+        props:['vMapData'],
         data() {
             return {
                 cityName: '',
@@ -36,39 +37,54 @@
                 mapData2:[],
                 codeList: [],
                 optionMap:'',
+                mapJson:{}
             }
         },
         mounted() {
-            this.$nextTick(()=> {
-                this.map = new AMap.Map('container', {
-                    resizeEnable: true,
-                    center: [116.30946, 39.937629],
-                    zoom: 3
-                });
-                this.opts = {
-                    subdistrict: 1,   //返回下一级行政区
-                    showbiz: false  //最后一级返回街道信息
-                };
-                this.district = new AMap.DistrictSearch(this.opts);//注意：需要使用插件同步下发功能才能这样直接使用
-                // this.district.search('中国', (status, result) => {
-                //     if (status == 'complete') {
-                //         this.getData(result.districtList[0], '', 100000);
-                //     }
-                // });
-                this.district.search('宜昌市', (status, result) => {
-                    console.log(result)
-                    if (status == 'complete') {
-                        this.getData(result.districtList[0], '', 420500);
-                    }
-                });
-            });
+            this.initMap()
         },
         watch: {
+            'vMapData':function(newValue,oldValue) {
+                this.mapData = newValue
+                if(this.mapJson.features) {
+                    this.loadMap(this.cityName, this.mapJson);
+                }
+            }
         },
         methods: {
+            initMap() {
+                this.$nextTick(()=> {
+                    this.map = new AMap.Map('container', {
+                        resizeEnable: true,
+                        center: [116.30946, 39.937629],
+                        zoom: 3
+                    });
+                    this.opts = {
+                        subdistrict: 1,   //返回下一级行政区
+                        showbiz: false  //最后一级返回街道信息
+                    };
+                    this.district = new AMap.DistrictSearch(this.opts);//注意：需要使用插件同步下发功能才能这样直接使用
+                    /*this.district.search('中国', (status, result) => {
+                        if (status == 'complete') {
+                            console.log("#################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+                            console.log(result)
+                            this.getData(result.districtList[0], '', 100000);
+                        }
+                    });*/
+                    this.district.search('湖北省', (status, result) => {
+                        if (status == 'complete') {
+                            this.getData(result.districtList[0], '', 420000);
+                        }
+                    });
+                });
+            },
             echartsMapClick(params) {//地图点击事件
                 var _self = this;
                 if (params.seriesType == 'effectScatter') {
+                    this.$router.push({
+                        path: '/power/powerprojecttask/detail/'+ params.data.id,
+                        // query: {id:params.data.id}
+                    })
                     console.log(params)
                 } else {
                     return
@@ -89,9 +105,8 @@
                             console.error(error);
                             return;
                         }
-                        let mapJson = {};
-                        mapJson.features = areaNode.getSubFeatures();
-                        this.loadMap(this.cityName, mapJson);
+                        this.mapJson.features = areaNode.getSubFeatures();
+                        this.loadMap(this.cityName, this.mapJson);
                     });
                 });
             },
@@ -107,12 +122,8 @@
                         tooltip : {
                             trigger: 'item', 
                             formatter:function(params, ticket, callback){
-                                if(params.seriesType=="scatter") {
-                                    return params.data.name+""+params.data.value[2];
-                                }else if(params.seriesType=="effectScatter"){
-                                    return params.data.name+"<br />"+params.data.value[2];
-                                }else{
-                                    return params.data.name+""+params.data.value;
+                                if(params.seriesType=="effectScatter") {
+                                    return params.data.name;
                                 }
                             } 
                         },
@@ -120,7 +131,8 @@
                             show: true,
                             map: mapName,
                             roam:true,
-                            zoom:1,
+                            zoom:1.3,
+                            aspectScale:1,
                             label: {
                                 normal: {
                                     show: true
@@ -131,11 +143,11 @@
                             },
                             itemStyle: {
                                 normal: {
-                                    areaColor: '#8790E8',
+                                    areaColor: '#ebebeb',
                                     borderColor: '#fff',
                                 },
                                 emphasis: {
-                                    areaColor: '#2B91B7',
+                                    areaColor: '#caf1ef',
                                 }
                             }
                         },
@@ -176,7 +188,7 @@
                                 name: '',
                                 type: 'effectScatter',
                                 coordinateSystem: 'geo',
-                                data: this.convertData(this.mapData.sort(function(a, b) {
+                                data: this.convertData(this.mapData.slice().sort(function(a, b) {
                                     return b.value - a.value;
                                 })),
                                 symbolSize: function(val) {
@@ -196,9 +208,9 @@
                                 },
                                 itemStyle: {
                                     normal: {
-                                        color: 'yellow',
+                                        color: '#246a73',
                                         shadowBlur: 10,
-                                        shadowColor: 'yellow'
+                                        shadowColor: '#246a73'
                                     }
                                 },
                                 zlevel: 1
@@ -212,13 +224,18 @@
             convertData(data) {
                 var res = [];
                 for (var i = 0; i < data.length; i++) {
-                    var geoCoord = this.mapData1[data[i].name];
-                    if(geoCoord) {
-                        res.push({
-                            name: data[i].name,
-                            value: geoCoord.concat(data[i].value),
-                        });
-                    }
+                    // var geoCoord = this.mapData1[data[i].name];
+                    // if(geoCoord) {
+                    //     res.push({
+                    //         name: data[i].name,
+                    //         value: geoCoord.concat(data[i].value),
+                    //     });
+                    // }
+                    res.push({
+                        name: data[i].name,
+                        value: [data[i].longitude, data[i].latitude],
+                        id:data[i].id
+                    });
                 }
                 return res;
             },
@@ -226,21 +243,20 @@
                 var subList = data.districtList;
                 if (subList) {
                     var curlevel = subList[0].level;
-                    this.mapData = [];
+                    // this.mapData = [];
                     for (var i = 0, l = subList.length; i < l; i++) {
                         var lat_lng = subList[i].center;
                         var name = subList[i].name;
                         var cityCode = subList[i].adcode;
                         this.mapData1[name] = [lat_lng.lng,lat_lng.lat]
-                        this.mapData.push({
-                            name: name,
-                            value: Math.round(Math.random()*100),
-                            level:curlevel,
-                            cityCode: cityCode,
-                        });
+                        // this.mapData.push({
+                        //     name: name,
+                        //     // value: Math.round(Math.random()*100),
+                        //     level:curlevel,
+                        //     cityCode: cityCode,
+                        // });
                     }
                     this.loadMapData(adcode);
-                    console.log(this.mapData1)
                 }
 
             }

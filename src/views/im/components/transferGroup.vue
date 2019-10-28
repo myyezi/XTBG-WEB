@@ -4,7 +4,7 @@
         <div class="transfer_group_count">
             <el-checkbox-group v-model="checkList" @change="handleCheckChange">
                 <el-checkbox :label="item.memberId" v-for="(item,index) in groupUserList" :key="index" class="li_user" v-if="item.memberId != chat.owner">
-                    <img :src="item.portrait?item.portrait:defaultPic"/>
+                    <img :src="allUserInfoObj[item.memberId]&&allUserInfoObj[item.memberId].portrait?allUserInfoObj[item.memberId].portrait:defaultPic"/>
                     <span>{{item.alias}}</span>
                 </el-checkbox>
             </el-checkbox-group>
@@ -21,7 +21,7 @@
     import ajax from '@/utils/request'
     const {ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
     export default {
-        props: ['chat','groupUserList'],
+        props: ['chat','groupUserList','allUserInfoObj'],
         data() {
             return {
                 groupUser:'',
@@ -90,6 +90,14 @@
                     }
                     console.log(objArr)
                     this.$store.commit('sendMessage', objArr);
+                    this.groupUserList.forEach((item)=>{
+                        if(item.type=2) {
+                            item.type=0
+                        }
+                        if(this.checkList[0] == item.memberId) {
+                            item.type=2
+                        }
+                    })
                     this.updateSession()
                 }).catch(() => {
                 });

@@ -4,7 +4,7 @@
         <div class="transfer_group_count">
             <el-checkbox-group v-model="checkList" v-if="groupUserListCopy.length>0">
                 <el-checkbox :label="item.memberId" v-for="(item,index) in groupUserListCopy" :key="index" class="li_user" v-if="item.memberId != chat.owner">
-                    <img :src="item.portrait?item.portrait:defaultPic"/>
+                    <img :src="allUserInfoObj[item.memberId]&&allUserInfoObj[item.memberId].portrait?allUserInfoObj[item.memberId].portrait:defaultPic"/>
                     <span>{{item.alias}}</span>
                 </el-checkbox>
             </el-checkbox-group>
@@ -24,7 +24,7 @@
     import ajax from '@/utils/request'
     const {ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
     export default {
-        props: ['chat','groupUserList'],
+        props: ['chat','groupUserList','allUserInfoObj'],
         data() {
             return {
                 groupUser:'',
@@ -85,8 +85,8 @@
                     let groupId = ''
                     let notifyContent = {
                         type:1,
-                        content:this.user.name+'将' + userNameString +'移除了群聊',
-                        pushContent:this.user.name+'将' + userNameString +'移除了群聊',
+                        content:this.user.name+'将' + userNameString.substring(0,userNameString.length-1) +'移除了群聊',
+                        pushContent:this.user.name+'将' + userNameString.substring(0,userNameString.length-1) +'移除了群聊',
                     }
                     let obj ={
                         groupId:this.chat.targetId,

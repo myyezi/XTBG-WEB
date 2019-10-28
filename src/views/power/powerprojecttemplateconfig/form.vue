@@ -149,6 +149,9 @@ mounted() {
                     text: "新增",
                     onclick: this.onAdd,
                     formatter: item => {
+                        if(item.level>2){
+                            return "";
+                        }
                         return "<img src='" + this.addImg + "' title='新增' style='margin-right:15px;vertical-align: middle;'/>";
                     }
                 },
@@ -239,6 +242,7 @@ methods: {
             this.projectTypeList = rs.XMLX;
             this.stageList = rs.GCJD;
             this.contentList = rs.GZNR;
+            console.info("111111111",this.projectTypeList);
         });
     },
     onChangeProjectType(){
@@ -404,7 +408,7 @@ methods: {
                 }
 
                 // 获取工作内容类型
-                if (this.isAddFirst || this.formData.parentId == "0"){
+                if (this.isAddFirst){
                     this.contentList.forEach((item) => {
                         if (item.text == this.templateConfigForm.name){
                             newChild.nameType = item.value;

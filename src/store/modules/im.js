@@ -29,11 +29,17 @@ const im = {
         // 未读消息
         messageCount:0,
         // 网络状态
-        netStaus:''
+        netStaus:'',
+        // 登录状态
+        loginStaus:true
       },
       mutations: {
         updateNet:function(state, net) {
           state.netStaus = net;
+        },
+        updateLoginStaus:function(state, net) {
+          console.log(net)
+          state.loginStaus = net;
         },
         setCurrentUser: function(state, user) {
           user.id = user.userId
@@ -157,17 +163,29 @@ const im = {
           if(message.fromUserId == state.user.id) {
             chatList = getChatList[message.conversation.targetId];
             if(message.serverTimestamp) {
+              let flag = false
               if(chatList&&chatList.length>0) {
                   chatList.forEach((item)=>{
-                    if(item.messageTag == message.messageTag) {
+                    if(message.messageTag&&item.messageTag == message.messageTag) {
+                      flag = true
                       item.serverTimestamp = message.serverTimestamp
                       item.messageId = message.messageId
                       if(item.netStausType) {
                         item.netStausType = 1
                       }
                     }
+                    if(message.messageId&&item.messageId == message.messageId) {
+                      flag = true
+                    }
                 })
+
+              } else {
+                chatList = []
               }
+              if(!flag) {
+                chatList.push(message);
+                getChatList[message.conversation.targetId] = chatList
+              } 
             } else {
               if(getChatList[message.conversation.targetId]) {
                 let flag = false 
@@ -224,7 +242,6 @@ const im = {
         },
         // 保存会话记录到内存
         addSession: function(state, session) {
-          console.log(session)
           if(session.draft&&session.targetId) {
             let getSessionList = ChatListUtils.getSessionList(state.user.id);
             if(getSessionList&&getSessionList.length>0) {
@@ -252,7 +269,7 @@ const im = {
                 // 发送消息的内容属性
                 content: {
                     type:session.content.type, //发送信息类型 1、文本 2、语音 3、图片 4、定位 5、文件 6、视频
-                    content:session.content.type==1?session.content.content:session.content.type==2?'语音':session.content.type==3?'图片':session.content.type==4?'定位':session.content.type==5?'文件':'视频'// 发送消息内容
+                    content:(session.content.type==1||session.content.type==100)?session.content.content:session.content.type==2?'语音':session.content.type==3?'图片':session.content.type==4?'定位':session.content.type==5?'文件':'视频'// 发送消息内容
                 },
               }
               // 是否本人发的消息
@@ -266,10 +283,10 @@ const im = {
                           sessionObj.targetName = item.name
                       }
                   })
-                  sessionObj.content.content =  userObj[session.fromUserId].name + ':  ' + sessionObj.content.content
+                  sessionObj.content.content =  userObj[session.fromUserId].name + ':' + sessionObj.content.content
                 } else {
                   sessionObj.targetId = session.fromUserId
-                  sessionObj.portrait = userObj[session.fromUserId].portrait
+                  sessionObj.portrait = session.conversation.type==2?'':userObj[session.fromUserId].portrait
                   sessionObj.targetName = userObj[session.fromUserId].name
                 }
               } else {
@@ -286,7 +303,7 @@ const im = {
                     flag = true
                     indexs = index
                     if(sessionObj.content.content) {
-                      item.content.content = sessionObj.content.content;
+                      item.content.content = sessionObj.type==2?JSON.parse(sessionObj.content.content).title:sessionObj.content.content;
                       item.content.type = sessionObj.content.type;
                     }
                     if(sessionObj.serverTimestamp) {
@@ -324,9 +341,12 @@ const im = {
         },
         setMessageListMap: function(state, messageListMap) {
           state.messageListMap = messageListMap;
+          ChatListUtils.setChatList(state.user.id, state.messageListMap);
         },
         setSessionList: function(state, sessionList) {
           state.sessionList = sessionList;
+          // 放入缓存
+          ChatListUtils.setSessionList(state.user.id, state.sessionList);
         },
         chatGroupListMap: function(state, chatGroupListMap) {
           state.chatGroupListMap = chatGroupListMap;

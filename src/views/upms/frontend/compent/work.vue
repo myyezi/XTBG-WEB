@@ -1,39 +1,254 @@
 <template>
-    <div class="work-flow-item">
-        <!-- 判断流程是否是分支，是的话循环分支内部节点 -->
-        <!-- <div v-if="workData.type == 2" class="work-flow-conditionNodes">
-            <work-item v-if="workData.nextNode" :workData="workData.nextNode"></work-item>
-        </div> -->
-        <!-- item 主体开始 -->
-        <work-item :workData="workData"></work-item>
-        <!-- item 主体结束 -->
-        <!-- 判断流程是否存在nextNode，如果有则去递归，没有就结束 -->
-        <!-- <work-item :workData="workData.childNode" v-if="workData.childNode"></work-item> -->
-        <work v-if="workData.childNode&&JSON.stringify(workData.childNode) !== '{}'" :workData="workData.childNode">
-        </work>
+    <div class="fd-nav-content">
+        <div class="workflow-design" id="workflow">
+            <div class="workflow-zoom">
+                <i class="el-icon-remove-outline" @click="changeSize('small')"></i>
+                <span>{{zoomSize}}%</span>
+                <i class="el-icon-circle-plus-outline" @click="changeSize('big')"></i>
+            </div>
+            <div class="box-scale" @click="transferStation({workData:workData,type:2})" :style="{ transform: 'scale('+transformSize+')' }" id="workflowDesign">
+                <!-- 流程主体开始 -->
+                <work-item 
+                    :workData="workData"
+                ></work-item>
+                <!-- 流程主体开始 -->
+                <!-- 流程结束开始 -->
+                <div class="workflow-end-node">
+                    <div class="end-node-text">流程结束</div>
+                </div>
+                <work-setting ref="setting" :drawerTitle="drawerTitle" :drawerType="drawerType"></work-setting>
+                <!-- 流程结束结束 -->
+            </div>
+        </div>
     </div>
 </template>
 <script>
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
     import workItem from './workItem'
+    import workSetting from './setting'
+    import Bus from "@/utils/eventBus.js";
     export default {
-        name: 'work',
-        components: {workItem},
+        name: 'workFlow',
+        components: {workItem,workSetting},
         mixins: [tool, ruleTool],
-        props: ['workData'],
+        props: ['workFlowData'],
         data() {
             return {
+                workData:this.workFlowData,
+                oneWorkData:{},
+                workDataType:null,
+                childNode:'',
+                drawerTitle:'',
+                drawerType:'',
+                transformSize:1,
+                zoomSize:100
             }
         },
         mounted() {
+            this.initLocation()
+            Bus.$on("transfer-station",data=>{
+                this.transferStation(data)
+            })
+            Bus.$on("work-add-pprover",data=>{
+                this.workAddApprover(data)
+            })
+            Bus.$on("work-add-notifier",data=>{
+                this.workAddNotifier(data)
+            })
+            Bus.$on("work-add-route",data=>{
+                this.workAddRoute(data)
+            })
+            Bus.$on("setting-count",data=>{
+                console.log(data)
+                this.$refs.setting.open()
+                this.drawerTitle = data.workData.name
+                this.drawerType = data.workData.type
+            })
         },
         methods: {
-            
+            // 初始化流程图居中
+            initLocation() {
+                this.$nextTick(() => {
+                    let divs = document.getElementById('workflow');
+                    let div = document.getElementById('workflowDesign');
+                    let iMove = (div.scrollWidth-document.body.offsetWidth)/2
+                    divs.scrollTo(iMove,0)
+                })
+            },
+            changeSize(type) {
+                if(type == 'big') {
+                    if(this.zoomSize < 300) {
+                        this.transformSize += 0.1
+                        this.zoomSize += 10
+                    }
+                } else {
+                    if(this.zoomSize > 50) {
+                        this.transformSize -= 0.1
+                        this.zoomSize -= 10
+                    }
+                }
+            },
+            transferStation(data) {
+                if(data.type !== 2) {
+                    this.oneWorkData = data.workData
+                }
+                this.workDataType = data.type
+                let obj = Object.assign({}, this.workData)
+                this.workDataHandle(obj)
+                this.workData = Object.assign({}, obj);
+            },
+            // 修改节点名称input框展现隐藏处理
+            workDataHandle(data) {
+                if(data.type=='route') {
+                    if(data.conditionNodes&&data.conditionNodes.length>0) {
+                        data.conditionNodes.forEach((item,index)=>{
+                            if(item.properties&&JSON.stringify(item.properties) !== '{}') { 
+                                item.properties.editName = true
+                                if(this.workDataType!==2) {
+                                    if(item.nodeId == this.oneWorkData.nodeId) {
+                                        if(this.workDataType === 1) {
+                                            item.properties.editName = false
+                                        }
+                                        if(this.workDataType === 3) {
+                                            item.childNode = this.childNode
+                                            // this.workData = Object.assign({}, data);
+                                        }
+                                        return
+                                    }
+                                }
+                            }
+                            if(item.childNode&&JSON.stringify(item.childNode[0]) !== '{}') {
+                                this.workDataHandle(item.childNode[0])
+                            }
+                        })
+                    }
+                    if(data.childNode&&JSON.stringify(data.childNode[0]) !== '{}') {
+                        this.workDataHandle(data.childNode[0])
+                    }
+                } else {
+                    if(data.properties&&JSON.stringify(data.properties) !== '{}') { 
+                        console.log(data)
+                        data.properties.editName = true
+                        if(this.workDataType!==2) {
+                            if(data.nodeId == this.oneWorkData.nodeId) {
+                                if(this.workDataType === 1) {
+                                    data.properties.editName = false
+                                }
+                                if(this.workDataType === 3) {
+                                    if(this.oneWorkData.childNode) {
+                                        let obj = Object.assign({}, this.oneWorkData.childNode);
+                                        data.childNode = this.childNode
+                                        data.childNode.childNode = obj
+                                    } else {
+                                        data.childNode = this.childNode
+                                    }
+                                    // this.workData = Object.assign({}, data);
+                                }
+                            }
+                        }
+                    }
+                    if(data.childNode&&JSON.stringify(data.childNode[0]) !== '{}') {
+                        this.workDataHandle(data.childNode[0])
+                    }
+                }
+            },
+            // 添加审批人
+            workAddApprover(data) {
+                let oneWorkData = data.workData
+                let nodeId = this.generateUUID()
+                this.childNode = {
+                    name:"审批人",
+                    type:"approver",
+                    prevId:oneWorkData.nodeId,
+                    nodeId:nodeId,
+                    properties:{
+                        editName:true
+                    }
+                }
+                this.transferStation({workData:oneWorkData,type:3})
+            },
+            // 添加抄送人
+            workAddNotifier(data) {
+                let oneWorkData = data.workData
+                let nodeId = this.generateUUID()
+            },
+            // 添加分支
+            workAddRoute(data) {
+                let oneWorkData = data.workData
+                let nodeId = this.generateUUID()
+            },
+            // 得到唯一流程id标示
+            generateUUID() {
+                var d = new Date().getTime();
+                if (window.performance && typeof window.performance.now === "function") {
+                    d += performance.now(); //高精度计时器
+                }
+                var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    var r = (d + Math.random() * 16) % 16 | 0;
+                    d = Math.floor(d / 16);
+                    return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+                });
+                return uuid;
+            }
         }
     }
 </script>
 <style lang="scss">
+.fd-nav-content {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    // overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 30px;
+}
+.workflow-design {
+    width: 100%;
+    overflow: auto;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: #f5f5f7;
+    .workflow-zoom {
+        display: flex;
+        position: fixed;
+        align-items: center;
+        justify-content: space-between;
+        height: 40px;
+        width: 125px;
+        right: 40px;
+        margin-top: 10px;
+        z-index: 10;
+        i {
+            font-size: 27px;
+            cursor: pointer;
+        }
+        span {
+            font-size: 15px;
+        }
+    }
+    .box-scale {
+        transform: scale(1);
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        // height: 100%;
+        padding: 50px 0;
+        align-items: flex-start;
+        justify-content: center;
+        flex-wrap: wrap;
+        min-width: min-content;
+        background-color: #f5f5f7;//背景色
+        // transform-origin: 0 0 0;
+        transform-origin: 50% 0px 0px;
+    }
+}
 .work-flow-item{
     width: 100%;
     // height:800px;
@@ -49,7 +264,7 @@
             content: "";
             position: absolute;
             top: 0;
-            left: 0;
+            left: 16px;
             bottom: 0;
             right: 40px;
         }
@@ -74,12 +289,15 @@
             border-radius: 4px;
             cursor: pointer;
             &:hover {
-                border: 1px solid #3296fa;
                 .close {
                     display:block;
                 }
                 .editable-title {
                     border-bottom: 1px dashed #fff;      
+                }
+                &::after {
+                    border: 1px solid #3296fa;
+                    box-shadow: 0 0 6px 0 rgba(50,150,250,.3);
                 }
             }
             &::before{
@@ -106,7 +324,7 @@
                 z-index: 2;
                 border-radius: 4px;
                 border: 1px solid transparent;
-                transition: all .1s cubic-bezier(.645,.045,.355,1);
+                transition: all .1s ease-out;
                 box-shadow: 0 2px 5px 0 rgba(0,0,0,.1);
             }
             .title {
@@ -123,10 +341,20 @@
                 text-align: left;
                 background: #ff943e;
                 border-radius: 4px 4px 0 0;
-                .el-icon-user-solid {
+                .el-icon-user-solid,.el-icon-s-promotion {
                     font-size: 12px;
                     margin-right: 5px;
                 }
+                input {
+                    width:139px;
+                    height: 20px;
+                    border-radius: 4px;
+                    border: 1px solid #DCDFE6;
+                    padding: 2px 5px;
+                }
+            }
+            .notifier_title {
+                background: #3296fa;
             }
             .content {
                 position: relative;
@@ -262,7 +490,11 @@
         z-index: 1;
         display: inline-flex;
         align-items: center;
-        transition: all .3s cubic-bezier(.645,.045,.355,1);
+        transition: all .3s ease-out;
+        &:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,.1);
+        }
     }
     .add-node-btn {
         user-select: none;
@@ -285,7 +517,7 @@
             position: relative;
             border: none;
             line-height: 30px;
-            transition: all .3s cubic-bezier(.645,.045,.355,1);
+            transition: all .3s ease-out;
             .el-icon-plus {
                 color: #fff;
                 font-size: 16px;
@@ -353,7 +585,6 @@
         padding: 14px 19px;
         cursor: pointer;
         &:hover {
-            border: 1px solid #3296fa;
             .close {
                 display:block;
             }
@@ -361,6 +592,10 @@
                 .editable-title {
                     border-bottom: 1px dashed #15bc83;      
                 }
+            }
+            &::after{
+                border: 1px solid #3296fa;
+                box-shadow: 0 0 6px 0 rgba(50,150,250,.3);
             }
         }
         &::after {
@@ -374,7 +609,7 @@
             z-index: 2;
             border-radius: 4px;
             border: 1px solid transparent;
-            transition: all .1s cubic-bezier(.645,.045,.355,1);
+            transition: all .1s ease-out;
             box-shadow: 0 2px 5px 0 rgba(0,0,0,.1); 
         }
         .title-wrapper {
@@ -389,6 +624,13 @@
                 overflow: hidden;
                 white-space: nowrap;
                 text-overflow: ellipsis;
+            }
+            input {
+                width:110px;
+                height: 20px;
+                border-radius: 4px;
+                border: 1px solid #DCDFE6;
+                padding: 2px 5px;
             }
             .priority-title {
                 display: inline-block;
@@ -412,5 +654,66 @@
             z-index: 2;
         }
     } 
+}
+.work-flow-add-node-body {
+    display: flex;
+    width: 300px;
+    min-height: 160px;
+    align-items: center;
+    .add-node-item {
+        cursor: pointer;
+        text-align: center;
+        flex: 1;
+        color: #333;
+        .node-item-wrapper {
+            user-select: none;
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 5px;
+            background: #fff;
+            border: 1px solid #e2e2e2;
+            border-radius: 50%;
+            transition: all .3s ease-out;
+            i{
+                font-size: 35px;
+                line-height: 80px;
+            }
+            .el-icon-user-solid {
+                color:#ff943e
+            }
+            .el-icon-s-promotion {
+                color:#3296fa
+            }
+            .icon-unit {
+                color:#15bc83;
+                font-size: 30px;
+            }
+        }
+        &:hover {
+            outline: 0;
+            .node-item-wrapper {
+                background: #3296fa;
+                box-shadow: 0 10px 20px 0 rgba(50,150,250,.4);
+                i {
+                    color:#fff;
+                }
+            }
+        }
+    }
+}
+.workflow-end-node {
+    display:flex;
+    justify-content:center;
+    font-size:14px;
+    color:#999;
+    .end-node-text{
+        text-align: center;
+        width: 70px;
+        height: 70px;
+        border: 2px solid #909399;
+        line-height: 66px;
+        border-radius: 50%;
+    }
 }
 </style>

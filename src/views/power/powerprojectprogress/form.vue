@@ -3,7 +3,11 @@
         <div style="padding:10px 0">
             <span style="font-size: 14px;color: #8C8C8C; font-weight: bold;">项目名称：{{projectName}}</span>
         </div>
-        <div class="container clearfix">
+        <el-radio-group v-model="isOpen" style="padding:10px 0px 10px;">
+            <el-radio :label="false" @change="changeOpen">收起</el-radio>
+            <el-radio :label="true" @change="changeOpen">展开</el-radio>
+        </el-radio-group>
+        <div class="clearfix">
             <gantt-add
                 ref="gantt"
                 class="left-container"
@@ -13,7 +17,7 @@
             </gantt-add>
         </div>
         <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
-            <stop-upload @func="getResFile"></stop-upload>
+            <stop-upload @func="getResFile" :sourceId = this.id :projectId = this.projectId :nodeName = projectNodeName ></stop-upload>
         </el-dialog>
 
         <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="200" height="800px">
@@ -21,7 +25,8 @@
                 <el-table :data="attachmentList" style="width: 100%;height: 500px;">
                     <el-table-column fixed label="操作" width="120">
                         <template fixed slot-scope="{ row, column, $index }">
-                            <el-button v-show="true" @click="delFile(row)" type="text" size="small">删除</el-button>
+<!--                            状态为待审批转态不能删除-->
+                            <el-button v-show="currentStatus!=4" @click="delFile(row)" type="text" size="small">删除</el-button>
                             <el-button v-show="true" @click="downloadFile(row)" type="text" size="small">下载</el-button>
                         </template>
                     </el-table-column>
@@ -31,7 +36,11 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称"></el-table-column>
-                    <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小"></el-table-column>
+                    <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小">
+                        <template slot-scope="scope">
+                            {{bytesToSize(scope.row.size)}}
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100" label="上传人"></el-table-column>
                     <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="上传时间"></el-table-column>
                 </el-table>
@@ -39,9 +48,9 @@
         </el-dialog>
 
         <el-dialog title="申请完成" :visible.sync="finishFormVisible" :class="{'dialog_animation_in':finishFormVisible,'dialog_animation_out':!finishFormVisible}" width="80">
-            <el-form :model="finishForm" :rules="rules" ref="finishForm" label-width="100px">
-                <el-form-item label="审批人" prop="stage">
-                    <el-input v-model="finishForm.principalText" placeholder="请选择审批人" readonly clearable>
+            <el-form :model="approvalFinishForm" :rules="rules" ref="ruleForm" label-width="100px">
+                <el-form-item label="审批人" prop="name">
+                    <el-input v-model="approvalFinishForm.name" placeholder="请选择审批人">
                         <el-button slot="append" icon="el-icon-search" @click="showEmployeeSelector = true"></el-button>
                     </el-input>
                 </el-form-item>
@@ -82,18 +91,21 @@
                 projectTaskList : [],
                 stageList : [],
                 attachmentList : [],
-                finishForm : {},
+                approvalFinishForm : {},
                 id : "",
                 taskId : "",
                 projectId : "",
                 projectName : "",
+                projectNodeName:"",
                 tempArr : [],
+                isOpen : true,
                 uploadShow : false,
                 stopUploadShow : false,
                 showEmployeeSelector : false,
+                currentStatus:'',
                 rules: {
                     name: [
-                        { required: true, message: '请输入工作内容', trigger: ['change','blur'] }
+                        { required: true, message: '请选择审批人', trigger: ['change','blur'] }
                     ],
                 },
                 tasks: {
@@ -109,6 +121,7 @@
                         width:'120',
                         template:function(obj){
                             let operateStr = "";
+                            this.currentStatus = obj.currentStatus;
                             let uploadStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>";
                             let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>";
                             if (obj.isUpload == 1 && obj.currentStatus != 4){
@@ -128,16 +141,18 @@
                         template:function(obj){
                             let operateStr = "";
                             let approvelStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>申请完成</a>";
-                            let finishStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>完成</a>";
+                            let finishStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;' title='完 成'>完成</a>";
                             let hasApprovalStr = "<a style='display:inline-block;width:50px;height:100%;color: #999999;'>已申请</a>";
-                            if (obj.isUpload == 1 && obj.isApproval == 1 && obj.fileNum > 0){
-                                operateStr += approvelStr;
-                            }
-                            if (obj.currentStatus == 4){
-                                operateStr += hasApprovalStr;
-                            }
-                            if (obj.isApproval == 0){
-                                operateStr += finishStr;
+                            if (obj.currentStatus!=6 ){
+                                if ((obj.isApproval == 1 && obj.fileNum > 0 && obj.currentStatus!=4) || (obj.isApproval == 1 && obj.isUpload == 0 && obj.currentStatus!=4)){
+                                    operateStr += approvelStr;
+                                }
+                                if (obj.currentStatus == 4){
+                                    operateStr += hasApprovalStr;
+                                }
+                                if (obj.isApproval == 0){
+                                    operateStr += finishStr;
+                                }
                             }
                             return operateStr;
                         }
@@ -245,42 +260,67 @@
             }
             Bus.$on("task-updated", data => {
                 if(data.operationType === 'upload') {
-                    this.uploadShow = true;
                     this.id = data.id;
+                    this.getProjectNodeName();
                 }else if (data.operationType === 'view'){
                     this.fileFormVisible = true;
-                    // 获取项目任务书对象
-                    ajax.get('power/powerprojectattachment/',{sourceId : data.id, projectId : this.projectId}).then(rs => {
-                        if (rs.status === 0){
-                            this.attachmentList = rs.data;
-                        }else{
-                            this.$message({
-                                message: rs.msg,
-                                type: 'error'
-                            });
-                        }
-                    });
+                    console.log(data)
+                    this.getProjectPlanStatus(data.id);
+                    // 获取项目文件
+                    this.getAttachmentList(data.id);
                 }else if (data.operationType === 'approvefinish'){
                     this.finishFormVisible = true;
+                    this.id = data.id;
                 }else if(data.operationType === 'finish') {
-
+                    let that = this;
+                    this.$confirm("确定完成该计划节点?" ,'提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                    }).then(function() {
+                        ajax.post('power/powerprojectplan/finish', {
+                            planId : data.id,
+                        }).then(rs => {
+                            if (rs.status == 0) {
+                                that.$message.success(rs.msg);
+                                that._getTasksModel();
+                            } else {
+                                that.$message.error(rs.msg);
+                            }
+                        });
+                    }).catch(function() {
+                    });
                 }
             });
             this.getProjectTask();
             this.getStageList();
         },
         methods: {
+            getAttachmentList(id){
+                ajax.get('power/powerprojectattachment/',{sourceId : id, projectId : this.projectId}).then(rs => {
+                    if (rs.status === 0){
+                        this.attachmentList = rs.data;
+                    }else{
+                        this.$message({
+                            message: rs.msg,
+                            type: 'error'
+                        });
+                    }
+                });
+            },
             // 上传成功回调
             getResFile(file){
+                console.log(file)
                 ajax.post('power/powerprojectattachment', {
-                    sourceId : this.id,
-                    projectId : this.projectId,
+                    sourceId : file.sourceId,
+                    projectId : file.projectId,
                     name : file.name,
                     size : file.size,
                     path : file.path
                 }).then(rs => {
                     if (rs.status == 0) {
                         this.$message.success(rs.msg);
+                        this.updateCurrentStatus();
                         this._getTasksModel();
                     } else {
                         this.$message.error(rs.msg);
@@ -288,15 +328,88 @@
                 });
             },
 
+           //修改项目节点状态
+            updateCurrentStatus(){
+                ajax.post('power/powerprojectplan/loading/'+ this.id
+                ).then(rs => {
+                    this._getTasksModel();
+                });
+            },
+
+            //修改项目节点状态
+            getProjectNodeName(){
+                ajax.get('power/powerprojectplan/'+ this.id
+                ).then(rs => {
+                    this.uploadShow = true;
+                    if(rs.data && rs.data.name) {
+                        this.projectNodeName = rs.data.name;
+                        this._getTasksModel();
+                    }
+                });
+            },
+
+
+            //获取项目节点当前状态
+            getProjectPlanStatus(id){
+                ajax.get('power/powerprojectplan/'+ id).then(rs => {
+                    if(rs.data ) {
+                        this.currentStatus = rs.data.currentStatus;
+                        this._getTasksModel();
+                    }
+                });
+            },
+
+            bytesToSize(bytes) {
+                if (bytes === 0) return '0 B';
+                var k = 1000, // or 1024
+                    sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+                    i = Math.floor(Math.log(bytes) / Math.log(k));
+                return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+            },
+
             delFile(data){
+                let that = this;
+                this.$confirm('确定删除该文件?' ,'提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }).then(function() {
+                    ajax.delete('power/powerprojectattachment/'+data.id).then(rs => {
+                        if (rs.status == 0) {
+                            that.$message.success(rs.msg);
+                            that.getAttachmentList(data.sourceId);
+                            that._getTasksModel();
+                        } else {
+                            that.$message.error(rs.msg);
+                        }
+                    });
+                }).catch(function() {
+                });
 
             },
 
             downloadFile(data){
-                window.open(process.env.URL_API+data.path);
+                // window.open(process.env.URL_API+data.path);
+                let fileName = data.name;
+                let filePath = data.path;
+                let param = "fileName=" + fileName + "&" + "filePath=" +filePath;
+                location.href = encodeURI(this.exportUrl("power/powerprojectplan/downLoadFile?" + param));
             },
-            selectedOnchangeHandle(){
-
+            selectedOnchangeHandle(data){
+                this.approvalFinishForm = {};
+                this.showEmployeeSelector = false;
+                if (data) {
+                    let { idArr = [],nameArr = [] } = {};
+                    data.map(item => {
+                        idArr.push(item.id);
+                        nameArr.push(item.name);
+                    });
+                    this.approvalFinishForm.id = idArr.join(",");
+                    this.approvalFinishForm.name = nameArr.join(",");
+                }
+            },
+            changeOpen(){
+                this._getTasksModel();
             },
             // 工程阶段字典
             getStageList() {
@@ -340,7 +453,7 @@
                                         item.end_date = item.planEndDate;
                                         item.text = item.name;
                                         item.parent = item.parentId;
-                                        item.open = true;
+                                        item.open = this.isOpen;
                                     });
                                     obj.data = rs.data;
                                     this.tasks = obj;
@@ -366,109 +479,32 @@
             // 弹框“确定”操作
             ok(){
                 this.$refs['ruleForm'].validate((valid) => {
-                    if (valid) {
-                        let newChild = this.powerprojectplanform;
-                        newChild.text = this.powerprojectplanform.name;
-                        newChild.start_date = this.powerprojectplanform.planStartDate;
-                        newChild.end_date = this.powerprojectplanform.planEndDate;
-                        if(this.operationType === 'add') {
-                            newChild.parent = 0;
-                            newChild.level = 1;
-                        } else if (this.operationType === 'inserted'){
-                            newChild.parent = this.formData.id;
-                            newChild.level = this.formData.level + 1;
-                        } else {
-                            if (this.tasks.data && this.tasks.data.length > 0){
-                                this.dataArr.forEach((item,index) => {
-                                    if(item.id === this.powerprojectplanform.id) {
-                                        this.dataArr.splice(index, 1);
-                                    }
-                                });
-                            }
-                        }
-                        //newChild.sortNum = this.getSortNum(newChild.parentId);
-                        this.getNodeProcessing(newChild);
-                    } else {
-                        return false;
+                    if (!this.approvalFinishForm.id){
+                        this.$message.error("请选择正确的审批人");
+                        return;
                     }
-                });
-            },
-
-            // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
-            getNodeProcessing(data,node) {
-                if(this.operationType === 'add' || this.operationType === 'inserted') {
-                    data.id = new Date().getTime()
-                    this.$message({
-                        message: '新增成功',
-                        type: 'success'
-                    });
-                    this.dialogVisible = false;
-                    this.dataArr.push(data);
-                    let obj = {};
-                    this.isLoading = true;
-                    obj.data = this.dataArr;
-                    this.tasks = obj;
-                } else if(this.operationType === 'deleted') {
-                    if (node && node.length > 0){
-                        node.forEach((item, index) => {
-                            if(item && item.id == data.id) {
-                                node.splice(index, 1, null);
+                    let arrIds = this.approvalFinishForm.id.split(",");
+                    if (arrIds.length > 5){
+                        this.$message.error("最多支持选择5个审批人");
+                        return;
+                    }
+                    if (!valid) {
+                        this.$message.error("校验不通过，请检查输入项");
+                        return;
+                    }else{
+                        ajax.post('power/powerprojectplan/approvalFinish', {
+                            planId : this.id,
+                            approvalEmployeeId : this.approvalFinishForm.id,
+                            taskId : this.taskId
+                        }).then(rs => {
+                            if (rs.status == 0) {
+                                this.$message.success(rs.msg);
+                                this.finishFormVisible = false;
+                                this._getTasksModel();
                             } else {
-                                if (item && item.parent && item.parent == data.id) {
-                                    this.getNodeProcessing(item, node);
-                                }
+                                this.$message.error(rs.msg);
                             }
                         });
-                    }
-                    let newArray = [];
-                    this.dataArr.forEach((item) => {
-                        if (item){
-                            newArray.push(item)
-                        }
-                    });
-                    this.dataArr = newArray;
-                    let obj = {};
-                    this.isLoading = true;
-                    obj.data = this.dataArr;
-                    this.tasks = obj;
-                } else {
-                    this.$message({
-                        message: '编辑成功',
-                        type: 'success'
-                    });
-                    debugger;
-                    this.dialogVisible = false;
-                    this.dataArr.push(data);
-                    let obj = {};
-                    this.isLoading = true;
-                    obj.data = this.dataArr;
-                    this.tasks = obj;
-                }
-            },
-            //保存
-            submitForm(projectStatus) {
-                if (!this.taskId || this.tasks.data.length == 0){
-                    this.$message.error('数据无效，请检查！');
-                    return;
-                }
-                let newList = [];
-                let obj = {};
-                this.tasks.data.forEach((item) => {
-                    obj = item;
-                    newList.push(obj);
-                });
-                ajax.post('power/powerprojectplan', {
-                    projectStatus : projectStatus,
-                    tempType : this.tempType,
-                    taskId : this.taskId,
-                    projectId : this.projectId,
-                    treeDataList : newList
-                }).then(rs => {
-                    if (rs.status == 0) {
-                        this.$message.success(rs.msg);
-                        this._getTasksModel();
-                    } else {
-                        this.$message.error(rs.msg);
                     }
                 });
             },

@@ -3,7 +3,6 @@
         <el-cascader
             :options="options"
             v-model="cityId"
-            :props="{checkStrictly: true }"
             clearable
             @change="handleChange">
         </el-cascader>
@@ -56,7 +55,7 @@
                     res.data.forEach(function (bean) {
                         if (bean.id) {
                             var data = {
-                                id: bean.id,
+                                value: bean.id,
                                 label: bean.label,
                                 children: bean.children
                             }

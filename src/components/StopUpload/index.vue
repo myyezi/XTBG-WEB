@@ -1,5 +1,5 @@
 <template>
-    <div class="global-uploader">
+    <div class="global-uploader" v-loading="loading">
         <uploader
             ref="uploader"
             :options="options"
@@ -38,6 +38,7 @@ export default {
     name: "StopUpload",
     data() {
         return {
+            loading: false,
             files:[],
             tableData: [],
             uploading: false,
@@ -88,6 +89,10 @@ export default {
             attrs: {
                 // accept: ACCEPT_CONFIG.getAll()
             },
+            params:{
+                sourceId:'',
+                projectId:''
+            }
         }
     },
     components: {},
@@ -97,9 +102,14 @@ export default {
             return this.$refs.uploader.uploader;
         }
     },
+    props: ['sourceId','projectId','nodeName'],
     methods: {
         onFileAdded(file) {
             console.log(file)
+            if(this.nodeName) {
+                file.nodeName = this.nodeName
+            }
+            this.loading = true
             FileMd5(file, (file, md5) => {
                 this.computeMD5Success(md5, file)
             });
@@ -135,6 +145,12 @@ export default {
                 resfile.name = file.name;
                 resfile.size = file.size;
                 resfile.path = res.data.path;
+                if(res.data.sourceId) {
+                    resfile.sourceId = res.data.sourceId
+                }
+                if(res.data.projectId) {
+                    resfile.projectId = res.data.projectId
+                }
             }
             this.$emit('func', resfile);
         },
@@ -146,6 +162,12 @@ export default {
             })
         },
         computeMD5Success(md5, file) {
+            if(this.sourceId) {
+                this.params.sourceId = this.sourceId
+            }
+            if(this.projectId) {
+                this.params.projectId = this.projectId
+            }
             // 将自定义参数直接加载uploader实例的opts上
             Object.assign(this.uploader.opts, {
                 query: {
@@ -154,6 +176,7 @@ export default {
             })
             file.uniqueIdentifier = md5;
             file.md5 = md5;
+            this.loading = false
             file.resume();
         },
     }

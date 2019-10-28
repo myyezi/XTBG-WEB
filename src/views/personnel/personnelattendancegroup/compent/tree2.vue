@@ -21,9 +21,11 @@
                     :data="tableData"
                     style="width: 100%"
                     max-height="360"
+                    :row-class-name="tableRowClassName"
                     @selection-change="handleSelectionChange">
                     <el-table-column
                         type="selection"
+                        :selectable="checkSelectable"
                         width="30">
                     </el-table-column>
                     <el-table-column
@@ -47,6 +49,16 @@
     </div>
 </template>
 
+<style>
+    .el-table .warning-row {
+        background: #CCCCCC;
+    }
+
+    .el-table .success-row {
+        background: #f0f9eb;
+    }
+</style>
+
 <script>
     import ajax from '@/utils/request'
     import {tool} from '@/utils/common'
@@ -54,7 +66,7 @@
     export default {
         name: 'tree-panel',
         mixins: [tool],
-        props: ['selectionAll','url'],
+        props: ['selectionAll','url','attendanceGroupId','selectionAllDisable'],
         data() {
             return {
                 placeholder: "请输入名称过滤",
@@ -92,9 +104,31 @@
             }
         },
         methods: {
+            checkSelectable(row){
+                for (let i = 0; i <this.selectionAllDisable.length ; i++) {
+                    if (this.selectionAllDisable[i].employeeId == row.employeeId) {
+                        if (this.attendanceGroupId != this.selectionAllDisable[i].attendanceGroupId) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+
+            tableRowClassName({row, rowIndex}) {
+                for (let i = 0; i <this.selectionAllDisable.length ; i++) {
+                    if (this.selectionAllDisable[i].employeeId == row.employeeId) {
+                        if (this.attendanceGroupId != this.selectionAllDisable[i].attendanceGroupId) {
+                            return 'warning-row';
+                        }
+                    }
+                }
+            },
+
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
+
             handleNodeClick(data) {
                 this.changePageCoreRecordData()
                 this.loadings = true

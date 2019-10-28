@@ -10,10 +10,9 @@
                     <ul>
                         <li v-for="(item,index) in messageList" :class="{'im-chat-mine': item.fromUserId == user.userId}" :key="index" v-if="(item.conversation.topic=='MS' || !item.conversation.topic)&&item.content.type!=4">
                             <div class="im-chat-user">
-                                <img v-if="item.fromUserId == user.userId" :src="user.portrait?user.portrait:defaultPic"/>
-                                <img v-else :src="allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
+                                <img :src="allUserInfoObj[item.fromUserId]&&allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
                                 <cite v-if="item.fromUserId == user.userId"><i v-if="item.serverTimestamp">{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
-                                <cite v-else>{{ allUserInfoObj[item.fromUserId].name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
+                                <cite v-else>{{ allUserInfoObj[item.fromUserId]&&allUserInfoObj[item.fromUserId].name }}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
                             </div>
                             <div class="im-chat-text" @contextmenu.prevent="rightEvent(item,$event)">
                                 <i class="el-icon-loading" v-if="!item.messageId&&item.netStausType==1"></i>
@@ -24,15 +23,71 @@
                             <!-- <div class="im-chat-cxfs" v-if="item.netStausType==2" @click="resendMessage(item)">重新发送</div> -->
                         </li>
                         <li v-else class="group_system_chat">
-                          <span>{{ formatDateTime(new Date(item.serverTimestamp)) }}</span>
-                          <p>{{item.content.content}}</p>
+                          <div v-if="item.content.type==100">
+                              <div class="im-chat-user">
+                                  <img :src="allUserInfoObj[item.fromUserId]&&allUserInfoObj[item.fromUserId].portrait?allUserInfoObj[item.fromUserId].portrait:defaultPic"/>
+                                  <cite v-if="item.fromUserId == user.userId"><i v-if="item.serverTimestamp">{{ formatDateTime(new Date(item.serverTimestamp)) }}</i>{{ user.name }}</cite>
+                                  <cite v-else>{{ notifyTypeObj[JSON.parse(item.content.content).notifyType]}}<i>{{ formatDateTime(new Date(item.serverTimestamp)) }}</i></cite>
+                              </div>
+                              <div class="im-chat-text">
+                                <el-card class="box-card">
+                                  <div class="job_notifications_title">
+                                    {{JSON.parse(item.content.content).title}}
+                                  </div>
+                                  <div class="job_notifications_time" v-if="JSON.parse(item.content.content).notifyType==1">
+                                    {{JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(5,7)+'月'+JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(8,10)+'日'}}
+                                  </div>
+                                  <div class="job_notifications_name">
+                                    <div v-if="JSON.parse(item.content.content).notifyType==1">
+                                      <span>班次时间：</span>
+                                      {{JSON.parse(item.content.content).workMessageContent.attendanceDate.substring(5,10)+"&nbsp;&nbsp;" +JSON.parse(item.content.content).workMessageContent.dutyTime + "&nbsp;&nbsp;" + (JSON.parse(item.content.content).workMessageContent.attendanceType==1?"上班":"下班")}}
+                                    </div>
+                                    <div v-else>
+                                      <div v-if="JSON.parse(item.content.content).workMessageContent.projectName">
+                                          <span>项目名称：</span>
+                                          {{JSON.parse(item.content.content).workMessageContent.projectName}}
+                                      </div>
+                                      <div v-if="JSON.parse(item.content.content).workMessageContent.projectPlanName">
+                                          <span>节点名称：</span>
+                                          {{JSON.parse(item.content.content).workMessageContent.projectPlanName}}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!-- <div class="job_notifications_name" v-if="JSON.parse(item.content.content).notifyType==3">
+                                    <div>
+                                      <span>审批时间：</span>
+                                      {{formatDateTime(new Date(JSON.parse(item.content.content).timestamp))}}
+                                    </div>
+                                  </div> -->
+                                  <div class="job_notifications_count">
+                                    <div v-if="JSON.parse(item.content.content).notifyType==1">
+                                      <span>打卡地点：</span>
+                                      {{JSON.parse(item.content.content).workMessageContent.adress}}
+                                    </div>
+                                    <div v-else>
+                                      <span v-if="JSON.parse(item.content.content).notifyType==2">申请原因：</span>
+                                      <span v-else>审批内容：</span>
+                                      {{JSON.parse(item.content.content).reason}}
+                                    </div>
+                                  </div>
+                                  <div class="job_notifications_result" v-if="JSON.parse(item.content.content).notifyType==3">审批结果：
+                                    <span v-if="JSON.parse(item.content.content).workMessageContent.approvaStatus==2" style="color:#14d41b">同意</span>
+                                    <span v-if="JSON.parse(item.content.content).workMessageContent.approvaStatus==3" style="color:#ff0404">不同意</span>
+                                  </div>
+                                </el-card>
+                              </div>
+                          </div>
+                          <div v-else class="group_system_notifications">
+                              <span>{{ formatDateTime(new Date(item.serverTimestamp)) }}</span>
+                              <p>{{item.content.content}}</p>
+                          </div>
                         </li>
                     </ul>
                 </div>
                 <ul v-show="visibleBox" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
                   <li @click.stop="withdrawMessage" :style="{color:isTimeOut?'#999':'#333'}">撤回消息<span v-if="isTimeOut">(已超过两分钟)</span></li>
               </ul>
-                <div class="im-chat-footer">
+                <div class="im-chat-footer" v-if="chat.type !== 2">
                     <div class="im-chat-tool">
                         <el-popover
                           placement="top"
@@ -67,7 +122,7 @@
                 <span v-show="!isSetting"> {{ chat.targetName }}</span>
                 <span v-show="isSetting"> 群设置</span>
               </div>
-              <setting :chat="chat" :groupUserList="currentGroupUser"  v-if="showHistory&&isSetting"></setting>
+              <setting :chat="chat" :groupUserList="currentGroupUser"  v-if="showHistory&&isSetting" :allUserInfoObj="allUserInfoObj"></setting>
               <chat-history :chat="chat" :messageList="messageList" :messageImgList="messageImgList" :allUserInfoObj="allUserInfoObj" v-if="showHistory&&!isSetting"></chat-history>
         </el-dialog>
         <!-- 大图预览 -->
@@ -157,7 +212,7 @@
         groupUserList:[],
         accept:'.jpg,.jpeg,.png,.gif,.doc,.docx,.xls,.xlsx,.pdf,.exe,',
         imgFormat: "jpg,jpeg,png,gif",
-        fileFormat: "doc,docx,xls,xlsx,pdf,exe,txt,ppt,pptx,zip,rar",
+        // fileFormat: "doc,docx,xls,xlsx,pdf,exe,txt,ppt,pptx,zip,rar",
         videoFormat: "mp4,mov",
         audioFormat: "mp3,m4a",
         transform:transform,
@@ -168,7 +223,12 @@
         },
         previewerImgList:[],//预览的图片集合
         messageImgList:[],//所有的图片消息图片的集合
-        allUserInfoObj:{} //所有用户信息
+        allUserInfoObj:{}, //所有用户信息
+        notifyTypeObj:{
+          1:'考勤打卡',
+          2:'申请',
+          3:'审批'
+        }
       };
     },
     props: ['chat','chatDialogVisible'],
@@ -264,12 +324,8 @@
           // 文件后缀
           let suffix = res.data.suffix;
           this.messageContent = JSON.stringify(res.data)
-          // 文件
-          if (self.fileFormat.indexOf(suffix) >=0) {
-            type = 5
-          }
           // 图片
-          else if (self.imgFormat.indexOf(suffix) >=0){
+          if (self.imgFormat.indexOf(suffix) >=0){
             type = 3
           }
           // 视频
@@ -279,6 +335,8 @@
           // 音频
           else if (self.audioFormat.indexOf(suffix) >=0){
             type = 2
+          } else {
+            type = 5 // 文件
           }
           this.mineSend(type)
         } else {
@@ -370,14 +428,16 @@
         this.showHistory = true
       },
       // 得到当前点击会话框的聊天信息
-      getCurrentMessageList() {
+      getCurrentMessageList(type) {
           let self = this;
           let userInfoObj = {}
           let cacheMessagesObj = {}
           let cacheMessages = []
-          self.messageList = [];
+          // self.messageList = [];
           self.messageImgList = []
-          self.messageContent = self.chat.draftContent?self.chat.draftContent:'' //获取草稿信息
+          if(type!==1) {
+            self.messageContent = self.chat.draftContent?self.chat.draftContent:'' //获取草稿信息
+          } 
           // 从内存中取用户信息
           userInfoObj = self.$store.state.im.userFriendObj
           if(JSON.stringify(userInfoObj) == '{}') {
@@ -400,11 +460,7 @@
                 cacheMessages = cacheMessagesObj[self.chat.targetId];
             }
           }
-          if (cacheMessages) {
-            let objArr = {
-                obj:{},
-                subTopic:'MS'
-            }
+          if (cacheMessages&&cacheMessages.length>0) {
             let contents = {}
             let path = ''
             self.messageList = cacheMessages;
@@ -421,8 +477,6 @@
                 if(this.netStausType == 1) {
                     if(item.netStausType == 2) {
                       item.netStausType = 1
-                      objArr.obj = item
-                      // this.$store.commit('sendMessage', objArr); 
                     } 
                 } else if(this.netStausType == 2) {
                     if(!item.messageId&&item.netStausType!=2) {
@@ -431,6 +485,22 @@
                     } 
                 }
             })
+          } else {
+            if(self.chat.serverTimestamp) {
+              let objArr = {
+                  obj:{
+                    head:'0',
+                    count:100,
+                    conversation:{
+                        line:0,
+                        type:self.chat.type,
+                        targetId:self.chat.targetId
+                    }
+                  },
+                  subTopic:'LRM'
+              }
+              self.$store.commit('sendMessage', objArr);
+            }
           }
           this.scollBottom()
       },
@@ -482,7 +552,9 @@
         }
       },
       messageList :function(newvalue,oldvalue) {
-        this.getCurrentMessageList()
+        if(newvalue) {
+          this.getCurrentMessageList(1)
+        }
         this.scollBottom()
       },
       currentGroupUser :function(newvalue,oldvalue) {
@@ -521,8 +593,9 @@
         flex: 1;
         // display: flex;
         // flex-direction: column;
-        margin-top: 4rem;
-        height: calc(100% - 4rem);
+        margin-top: 3rem;
+        height: calc(100% - 3rem);
+        min-height: 0;
     }
 
     .im-chat-top {
@@ -531,7 +604,14 @@
         padding: 0 0 0 10px;
         font-size: 1.6rem;
         font-weight: bold;
-        height: 40px;
+        height: 30px;
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 500px;
+          display: inline-block;
+        }
         .menu {
             color: $color-default;
             display: inline-block;
@@ -575,7 +655,7 @@
         flex: 1;
         display: flex;
         flex-direction: row;
-        height: calc(100% - 40px);
+        height: calc(100% - 30px);
 
         .im-chat-main-left {
             flex: 4;
@@ -658,7 +738,7 @@
                               text-overflow:ellipsis;//让超出的用...实现
                               white-space:nowrap;//禁止换行
                               overflow:hidden;//超出的隐藏
-                              width: 350px;
+                              max-width: 350px;
                             }
                             .el-icon-download {
                                 float: left;
@@ -765,6 +845,37 @@
                 }
             }
             .group_system_chat {
+              .im-chat-text {
+                  width: 25rem;
+                  padding: 0;
+                  &:after {
+                      border-color: #fff transparent transparent;
+                  }
+                  .job_notifications_title {
+                      // text-align: center;
+                      font-size: 15px;
+                      margin-bottom: 5px;
+                      color: #fb9034;
+                  }
+                  .job_notifications_time {
+                      font-size: 12px;
+                      margin-bottom: 5px;
+                  }
+                  .job_notifications_name {
+                    span {
+                      color:#999
+                    }
+                  }
+                  .job_notifications_count {
+                    span {
+                      color:#999
+                    }
+                  }
+                  .job_notifications_result {
+                    color:#999
+                  }
+              }
+              .group_system_notifications {
                 text-align: center;
                 span {
                     font-size:12px;
@@ -775,7 +886,8 @@
                     margin-top: 5px;
                     color: #333;
                 }
-            }
+              }
+        }
         }
 
         .contextmenu {

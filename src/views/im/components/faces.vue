@@ -10,14 +10,14 @@
               </li>
           </ul>
         </el-tab-pane>
-        <el-tab-pane>
+        <!-- <el-tab-pane>
           <span slot="label"><i class="icon-gif"></i></span>
           <ul class="faces clearfix">
               <li v-for="(item,index2) in faceList" :key="emojiList.length+index2">
                   <img :src="faceMap[item]" :alt="item" :title="item" @click="insertFace(item,2)"/>
               </li>
           </ul>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </div>
 </template>
@@ -44,6 +44,10 @@ export default {
 
 <style lang="scss">
 .faces_count {
+    .el-tabs__item {
+      margin: 0;
+      border-radius: 0;
+    }
     .el-tabs__item.is-active{
         background-color: #e4e7ed;
         border-bottom: none;

@@ -1,5 +1,7 @@
 <template>
+  <div style="overflow:auto;">
     <div ref="gantt"></div>
+  </div>
 </template>
 
 <script>
@@ -60,7 +62,7 @@ export default {
           if(row.outerHTML.indexOf('申请完成')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'approvefinish'});
           }
-          if(row.outerHTML.indexOf('完成')!=-1) {
+          if(row.outerHTML.indexOf('完 成')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'finish'});
           }
       });
@@ -98,6 +100,8 @@ export default {
         gantt.config.date_scale = "%Y-%m";
         gantt.config.xml_date = "%Y-%m-%d %H:%i";
         gantt.config.scale_height = 50;
+        gantt.config.autosize = "xy";
+        // gantt.config.autosize_min_width = 100;
         gantt.config.subscales = [
             {unit: "week", step: 1, date: "第%w周"},
         ];

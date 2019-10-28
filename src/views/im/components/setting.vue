@@ -15,7 +15,7 @@
             </div>
             <div class="im_chat_setting_title_right clearfix">
                 <span v-if="!showEdit">{{chats.targetName}}</span>
-                <input v-else v-model="chats.targetName" @click.stop=''/>
+                <input v-else v-model="chats.targetName" @click.stop='' maxlength="30"/>
                 <!-- <span>内部群</span> -->
                 <i class="el-icon-edit" title="编辑群名称" @click.stop="showEdit=!showEdit" v-if="chats.owner == this.user.userId"></i>
             </div>
@@ -28,7 +28,7 @@
             </div>
             <ul v-if="groupUserListSearch.length>0" class="clearfix">
                 <li v-for="(item,index) in groupUserListCopy" :key="index" :title="item.type == 2?'群主':item.type == 1?'管理员':''">
-                    <img :src="item.portrait?item.portrait:defaultPic"/>
+                    <img :src="allUserInfoObj[item.memberId]&&allUserInfoObj[item.memberId].portrait?allUserInfoObj[item.memberId].portrait:defaultPic"/>
                     <i class="icon-qunzhu" v-if="item.type == 2"></i>
                     <i class="icon-qunzhu" v-if="item.type == 1" style="color:#67c23a"></i>
                     <p>{{item.alias}}</p>
@@ -70,13 +70,13 @@
             <div slot="title">
                 <span > 转移群聊 </span>
             </div>
-            <transfer-group @close-add-user="closeAddUser" :groupUserList="groupUserLists" :chat="chats" v-if="showTransferUser"></transfer-group>
+            <transfer-group @close-add-user="closeAddUser" :groupUserList="groupUserList" :chat="chats" :allUserInfoObj="allUserInfoObj" v-if="showTransferUser"></transfer-group>
         </el-dialog>
         <el-dialog :visible.sync="showEliminateUser" width="600px"  top="calc((100vh - 716px)/2)"  :close-on-press-escape="false" :append-to-body="true" :modal="false" class="im_chat_add_user">
             <div slot="title">
                 <span > 剔除群成员 </span>
             </div>
-            <eliminate-user @close-add-user="closeAddUser" :groupUserList="groupUserLists" :chat="chats" v-if="showEliminateUser"></eliminate-user>
+            <eliminate-user @close-add-user="closeAddUser" :groupUserList="groupUserLists" :chat="chats" :allUserInfoObj="allUserInfoObj" v-if="showEliminateUser"></eliminate-user>
         </el-dialog>
     </div>
 </template>
@@ -88,7 +88,7 @@
     import Bus from "@/utils/eventBus.js";
     const { ChatListUtils } = require('../../../utils/imUtils/ChatUtils');
     export default {
-        props: ['chat','groupUserList'],
+        props: ['chat','groupUserList','allUserInfoObj'],
         components: {
             addUser,
             transferGroup,
@@ -305,6 +305,10 @@
                     height: 26px;
                     line-height: 26px;
                     margin-right: 5px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    width: 450px;
                 }
                 span:nth-child(2) {
                     float: left;
@@ -321,6 +325,7 @@
                     border: 1px solid #DCDFE6;
                     border-radius: 4px;
                     padding:5px;
+                    width: 450px;
                 }
                 .el-icon-edit {
                     cursor: pointer;

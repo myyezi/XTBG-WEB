@@ -38,7 +38,9 @@
                       <el-option  label="委托书" value="1"></el-option>
                       <el-option  label="招标书" value="2"></el-option>
                       <el-option  label="电话委托" value="3"></el-option>
-                      <el-option  label="其他" value="4"></el-option>
+                      <el-option  label="中标通知书" value="4"></el-option>
+                      <el-option  label="合同" value="5"></el-option>
+                      <el-option  label="其他" value="6"></el-option>
                   </el-select>
             </el-form-item>
             <el-form-item label="相关设计" prop="relatedDesign">
@@ -108,7 +110,6 @@
                   :before-remove="beforeRemove"
                   :on-success="handleChange"
                    multiple
-                  :limit="3"
                   :on-exceed="handleExceed"
                   :file-list="saveList">
                   <el-button size="small" type="primary" >上传附件</el-button>
@@ -141,7 +142,12 @@ export default {
     return {
       uploadUrl: process.env.BASE_API + "file/upload/multipart",
       saveList: [],
-      powerprojecttaskForm: {proprietorContactId:''},
+      powerprojecttaskForm: {
+          proprietorContactId:'',
+          adress:'',
+          longitude:'',
+          latitude:''
+      },
       typeOptions: [],
       designOptions:[],
       ProprietorList:[],

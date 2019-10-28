@@ -36,9 +36,6 @@
     margin: 0;
 }
 
-.el-tabs__nav {
-    // margin-left: 20px;
-}
 
 .el-tabs__nav-wrap::after {
     background-color: #f2f2f2;
@@ -46,12 +43,10 @@
 }
 
 .el-tabs__item {
-    // padding: 4px 10px !important;
-    // border-radius: 15px;
-    // height: auto;
-    // width: auto;
-    // line-height: initial;
-    // margin: 13px 0;
+    padding: 4px 10px !important;
+    height: auto;
+    width: auto;
+    line-height: initial;
 }
 
 .el-tabs__item.is-active {
@@ -156,9 +151,13 @@
 
 .el-table table > thead > tr > td,
 .el-table table > thead > tr > th {
-    background: #f0f1f4;
+    background-color: #dfedff;
+    background: -webkit-gradient(linear,left top,left bottom,color-stop(0,#e4f0ff),color-stop(50%,#dfedff),color-stop(100%,#d5e8ff));
 }
-
+.el-table table > tbody > .hover-row ,.el-table table > tbody > .hover-row > td {
+    background-color: #ffe6b1;
+    border-bottom-color: #ffc341;
+}
 .el-table td,
 .el-table th {
     text-align: center;
@@ -287,7 +286,7 @@
     color: #333;
 }
 .el-form-item__label {
-    // line-height: 30px;
+    line-height: 30px;
 }
 
 .el-form-item.is-success .el-input__inner,
@@ -357,8 +356,5 @@
         margin-right: 0;
 
     }
-}
-.el-form-item__content {
-    line-height: 34px;
 }
 /*表单end*/
