@@ -370,14 +370,17 @@ export default {
 
         b {
           position: absolute;
-          font-size: 1.3rem;
+          font-size: 1.2rem;
           left: 7.5rem;
           overflow: hidden;
           text-overflow: ellipsis;
           font-weight: 600;
           top: 0.6rem;
-          white-space: nowrap;
+          // white-space: nowrap;
           width: 6rem;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
         span {
           position: absolute;
