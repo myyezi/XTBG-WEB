@@ -16,9 +16,9 @@
                 :headerTitle="headerTitle">
             </gantt-add>
         </div>
-        <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
+        <!-- <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
             <stop-upload @func="getResFile" :sourceId = this.id :projectId = this.projectId :nodeName = projectNodeName ></stop-upload>
-        </el-dialog>
+        </el-dialog> -->
 
         <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="200" height="800px">
             <div>
@@ -386,6 +386,10 @@
                     });
                 }
             });
+            Bus.$on("upload-success", data => {
+                this.updateCurrentStatus();
+                this._getTasksModel();
+            })
             this.getProjectTask();
             this.getStageList();
             this.treeData.columns = [
@@ -442,25 +446,25 @@
                     }
                 });
             },
-            // 上传成功回调
-            getResFile(file){
-                console.log(file)
-                ajax.post('power/powerprojectattachment', {
-                    sourceId : file.sourceId,
-                    projectId : file.projectId,
-                    name : file.name,
-                    size : file.size,
-                    path : file.path
-                }).then(rs => {
-                    if (rs.status == 0) {
-                        this.$message.success(rs.msg);
-                        this.updateCurrentStatus();
-                        this._getTasksModel();
-                    } else {
-                        this.$message.error(rs.msg);
-                    }
-                });
-            },
+            // // 上传成功回调
+            // getResFile(file){
+            //     console.log(file)
+            //     ajax.post('power/powerprojectattachment', {
+            //         sourceId : file.sourceId,
+            //         projectId : file.projectId,
+            //         name : file.name,
+            //         size : file.size,
+            //         path : file.path
+            //     }).then(rs => {
+            //         if (rs.status == 0) {
+            //             this.$message.success(rs.msg);
+            //             this.updateCurrentStatus();
+            //             this._getTasksModel();
+            //         } else {
+            //             this.$message.error(rs.msg);
+            //         }
+            //     });
+            // },
 
            //修改项目节点状态
             updateCurrentStatus(){
@@ -474,10 +478,11 @@
             getProjectNodeName(){
                 ajax.get('power/powerprojectplan/'+ this.id
                 ).then(rs => {
-                    this.uploadShow = true;
+                    // this.uploadShow = true;
                     if(rs.data && rs.data.name) {
                         this.projectNodeName = rs.data.name;
-                        this._getTasksModel();
+                        // this._getTasksModel();
+                        Bus.$emit("upload-show",{id:this.id,projectId:this.projectId,projectNodeName:this.projectNodeName,projectName:this.projectName});
                     }
                 });
             },
