@@ -213,6 +213,12 @@ input[type="number"]{
     border-top: 1px solid #dcdfe6;
     box-sizing: border-box;
 }
+.table_column-left {
+    text-align: left !important;
+}
+.table_column-center {
+    text-align: center !important;
+}
 // .dialog_animation_in {
 //     height:100%;
 //     animation:dialog-fade-in 0.5s ease-in-out;

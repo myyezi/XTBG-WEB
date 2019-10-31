@@ -35,7 +35,7 @@
                             {{scope.$index+1}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称">
+                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称" class-name="table_column-left">
                         <template fixed slot-scope="{ row, column, $index }">
                             <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                             <span>{{row.name}}</span>
