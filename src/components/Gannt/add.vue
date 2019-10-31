@@ -71,6 +71,9 @@ export default {
           if(row.outerHTML.indexOf('列表')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'selectPosition'});
           }
+          if(row.outerHTML.indexOf('审批记录')!=-1) {
+              Bus.$emit("task-updated",{id:id,operationType:'approvalList'});
+          }
       });
 
       gantt.attachEvent("onGridHeaderClick", (name, e) => {
