@@ -6,50 +6,37 @@
                 <el-collapse-item title="基本信息" name="1">
                     <div class="flex-panel">
                         <el-form-item label="手机号" prop="account">
-                            <el-input v-model="employeeForm.account" placeholder="请输入手机号" clearable @change="getUserByPhone()"></el-input>
+                            <el-input v-model="employeeForm.account" placeholder="请输入手机号" maxlength=11 show-word-limit
+                                      clearable
+                                      @change="getUserByPhone()"></el-input>
                         </el-form-item>
                         <el-form-item label="姓名" prop="name">
-                            <el-input v-model="employeeForm.name" placeholder="输入手机号码自动带入" clearable disabled></el-input>
-                        </el-form-item>
-                        <el-form-item label="性别" prop="gender">
-                            <el-select v-model="employeeForm.gender" placeholder="输入手机号码自动带入" filterable clearable disabled>
-                                <el-option label="男" :value="1"></el-option>
-                                <el-option label="女" :value="2"></el-option>
-                                <el-option label="其他" :value="3"></el-option>
-                            </el-select>
+                            <el-input v-model="employeeForm.name" placeholder="输入手机号码自动带入" clearable
+                                      disabled></el-input>
                         </el-form-item>
                         <el-form-item label="学历" prop="education">
-                            <el-select class="overall_situation_input_icon" v-model="employeeForm.education" disabled placeholder="输入手机号码自动带入">
-                                <el-option v-for="item in xlList" :key="item.value" :label="item.text" :value="item.value"></el-option>
+                            <el-select class="overall_situation_input_icon" v-model="employeeForm.education" disabled
+                                       placeholder="输入手机号码自动带入">
+                                <el-option v-for="item in xlList" :key="item.value" :label="item.text"
+                                           :value="item.value"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="职称" prop="qualification">
-                            <el-select class="overall_situation_input_icon" v-model="employeeForm.qualification" disabled placeholder="输入手机号码自动带入">
-                                <el-option v-for="item in zcList" :key="item.value" :label="item.text" :value="item.value"></el-option>
-                            </el-select>
-                        </el-form-item>
-
-                        <!--<el-form-item label="学历" prop="education">
-                            <el-input v-model="employeeForm.education" placeholder="输入手机号码自动带入" clearable disabled></el-input>
-                        </el-form-item>
-                        <el-form-item label="职称" prop="qualification">
-                            <el-input v-model="employeeForm.qualification" placeholder="输入手机号码自动带入" clearable disabled></el-input>
-                        </el-form-item>-->
-                        <el-form-item label="状态" prop="employeeStatus" v-if="employeeForm.id == null">
-                            <el-select v-model="employeeForm.employeeStatus" filterable clearable>
-                                <el-option label="试用期" :value="'1'"></el-option>
-                                <el-option label="正式员工" :value="'2'"></el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="状态" prop="employeeStatus" v-else>
-                            <el-select v-model="employeeForm.employeeStatus" filterable clearable>
-                                <el-option label="试用期" :value="1"></el-option>
-                                <el-option label="正式员工" :value="2"></el-option>
-                                <el-option label="离职" :value="3"></el-option>
+                            <el-select class="overall_situation_input_icon" v-model="employeeForm.qualification"
+                                       disabled placeholder="输入手机号码自动带入">
+                                <el-option v-for="item in zcList" :key="item.value" :label="item.text"
+                                           :value="item.value"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="邮箱" prop="email">
-                            <el-input v-model="employeeForm.email" placeholder="请输入邮箱" clearable></el-input>
+                            <el-input v-model="employeeForm.email" placeholder="请输入邮箱" maxlength=50 show-word-limit
+                                      clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="入职日期" prop="entryDate">
+                            <el-date-picker
+                                v-model="employeeForm.entryDate" type="date" placeholder="请选择入职日期"
+                                :picker-options="pickerOptions">
+                            </el-date-picker>
                         </el-form-item>
                     </div>
                 </el-collapse-item>
@@ -61,7 +48,8 @@
                                 <el-form-item :prop="'list.' + $index + '.organizations'"
                                               :rules="rules.required('请选择组织')">
                                     <tree-select v-model="row.organizations" placeholder="请选择" type="one"
-                                                 :disabled-id="['1']" url="/upms/employee/treeNodeByCompanyId"></tree-select>
+                                                 :disabled-id="['1']"
+                                                 url="/upms/employee/treeNodeByCompanyId"></tree-select>
                                 </el-form-item>
                             </template>
                         </el-table-column>
@@ -84,13 +72,295 @@
                         </el-table-column>
                         <el-table-column label="操作" min-width="50">
                             <template slot-scope="{row, $index}">
-                                <el-button v-if="employeeForm.list.length>1" type="text" size="small" @click="delItem($index)">删除</el-button>
+                                <el-button v-if="employeeForm.list.length>1" type="text" size="small"
+                                           @click="delItem($index)">删除
+                                </el-button>
                             </template>
                         </el-table-column>
                     </el-table>
-                    <el-form-item label="附件" prop="attachment" class="big">
-                        <upload-panel :size="6" accept=".jpg,.jpeg,.png,.gif" :file-list.sync="attachment" :show-img="true"></upload-panel>
-                    </el-form-item>
+                </el-collapse-item>
+
+                <el-collapse-item title="档案信息" name="3">
+                    <div class="flex-panel">
+                        <el-divider content-position="left">工作信息</el-divider>
+                        <el-form-item label="员工类型" prop="type">
+                            <el-select v-model="employeeForm.type" filterable clearable placeholder="请选择员工类型">
+                                <el-option v-for="item in typeList" :key="item.value" :label="item.text"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="员工状态" prop="employeeStatus">
+                            <el-select v-model="employeeForm.employeeStatus" filterable clearable placeholder="请选择员工状态">
+                                <el-option label="试用期" :value="1"></el-option>
+                                <el-option label="正式员工" :value="2"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="试用期" prop="probation">
+                            <el-select v-model="employeeForm.probation" filterable clearable placeholder="请选择试用期">
+                                <el-option v-for="item in probationList" :key="item.value" :label="item.text"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="转正日期" prop="positiveDate">
+                            <el-date-picker
+                                v-model="employeeForm.positiveDate" type="date" placeholder="请选择转正日期">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="岗位职级" prop="postLevel">
+                            <el-input v-model="employeeForm.postLevel" placeholder="请输入岗位职级" maxlength=20
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                    </div>
+                    <div class="flex-panel">
+                        <el-divider content-position="left">个人信息</el-divider>
+                        <el-form-item label="身份证姓名" prop="idCardName">
+                            <el-input v-model="employeeForm.idCardName" placeholder="请输入身份证姓名" maxlength=20
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="证件号码" prop="idCard">
+                            <el-input v-model="employeeForm.idCard" placeholder="请输入证件号码" maxlength=18 show-word-limit
+                                      clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="出生日期" prop="birthday">
+                            <el-date-picker
+                                v-model="employeeForm.birthday" type="date" placeholder="请选择出生日期"
+                                :picker-options="pickerOptions">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="性别" prop="gender">
+                            <el-select v-model="employeeForm.gender" placeholder="输入手机号码自动带入" filterable clearable
+                                       disabled>
+                                <el-option label="男" :value="1"></el-option>
+                                <el-option label="女" :value="2"></el-option>
+                                <el-option label="其他" :value="3"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="名族" prop="nationality">
+                            <el-select v-model="employeeForm.nationality" filterable clearable placeholder="请选择名族">
+                                <el-option v-for="item in nationalityList" :key="item.value" :label="item.text"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="身份证地址" prop="idCardAddress">
+                            <el-input v-model="employeeForm.idCardAddress" placeholder="请输入身份证地址" maxlength=50
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="证件有效期" prop="idCardValidity">
+                            <el-col :span="15">
+                                <el-date-picker
+                                    v-model="employeeForm.idCardValidity" type="date" placeholder="请选择证件有效期"
+                                    style="width: 100%;">
+                                </el-date-picker>
+                            </el-col>
+                            <el-col :span="9">
+                                <span>长期</span>
+                                <el-switch v-model="employeeForm.idCardLong"></el-switch>
+                            </el-col>
+                        </el-form-item>
+                        <el-form-item label="户籍类型" prop="householdRegister">
+                            <el-select v-model="employeeForm.householdRegister" filterable clearable
+                                       placeholder="请选择户籍类型">
+                                <el-option v-for="item in householdRegisterList" :key="item.value" :label="item.text"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="住址" prop="address">
+                            <el-input v-model="employeeForm.address" placeholder="请输入现住地址" maxlength=50 show-word-limit
+                                      clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="政治面貌" prop="political">
+                            <el-select v-model="employeeForm.political" filterable clearable placeholder="请选择政治面貌">
+                                <el-option v-for="item in politicalList" :key="item.value" :label="item.text"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="婚姻状况" prop="marital">
+                            <el-select v-model="employeeForm.marital" filterable clearable placeholder="请选择婚姻状况">
+                                <el-option v-for="item in maritalList" :key="item.value" :label="item.text"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="首次参加工作日期" prop="workDate">
+                            <el-date-picker
+                                v-model="employeeForm.workDate" type="date" placeholder="请选择工作日期"
+                                :picker-options="pickerOptions">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="社保账号" prop="socialSecurity">
+                            <el-input v-model="employeeForm.socialSecurity" placeholder="请输入社保账号" maxlength=20
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="公积金帐号" prop="providentFund">
+                            <el-input v-model="employeeForm.providentFund" placeholder="请输入公积金帐号" maxlength=20
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                    </div>
+                    <el-divider content-position="left">学历信息</el-divider>
+                    <el-button type="primary" @click="addEducationItem">新增</el-button>
+                    <el-table border :data="employeeForm.educationList" style="width: 100%">
+                        <el-table-column prop="index" label="序号" min-width="50">
+                            <template slot-scope="{row,$index}">
+                                <span>{{$index+1}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="学历" min-width="200">
+                            <template slot-scope="{row,$index}">
+                                <el-form-item :prop="'educationList.' + $index + '.education'">
+                                    <el-select v-model="row.education" filterable clearable placeholder="请选择学历">
+                                        <el-option v-for="item in xlList" :key="item.value" :label="item.text"
+                                                   :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="毕业院校" min-width="200">
+                            <template slot-scope="{row,$index}">
+                                <el-form-item :prop="'educationList.' + $index + '.school'">
+                                    <el-input v-model="row.school" placeholder="请输入毕业院校" :maxlength=50 show-word-limit
+                                              clearable></el-input>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="毕业时间" min-width="200">
+                            <template slot-scope="{row,$index}">
+                                <el-form-item :prop="'educationList.' + $index + '.graduationDate'">
+                                    <el-date-picker
+                                        v-model="row.graduationDate" type="date" placeholder="请选择毕业时间">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="所学专业" min-width="200">
+                            <template slot-scope="{row,$index}">
+                                <el-form-item :prop="'educationList.' + $index + '.profession'">
+                                    <el-input v-model="row.profession" placeholder="请输入专业" :maxlength=20 show-word-limit
+                                              clearable></el-input>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作" min-width="50">
+                            <template slot-scope="{row, $index}">
+                                <el-button v-if="employeeForm.educationList.length>1" type="text" size="small"
+                                           @click="deleducationItem($index, row)">删除
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <div class="flex-panel">
+                        <el-divider content-position="left">银行卡信息</el-divider>
+                        <el-form-item label="银行卡号" prop="bankAccount">
+                            <el-input v-model="employeeForm.bankAccount" placeholder="请输入银行卡号" maxlength=20
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="开户行" prop="bank">
+                            <el-input v-model="employeeForm.bank" placeholder="请输入开户行" maxlength=30
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                    </div>
+                    <div class="flex-panel">
+                        <el-divider content-position="left">合同信息</el-divider>
+                        <el-form-item label="合同公司" prop="contractCompany">
+                            <el-input v-model="employeeForm.contractCompany" placeholder="请输入合同公司" maxlength=30
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                        <el-form-item label="合同类型" prop="contractType">
+                            <el-select v-model="employeeForm.contractType" filterable clearable placeholder="请选择合同类型">
+                                <el-option v-for="item in contractTypeList" :key="item.value" :label="item.text"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="首次合同起始日" prop="contractStartDate">
+                            <el-date-picker
+                                v-model="employeeForm.contractStartDate" type="date" placeholder="请选择合同起始日"
+                                :picker-options="pickerOptions">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="首次合同到期日" prop="contractEndDate">
+                            <el-date-picker
+                                v-model="employeeForm.contractEndDate" type="date" placeholder="请选择合同到期日"
+                                :picker-options="pickerOptions">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="现合同起始日" prop="contractCstartDate">
+                            <el-date-picker
+                                v-model="employeeForm.contractCstartDate" type="date" placeholder="请选择现合同起始日"
+                                :picker-options="pickerOptions">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="现合同到期日" prop="contractCendDate">
+                            <el-date-picker
+                                v-model="employeeForm.contractCendDate" type="date" placeholder="请选择现合同到期日"
+                                :picker-options="pickerOptions">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="合同期限" prop="contractPeriod">
+                            <el-select v-model="employeeForm.contractPeriod" filterable clearable placeholder="请选择合同期限">
+                                <el-option v-for="item in contractPeriodList" :key="item.value" :label="item.text"
+                                           :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="续签次数" prop="contractCount">
+                            <el-input v-model="employeeForm.contractCount" placeholder="请输入续签次数" maxlength=5
+                                      show-word-limit clearable></el-input>
+                        </el-form-item>
+                    </div>
+                        <el-divider content-position="left">紧急联系人</el-divider>
+                        <el-button type="primary" @click="addContactItem">新增</el-button>
+                        <el-table border :data="employeeForm.contactList" style="width: 100%">
+                            <el-table-column prop="index" label="序号" min-width="50">
+                                <template slot-scope="{row,$index}">
+                                    <span>{{$index+1}}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="紧急联系人姓名" min-width="200">
+                                <template slot-scope="{row,$index}">
+                                    <el-form-item :prop="'contactList.' + $index + '.name'">
+                                        <el-input v-model="row.name" placeholder="请输入紧急联系人姓名" :maxlength=10 show-word-limit
+                                                  clearable></el-input>
+                                    </el-form-item>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="联系人关系" min-width="200">
+                                <template slot-scope="{row,$index}">
+                                    <el-form-item :prop="'contactList.' + $index + '.relationship'">
+                                        <el-select v-model="row.relationship" filterable clearable placeholder="请选择联系人关系">
+                                            <el-option v-for="item in relationshipList" :key="item.value" :label="item.text"
+                                                       :value="item.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="联系人电话" min-width="200">
+                                <template slot-scope="{row,$index}">
+                                    <el-form-item :prop="'contactList.' + $index + '.phone'">
+                                        <el-input v-model="row.phone" placeholder="请输入联系人电话" :maxlength=15 show-word-limit
+                                                  clearable></el-input>
+                                    </el-form-item>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="操作" min-width="50">
+                                <template slot-scope="{row, $index}">
+                                    <el-button v-if="employeeForm.contactList.length>1" type="text" size="small"
+                                               @click="delContactItem($index, row)">删除
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    <div class="flex-panel">
+                        <el-divider content-position="left">个人资料</el-divider>
+
+                    </div>
                 </el-collapse-item>
             </el-collapse>
             <div class="left-row">
@@ -113,14 +383,60 @@
         data() {
 
             return {
-                xlList: [],
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() > Date.now();
+                    }
+                },
                 zcList: [],
+                typeList: [],
+                probationList: [],
+                nationalityList: [],
+                householdRegisterList: [],
+                politicalList: [],
+                maritalList: [],
+                xlList: [],
+                contractTypeList:[],
+                contractPeriodList:[],
+                relationshipList:[],
                 employeeForm: {
                     list: [{}],
+                    educationList: [{}],
+                    contactList:[{}],
                     userId: '',
                     name: '',
                     account: '',
                     email: '',
+                    entryDate: '',
+                    type: '',
+                    probation: '',
+                    positiveDate: '',
+                    postLevel: '',
+                    idCardName: '',
+                    idCard: '',
+                    birthday: '',
+                    nationality: "",
+                    idCardAddress: '',
+                    idCardValidity: '',
+                    idCardLong: '',
+                    householdRegister: '',
+                    address: '',
+                    political: '',
+                    marital: '',
+                    workDate: '',
+                    socialSecurity: '',
+                    providentFund: '',
+                    bankAccount: "",
+                    bank: "",
+                    contractCompany:'',
+                    contractType:"",
+                    contractStartDate:'',
+                    contractEndDate:'',
+                    contractCstartDate:'',
+                    contractCendDate:'',
+                    contractPeriod:'',
+                    contractCount:"",
+
                     education: '',
                     qualification: '',
                     employeeStatus: '',
@@ -142,18 +458,16 @@
                         {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']},
                         {max: 50, message: '邮箱不能超过50个字符', trigger: ['blur', 'change']}
                     ],
+                    entryDate: [
+                        {required: true, message: '请选择入职日期', trigger: ['blur', 'change']},
+                    ],
                     gender: [
                         {required: true, message: '请选择性别', trigger: ['blur', 'change']},
                     ],
                     employeeStatus: [
-                        {required: true, message: '请选择状态', trigger: ['blur', 'change']},
+                        {required: true, message: '请选择员工状态', trigger: ['blur', 'change']},
                     ],
-                    /*education: [
-                        {required: true, message: '请选择学历', trigger: ['blur', 'change']},
-                    ],
-                    qualification: [
-                        {required: true, message: '请选择职称', trigger: ['blur', 'change']},
-                    ]*/
+
 
                 },
             }
@@ -162,10 +476,17 @@
 
             // 获取字典
             getDict() {
-                let r = 'XL,ZC';
-                ajax.get("upms/dict/allType/"+r).then(rs => {
+                let r = 'XL,ZC,YGLX.SYQ,MZ,HJLX,HTLX,HTQX,LXRGX';
+                ajax.get("upms/dict/allType/" + r).then(rs => {
                     this.xlList = rs.XL;
-                    this.zcList = rs.ZC
+                    this.zcList = rs.ZC;
+                    this.typeList = rs.YGLX;
+                    this.probationList = rs.SYQ;
+                    this.nationalityList = rs.MZ;
+                    this.householdRegisterList = rs.HJLX;
+                    this.contractTypeList=rs.HTLX;
+                    this.contractPeriodList=rs.HTQX;
+                    this.relationshipList=rs.LXRGX;
                 });
             },
 
@@ -173,10 +494,10 @@
                 this.employeeForm.name = ''
                 this.employeeForm.gender = ''
                 let account = this.employeeForm.account
-                if(account && account.length == 11) {
+                if (account && account.length == 11) {
                     ajax.get('/upms/user/getUserByPhone?phone=' + account).then(rs => {
                         let data = rs.data
-                        if(data) {
+                        if (data) {
                             this.employeeForm.userId = data.id
                             this.employeeForm.name = data.name
                             this.employeeForm.gender = data.gender
@@ -269,12 +590,12 @@
                             data.attachment = JSON.stringify(this.attachment);
                         }
                         else {
-                            data.attachment ="[]";
+                            data.attachment = "[]";
                         }
                         data.createTime = ''
                         data.updateTime = ''
                         console.log(data)
-                        if(data.roles.indexOf("null") != -1) {
+                        if (data.roles.indexOf("null") != -1) {
                             data.roles = "[]"
                         }
                         ajax.post('upms/employee', data).then(rs => {
@@ -308,6 +629,24 @@
                 }).catch(_ => {
                 });
             },
+            addEducationItem() {
+                this.employeeForm.educationList.push({});
+            },
+            deleducationItem(i) {
+                this.$confirm("确认删除吗？").then(_ => {
+                    this.employeeForm.educationList.splice(i, 1);
+                }).catch(_ => {
+                });
+            },
+            addContactItem() {
+                this.employeeForm.contactList.push({});
+            },
+            delContactItem(i){
+                this.$confirm("确认删除吗？").then(_ => {
+                    this.employeeForm.contactList.splice(i, 1);
+                }).catch(_ => {
+                });
+            }
         },
         mounted() {
             this.open();
