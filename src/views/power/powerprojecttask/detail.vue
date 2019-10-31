@@ -376,7 +376,7 @@
                         }
                     },
                     {
-                        name: 'profession',
+                        name: 'professionText',
                         label: '专业',
                         align: "center",
                         width: '75',
