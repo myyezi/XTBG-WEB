@@ -35,7 +35,12 @@
                             {{scope.$index+1}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称"></el-table-column>
+                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称">
+                        <template fixed slot-scope="{ row, column, $index }">
+                            <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                            <span>{{row.name}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小">
                         <template slot-scope="scope">
                             {{bytesToSize(scope.row.size)}}
@@ -117,10 +122,11 @@
     import EmployeeListSelect from "@/components/EmployeeListSelect"
     import BaiduMap from '@/components/BaiduMap/index'
     import dragTreeTable from "@/components/treeTable/dragTreeTable.vue";
+    import DocIconType from '@/components/DocIconType'
 
     export default {
         mixins: [tool, ruleTool],
-        components: {GanttAdd, StopUpload, EmployeeListSelect,BaiduMap,dragTreeTable},
+        components: {GanttAdd, StopUpload, EmployeeListSelect,BaiduMap,dragTreeTable,DocIconType},
         data() {
             let that = this;
             return {
