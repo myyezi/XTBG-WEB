@@ -17,6 +17,7 @@
                 <el-date-picker
                   v-model="powerprojecttaskForm.year"
                   type="year"
+                  value-format="yyyy"
                   placeholder="请选择项目年份">
                 </el-date-picker>
             </el-form-item>
@@ -180,9 +181,9 @@ export default {
         proprietorId: [
           { required: true, message: '请选择建设单位', trigger: ['blur'] }
         ],
-        // proprietorContactId: [
-        //   { required: true, message: '请选择联系人', trigger: ['blur'] }
-        // ],
+        year: [
+          { required: true, message: '请选择年份', trigger: ['blur'] }
+        ],
         source: [
           { required: true, message: '请选择任务依据', trigger: ['blur'] }
         ],
@@ -195,14 +196,11 @@ export default {
         manager: [
           { required: true, message: '请选择项目经理', trigger: ['blur'] }
         ],
-        signer: [
-          { required: true, message: '请选择签收人', trigger: ['blur'] }
+        belongCompany: [
+          { required: true, message: '请选择归属单位', trigger: ['blur'] }
         ],
         designScale: [
           { required: true, message: '请输入设计规模', trigger: ['blur'] }
-        ],
-        designRange: [
-          { required: true, message: '请输入设计范围', trigger: ['blur'] }
         ],
         progress: [
           { required: true, message: '请输入项目进度要求', trigger: ['blur'] }
@@ -306,9 +304,16 @@ export default {
       },
       //加载地图
       selectLocation(location) {
+          console.log(location);
+          let adcode =  location.adcode;
+          let province = adcode.substring(0,2)+"0000";
+          let city = adcode.substring(0,4)+"00";
           this.powerprojecttaskForm.adress = location.address;
           this.powerprojecttaskForm.longitude = location.lng;
           this.powerprojecttaskForm.latitude = location.lat;
+          this.powerprojecttaskForm.province = province;
+          this.powerprojecttaskForm.city = city;
+          this.powerprojecttaskForm.district = adcode;
           this.dialogAdressVisible = false;
       },
     //保存

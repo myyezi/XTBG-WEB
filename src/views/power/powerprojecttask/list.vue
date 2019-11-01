@@ -40,10 +40,17 @@
                 <el-date-picker
                   v-model="searchParam.year"
                   type="year"
+                  value-format="yyyy"
                   placeholder="请选择项目年份">
                 </el-date-picker>
             </div>
           </div>
+          <div class="form-group">
+                  <label class="control-label">地区</label>
+                  <div class="input-group">
+                          <city-select-panel :value.sync="citySelectArr" ref="citySelect" @change="citySelectOnchange"></city-select-panel>
+                  </div>
+              </div>
           <div class="form-group">
             <label class="control-label">归属单位</label>
             <div class="input-group">
@@ -174,10 +181,11 @@
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
+import CitySelectPanel from '@/components/CitySelect/index2'
 import OrganizationSelect from '@/components/OrganizationSelect'
 export default {
   name: 'PowerProjectTask',
-    components: {OrganizationSelect},
+    components: {CitySelectPanel, OrganizationSelect},
     mixins: [tool],
   data() {
     return {
@@ -195,6 +203,7 @@ export default {
         detailList:[],
         pageList:[],
         isShowMore: false,
+        citySelectArr:[],
         listUrl: "power/powerprojecttask",
         showSearch: false,
         showAddBtn: this.getCurrentUserAuthority("/power/powerprojecttask/save"),
@@ -238,6 +247,21 @@ export default {
               params.signTimeEnd = '';
           }
       },
+      citySelectOnchange(){
+          this.searchParam.province = "";
+          this.searchParam.city = "";
+          this.searchParam.district = "";
+          if(this.citySelectArr.length>0){
+            this.searchParam.province = this.citySelectArr[0];
+            if(this.citySelectArr.length>1){
+                this.searchParam.city = this.citySelectArr[1];
+            }
+            if(this.citySelectArr.length>2){
+                this.searchParam.district = this.citySelectArr[2];
+            }
+          }
+          
+      },
       // 获取字典
       getDict() {
           let r = 'XMLX,XBBM,RWYJ,GSDW';
@@ -257,6 +281,7 @@ export default {
           this.createTime =[];
           this.signTime =[];
           this.searchParam = {};
+          this.citySelectArr = [];
           this.handleCurrentChange(1);
       },
 

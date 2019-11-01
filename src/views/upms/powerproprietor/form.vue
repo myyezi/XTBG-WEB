@@ -190,9 +190,15 @@
 
             selectLocation(location) {
                 console.log(location)
+                let adcode =  location.adcode;
+                let province = adcode.substring(0,2)+"0000";
+                let city = adcode.substring(0,4)+"00";
                 this.powerproprietorForm.address = location.address;
                 this.powerproprietorForm.longitude = location.lng;
                 this.powerproprietorForm.latitude = location.lat;
+                this.powerproprietorForm.province = province;
+                this.powerproprietorForm.city = city;
+                this.powerproprietorForm.district = adcode;
                 this.dialogPositionVisible = false;
             },
             addItem() {
