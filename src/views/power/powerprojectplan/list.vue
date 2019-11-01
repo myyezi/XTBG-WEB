@@ -5,12 +5,29 @@
       <el-input v-model="searchParam.keyWord" placeholder="请输入项目名称或者编号" clearable class="zy_input" style="width:190px"></el-input>
       <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
-      <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
+      <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
     </div>
     <!-- 展开更多查询开始 -->
     <el-collapse-transition>
       <div class="search-box" v-show="isShowMore">
           <div class="form-box">
+              <div class="form-group">
+                  <label class="control-label">年份</label>
+                  <div class="input-group">
+                      <el-date-picker
+                      v-model="year"
+                      type="year"
+                      placeholder="选择年份" value-format="yyyy">
+                  </el-date-picker>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label class="control-label">地区</label>
+                  <div class="input-group">
+                          <city-select-panel :value.sync="searchParam.districtId" ref="citySelect"></city-select-panel>
+                  </div>
+              </div>
+
               <div class="form-group">
                   <label class="control-label">项目类型</label>
                   <div class="input-group">
@@ -22,13 +39,9 @@
               <div class="form-group">
                   <label class="control-label">任务依据</label>
                   <div class="input-group">
-                      <el-select v-model="searchParam.source" placeholder="请选择任务依据" clearable>
-                          <el-option  label="委托书" :value="1"></el-option>
-                          <el-option  label="招投标" :value="2"></el-option>
-                          <el-option  label="电话委托" :value="3"></el-option>
-                          <el-option  label="中标通知书" value="4"></el-option>
-                          <el-option  label="合同" value="5"></el-option>
-                          <el-option  label="其他" value="6"></el-option>
+                      <el-select v-model="searchParam.source"  placeholder="请选择任务依据">
+                          <el-option v-for="item in sourceOptions" :key="item.value" :label="item.text" :value="item.value">
+                          </el-option>
                       </el-select>
                   </div>
               </div>
@@ -121,6 +134,7 @@
               <el-button v-if="row.projectStatus != 1" v-show="showRecordBtn" @click="record(row.id)" type="text" size="small">记录</el-button>
           </template>
         </el-table-column>
+        <el-table-column prop="year" sortable show-overflow-tooltip min-width="50" label="年份"></el-table-column>
         <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号">
             <template slot-scope="scope">
                 <el-button type="text" size="small" @click="toProjectDetail(scope.row.taskId)">
@@ -163,10 +177,13 @@
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
+import CitySelectPanel from '@/components/CitySelect/index2'
+
 
 export default {
   name: 'PowerProjectPlan',
   mixins: [tool],
+  components: {CitySelectPanel},
   data() {
     return {
         isShowMore: false,
@@ -186,6 +203,8 @@ export default {
         projectId:"",
         startTime:[],
         endTime:[],
+        year:'',
+        sourceOptions:[],
     }
   },
   mounted() {
@@ -208,13 +227,17 @@ export default {
               params.endTimeStart = '';
               params.endTimeEnd = '';
           }
+          if(this.year){
+              params.year = this.year;
+          }
       },
       // 获取字典
       getDict() {
-          let types = 'XMLX,XBBM';
+          let types = 'XMLX,XBBM,RWYJ';
           ajax.get("upms/dict/allType/"+types).then(rs => {
               this.projectTypeList = rs.XMLX;
               this.coDepartmentList = rs.XBBM;
+              this.sourceOptions = rs.RWYJ;
           });
       },
       finish(projectId){
@@ -267,8 +290,15 @@ export default {
       toProjectDetail(taskId){
           let url = "/power/powerprojecttask/detail/"+taskId;
           this.toPage(url)
-      }
-
+      },
+      //重置筛选
+      resetList() {
+          this.startTime =[];
+          this.endTime =[];
+          this.year ='';
+          this.searchParam = {};
+          this.handleCurrentChange(1);
+      },
   }
 }
 </script>

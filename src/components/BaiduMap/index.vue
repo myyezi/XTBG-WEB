@@ -37,7 +37,8 @@
                     address: '',
                     province:'',
                     city:'',
-                    district:''
+                    district:'',
+                    adcode:''
                 },
                 map: {},
                 ac: {}
@@ -131,6 +132,7 @@
                         this.location.province = result.regeocode.addressComponent.province
                         this.location.city = result.regeocode.addressComponent.city
                         this.location.district = result.regeocode.addressComponent.district
+                        this.location.adcode = result.regeocode.addressComponent.adcode
                         this.setSearch()
                     }
                 })

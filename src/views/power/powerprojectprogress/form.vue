@@ -35,7 +35,7 @@
                             {{scope.$index+1}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称">
+                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称" class-name="table_column-left">
                         <template fixed slot-scope="{ row, column, $index }">
                             <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                             <span>{{row.name}}</span>
@@ -51,6 +51,25 @@
                 </el-table>
             </div>
         </el-dialog>
+
+        <el-dialog title="审批记录" :visible.sync="checkFormVisible" :class="{'dialog_animation_in':checkFormVisible,'dialog_animation_out':!checkFormVisible}" width="200" height="800px">
+            <div>
+                <el-table :data="approvalList" style="width: 100%;height: 500px;">
+                    <el-table-column label="序号" width="70px">
+                        <template slot-scope="scope">
+                            {{scope.$index+1}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="createrName" sortable show-overflow-tooltip min-width="100" label="申请人"></el-table-column>
+                    <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="申请时间"></el-table-column>
+                    <el-table-column prop="approverName" sortable show-overflow-tooltip min-width="100" label="审批人"></el-table-column>
+                    <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100" label="审批时间"></el-table-column>
+                    <el-table-column prop="approvalStatusText" sortable show-overflow-tooltip min-width="100" label="审批状态"></el-table-column>
+                    <el-table-column prop="reason" sortable show-overflow-tooltip min-width="100" label="审批原因"></el-table-column>
+                </el-table>
+            </div>
+        </el-dialog>
+
 
         <el-dialog title="位置列表" :visible.sync="positionListFormVisible" :class="{'dialog_animation_in':positionListFormVisible,'dialog_animation_out':!positionListFormVisible}" width="800px" style="height:600px" >
             <dragTreeTable
@@ -137,9 +156,11 @@
                 positionFormVisible : false,
                 dialogAdressVisible:false,
                 positionListFormVisible :false,
+                checkFormVisible :false,
                 projectTaskList : [],
                 stageList : [],
                 attachmentList : [],
+                approvalList : [],
                 approvalFinishForm : {},
                 positionForm :{
                     adress:'',
@@ -189,17 +210,21 @@
                         name:"action",
                         label:'关联文件',
                         align: "center",
-                        width:'120',
+                        width:'220',
                         template:function(obj){
                             let operateStr = "";
                             this.currentStatus = obj.currentStatus;
                             let uploadStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>";
                             let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>";
+                            let checkStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>审批记录</a>";
                             if (obj.isUpload == 1 && obj.currentStatus != 4){
                                 operateStr += uploadStr;
                             }
                             if (obj.fileNum > 0){
                                 operateStr += viewStr;
+                            }
+                            if(obj.checkNum>0){
+                                operateStr += checkStr;
                             }
                             return operateStr;
                         }
@@ -299,7 +324,7 @@
                         }
                     },
                     {
-                        name:'profession',
+                        name:'professionText',
                         label:'专业',
                         align: "center",
                         width:'75',
@@ -370,6 +395,11 @@
                     this.positionListFormVisible = true
                     this.id = data.id;
                     this.getPositionList(data.id);
+                }else if(data.operationType === 'approvalList'){
+                    //审核记录列表
+                    this.checkFormVisible = true;
+                    this.id = data.id;
+                    this.getApprovalList(data.id);
                 }
                 else if(data.operationType === 'finish') {
                     let that = this;
@@ -690,6 +720,13 @@
                 // 获取项目节点定位
                 ajax.get('power/powerprojectposition/selectList/' ,{projectId:this.projectId,projectPlanId:this.id}).then(rs => {
                         this.treeData.lists = rs;
+                });
+
+            },
+            getApprovalList(id){
+                // 获取项目节点定位
+                ajax.get('power/powerprojectapproval/selectList/' ,{projectPlanId:this.id}).then(rs => {
+                    this.approvalList = rs;
                 });
 
             },

@@ -36,7 +36,10 @@
                     <el-input v-model="templateConfigForm.period" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="专业" prop="profession">
-                    <el-input v-model.trim="templateConfigForm.profession" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
+<!--                    <el-input v-model.trim="templateConfigForm.profession" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>-->
+                    <el-select v-model="templateConfigForm.profession" placeholder="请选择专业" clearable>
+                        <el-option v-for="e in professionList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="工程阶段" prop="stage">
                     <el-select v-model="templateConfigForm.stage" placeholder="请选择项目类型" clearable>
@@ -92,6 +95,7 @@ export default {
         projectTypeList : [],
         stageList : [],
         contentList : [],
+        professionList : [],
         treeData: {
             columns: [],
             lists: [],
@@ -194,7 +198,7 @@ mounted() {
         },
         {
             title: "专业",
-            field: "profession",
+            field: "professionText",
             width: 180,
             align: "center",
         },
@@ -253,11 +257,12 @@ mounted() {
 methods: {
     // 获取字典
     getDict() {
-        let type = 'XMLX,GCJD,GZNR';
+        let type = 'XMLX,GCJD,GZNR,ZY';
         ajax.get("upms/dict/allType/"+type).then(rs => {
             this.projectTypeList = rs.XMLX;
             this.stageList = rs.GCJD;
             this.contentList = rs.GZNR;
+            this.professionList = rs.ZY;
             console.info("111111111",this.projectTypeList);
         });
     },
@@ -332,7 +337,6 @@ methods: {
     },
     // 增加节点
     onAdd(data) {
-        debugger
         this.showContent = false;
         if (!this.projectType){
             this.$message.error('请先选择项目类型！');
@@ -422,6 +426,13 @@ methods: {
     ok() {
         this.$refs['ruleForm'].validate((valid) => {
             if (valid) {
+                //获取专业名称
+                for (let i = 0; i <this.professionList.length ; i++) {
+                    if (this.professionList[i].value ==  this.templateConfigForm.profession){
+                        this.templateConfigForm.professionText = this.professionList[i].text;
+                        break;
+                    }
+                }
                 let newChild = this.templateConfigForm;
                 if(this.operationType === 'add') {
                     // 新增传父级id
@@ -516,6 +527,7 @@ methods: {
             this.formData.isApproval = data.isApproval;
             this.formData.isUpload = data.isUpload;
             this.formData.isPosition = data.isPosition;
+            this.formData.professionText = data.professionText;
         }
     },
     //保存
