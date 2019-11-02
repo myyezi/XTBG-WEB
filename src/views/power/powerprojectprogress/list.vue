@@ -24,7 +24,7 @@
             <div class="form-group">
                 <label class="control-label">地区</label>
                 <div class="input-group">
-                    <city-select-panel :value.sync="searchParam.districtId" ref="citySelect"></city-select-panel>
+                    <city-select-panel :value.sync="citySelectArr" ref="citySelect" @change="citySelectOnchange"></city-select-panel>
                 </div>
             </div>
           <div class="form-group">
@@ -162,6 +162,7 @@ export default {
       stopUploadShow:false,
       showExtensionHisDialogVisible: false,
       showExtensionHisList: [],
+      citySelectArr:[],
       year :'',
       extDate:'',
       isShowMore: false,
@@ -197,7 +198,21 @@ export default {
               this.showExtensionHisList = rs.records;
           });
       },
+      citySelectOnchange(){
+          this.searchParam.province = "";
+          this.searchParam.city = "";
+          this.searchParam.district = "";
+          if(this.citySelectArr.length>0){
+              this.searchParam.province = this.citySelectArr[0];
+              if(this.citySelectArr.length>1){
+                  this.searchParam.city = this.citySelectArr[1];
+              }
+              if(this.citySelectArr.length>2){
+                  this.searchParam.district = this.citySelectArr[2];
+              }
+          }
 
+      },
       getListBefore(params) {
           params.initStatus = 1;
           if(this.year){
@@ -205,8 +220,9 @@ export default {
           }
       },
       resetList(){
-        this.year ='';
+          this.year ='';
           this.searchParam = {};
+          this.citySelectArr = [],
           this.handleCurrentChange(1);
       },
       // 获取字典
