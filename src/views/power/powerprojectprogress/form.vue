@@ -16,9 +16,9 @@
                 :headerTitle="headerTitle">
             </gantt-add>
         </div>
-        <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
+        <!-- <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
             <stop-upload @func="getResFile" :sourceId = this.id :projectId = this.projectId :nodeName = projectNodeName ></stop-upload>
-        </el-dialog>
+        </el-dialog> -->
 
         <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="200" height="800px">
             <div>
@@ -35,7 +35,12 @@
                             {{scope.$index+1}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称"></el-table-column>
+                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称" class-name="table_column-left">
+                        <template fixed slot-scope="{ row, column, $index }">
+                            <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                            <span>{{row.name}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小">
                         <template slot-scope="scope">
                             {{bytesToSize(scope.row.size)}}
@@ -46,6 +51,25 @@
                 </el-table>
             </div>
         </el-dialog>
+
+        <el-dialog title="审批记录" :visible.sync="checkFormVisible" :class="{'dialog_animation_in':checkFormVisible,'dialog_animation_out':!checkFormVisible}" width="200" height="800px">
+            <div>
+                <el-table :data="approvalList" style="width: 100%;height: 500px;">
+                    <el-table-column label="序号" width="70px">
+                        <template slot-scope="scope">
+                            {{scope.$index+1}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="createrName" sortable show-overflow-tooltip min-width="100" label="申请人"></el-table-column>
+                    <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="申请时间"></el-table-column>
+                    <el-table-column prop="approverName" sortable show-overflow-tooltip min-width="100" label="审批人"></el-table-column>
+                    <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100" label="审批时间"></el-table-column>
+                    <el-table-column prop="approvalStatusText" sortable show-overflow-tooltip min-width="100" label="审批状态"></el-table-column>
+                    <el-table-column prop="reason" sortable show-overflow-tooltip min-width="100" label="审批原因"></el-table-column>
+                </el-table>
+            </div>
+        </el-dialog>
+
 
         <el-dialog title="位置列表" :visible.sync="positionListFormVisible" :class="{'dialog_animation_in':positionListFormVisible,'dialog_animation_out':!positionListFormVisible}" width="800px" style="height:600px" >
             <dragTreeTable
@@ -91,7 +115,7 @@
             </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="finishFormVisible = false">取 消</el-button>
+                <el-button @click="positionFormVisible = false">取 消</el-button>
                 <el-button type="primary" @click="addPosition">确 定</el-button>
             </div>
         </el-dialog>
@@ -117,10 +141,11 @@
     import EmployeeListSelect from "@/components/EmployeeListSelect"
     import BaiduMap from '@/components/BaiduMap/index'
     import dragTreeTable from "@/components/treeTable/dragTreeTable.vue";
+    import DocIconType from '@/components/DocIconType'
 
     export default {
         mixins: [tool, ruleTool],
-        components: {GanttAdd, StopUpload, EmployeeListSelect,BaiduMap,dragTreeTable},
+        components: {GanttAdd, StopUpload, EmployeeListSelect,BaiduMap,dragTreeTable,DocIconType},
         data() {
             let that = this;
             return {
@@ -131,9 +156,11 @@
                 positionFormVisible : false,
                 dialogAdressVisible:false,
                 positionListFormVisible :false,
+                checkFormVisible :false,
                 projectTaskList : [],
                 stageList : [],
                 attachmentList : [],
+                approvalList : [],
                 approvalFinishForm : {},
                 positionForm :{
                     adress:'',
@@ -183,17 +210,21 @@
                         name:"action",
                         label:'关联文件',
                         align: "center",
-                        width:'120',
+                        width:'220',
                         template:function(obj){
                             let operateStr = "";
                             this.currentStatus = obj.currentStatus;
                             let uploadStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>";
                             let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>";
+                            let checkStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>审批记录</a>";
                             if (obj.isUpload == 1 && obj.currentStatus != 4){
                                 operateStr += uploadStr;
                             }
                             if (obj.fileNum > 0){
                                 operateStr += viewStr;
+                            }
+                            if(obj.checkNum>0){
+                                operateStr += checkStr;
                             }
                             return operateStr;
                         }
@@ -293,7 +324,7 @@
                         }
                     },
                     {
-                        name:'profession',
+                        name:'professionText',
                         label:'专业',
                         align: "center",
                         width:'75',
@@ -364,6 +395,11 @@
                     this.positionListFormVisible = true
                     this.id = data.id;
                     this.getPositionList(data.id);
+                }else if(data.operationType === 'approvalList'){
+                    //审核记录列表
+                    this.checkFormVisible = true;
+                    this.id = data.id;
+                    this.getApprovalList(data.id);
                 }
                 else if(data.operationType === 'finish') {
                     let that = this;
@@ -386,6 +422,10 @@
                     });
                 }
             });
+            Bus.$on("upload-success", data => {
+                this.updateCurrentStatus();
+                this._getTasksModel();
+            })
             this.getProjectTask();
             this.getStageList();
             this.treeData.columns = [
@@ -442,25 +482,25 @@
                     }
                 });
             },
-            // 上传成功回调
-            getResFile(file){
-                console.log(file)
-                ajax.post('power/powerprojectattachment', {
-                    sourceId : file.sourceId,
-                    projectId : file.projectId,
-                    name : file.name,
-                    size : file.size,
-                    path : file.path
-                }).then(rs => {
-                    if (rs.status == 0) {
-                        this.$message.success(rs.msg);
-                        this.updateCurrentStatus();
-                        this._getTasksModel();
-                    } else {
-                        this.$message.error(rs.msg);
-                    }
-                });
-            },
+            // // 上传成功回调
+            // getResFile(file){
+            //     console.log(file)
+            //     ajax.post('power/powerprojectattachment', {
+            //         sourceId : file.sourceId,
+            //         projectId : file.projectId,
+            //         name : file.name,
+            //         size : file.size,
+            //         path : file.path
+            //     }).then(rs => {
+            //         if (rs.status == 0) {
+            //             this.$message.success(rs.msg);
+            //             this.updateCurrentStatus();
+            //             this._getTasksModel();
+            //         } else {
+            //             this.$message.error(rs.msg);
+            //         }
+            //     });
+            // },
 
            //修改项目节点状态
             updateCurrentStatus(){
@@ -474,10 +514,11 @@
             getProjectNodeName(){
                 ajax.get('power/powerprojectplan/'+ this.id
                 ).then(rs => {
-                    this.uploadShow = true;
+                    // this.uploadShow = true;
                     if(rs.data && rs.data.name) {
                         this.projectNodeName = rs.data.name;
-                        this._getTasksModel();
+                        // this._getTasksModel();
+                        Bus.$emit("upload-show",{id:this.id,projectId:this.projectId,projectNodeName:this.projectNodeName,projectName:this.projectName});
                     }
                 });
             },
@@ -679,6 +720,13 @@
                 // 获取项目节点定位
                 ajax.get('power/powerprojectposition/selectList/' ,{projectId:this.projectId,projectPlanId:this.id}).then(rs => {
                         this.treeData.lists = rs;
+                });
+
+            },
+            getApprovalList(id){
+                // 获取项目节点定位
+                ajax.get('power/powerprojectapproval/selectList/' ,{projectPlanId:this.id}).then(rs => {
+                    this.approvalList = rs;
                 });
 
             },

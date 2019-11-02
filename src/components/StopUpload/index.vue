@@ -11,7 +11,7 @@
             @file-error="onFileError"
             class="uploader-app">
             <uploader-unsupport></uploader-unsupport>
-            <uploader-btn :attrs="attrs">选择文件</uploader-btn>
+            <uploader-btn :attrs="attrs" v-if="isShowUploadBut">选择文件</uploader-btn>
             <uploader-list>
                 <div class="file-panel" slot-scope="props">
                     <div class="file-title">
@@ -102,12 +102,13 @@ export default {
             return this.$refs.uploader.uploader;
         }
     },
-    props: ['sourceId','projectId','nodeName'],
+    props: ['sourceId','projectId','nodeName','isShowUploadBut','projectName'],
     methods: {
         onFileAdded(file) {
             console.log(file)
             if(this.nodeName) {
                 file.nodeName = this.nodeName
+                file.projectName = this.projectName
             }
             this.loading = true
             FileMd5(file, (file, md5) => {

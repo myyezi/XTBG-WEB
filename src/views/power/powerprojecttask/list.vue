@@ -35,6 +35,34 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="control-label">项目年份</label>
+            <div class="input-group">
+                <el-date-picker
+                  v-model="searchParam.year"
+                  type="year"
+                  value-format="yyyy"
+                  placeholder="请选择项目年份">
+                </el-date-picker>
+            </div>
+          </div>
+          <div class="form-group">
+                  <label class="control-label">地区</label>
+                  <div class="input-group">
+                          <city-select-panel :value.sync="citySelectArr" ref="citySelect" @change="citySelectOnchange"></city-select-panel>
+                  </div>
+              </div>
+          <div class="form-group">
+            <label class="control-label">归属单位</label>
+            <div class="input-group">
+                <el-select v-model="searchParam.belongCompany"  filterable clearable placeholder="请选择归属单位" >
+                    <el-option
+                        v-for="item in belongCompanyList"
+                         :key="item.value" :label="item.text" :value="item.value" >
+                    </el-option>
+                </el-select>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="control-label">任务依据</label>
             <div class="input-group">
                 <el-select v-model="searchParam.source"  placeholder="请选择任务依据">
@@ -113,16 +141,16 @@
             <el-button v-show="showEditBtn" @click="showDig(row.id)" type="text" size="small">记录</el-button>
           </template>
         </el-table-column>
-
-          <el-table-column prop="code" sortable show-overflow-tooltip min-width="100" label="项目编号">
-              <template slot-scope="scope">
-                  <el-button type="text" size="small" @click="toDetail(scope.row)">
-                      {{scope.row.code}}
-                  </el-button>
-              </template>
-          </el-table-column>
+        <el-table-column prop="code" sortable show-overflow-tooltip min-width="80" label="项目编号">
+            <template slot-scope="scope">
+                <el-button type="text" size="small" @click="toDetail(scope.row)">
+                    {{scope.row.code}}
+                </el-button>
+            </template>
+        </el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="180" label="项目名称"></el-table-column>
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="80" label="项目类型"></el-table-column>
+        <el-table-column prop="year" sortable show-overflow-tooltip min-width="60" label="项目年份"></el-table-column>
         <el-table-column prop="manager" sortable show-overflow-tooltip min-width="80" label="项目经理"></el-table-column>
         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="120" label="下达时间"></el-table-column>
       </el-table>
@@ -153,10 +181,11 @@
 <script>
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
+import CitySelectPanel from '@/components/CitySelect/index2'
 import OrganizationSelect from '@/components/OrganizationSelect'
 export default {
   name: 'PowerProjectTask',
-    components: {OrganizationSelect},
+    components: {CitySelectPanel, OrganizationSelect},
     mixins: [tool],
   data() {
     return {
@@ -168,11 +197,13 @@ export default {
         ContactList: [],
         companyList:[],
         userList: [],
+        belongCompanyList:[],
         createTime:[],
         signTime:[],
         detailList:[],
         pageList:[],
         isShowMore: false,
+        citySelectArr:[],
         listUrl: "power/powerprojecttask",
         showSearch: false,
         showAddBtn: this.getCurrentUserAuthority("/power/powerprojecttask/save"),
@@ -216,13 +247,29 @@ export default {
               params.signTimeEnd = '';
           }
       },
+      citySelectOnchange(){
+          this.searchParam.province = "";
+          this.searchParam.city = "";
+          this.searchParam.district = "";
+          if(this.citySelectArr.length>0){
+            this.searchParam.province = this.citySelectArr[0];
+            if(this.citySelectArr.length>1){
+                this.searchParam.city = this.citySelectArr[1];
+            }
+            if(this.citySelectArr.length>2){
+                this.searchParam.district = this.citySelectArr[2];
+            }
+          }
+          
+      },
       // 获取字典
       getDict() {
-          let r = 'XMLX,XBBM,RWYJ';
+          let r = 'XMLX,XBBM,RWYJ,GSDW';
           ajax.get("upms/dict/allType/"+r).then(rs => {
               this.typeOptions = rs.XMLX;
               this.coDepartmentOptions = rs.XBBM;
               this.sourceOptions = rs.RWYJ;
+              this.belongCompanyList = rs.GSDW;
           });
       },
 
@@ -234,6 +281,7 @@ export default {
           this.createTime =[];
           this.signTime =[];
           this.searchParam = {};
+          this.citySelectArr = [];
           this.handleCurrentChange(1);
       },
 

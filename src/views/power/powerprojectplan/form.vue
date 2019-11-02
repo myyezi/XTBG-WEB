@@ -119,7 +119,10 @@
                   </el-input>
               </el-form-item>
               <el-form-item label="专业" prop="profession">
-                  <el-input v-model.trim="powerprojectplanform.profession" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
+<!--                  <el-input v-model.trim="powerprojectplanform.profession" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>-->
+                  <el-select v-model="powerprojectplanform.profession" placeholder="请选择专业" clearable>
+                      <el-option v-for="e in professionList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
+                  </el-select>
               </el-form-item>
               <el-form-item label="是否审批" prop="isApproval">
                   <el-radio v-model="powerprojectplanform.isApproval" :label="1" @change="changeApproval">是</el-radio>
@@ -197,6 +200,7 @@ export default {
         dialogVisible : false,
         showUserSelector : false,
         projectTaskList : [],
+        professionList :[],
         stageList : [],
         contentList : [],
         taskId : "",
@@ -317,7 +321,7 @@ export default {
                 }
             },
             {
-                name:'profession',
+                name:'professionText',
                 label:'专业',
                 align: "center",
                 width:'75',
@@ -468,10 +472,11 @@ export default {
 
       // 获取字典
       getDict() {
-          let type = 'GCJD,GZNR';
+          let type = 'GCJD,GZNR,ZY';
           ajax.get("upms/dict/allType/"+type).then(rs => {
               this.stageList = rs.GCJD;
               this.contentList = rs.GZNR;
+              this.professionList = rs.ZY;
           });
       },
 
@@ -706,7 +711,12 @@ export default {
                                     item.planEndDate = this.powerprojectplanform.planEndDate;
                                     item.stage = this.powerprojectplanform.stage;
                                     item.principal = this.powerprojectplanform.principal;
-                                    item.profession = this.powerprojectplanform.profession;
+                                    for (let i = 0; i <this.professionList.length ; i++) {
+                                        if (this.professionList[i].value ==  this.powerprojectplanform.profession){
+                                            this.powerprojectplanform.professionText = this.professionList[i].text;
+                                            break;
+                                        }
+                                    }
                                     item.isApproval = this.powerprojectplanform.isApproval;
                                     item.isUpload = this.powerprojectplanform.isUpload;
                                     item.isPosition = this.powerprojectplanform.isPosition;
