@@ -15,11 +15,17 @@
                 <el-form-item label="项目名称">
                   <el-input v-model="powerprojecttaskForm.name" placeholder="请输入项目名称" clearable :disabled="planDisabled"></el-input>
                 </el-form-item>
+                <el-form-item label="项目年份">
+                  <el-input v-model="powerprojecttaskForm.year" placeholder="请输入项目年份" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
                 <el-form-item label="建设单位">
                   <el-input v-model="powerprojecttaskForm.proprietorName" placeholder="请输入建设单位" clearable :disabled="planDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="联系人">
                   <el-input v-model="powerprojecttaskForm.proprietorContactName" placeholder="请输入联系人" clearable :disabled="planDisabled"></el-input>
+                </el-form-item>
+                <el-form-item label="归属单位">
+                  <el-input v-model="powerprojecttaskForm.belongCompanyName" placeholder="请输入归属单位" clearable :disabled="planDisabled"></el-input>
                 </el-form-item>
                 <el-form-item label="任务依据">
                   <el-input v-model="powerprojecttaskForm.sourceText" placeholder="请输入任务依据" clearable :disabled="planDisabled"></el-input>
@@ -33,15 +39,16 @@
                 <el-form-item label="项目经理">
                   <el-input v-model="powerprojecttaskForm.manager" placeholder="请输入项目经理" clearable :disabled="planDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="签收人">
+                
+                <!-- <el-form-item label="签收人">
                   <el-input v-model="powerprojecttaskForm.signer" placeholder="请输入签收人" clearable :disabled="planDisabled"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="设计规模" class="small">
                   <el-input type="textarea" v-model="powerprojecttaskForm.designScale" placeholder="请输入设计规模" clearable :disabled="planDisabled"></el-input>
                 </el-form-item>
-                <el-form-item label="设计范围" class="small">
+                <!-- <el-form-item label="设计范围" class="small">
                   <el-input type="textarea" v-model="powerprojecttaskForm.designRange" placeholder="请输入设计范围" clearable :disabled="planDisabled"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="项目进度要求" class="small">
                   <el-input type="textarea" v-model="powerprojecttaskForm.progress" placeholder="请输入项目进度要求" clearable :disabled="planDisabled"></el-input>
                 </el-form-item>
@@ -252,7 +259,7 @@ export default {
                 template:function(obj){
                     let str = "";
                     let addStr = "";
-                    if(obj.level>2){
+                    if(obj.level>4){
                         addStr = "";
                     }else{
                         addStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='"+addImg+"' title='新增' style='vertical-align: middle;'/></a>";
@@ -418,7 +425,7 @@ export default {
           }else if (data.operationType === 'inserted'){
               console.log(data)
               ajax.get('power/powerprojectplan/' + data.id).then(rs => {
-                  if(rs.data.level >= 3) {
+                  if(rs.data.level >= 5) {
                       this.$message.error("最多只能添加到三级节点");
                       return false
                   }
