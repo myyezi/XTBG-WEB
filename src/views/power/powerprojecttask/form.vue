@@ -154,6 +154,8 @@ export default {
       uploadUrl: process.env.BASE_API + "file/upload/multipart",
       saveList: [],
       powerprojecttaskForm: {
+          year: '',
+          belongCompany:'',
           proprietorContactId:'',
           adress:'',
           longitude:'',
@@ -306,13 +308,9 @@ export default {
       selectLocation(location) {
           console.log(location);
           let adcode =  location.adcode;
-          let province = adcode.substring(0,2)+"0000";
-          let city = adcode.substring(0,4)+"00";
           this.powerprojecttaskForm.adress = location.address;
           this.powerprojecttaskForm.longitude = location.lng;
           this.powerprojecttaskForm.latitude = location.lat;
-          this.powerprojecttaskForm.province = province;
-          this.powerprojecttaskForm.city = city;
           this.powerprojecttaskForm.district = adcode;
           this.dialogAdressVisible = false;
       },
