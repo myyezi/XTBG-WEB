@@ -382,7 +382,7 @@
                                 :on-error="errorCallback"
                                 :on-remove="uploadChange">
                                 <i class="el-icon-plus avatar-uploader-icon"></i>
-                                <i v-if="i>6" class="el-icon-circle-close" @click="delFile(i)"></i>
+                                <i v-if="i>6" class="el-icon-circle-close" @click.stop="delFile(i)"></i>
                             </el-upload>
                         </div>
                     </div>
@@ -787,7 +787,13 @@
         border-radius: 6px;
         cursor: pointer;
         position: relative;
-        overflow: hidden;
+        // overflow: hidden;
+        .el-icon-circle-close {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            cursor: pointer;
+        }
     }
 
     .avatar-uploader .el-upload:hover {
@@ -796,12 +802,12 @@
 
     .avatar_img {
         position: relative;
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
         img {
             height: 178px;
             width: 100%;
             display: block;
-            border: 1px dashed #d9d9d9;
-            border-radius: 6px;
         }
         i {
             position: absolute;
