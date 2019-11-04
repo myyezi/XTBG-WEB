@@ -365,7 +365,10 @@
                     <div class="avatar-uploader_count clearfix">
                         <div v-for="(attachment,i) in employeeForm.attachmentList" :key="i" class="avatar-uploader_count_item" @click="attachmentItem = attachment">
                             <span class="avatar-uploader_name">{{attachment.name}}</span>
-                            <img v-if="attachment.path" :src="employeeForm.fileDomain+attachment.path" alt="" class="avatar_img">
+                            <div v-if="attachment.path" class="avatar_img">
+                                <img :src="employeeForm.fileDomain+attachment.path" alt="">
+                                <i class="el-icon-circle-close"></i>
+                            </div>
                             <el-upload 
                                 v-else
                                 class="avatar-uploader"
@@ -772,7 +775,20 @@
     }
 
     .avatar_img {
-
+        position: relative;
+        img {
+            height: 178px;
+            width: 100%;
+            display: block;
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+        }
+        i {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            cursor: pointer;
+        }
     }
     .avatar-uploader-icon {
         font-size: 28px;
