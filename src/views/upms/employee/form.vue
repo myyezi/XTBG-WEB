@@ -360,23 +360,26 @@
 
                     <el-divider content-position="left">个人资料</el-divider>
                     <el-button type="primary" @click="addAttachmentList" size="small"
-                               style="float: right;margin-bottom: 5px">新增
+                            style="float: right;margin-bottom: 5px">新增
                     </el-button>
-                    <div v-for="(attachment,i) in employeeForm.attachmentList" :key="i">
-                        <span>{{attachment.name}}</span>
-                        <img v-if="attachment.path" width="30%" :src="employeeForm.fileDomain+attachment.path" alt="">
-                        <el-upload v-else
-                                   :multiple="true"
-                                   :headers="headers"
-                                   :show-file-list="false"
-                                   :action="uploadUrl"
-                                   :before-upload="uploadBefore"
-                                   :on-change="uploadChange"
-                                   :on-error="errorCallback"
-                                   :on-remove="uploadChange">
-                            <i class="el-icon-plus"></i>
-                        </el-upload>
-
+                    <div class="avatar-uploader_count clearfix">
+                        <div v-for="(attachment,i) in employeeForm.attachmentList" :key="i" class="avatar-uploader_count_item" @click="attachmentItem = attachment">
+                            <span class="avatar-uploader_name">{{attachment.name}}</span>
+                            <img v-if="attachment.path" :src="employeeForm.fileDomain+attachment.path" alt="" class="avatar_img">
+                            <el-upload 
+                                v-else
+                                class="avatar-uploader"
+                                :multiple="true"
+                                :headers="headers"
+                                :show-file-list="false"
+                                :action="uploadUrl"
+                                :before-upload="uploadBefore"
+                                :on-change="uploadChange"
+                                :on-error="errorCallback"
+                                :on-remove="uploadChange">
+                                <i class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </div>
                     </div>
                 </el-collapse-item>
             </el-collapse>
@@ -435,6 +438,7 @@
                 contractPeriodList: [],
                 relationshipList: [],
                 attachmentName: "",
+                attachmentItem:{},
                 employeeForm: {
                     fileDomain: process.env.URL_API,
                     list: [{}],
@@ -693,6 +697,7 @@
                 console.log(file, fileList);
             },
             uploadBefore(file) {
+                console.log(this.attachmentItem)
                 // 限制20M
                 if (file.size > 1024 * 1024 * 2) {
                     this.showMessage("请上传2M以下的文件");
@@ -726,7 +731,7 @@
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
     .user-input {
         /deep/ .el-form-item__content {
             display: flex;
@@ -736,6 +741,46 @@
                 margin-right: 0;
             }
         }
+    }
+    .avatar-uploader_count {
+        width:calc(100% - 60px);
+    }
+    .avatar-uploader_count_item {
+        float:left;
+        margin: 0 36px 10px 0;
+        width:calc(33% - 36px);
+    }
+    .avatar-uploader_count_item:nth-child(3n) {
+        margin: 0 0 10px 0;
+    }
+    .avatar-uploader_name {
+        text-align: center;
+        display: inline-block;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .avatar-uploader .el-upload {
+        width: 100%;
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+
+    .avatar_img {
+
+    }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
     }
 
 
