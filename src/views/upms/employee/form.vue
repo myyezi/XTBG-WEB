@@ -388,7 +388,7 @@
                 <el-button @click="close">返回</el-button>
             </div>
 
-            <el-dialog title="个人资料" v-dialogDrag :visible.sync="dialogVisible" :before-close="beforeClose" width="35%">
+            <el-dialog title="个人资料" v-dialogDrag :visible.sync="dialogVisible"  width="35%">
                 <el-form>
                     <el-form-item label="照片名称" prop="attachmentName">
                         <el-input autocomplete="off" v-model="attachmentName" placeholder="请输入照片名称" :maxlength=10
@@ -685,7 +685,7 @@
                 this.attachmentName="";
             },
             ok(){
-                var type=this.employeeForm.attachmentList.size();
+                let type=this.employeeForm.attachmentList.size;
                 this.employeeForm.attachmentList.push({name: this.attachmentName, path: "", type:type+1 });
                 this.dialogVisible = false;
                 this.attachmentName="";
