@@ -155,7 +155,7 @@
                                     style="width: 100%;">
                                 </el-date-picker>
                             </el-col>
-                            <el-col :span="9">
+                            <el-col :span="9" style="float: right;text-align: right;">
                                 <span>长期</span>
                                 <el-switch v-model="employeeForm.idCardLong"></el-switch>
                             </el-col>
@@ -202,7 +202,9 @@
                         </el-form-item>
                     </div>
                     <el-divider content-position="left">学历信息</el-divider>
-                    <el-button type="primary" @click="addEducationItem">新增</el-button>
+                    <el-button type="primary" @click="addEducationItem" size="small"
+                               style="float: right;margin-bottom: 5px">新增
+                    </el-button>
                     <el-table border :data="employeeForm.educationList" style="width: 100%">
                         <el-table-column prop="index" label="序号" min-width="50">
                             <template slot-scope="{row,$index}">
@@ -280,26 +282,22 @@
                         </el-form-item>
                         <el-form-item label="首次合同起始日" prop="contractStartDate">
                             <el-date-picker
-                                v-model="employeeForm.contractStartDate" type="date" placeholder="请选择合同起始日"
-                                :picker-options="pickerOptions">
+                                v-model="employeeForm.contractStartDate" type="date" placeholder="请选择合同起始日">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="首次合同到期日" prop="contractEndDate">
                             <el-date-picker
-                                v-model="employeeForm.contractEndDate" type="date" placeholder="请选择合同到期日"
-                                :picker-options="pickerOptions">
+                                v-model="employeeForm.contractEndDate" type="date" placeholder="请选择合同到期日">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="现合同起始日" prop="contractCstartDate">
                             <el-date-picker
-                                v-model="employeeForm.contractCstartDate" type="date" placeholder="请选择现合同起始日"
-                                :picker-options="pickerOptions">
+                                v-model="employeeForm.contractCstartDate" type="date" placeholder="请选择现合同起始日">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="现合同到期日" prop="contractCendDate">
                             <el-date-picker
-                                v-model="employeeForm.contractCendDate" type="date" placeholder="请选择现合同到期日"
-                                :picker-options="pickerOptions">
+                                v-model="employeeForm.contractCendDate" type="date" placeholder="请选择现合同到期日">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="合同期限" prop="contractPeriod">
@@ -314,51 +312,70 @@
                                       show-word-limit clearable></el-input>
                         </el-form-item>
                     </div>
-                        <el-divider content-position="left">紧急联系人</el-divider>
-                        <el-button type="primary" @click="addContactItem">新增</el-button>
-                        <el-table border :data="employeeForm.contactList" style="width: 100%">
-                            <el-table-column prop="index" label="序号" min-width="50">
-                                <template slot-scope="{row,$index}">
-                                    <span>{{$index+1}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="紧急联系人姓名" min-width="200">
-                                <template slot-scope="{row,$index}">
-                                    <el-form-item :prop="'contactList.' + $index + '.name'">
-                                        <el-input v-model="row.name" placeholder="请输入紧急联系人姓名" :maxlength=10 show-word-limit
-                                                  clearable></el-input>
-                                    </el-form-item>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="联系人关系" min-width="200">
-                                <template slot-scope="{row,$index}">
-                                    <el-form-item :prop="'contactList.' + $index + '.relationship'">
-                                        <el-select v-model="row.relationship" filterable clearable placeholder="请选择联系人关系">
-                                            <el-option v-for="item in relationshipList" :key="item.value" :label="item.text"
-                                                       :value="item.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="联系人电话" min-width="200">
-                                <template slot-scope="{row,$index}">
-                                    <el-form-item :prop="'contactList.' + $index + '.phone'">
-                                        <el-input v-model="row.phone" placeholder="请输入联系人电话" :maxlength=15 show-word-limit
-                                                  clearable></el-input>
-                                    </el-form-item>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="操作" min-width="50">
-                                <template slot-scope="{row, $index}">
-                                    <el-button v-if="employeeForm.contactList.length>1" type="text" size="small"
-                                               @click="delContactItem($index, row)">删除
-                                    </el-button>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    <div class="flex-panel">
-                        <el-divider content-position="left">个人资料</el-divider>
+                    <el-divider content-position="left">紧急联系人</el-divider>
+                    <el-button type="primary" @click="addContactItem" size="small"
+                               style="float: right;margin-bottom: 5px">新增
+                    </el-button>
+                    <el-table border :data="employeeForm.contactList" style="width: 100%">
+                        <el-table-column prop="index" label="序号" min-width="50">
+                            <template slot-scope="{row,$index}">
+                                <span>{{$index+1}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="紧急联系人姓名" min-width="200">
+                            <template slot-scope="{row,$index}">
+                                <el-form-item :prop="'contactList.' + $index + '.name'">
+                                    <el-input v-model="row.name" placeholder="请输入紧急联系人姓名" :maxlength=10 show-word-limit
+                                              clearable></el-input>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="联系人关系" min-width="200">
+                            <template slot-scope="{row,$index}">
+                                <el-form-item :prop="'contactList.' + $index + '.relationship'">
+                                    <el-select v-model="row.relationship" filterable clearable placeholder="请选择联系人关系">
+                                        <el-option v-for="item in relationshipList" :key="item.value" :label="item.text"
+                                                   :value="item.value">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="联系人电话" min-width="200">
+                            <template slot-scope="{row,$index}">
+                                <el-form-item :prop="'contactList.' + $index + '.phone'">
+                                    <el-input v-model="row.phone" placeholder="请输入联系人电话" :maxlength=15 show-word-limit
+                                              clearable></el-input>
+                                </el-form-item>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="操作" min-width="50">
+                            <template slot-scope="{row, $index}">
+                                <el-button v-if="employeeForm.contactList.length>1" type="text" size="small"
+                                           @click="delContactItem($index, row)">删除
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <el-divider content-position="left">个人资料</el-divider>
+                    <el-button type="primary" @click="addAttachmentList" size="small"
+                               style="float: right;margin-bottom: 5px">新增
+                    </el-button>
+                    <div v-for="(attachment,i) in employeeForm.attachmentList" :key="i">
+                        <span>{{attachment.name}}</span>
+                        <img v-if="attachment.path" width="30%" :src="employeeForm.fileDomain+attachment.path" alt="">
+                        <el-upload v-else
+                                   :multiple="true"
+                                   :headers="headers"
+                                   :show-file-list="false"
+                                   :action="uploadUrl"
+                                   :before-upload="uploadBefore"
+                                   :on-change="uploadChange"
+                                   :on-error="errorCallback"
+                                   :on-remove="uploadChange">
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
 
                     </div>
                 </el-collapse-item>
@@ -367,6 +384,19 @@
                 <el-button type="primary" @click="submitForm('employeeForm')">保存</el-button>
                 <el-button @click="close">返回</el-button>
             </div>
+
+            <el-dialog title="个人资料" v-dialogDrag :visible.sync="dialogVisible" :before-close="beforeClose" width="35%">
+                <el-form>
+                    <el-form-item label="照片名称" prop="attachmentName">
+                        <el-input autocomplete="off" v-model="attachmentName" placeholder="请输入照片名称" :maxlength=10
+                                  show-word-limit clearable t></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="cancel">取 消</el-button>
+                    <el-button type="primary" @click="ok">确 定</el-button>
+                </div>
+            </el-dialog>
         </el-form>
     </div>
 </template>
@@ -383,11 +413,16 @@
         data() {
 
             return {
+                uploadUrl: process.env.BASE_API + "file/upload/multipart",
+                headers: {
+                    "Authorization": 'Bearer ' + this.$store.getters.token
+                },
                 pickerOptions: {
                     disabledDate(time) {
                         return time.getTime() > Date.now();
                     }
                 },
+                dialogVisible: false,
                 zcList: [],
                 typeList: [],
                 probationList: [],
@@ -396,13 +431,24 @@
                 politicalList: [],
                 maritalList: [],
                 xlList: [],
-                contractTypeList:[],
-                contractPeriodList:[],
-                relationshipList:[],
+                contractTypeList: [],
+                contractPeriodList: [],
+                relationshipList: [],
+                attachmentName: "",
                 employeeForm: {
+                    fileDomain: process.env.URL_API,
                     list: [{}],
                     educationList: [{}],
-                    contactList:[{}],
+                    contactList: [{}],
+                    attachmentList: [
+                        {name: "身份证正面", path: "", type: 1},
+                        {name: "身份证背面", path: "", type: 2},
+                        {name: "学历证书", path: "", type: 3},
+                        {name: "学位证书", path: "", type: 4},
+                        {name: "前公司离职证明", path: "", type: 5},
+                        {name: "职称证书", path: "", type: 6},
+                        {name: "员工照片", path: "", type: 7}
+                    ],
                     userId: '',
                     name: '',
                     account: '',
@@ -428,21 +474,20 @@
                     providentFund: '',
                     bankAccount: "",
                     bank: "",
-                    contractCompany:'',
-                    contractType:"",
-                    contractStartDate:'',
-                    contractEndDate:'',
-                    contractCstartDate:'',
-                    contractCendDate:'',
-                    contractPeriod:'',
-                    contractCount:"",
+                    contractCompany: '',
+                    contractType: "",
+                    contractStartDate: '',
+                    contractEndDate: '',
+                    contractCstartDate: '',
+                    contractCendDate: '',
+                    contractPeriod: '',
+                    contractCount: "",
 
                     education: '',
                     qualification: '',
                     employeeStatus: '',
                     gender: '',
                 },
-                attachment: [],
                 openCollapse: ["1", "2"],//默认打开的面板
                 flag: this.getCurrentUserInfo()['managementCompanyId'] ? '' : 'empty',
                 rules: {
@@ -476,7 +521,7 @@
 
             // 获取字典
             getDict() {
-                let r = 'XL,ZC,YGLX.SYQ,MZ,HJLX,HTLX,HTQX,LXRGX';
+                let r = 'XL,ZC,YGLX,SYQ,MZ,HJLX,ZZMM,HYZK,HTLX,HTQX,LXRGX';
                 ajax.get("upms/dict/allType/" + r).then(rs => {
                     this.xlList = rs.XL;
                     this.zcList = rs.ZC;
@@ -484,9 +529,11 @@
                     this.probationList = rs.SYQ;
                     this.nationalityList = rs.MZ;
                     this.householdRegisterList = rs.HJLX;
-                    this.contractTypeList=rs.HTLX;
-                    this.contractPeriodList=rs.HTQX;
-                    this.relationshipList=rs.LXRGX;
+                    this.politicalList = rs.ZZMM;
+                    this.maritalList = rs.HYZK;
+                    this.contractTypeList = rs.HTLX;
+                    this.contractPeriodList = rs.HTQX;
+                    this.relationshipList = rs.LXRGX;
                 });
             },
 
@@ -512,14 +559,7 @@
                 this.openCollapse = ["1", "2"];
                 if (this.$route.query.id) {
                     ajax.get('upms/employee/' + this.$route.query.id).then(rs => {
-                        //if (this.checkResponse(rs)) {
-                        /*rs.data.userType += '';
-                        rs.data.employeeStatus += '';*/
                         this.employeeForm = Object.assign(this.employeeForm, rs.data);
-                        if (null != rs.data.attachment && rs.data.attachment.length > 0) {
-                            this.attachment = JSON.parse(rs.data.attachment);
-                        }
-                        //}
                     });
                     //加载用户的权限信息
                     ajax.get('upms/user/getUserOrganStructure', {id: this.$route.query.id}).then(rs => {
@@ -533,13 +573,6 @@
                 }
             },
             setAuthData(data) {
-                // data = [
-                //     {
-                //         organizations: [],
-                //         positions: [],
-                //         roles: [],
-                //     }
-                // ];
                 this.employeeForm.list = [];
                 if (data && data.length) {
                     data.forEach(item => {
@@ -586,18 +619,10 @@
                             roles: JSON.stringify(roles)
                         });
 
-                        if (this.attachment && this.attachment.length > 0) {
-                            data.attachment = JSON.stringify(this.attachment);
-                        }
-                        else {
-                            data.attachment = "[]";
-                        }
-                        data.createTime = ''
-                        data.updateTime = ''
-                        console.log(data)
                         if (data.roles.indexOf("null") != -1) {
                             data.roles = "[]"
                         }
+                        data.idCardLong = this.employeeForm.idCardLong ? 1 : 0;
                         ajax.post('upms/employee', data).then(rs => {
                             if (rs.status == 0) {
                                 that.$message({message: '保存成功！', type: 'success'});
@@ -641,12 +666,58 @@
             addContactItem() {
                 this.employeeForm.contactList.push({});
             },
-            delContactItem(i){
+            delContactItem(i) {
                 this.$confirm("确认删除吗？").then(_ => {
                     this.employeeForm.contactList.splice(i, 1);
                 }).catch(_ => {
                 });
-            }
+            },
+            addAttachmentList() {
+                this.dialogVisible = true;
+                this.attachmentName="";
+            },
+            cancel(){
+                this.dialogVisible = false;
+                this.attachmentName="";
+            },
+            ok(){
+                var type=this.employeeForm.attachmentList.size();
+                this.employeeForm.attachmentList.push({name: this.attachmentName, path: "", type:type+1 });
+                this.dialogVisible = false;
+                this.attachmentName="";
+            },
+            delFile(i) {
+                this.employeeForm.attachmentList.splice(i, 1);
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            uploadBefore(file) {
+                // 限制20M
+                if (file.size > 1024 * 1024 * 2) {
+                    this.showMessage("请上传2M以下的文件");
+                    return false;
+                }
+                else {
+                    this.loading = true;
+                    // NProgress.start();
+                    return true;
+                }
+            },
+            errorCallback() {
+                this.loading = false;
+                this.$emit("error");
+            },
+            uploadChange(file) {
+                this.loading = false;
+                if (!file.response) {
+                    return;
+                }
+                if (file.response.status == 0) {
+
+                }
+                this.$emit("update:employeeForm.attachmentList", this.employeeForm.attachmentList.slice(-this.size));
+            },
         },
         mounted() {
             this.open();
@@ -666,4 +737,6 @@
             }
         }
     }
+
+
 </style>
