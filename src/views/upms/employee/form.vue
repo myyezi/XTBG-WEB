@@ -360,16 +360,17 @@
 
                     <el-divider content-position="left">个人资料</el-divider>
                     <el-button type="primary" @click="addAttachmentList" size="small"
-                            style="float: right;margin-bottom: 5px">新增
+                               style="float: right;margin-bottom: 5px">新增
                     </el-button>
                     <div class="avatar-uploader_count clearfix">
-                        <div v-for="(attachment,i) in employeeForm.attachmentList" :key="i" class="avatar-uploader_count_item" @click="attachmentItem = attachment">
+                        <div v-for="(attachment,i) in employeeForm.attachmentList" :key="i"
+                             class="avatar-uploader_count_item" @click="attachmentType = i">
                             <span class="avatar-uploader_name">{{attachment.name}}</span>
                             <div v-if="attachment.path" class="avatar_img">
-                                <img :src="employeeForm.fileDomain+attachment.path" alt="">
-                                <i class="el-icon-circle-close"></i>
+                                <img :src="employeeForm.fileDomain + attachment.path" alt="">
+                                <i class="el-icon-circle-close" @click="delFile(i)"></i>
                             </div>
-                            <el-upload 
+                            <el-upload
                                 v-else
                                 class="avatar-uploader"
                                 :multiple="true"
@@ -381,6 +382,7 @@
                                 :on-error="errorCallback"
                                 :on-remove="uploadChange">
                                 <i class="el-icon-plus avatar-uploader-icon"></i>
+                                <i v-if="i>6" class="el-icon-circle-close" @click="delFile(i)"></i>
                             </el-upload>
                         </div>
                     </div>
@@ -391,7 +393,7 @@
                 <el-button @click="close">返回</el-button>
             </div>
 
-            <el-dialog title="个人资料" v-dialogDrag :visible.sync="dialogVisible"  width="35%">
+            <el-dialog title="个人资料" v-dialogDrag :visible.sync="dialogVisible" width="35%">
                 <el-form>
                     <el-form-item label="照片名称" prop="attachmentName">
                         <el-input autocomplete="off" v-model="attachmentName" placeholder="请输入照片名称" :maxlength=10
@@ -441,20 +443,20 @@
                 contractPeriodList: [],
                 relationshipList: [],
                 attachmentName: "",
-                attachmentItem:{},
+                attachmentType: "",
                 employeeForm: {
                     fileDomain: process.env.URL_API,
                     list: [{}],
                     educationList: [{}],
                     contactList: [{}],
                     attachmentList: [
-                        {name: "身份证正面", path: "", type: 1},
-                        {name: "身份证背面", path: "", type: 2},
-                        {name: "学历证书", path: "", type: 3},
-                        {name: "学位证书", path: "", type: 4},
-                        {name: "前公司离职证明", path: "", type: 5},
-                        {name: "职称证书", path: "", type: 6},
-                        {name: "员工照片", path: "", type: 7}
+                        {name: "身份证正面", path: "",suffix:"",size:"", type: 1},
+                        {name: "身份证背面", path: "", suffix:"",size:"",type: 2},
+                        {name: "学历证书", path: "", suffix:"",size:"",type: 3},
+                        {name: "学位证书", path: "", suffix:"",size:"",type: 4},
+                        {name: "前公司离职证明", path: "", suffix:"",size:"",type: 5},
+                        {name: "职称证书", path: "", suffix:"",size:"",type: 6},
+                        {name: "员工照片", path: "", suffix:"",size:"",type: 7}
                     ],
                     userId: '',
                     name: '',
@@ -681,20 +683,29 @@
             },
             addAttachmentList() {
                 this.dialogVisible = true;
-                this.attachmentName="";
+                this.attachmentName = "";
             },
-            cancel(){
+            cancel() {
                 this.dialogVisible = false;
-                this.attachmentName="";
+                this.attachmentName = "";
             },
-            ok(){
-                let type=this.employeeForm.attachmentList.size;
-                this.employeeForm.attachmentList.push({name: this.attachmentName, path: "", type:type+1 });
+            ok() {
+                let type = this.employeeForm.attachmentList.size;
+                this.employeeForm.attachmentList.push({name: this.attachmentName, path: "", type: type + 1});
                 this.dialogVisible = false;
-                this.attachmentName="";
+                this.attachmentName = "";
             },
             delFile(i) {
-                this.employeeForm.attachmentList.splice(i, 1);
+                console.log(i);
+                if(i>6) {
+                    this.employeeForm.attachmentList.splice(i, 1);
+                }
+                else {
+                    this.employeeForm.attachmentList[i].path="";
+                    this.employeeForm.attachmentList[i].suffix="";
+                    this.employeeForm.attachmentList[i].size="";
+                }
+
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
@@ -722,7 +733,10 @@
                     return;
                 }
                 if (file.response.status == 0) {
-
+                    let data = file.response.data;
+                    this.employeeForm.attachmentList[this.attachmentType].path=data.path;
+                    this.employeeForm.attachmentList[this.attachmentType].suffix=data.suffix;
+                    this.employeeForm.attachmentList[this.attachmentType].size=data.size;
                 }
                 this.$emit("update:employeeForm.attachmentList", this.employeeForm.attachmentList.slice(-this.size));
             },
@@ -745,23 +759,28 @@
             }
         }
     }
+
     .avatar-uploader_count {
-        width:calc(100% - 60px);
+        width: calc(100% - 60px);
     }
+
     .avatar-uploader_count_item {
-        float:left;
+        float: left;
         margin: 0 36px 10px 0;
-        width:calc(33% - 36px);
+        width: calc(33% - 36px);
     }
+
     .avatar-uploader_count_item:nth-child(3n) {
         margin: 0 0 10px 0;
     }
+
     .avatar-uploader_name {
         text-align: center;
         display: inline-block;
         width: 100%;
         margin-bottom: 5px;
     }
+
     .avatar-uploader .el-upload {
         width: 100%;
         border: 1px dashed #d9d9d9;
@@ -770,6 +789,7 @@
         position: relative;
         overflow: hidden;
     }
+
     .avatar-uploader .el-upload:hover {
         border-color: #409EFF;
     }
@@ -790,6 +810,7 @@
             cursor: pointer;
         }
     }
+
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
