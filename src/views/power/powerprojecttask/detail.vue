@@ -21,6 +21,12 @@
                             <span>{{powerprojecttaskForm.typeText}}</span>
                         </div>
                     </div>
+                    <div class="detail-item">
+                        <label class="control-label">项目年份</label>
+                        <div class="input-group">
+                            <span>{{powerprojecttaskForm.year}}</span>
+                        </div>
+                    </div>
                     <div class="detail-item ">
                         <label class="control-label">建设单位</label>
                         <div class="input-group">
@@ -70,17 +76,17 @@
                         </div>
                     </div>
                     <div class="detail-item">
-                        <label class="control-label">签收人</label>
+                        <label class="control-label">归属单位</label>
                         <div class="input-group">
-                            <span>{{powerprojecttaskForm.signerName}}</span>
+                            <span>{{powerprojecttaskForm.belongCompanyName}}</span>
                         </div>
                     </div>
-                    <div class="detail-item">
+                    <!-- <div class="detail-item">
                         <label class="control-label">签收时间</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.signTime}}</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="detail-item">
                         <label class="control-label">项目开始时间</label>
                         <div class="input-group">
@@ -94,29 +100,30 @@
                         </div>
                     </div>
                     <div class="detail-item big">
+                        <label class="control-label">项目地址</label>
+                        <div class="input-group">
+                            <span>{{powerprojecttaskForm.adress}}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item big">
                         <label class="control-label">设计规模</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.designScale}}</span>
                         </div>
                     </div>
-                    <div class="detail-item big">
+                    <!-- <div class="detail-item big">
                         <label class="control-label">设计规范</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.designRange}}</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="detail-item big">
                         <label class="control-label">设计进度要求</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.progress}}</span>
                         </div>
                     </div>
-                    <div class="detail-item big">
-                        <label class="control-label">项目地址</label>
-                        <div class="input-group">
-                            <span>{{powerprojecttaskForm.adress}}</span>
-                        </div>
-                    </div>
+                    
                     <div class="detail-item big">
                         <label class="control-label">备注</label>
                         <div class="input-group">
