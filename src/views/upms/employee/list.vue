@@ -16,9 +16,10 @@
             <div class="search-box" v-show="isShowMore">
                 <div class="form-box">
                     <div class="form-group">
-                        <label class="control-label">角色</label>
-                        <div class="input-group input-groups">
-                            <el-input v-model="searchParam.roleName" placeholder="请输入角色名称"></el-input>
+                        <label class="control-label">组织</label>
+                        <div class="input-group">
+                            <tree-select v-model="searchParam.organizationId" placeholder="请选择" type="one"
+                                         url="/upms/employee/treeNodeByCompanyId"></tree-select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -26,28 +27,6 @@
                         <div class="input-group input-groups">
                             <tree-select v-model="searchParam.posId" placeholder="请选择" type="one"
                                          url="upms/position/tree"></tree-select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">学历</label>
-                        <div class="input-group input-groups">
-                            <el-select v-model="searchParam.education" filterable clearable>
-                                <el-option label="博士" :value="1"></el-option>
-                                <el-option label="硕士" :value="2"></el-option>
-                                <el-option label="本科" :value="3"></el-option>
-                                <el-option label="大专" :value="4"></el-option>
-                                <el-option label="高中" :value="5"></el-option>
-                            </el-select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">性别</label>
-                        <div class="input-group input-groups">
-                            <el-select v-model="searchParam.gender" filterable clearable>
-                                <el-option label="男" :value="1"></el-option>
-                                <el-option label="女" :value="2"></el-option>
-                                <el-option label="其他" :value="3"></el-option>
-                            </el-select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -199,22 +178,10 @@
                 });
             },
             getListBefore(params) {
-                params.organCascade = params.organCascade ? 1 : 0;
-                if (params.organId)
-                    params.organId = params.organId.join(',');
+                if (params.organizationId)
+                    params.organizationId = params.organizationId.join(',');
                 if (params.posId)
                     params.posId = params.posId.join(',');
-            },
-            getListAfter() {
-                var s = "yyyy-MM-dd hh:mm";
-                this.list.forEach(item => {
-                    if (item.createTime)
-                        item.createTimeStr = new Date(item.createTime).format(s);
-                    if (item.updateTime)
-                        item.updateTimeStr = new Date(item.updateTime).format(s);
-                    if (item.lastLoginTime)
-                        item.loginTimeStr = new Date(item.lastLoginTime).format(s);
-                });
             },
             leave(id) {
                 this.leaveForm.id = id;
