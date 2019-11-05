@@ -1,7 +1,7 @@
 <template>
     <div class="app-container white-bg list-panel" v-cloak>
         <div class="opertion-box">
-            <el-button type="primary" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建
+            <el-button type="primary" v-show="showAddBtn" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建
             </el-button>
             <el-input v-model="searchParam.nameOrPhone" placeholder="请输入姓名或手机号" clearable class="zy_input"
                       style="width:190px"></el-input>
@@ -9,7 +9,7 @@
             <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i
                 :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
             <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
-            <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
+            <el-button type="primary" v-show="showExportBtn" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
         </div>
         <!-- 展开更多查询开始 -->
         <el-collapse-transition>
@@ -75,7 +75,7 @@
                         <label class="control-label">入职日期</label>
                         <div class="input-group input-groups">
                             <el-date-picker
-                                v-model="searchParam.entryDate" type="date" placeholder="请选择入职日期">
+                                v-model="searchParam.entryDate" type="date" placeholder="请选择入职日期" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </div>
                     </div>
@@ -177,6 +177,7 @@
                 showAddBtn: this.getCurrentUserAuthority("/employee/add"),
                 showEditBtn: this.getCurrentUserAuthority('/employee/edit'),
                 showLeaveBtn: this.getCurrentUserAuthority('/employee/leave'),
+                showExportBtn: this.getCurrentUserAuthority('/employee/export'),
                 rules: {
                     leaveDate: [
                         {required: true, message: '请选择入职日期', trigger: ['blur', 'change']},
@@ -244,6 +245,9 @@
                         return false;
                     }
                 })
+            },
+            exportExcel() {
+                window.location = this.exportUrl("upms/employee/export?" + $.param(this.searchParam));
             },
         }
     }

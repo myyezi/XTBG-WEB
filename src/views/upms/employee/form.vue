@@ -367,7 +367,8 @@
                              class="avatar-uploader_count_item" @click="attachmentType = i">
                             <span class="avatar-uploader_name">{{attachment.name}}</span>
                             <div v-if="attachment.path" class="avatar_img">
-                                <img :src="employeeForm.fileDomain + attachment.path" alt="" @click="showBigImg($event)">
+                                <img :src="employeeForm.fileDomain + attachment.path" alt=""
+                                     @click="showBigImg($event)">
                                 <i class="el-icon-circle-close" @click="delFile(i)"></i>
                             </div>
                             <el-upload
@@ -522,7 +523,7 @@
                     employeeStatus: [
                         {required: true, message: '请选择员工状态', trigger: ['blur', 'change']},
                     ],
-                    contractCount:[
+                    contractCount: [
                         {pattern: /^[+]{0,1}(\d+)$/, message: '请输入正整数', trigger: ['blur', 'change']}
                     ]
 
@@ -572,9 +573,9 @@
                 if (this.$route.query.id) {
                     ajax.get('upms/employee/' + this.$route.query.id).then(rs => {
                         this.employeeForm = Object.assign(this.employeeForm, rs.data);
-                        if(!this.employeeForm.attachmentList || this.employeeForm.attachmentList.length<1)
-                        {
-                            this.employeeForm.attachmentList= [
+                        this.employeeForm.idCardLong = rs.data.idCardLong == 1 ? true : false;
+                        if (!this.employeeForm.attachmentList || this.employeeForm.attachmentList.length < 1) {
+                            this.employeeForm.attachmentList = [
                                 {name: "身份证正面", path: "", suffix: "", size: "", type: 1},
                                 {name: "身份证背面", path: "", suffix: "", size: "", type: 2},
                                 {name: "学历证书", path: "", suffix: "", size: "", type: 3},
