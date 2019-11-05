@@ -141,6 +141,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import ajax from '@/utils/request'
 import { tool, ruleTool } from '@/utils/common'
 import BaiduMap from '@/components/BaiduMap/index'
@@ -149,6 +150,11 @@ import UploadPanel from '@/components/UploadPanel/index'
 export default {
   mixins: [tool, ruleTool],
   components: {BaiduMap,UploadPanel},
+  computed: {
+      ...mapGetters([
+          'user',
+      ])
+    },
   data() {
     return {
       uploadUrl: process.env.BASE_API + "file/upload/multipart",
@@ -250,13 +256,14 @@ export default {
 
       // 获取字典
       getDict() {
-       let r = 'XMLX,XBBM,RWYJ,GSDW';
+       let managementCompanyId = this.user.managementCompanyId;
+       let r = 'XMLX,XBBM,RWYJ,'+managementCompanyId;
           ajax.get("upms/dict/allType/"+r).then(rs => {
               this.typeOptions = rs.XMLX;
               // this.designOptions = rs.XGSJ
               this.coDepartmentOptions = rs.XBBM;
               this.sourceOptions = rs.RWYJ;
-              this.belongCompanyList = rs.GSDW;
+              this.belongCompanyList = rs[managementCompanyId];
           });
       },
 
