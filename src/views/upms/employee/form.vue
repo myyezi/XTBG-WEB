@@ -152,7 +152,7 @@
                             <el-col :span="15">
                                 <el-date-picker
                                     v-model="employeeForm.idCardValidity" type="date" placeholder="请选择证件有效期"
-                                    style="width: 100%;">
+                                    style="width: 100%;" :disabled="employeeForm.idCardLong">
                                 </el-date-picker>
                             </el-col>
                             <el-col :span="9" style="float: right;text-align: right;">
@@ -374,6 +374,7 @@
                                 v-else
                                 class="avatar-uploader"
                                 :multiple="true"
+                                accept=".jpg,.jpeg,.png"
                                 :headers="headers"
                                 :show-file-list="false"
                                 :action="uploadUrl"
@@ -473,7 +474,7 @@
                     nationality: "",
                     idCardAddress: '',
                     idCardValidity: '',
-                    idCardLong: '',
+                    idCardLong: false,
                     householdRegister: '',
                     address: '',
                     political: '',
@@ -521,7 +522,9 @@
                     employeeStatus: [
                         {required: true, message: '请选择员工状态', trigger: ['blur', 'change']},
                     ],
-
+                    contractCount:[
+                        {pattern: /^[+]{0,1}(\d+)$/, message: '请输入正整数', trigger: ['blur', 'change']}
+                    ]
 
                 },
             }
