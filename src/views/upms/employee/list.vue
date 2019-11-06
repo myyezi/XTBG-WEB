@@ -283,13 +283,13 @@
 
     .big_data_ring_item {
         float: left;
-        margin-right: calc((100% - 480px) / 9);
+        margin-right: calc((100% - 480px) /7);
         transition: All 1s ease-in-out;
     }
 
     .big_data_ring_item:nth-child(1) {
         float: left;
-        margin-left: calc((100% - 480px) / 9)
+        margin-left: calc((100% - 480px) / 7)
     }
 
     .big_data_ring_item_title {
