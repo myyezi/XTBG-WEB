@@ -183,7 +183,7 @@
                     {color: "#19ffe2", title: "兼职", num: 0},
                     {color: "#fbbd5c", title: "实习", num: 0},
                     {color: "#01abff", title: "试用", num: 0},
-                    {color: "#ff7347", title: "离职", num: 0}
+                    {color: "#ac4ed3", title: "离职", num: 0}
                 ],//圆环显示数组
             }
         },
