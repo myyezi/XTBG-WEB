@@ -282,6 +282,7 @@
     }
 
     .big_data_ring_item {
+        margin-top: 5px;
         float: left;
         margin-right: calc((100% - 480px) /7);
         transition: All 1s ease-in-out;
