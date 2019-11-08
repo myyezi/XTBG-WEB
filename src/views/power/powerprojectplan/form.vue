@@ -221,9 +221,9 @@ export default {
             stage: [
                 { required: true, message: '请选择所属阶段', trigger: ['change','blur'] }
             ],
-            principal: [
-                { required: true, message: '请选择负责人', trigger: ['change','blur'] }
-            ],
+            // principal: [
+            //     { required: true, message: '请选择负责人', trigger: ['change','blur'] }
+            // ],
             profession: [
                 { required: true, message: '请输入专业', trigger: ['blur','blur'] }
             ],
