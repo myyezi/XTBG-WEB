@@ -1,7 +1,19 @@
 <template>
+
     <div class="app-container white-bg list-panel" v-cloak>
+        <div class="big_data_ring clearfix">
+            <div class="big_data_ring_item" v-for="(item,index) in ringList" :key="index"
+                 @click="setSearchParam(index)">
+                <el-progress type="circle" :percentage="100" :width="60" :stroke-width="3" :color="item.color"
+                             :format="function() {return item.num}"></el-progress>
+                <div class="big_data_ring_item_title">
+                    {{item.title}}
+                </div>
+            </div>
+        </div>
         <div class="opertion-box">
-            <el-button type="primary" v-show="showAddBtn" icon="el-icon-plus" size="small" @click="add()" style="margin-right:10px">创建
+            <el-button type="primary" v-show="showAddBtn" icon="el-icon-plus" size="small" @click="add()"
+                       style="margin-right:10px">创建
             </el-button>
             <el-input v-model="searchParam.nameOrPhone" placeholder="请输入姓名或手机号" clearable class="zy_input"
                       style="width:190px"></el-input>
@@ -9,7 +21,9 @@
             <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i
                 :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
             <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
-            <el-button type="primary" v-show="showExportBtn" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>
+            <el-button type="primary" v-show="showExportBtn" icon="el-icon-upload" size="small" @click="exportExcel()">
+                导出
+            </el-button>
         </div>
         <!-- 展开更多查询开始 -->
         <el-collapse-transition>
@@ -33,7 +47,6 @@
                         <label class="control-label">状态</label>
                         <div class="input-group input-groups">
                             <el-select v-model="searchParam.employeeStatus" placeholder="全部">
-                                <el-option label="全部" value="-1"></el-option>
                                 <el-option label="试用期" value="1"></el-option>
                                 <el-option label="正式员工" value="2"></el-option>
                                 <el-option label="离职" value="3"></el-option>
@@ -54,7 +67,8 @@
                         <label class="control-label">入职日期</label>
                         <div class="input-group input-groups">
                             <el-date-picker
-                                v-model="searchParam.entryDate" type="date" placeholder="请选择入职日期" value-format="yyyy-MM-dd">
+                                v-model="searchParam.entryDate" type="date" placeholder="请选择入职日期"
+                                value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </div>
                     </div>
@@ -162,12 +176,21 @@
                         {required: true, message: '请选择入职日期', trigger: ['blur', 'change']},
                     ],
                 },
-                leaveForm: {id: "", leaveDate: ""}
+                leaveForm: {id: "", leaveDate: ""},
+                ringList: [
+                    {color: "#e2516a", title: "在职", num: 0},
+                    {color: "#6149e1", title: "全职", num: 0},
+                    {color: "#19ffe2", title: "兼职", num: 0},
+                    {color: "#fbbd5c", title: "实习", num: 0},
+                    {color: "#01abff", title: "试用", num: 0},
+                    {color: "#ac4ed3", title: "离职", num: 0}
+                ],//圆环显示数组
             }
         },
         mounted() {
             this.getList();
             this.getDict();
+            this.getTotalCount();
         },
         methods: {
             // 获取字典
@@ -216,6 +239,65 @@
             exportExcel() {
                 window.location = this.exportUrl("upms/employee/export?" + $.param(this.searchParam));
             },
+            // 获取概览
+            getTotalCount() {
+                ajax.get('upms/employee/getTotalCount').then(rs => {
+                    if (rs.status === 0) {
+                        this.getRingList(rs.data);
+                    }
+                });
+            },
+            // 转换统计数
+            getRingList(data) {
+                this.ringList[0].num = data.zsyg ? data.zsyg : '0';
+                this.ringList[1].num = data.qz ? data.qz : '0';
+                this.ringList[2].num = data.jz ? data.jz : '0';
+                this.ringList[3].num = data.sx ? data.sx : '0';
+                this.ringList[4].num = data.syq ? data.syq : '0';
+                this.ringList[5].num = data.lz ? data.lz : '0';
+            },
+            setSearchParam(index) {
+                this.searchParam = {};
+                if (index == 0) {
+                    this.searchParam.employeeStatus = "2";
+                } else if (index == 1) {
+                    this.searchParam.type = "1";
+                } else if (index == 2) {
+                    this.searchParam.type = "2";
+                } else if (index == 3) {
+                    this.searchParam.type = "3";
+                } else if (index == 4) {
+                    this.searchParam.employeeStatus = "1";
+                } else if (index == 5) {
+                    this.searchParam.employeeStatus = "3";
+                }
+                this.getList();
+            }
         }
     }
 </script>
+<style>
+    .big_data_ring {
+        width: 100%;
+    }
+
+    .big_data_ring_item {
+        margin-top: 5px;
+        float: left;
+        margin-right: calc((100% - 480px) /7);
+        transition: All 1s ease-in-out;
+    }
+
+    .big_data_ring_item:nth-child(1) {
+        float: left;
+        margin-left: calc((100% - 480px) / 7)
+    }
+
+    .big_data_ring_item_title {
+        font-size: 10px;
+        width: 60px;
+        text-align: center;
+        margin-top: 5px;
+        line-height: 18px;
+    }
+</style>
