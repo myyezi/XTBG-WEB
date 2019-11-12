@@ -6,7 +6,7 @@
       <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
       <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
-<!--      <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button>-->
+     <el-button type="primary" icon="el-icon-s-operation" size="small" @click="swtichData()">切换</el-button>
     </div>
     <!-- 展开更多查询开始 -->
     <el-collapse-transition>
@@ -133,7 +133,7 @@
       </div>
     </el-collapse-transition>
     <div class="division-line"></div>
-    <div class="table-box">
+    <div class="table-box" v-show="!tableShow">
       <el-table :data="list" style="width: 100%">
         <el-table-column fixed label="操作" width="120">
           <template fixed slot-scope="{ row, column, $index }">
@@ -156,6 +156,37 @@
       </el-table>
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page" :page-sizes="pageSizeSetting" :page-size="pageSize" :layout="pageLayout" :total="listCount">
       </el-pagination>
+    </div>
+    <div class="table-box" v-show="tableShow">
+      <ul class="project_table_statistics clearfix">
+        <li v-for="(item,index) in list" :key="index" class="clearfix">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <p>
+                        <img :src="imgList[0]" alt="" v-if="item.typeText=='配电'">
+                        <img :src="imgList[1]" alt="" v-else-if="item.typeText=='配网'">
+                        <img :src="imgList[2]" alt="" v-else-if="item.typeText=='输电'">
+                        <img :src="imgList[3]" alt="" v-else-if="item.typeText=='变电'">
+                        <img :src="imgList[4]" alt="" v-else-if="item.typeText=='配电'">
+                        <img :src="imgList[5]" alt="" v-else>
+                    </p>
+                    <p>
+                        <span>{{item.name}}</span>
+                        <span>{{item.code}}</span>
+                    </p>
+                </div>
+                <div>
+                    <div class="text">{{'年份： ' +  item.year}}</div>
+                    <div class="text">{{'类型： ' + item.typeText}}</div>
+                    <div class="text">项目经理：  {{item.manager?item.manager:''}}</div>
+                    <div style="text-align: right;">
+                        <el-button size="small" round @click="edit(item.id)">编辑</el-button>
+                        <el-button size="small" round @click="showDig(item.id)">记录</el-button>
+                    </div>
+                </div>
+            </el-card>
+        </li>
+    </ul>
     </div>
       <el-dialog title="项目任务书更改记录" :visible.sync="dialogVisible" width="60%"  v-cloak>
           <div class="app-container white-bg list-panel">
@@ -189,6 +220,8 @@ export default {
     mixins: [tool],
   data() {
     return {
+        tableShow:true,
+        imgList:[require('@/styles/img/zodiac/peidian.png'),require('@/styles/img/zodiac/peiwang.png'),require('@/styles/img/zodiac/shudian.png'),require('@/styles/img/zodiac/biandian.png'),require('@/styles/img/zodiac/xitongguihua.png'),require('@/styles/img/zodiac/qita.png')],
         typeOptions: [],
         designOptions: [],
         ProprietorList: [],
@@ -211,6 +244,8 @@ export default {
         dialogVisible:false,
         pageC :1,
         pageS :10,
+        pageSize:20,
+        page:1,
         projectTaskId:''
     }
   },
@@ -219,8 +254,23 @@ export default {
       this.getDict();
       this.getProprietor();
       this.getUserList();
+      window.addEventListener('scroll', this.scrollDs, true)
   },
   methods: {
+    scrollDs() {
+        let div = document.getElementsByClassName('app-main');
+        let clientHeight = div[0].clientHeight
+        let scrollHeight = div[0].scrollHeight
+        let scrollTop = div[0].scrollTop
+        if (scrollTop + clientHeight >=scrollHeight) {
+            div[0].scrollTop = div[0].scrollTop-5;
+            console.log('到底了')
+        }
+        
+    },
+      swtichData() {
+          this.tableShow = !this.tableShow
+      },
       /*getSeletedId(obj) {
           this.searchParam.companyId =obj.id;
       },*/
@@ -348,3 +398,56 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+    .project_table_statistics {
+        width:100%;
+        li {
+            position: relative;
+            width: 23%;
+            float: left;
+            margin: 0 1% 20px; 
+            .el-card__header {
+                padding:12px 15px;
+            }
+            .text {
+                font-size:14px;
+                color:#666;
+                margin-bottom: 14px;
+            }
+            .el-button {
+                border: 1px solid #29c9bb;
+                color: #29c9bb;
+            }
+            p:nth-child(1) {
+                float: left;
+                margin-right:15px;
+                img {
+                    width:44px;
+                    height:44px;
+                }
+            }
+            p:nth-child(2) {
+                float: left;
+                height: 100%;
+                width: calc(100% - 65px);
+                span {
+                    display: block;
+                    height: 25px;
+                    line-height:25px;
+                    color:#333;
+                    width: 100%;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+                span:nth-child(1) {
+                    font-size:16px;
+                }
+                span:nth-child(2) {
+                    font-size:12px;
+                }
+            }
+        }
+    }
+</style>
+
