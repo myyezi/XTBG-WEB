@@ -135,9 +135,10 @@
     <div class="division-line"></div>
     <div class="table-box" v-show="!tableShow">
       <el-table :data="list" style="width: 100%">
-        <el-table-column fixed label="操作" width="120">
+        <el-table-column fixed label="操作" min-width="100" >
           <template fixed slot-scope="{ row, column, $index }">
             <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
+            <el-button v-show="showDownloadBtn" @click="downloadZip(row.id)" type="text" size="small">打包下载</el-button>
             <el-button v-show="showEditBtn" @click="showDig(row.id)" type="text" size="small">记录</el-button>
           </template>
         </el-table-column>
@@ -241,6 +242,7 @@ export default {
         showSearch: false,
         showAddBtn: this.getCurrentUserAuthority("/power/powerprojecttask/save"),
         showEditBtn: this.getCurrentUserAuthority("/power/powerprojecttask/edit"),
+        showDownloadBtn: this.getCurrentUserAuthority("/power/powerprojecttask/download"),
         dialogVisible:false,
         pageC :1,
         pageS :10,
@@ -394,7 +396,9 @@ export default {
           this.pageC = val;
           this.getChangeList();
       },
-
+      downloadZip(id){
+          window.location=this.exportUrl("power/powerprojecttask/downloadZip/"+id);
+      }
   }
 }
 </script>

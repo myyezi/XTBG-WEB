@@ -152,7 +152,7 @@
                             <el-col :span="15">
                                 <el-date-picker
                                     v-model="employeeForm.idCardValidity" type="date" placeholder="请选择证件有效期"
-                                    style="width: 100%;">
+                                    style="width: 100%;" :disabled="employeeForm.idCardLong">
                                 </el-date-picker>
                             </el-col>
                             <el-col :span="9" style="float: right;text-align: right;">
@@ -367,13 +367,15 @@
                              class="avatar-uploader_count_item" @click="attachmentType = i">
                             <span class="avatar-uploader_name">{{attachment.name}}</span>
                             <div v-if="attachment.path" class="avatar_img">
-                                <img :src="employeeForm.fileDomain + attachment.path" alt="">
+                                <img :src="employeeForm.fileDomain + attachment.path" alt=""
+                                     @click="showBigImg($event)">
                                 <i class="el-icon-circle-close" @click="delFile(i)"></i>
                             </div>
                             <el-upload
                                 v-else
                                 class="avatar-uploader"
                                 :multiple="true"
+                                accept=".jpg,.jpeg,.png"
                                 :headers="headers"
                                 :show-file-list="false"
                                 :action="uploadUrl"
@@ -382,7 +384,7 @@
                                 :on-error="errorCallback"
                                 :on-remove="uploadChange">
                                 <i class="el-icon-plus avatar-uploader-icon"></i>
-                                <i v-if="i>6" class="el-icon-circle-close" @click.stop="delFile(i)"></i>
+                                <i v-if="i>6" class="el-icon-circle-close" @click.stop="delFileItem(i)"></i>
                             </el-upload>
                         </div>
                     </div>
@@ -450,13 +452,13 @@
                     educationList: [{}],
                     contactList: [{}],
                     attachmentList: [
-                        {name: "身份证正面", path: "",suffix:"",size:"", type: 1},
-                        {name: "身份证背面", path: "", suffix:"",size:"",type: 2},
-                        {name: "学历证书", path: "", suffix:"",size:"",type: 3},
-                        {name: "学位证书", path: "", suffix:"",size:"",type: 4},
-                        {name: "前公司离职证明", path: "", suffix:"",size:"",type: 5},
-                        {name: "职称证书", path: "", suffix:"",size:"",type: 6},
-                        {name: "员工照片", path: "", suffix:"",size:"",type: 7}
+                        {name: "身份证正面", path: "", suffix: "", size: "", type: 1},
+                        {name: "身份证背面", path: "", suffix: "", size: "", type: 2},
+                        {name: "学历证书", path: "", suffix: "", size: "", type: 3},
+                        {name: "学位证书", path: "", suffix: "", size: "", type: 4},
+                        {name: "前公司离职证明", path: "", suffix: "", size: "", type: 5},
+                        {name: "职称证书", path: "", suffix: "", size: "", type: 6},
+                        {name: "员工照片", path: "", suffix: "", size: "", type: 7}
                     ],
                     userId: '',
                     name: '',
@@ -473,7 +475,7 @@
                     nationality: "",
                     idCardAddress: '',
                     idCardValidity: '',
-                    idCardLong: '',
+                    idCardLong: false,
                     householdRegister: '',
                     address: '',
                     political: '',
@@ -521,7 +523,9 @@
                     employeeStatus: [
                         {required: true, message: '请选择员工状态', trigger: ['blur', 'change']},
                     ],
-
+                    contractCount: [
+                        {pattern: /^[+]{0,1}(\d+)$/, message: '请输入正整数', trigger: ['blur', 'change']}
+                    ]
 
                 },
             }
@@ -569,6 +573,19 @@
                 if (this.$route.query.id) {
                     ajax.get('upms/employee/' + this.$route.query.id).then(rs => {
                         this.employeeForm = Object.assign(this.employeeForm, rs.data);
+                        this.employeeForm.idCardLong = rs.data.idCardLong == 1 ? true : false;
+                        if (!this.employeeForm.attachmentList || this.employeeForm.attachmentList.length < 1) {
+                            this.employeeForm.attachmentList = [
+                                {name: "身份证正面", path: "", suffix: "", size: "", type: 1},
+                                {name: "身份证背面", path: "", suffix: "", size: "", type: 2},
+                                {name: "学历证书", path: "", suffix: "", size: "", type: 3},
+                                {name: "学位证书", path: "", suffix: "", size: "", type: 4},
+                                {name: "前公司离职证明", path: "", suffix: "", size: "", type: 5},
+                                {name: "职称证书", path: "", suffix: "", size: "", type: 6},
+                                {name: "员工照片", path: "", suffix: "", size: "", type: 7}
+                            ];
+                        }
+
                     });
                     //加载用户的权限信息
                     ajax.get('upms/user/getUserOrganStructure', {id: this.$route.query.id}).then(rs => {
@@ -690,22 +707,18 @@
                 this.attachmentName = "";
             },
             ok() {
-                let type = this.employeeForm.attachmentList.size;
+                let type = this.employeeForm.attachmentList.length;
                 this.employeeForm.attachmentList.push({name: this.attachmentName, path: "", type: type + 1});
                 this.dialogVisible = false;
                 this.attachmentName = "";
             },
+            delFileItem(i) {
+                this.employeeForm.attachmentList.splice(i, 1);
+            },
             delFile(i) {
-                console.log(i);
-                if(i>6) {
-                    this.employeeForm.attachmentList.splice(i, 1);
-                }
-                else {
-                    this.employeeForm.attachmentList[i].path="";
-                    this.employeeForm.attachmentList[i].suffix="";
-                    this.employeeForm.attachmentList[i].size="";
-                }
-
+                this.employeeForm.attachmentList[i].path = "";
+                this.employeeForm.attachmentList[i].suffix = "";
+                this.employeeForm.attachmentList[i].size = "";
             },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
@@ -734,9 +747,9 @@
                 }
                 if (file.response.status == 0) {
                     let data = file.response.data;
-                    this.employeeForm.attachmentList[this.attachmentType].path=data.path;
-                    this.employeeForm.attachmentList[this.attachmentType].suffix=data.suffix;
-                    this.employeeForm.attachmentList[this.attachmentType].size=data.size;
+                    this.employeeForm.attachmentList[this.attachmentType].path = data.path;
+                    this.employeeForm.attachmentList[this.attachmentType].suffix = data.suffix;
+                    this.employeeForm.attachmentList[this.attachmentType].size = data.size;
                 }
                 this.$emit("update:employeeForm.attachmentList", this.employeeForm.attachmentList.slice(-this.size));
             },
