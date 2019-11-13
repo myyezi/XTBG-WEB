@@ -489,20 +489,21 @@
                 float: left;
                 height: 100%;
                 width: calc(100% - 65px);
+                color: #333;
+                &:hover {
+                    color: #29c9bb;
+                    transform:scale(1.1);
+                }
                 span {
                     display: block;
                     height: 25px;
                     line-height: 25px;
-                    color: #333;
                     width: 100%;
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
                     cursor: pointer;
-                    &:hover {
-                        color: #29c9bb;
-                        transform:scale(1.1);
-                    }
+
                 }
                 span:nth-child(1) {
                     font-size: 16px;
