@@ -98,7 +98,7 @@
         </el-tabs>
         <div class="drawer_footer">
             <el-button @click="handleCloseDrawer">取消</el-button>
-            <el-button type="primary">保存</el-button>
+            <el-button type="primary" @click="saveData">保存</el-button>
         </div>
         <el-dialog title="人员设置" :visible.sync="dialogFormVisible" :append-to-body="true">
             <el-tree
@@ -123,8 +123,9 @@
 <script>
 import {mapGetters} from 'vuex'
 import ajax from '@/utils/request'
+import Bus from "@/utils/eventBus.js";
 export default {
-    props: ['drawerTitle','drawerType'],
+    props: ['drawerTitle','drawerType','drawerId'],
     data () {
         return {
             dialogFormVisible:false,
@@ -246,6 +247,30 @@ export default {
             console.log(this.seleteOrganizationListId)
             console.log(this.seleteUserListId)
             console.log(this.seleteListName)
+        },
+        saveData() {
+            let obj = {
+                nodeType:this.drawerType,
+                id:this.drawerId,
+                sourceNodes:this.seleteUserListId,
+            }
+            if(this.drawerType==1) {
+                obj.sponsor = 1
+            } else if(this.drawerType==2) {
+                obj.approver = this.approverForm.redio
+            } else if(this.drawerType==3) {
+
+            } else if(this.drawerType==4) {
+
+            }
+            ajax.post('workflow/workflowconfignode/updateConfigNodeCacheSource',obj).then(rs => {
+                if (rs.status === 0) {
+                    
+                } else {
+                    this.$message.error(rs.msg);
+                    this.isLoading = false
+                }
+            });
         }
     }
 }
