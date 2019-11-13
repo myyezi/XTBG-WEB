@@ -522,7 +522,7 @@
                     configId:'1'
                 }).then(rs => {
                     if (rs.status === 0) {
-                        // this.workFlowData = rs.data
+                        this.workFlowData = rs.data
                     }
                 });
             },
