@@ -405,6 +405,7 @@ export default {
       this.onChangeProjectTask();
       this.disabledTaskSelect = true;
     }
+    this.getTaskList();
     this.getPlanTreeList();
     this.getDict();
 
@@ -693,6 +694,7 @@ export default {
     // where: 拖拽的类型，top（上面）、center（里面）、bottom（下面）
     onTreeDataChange(list, from, to, where) {
         this.treeData.lists = list;
+        this.isEdit = true;
     },
     changeOpen() {
       // this._getTasksModel();
