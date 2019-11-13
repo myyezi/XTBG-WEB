@@ -5,10 +5,10 @@
             </el-button>
             <el-input v-model="searchParam.codeOrName" placeholder="请输入项目名称或编号" clearable class="zy_input"
                       style="width:190px"></el-input>
-            <el-button type="primary" icon="el-icon-search" size="small" @click="queryList()">查询</el-button>
+            <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1);resetCardList()">查询</el-button>
             <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i
                 :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
-            <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
+            <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList();resetCardList()">重置</el-button>
             <el-button type="primary" icon="el-icon-s-operation" size="small" @click="swtichData()">切换</el-button>
         </div>
         <!-- 展开更多查询开始 -->
@@ -374,12 +374,6 @@
                     this.belongCompanyList = rs.GSDW;
                 });
             },
-            queryList() {
-                this.handleCurrentChange(1);
-                this.cardPage = 1;
-                this.cardList = [];
-                this.getCardList();
-            },
             //重置筛选
             resetList() {
                 this.createTime = [];
@@ -387,11 +381,13 @@
                 this.searchParam = {};
                 this.citySelectArr = [];
                 this.handleCurrentChange(1);
+
+            },
+            resetCardList(){
                 this.cardPage = 1;
                 this.cardList = [];
                 this.getCardList();
             },
-
             getUserList() {
                 ajax.get("power/powerproprietor/getUser").then(rs => {
                     this.userList = rs.data;
