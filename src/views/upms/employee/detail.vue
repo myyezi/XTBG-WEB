@@ -18,13 +18,13 @@
                     <div class="detail-item">
                         <label class="control-label">学历</label>
                         <div class="input-group">
-                            <span>{{employeeForm.education}}</span>
+                            <span>{{employeeForm.educationText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
                         <label class="control-label">职称</label>
                         <div class="input-group">
-                            <span>{{employeeForm.qualification}}</span>
+                            <span>{{employeeForm.qualificationText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
@@ -75,7 +75,7 @@
                     <div class="detail-item">
                         <label class="control-label">员工类型</label>
                         <div class="input-group">
-                            <span>{{employeeForm.type}}</span>
+                            <span>{{employeeForm.typeText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
@@ -87,7 +87,7 @@
                     <div class="detail-item">
                         <label class="control-label">试用期</label>
                         <div class="input-group">
-                            <span>{{employeeForm.probation}}</span>
+                            <span>{{employeeForm.probationText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
@@ -100,12 +100,6 @@
                         <label class="control-label">岗位职级</label>
                         <div class="input-group">
                             <span>{{employeeForm.postLevel}}</span>
-                        </div>
-                    </div>
-                    <div class="detail-item">
-                        <label class="control-label">员工类型</label>
-                        <div class="input-group">
-                            <span>{{employeeForm.type}}</span>
                         </div>
                     </div>
                 </div>
@@ -156,7 +150,7 @@
                     <div class="detail-item">
                         <label class="control-label">户籍类型</label>
                         <div class="input-group">
-                            <span>{{employeeForm.householdRegister}}</span>
+                            <span>{{employeeForm.householdRegisterText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
@@ -168,13 +162,13 @@
                     <div class="detail-item">
                         <label class="control-label">政治面貌</label>
                         <div class="input-group">
-                            <span>{{employeeForm.political}}</span>
+                            <span>{{employeeForm.politicalText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
                         <label class="control-label">婚姻状况</label>
                         <div class="input-group">
-                            <span>{{employeeForm.marital}}</span>
+                            <span>{{employeeForm.maritalText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
@@ -202,7 +196,7 @@
                         <div class="detail-item">
                             <label class="control-label">学历</label>
                             <div class="input-group">
-                                <span>{{item.education}}</span>
+                                <span>{{item.educationText}}</span>
                             </div>
                         </div>
 
@@ -253,7 +247,7 @@
                     <div class="detail-item">
                         <label class="control-label">合同类型</label>
                         <div class="input-group">
-                            <span>{{employeeForm.contractType}}</span>
+                            <span>{{employeeForm.contractTypeText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
@@ -283,7 +277,7 @@
                     <div class="detail-item">
                         <label class="control-label">合同期限</label>
                         <div class="input-group">
-                            <span>{{employeeForm.contractPeriod}}</span>
+                            <span>{{employeeForm.contractPeriodText}}</span>
                         </div>
                     </div>
                     <div class="detail-item">
@@ -306,7 +300,7 @@
                         <div class="detail-item">
                             <label class="control-label">联系人关系</label>
                             <div class="input-group">
-                                <span>{{item.relationship}}</span>
+                                <span>{{item.relationshipText}}</span>
                             </div>
                         </div>
 
@@ -347,14 +341,6 @@
         data() {
             return {
                 employeeForm: {
-                    account: '',
-                    phone: '',
-                    email: '',
-                    wechat: '',
-                    userType: '1',
-                    userStatus: '1',
-                    remark: '',
-                    password: ''
                 },
                 openCollapse: ["1", "2"],//默认打开的面板
                 show: false,//编辑页显示状态
