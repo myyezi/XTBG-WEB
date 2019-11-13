@@ -16,7 +16,7 @@
                 <div class="workflow-end-node">
                     <div class="end-node-text">流程结束</div>
                 </div>
-                <work-setting ref="setting" :drawerTitle="drawerTitle" :drawerType="drawerType"></work-setting>
+                <work-setting ref="setting" :drawerTitle="drawerTitle" :drawerType="drawerType" :drawerId="drawerId"></work-setting>
                 <!-- 流程结束结束 -->
             </div>
         </div>
@@ -24,14 +24,12 @@
 </template>
 <script>
     import ajax from '@/utils/request'
-    import {tool, ruleTool} from '@/utils/common'
     import workItem from './workItem'
     import workSetting from './setting'
     import Bus from "@/utils/eventBus.js";
     export default {
         name: 'workFlow',
         components: {workItem,workSetting},
-        mixins: [tool, ruleTool],
         props: ['workFlowData'],
         data() {
             return {
@@ -40,6 +38,7 @@
                 workDataType:null,
                 drawerTitle:'',
                 drawerType:'',
+                drawerId:'',
                 transformSize:1,
                 zoomSize:100,
                 isLoading:false
@@ -67,6 +66,7 @@
                 this.$refs.setting.open()
                 this.drawerTitle = data.workData.name
                 this.drawerType = data.workData.nodeType
+                this.drawerId = data.workData.id
             })
             Bus.$on("delete-node",data=>{
                 this.workDeleteNode(data)
@@ -186,7 +186,6 @@
             workDeleteNode(data) {
                 let oneWorkData = data.workData
                 this.isLoading = true
-                console.log(data)
                 let obj = {
                     id:oneWorkData.id,
                 }
