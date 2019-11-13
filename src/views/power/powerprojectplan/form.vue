@@ -236,9 +236,9 @@ export default {
         stage: [
           { required: true, message: '请选择所属阶段', trigger: ['change', 'blur'] }
         ],
-        principal: [
-          { required: true, message: '请选择负责人', trigger: ['change', 'blur'] }
-        ],
+        // principal: [
+        //   { required: true, message: '请选择负责人', trigger: ['change', 'blur'] }
+        // ],
         profession: [
           { required: true, message: '请输入专业', trigger: ['blur', 'blur'] }
         ],
@@ -535,7 +535,7 @@ export default {
           align: "left"
         },
         {
-          
+
           title: "工期(天)",
           field: "period",
           width: 150,
@@ -625,7 +625,7 @@ export default {
                 _this.$message.error("最多只能添加到五级级节点");
                 return false
             }
-            
+
             _this.clearValidate('ruleForm')
             _this.dialogVisible = true;
             _this.showContent = false;
