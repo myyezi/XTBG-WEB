@@ -443,6 +443,11 @@ export default {
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
+                    cursor: pointer;
+                    &:hover {
+                        color: #29c9bb;
+                        transform:scale(1.1);
+                    }
                 }
                 span:nth-child(1) {
                     font-size:16px;
