@@ -1,5 +1,5 @@
 <template>
-    <div class="fd-nav-content">
+    <div class="fd-nav-content" v-loading="isLoading">
         <div class="workflow-design" id="workflow">
             <div class="workflow-zoom">
                 <i class="el-icon-remove-outline" @click="changeSize('small')"></i>
@@ -38,11 +38,11 @@
                 workData:this.workFlowData,
                 oneWorkData:{},
                 workDataType:null,
-                childNode:'',
                 drawerTitle:'',
                 drawerType:'',
                 transformSize:1,
-                zoomSize:100
+                zoomSize:100,
+                isLoading:false
             }
         },
         mounted() {
@@ -57,13 +57,19 @@
                 this.workAddNotifier(data)
             })
             Bus.$on("work-add-route",data=>{
-                this.workAddRoute(data)
+                this.workAddRoute(data,5)
+            })
+            Bus.$on("work-add-one-route",data=>{
+                this.workAddRoute(data,4)
             })
             Bus.$on("setting-count",data=>{
                 console.log(data)
                 this.$refs.setting.open()
                 this.drawerTitle = data.workData.name
-                this.drawerType = data.workData.type
+                this.drawerType = data.workData.nodeType
+            })
+            Bus.$on("delete-node",data=>{
+                this.workDeleteNode(data)
             })
         },
         methods: {
@@ -94,89 +100,122 @@
                     this.oneWorkData = data.workData
                 }
                 this.workDataType = data.type
-                let obj = Object.assign({}, this.workData)
-                this.workDataHandle(obj)
-                this.workData = Object.assign({}, obj);
+                this.workDataHandle(this.workData)
             },
             // 修改节点名称input框展现隐藏处理
             workDataHandle(data) {
-                if(data.type=='route') {
-                    if(data.conditionNodes&&data.conditionNodes.length>0) {
-                        data.conditionNodes.forEach((item,index)=>{
+                if(data.nodeType == 5) {
+                    if(data.conditionList&&data.conditionList.length>0) {
+                        data.conditionList.forEach((item,index)=>{
                             if(item.properties&&JSON.stringify(item.properties) !== '{}') { 
-                                item.properties.editName = true
-                                if(this.workDataType!==2) {
-                                    if(item.nodeId == this.oneWorkData.nodeId) {
-                                        if(this.workDataType === 1) {
-                                            item.properties.editName = false
-                                        }
-                                        if(this.workDataType === 3) {
-                                            item.childNode = this.childNode
-                                            // this.workData = Object.assign({}, data);
-                                        }
-                                        return
+                                if(item.properties.editName) {
+                                    this.updateNodeName()
+                                }
+                                item.properties.editName = false
+                            } 
+                            if(this.workDataType!==2) {
+                                if(item.id == this.oneWorkData.id) {
+                                    if(this.workDataType === 1) {
+                                        item.properties.editName = true
                                     }
                                 }
                             }
-                            if(item.childNode&&JSON.stringify(item.childNode[0]) !== '{}') {
-                                this.workDataHandle(item.childNode[0])
-                            }
+                            this.workDataHandle(item)
                         })
                     }
-                    if(data.childNode&&JSON.stringify(data.childNode[0]) !== '{}') {
-                        this.workDataHandle(data.childNode[0])
-                    }
+                    if(data.children&&data.children.length >0) {
+                        this.workDataHandle(data.children[0])
+                    } 
                 } else {
                     if(data.properties&&JSON.stringify(data.properties) !== '{}') { 
-                        console.log(data)
-                        data.properties.editName = true
-                        if(this.workDataType!==2) {
-                            if(data.nodeId == this.oneWorkData.nodeId) {
-                                if(this.workDataType === 1) {
-                                    data.properties.editName = false
-                                }
-                                if(this.workDataType === 3) {
-                                    if(this.oneWorkData.childNode) {
-                                        let obj = Object.assign({}, this.oneWorkData.childNode);
-                                        data.childNode = this.childNode
-                                        data.childNode.childNode = obj
-                                    } else {
-                                        data.childNode = this.childNode
-                                    }
-                                    // this.workData = Object.assign({}, data);
-                                }
+                        if(data.properties.editName&&data.nodeType != 4) {
+                            this.updateNodeName()
+                        }
+                        data.properties.editName = false
+                    } 
+                    if(this.workDataType!==2) {
+                        if(data.id == this.oneWorkData.id) {
+                            if(this.workDataType === 1) {
+                                data.properties.editName = true
                             }
                         }
                     }
-                    if(data.childNode&&JSON.stringify(data.childNode[0]) !== '{}') {
-                        this.workDataHandle(data.childNode[0])
-                    }
+                    if(data.children&&data.children.length >0) {
+                        this.workDataHandle(data.children[0])
+                    } 
                 }
             },
             // 添加审批人
             workAddApprover(data) {
                 let oneWorkData = data.workData
-                let nodeId = this.generateUUID()
-                this.childNode = {
-                    name:"审批人",
-                    type:"approver",
-                    prevId:oneWorkData.nodeId,
-                    nodeId:nodeId,
-                    properties:{
-                        editName:true
-                    }
-                }
-                this.transferStation({workData:oneWorkData,type:3})
+                this.isLoading = true
+                this.addNode(oneWorkData,2)
+                // this.transferStation({workData:oneWorkData,type:3})
             },
             // 添加抄送人
             workAddNotifier(data) {
                 let oneWorkData = data.workData
-                let nodeId = this.generateUUID()
+                this.isLoading = true
+                this.addNode(oneWorkData,3)
             },
             // 添加分支
-            workAddRoute(data) {
+            workAddRoute(data,type) {
                 let oneWorkData = data.workData
-                let nodeId = this.generateUUID()
+                this.isLoading = true
+                this.addNode(oneWorkData,type)
+            },
+            // 添加节点请求
+            addNode(data,type) {
+                let obj = {
+                    nodeType:type,
+                    parentId:data.id,
+                    configId:'1'
+                }
+                ajax.post('workflow/workflowconfignode/saveConfigNodeTree',obj).then(rs => {
+                    if (rs.status === 0) {
+                        this.workData = rs.data[0]
+                        this.initLocation()
+                        this.isLoading = false
+                    } else {
+                        this.$message.error(rs.msg);
+                        this.isLoading = false
+                    }
+                });
+            },
+            // 删除节点
+            workDeleteNode(data) {
+                let oneWorkData = data.workData
+                this.isLoading = true
+                console.log(data)
+                let obj = {
+                    id:oneWorkData.id,
+                }
+                ajax.get('workflow/workflowconfignode/deleteConfigNodeCache',obj).then(rs => {
+                    if (rs.status === 0) {
+                        this.workData = rs.data[0]
+                        this.initLocation()
+                        this.isLoading = false
+                    } else {
+                        this.$message.error(rs.msg);
+                        this.isLoading = false
+                    }
+                });
+            },
+            // 修改名称
+            updateNodeName() {
+                // this.isLoading = true
+                let obj = {
+                    name:this.oneWorkData.name,
+                    id:this.oneWorkData.id,
+                }
+                ajax.post('workflow/workflowconfignode/updateConfigNodeCacheName',obj).then(rs => {
+                    if (rs.status === 0) {
+                        this.isLoading = false
+                    } else {
+                        this.$message.error(rs.msg);
+                        this.isLoading = false
+                    }
+                });
             },
             // 得到唯一流程id标示
             generateUUID() {

@@ -110,6 +110,7 @@
                 ajax.get('upms/organization/getCompanyByUserId').then(result => {
                     this.companys = result.data;
                     console.log(this.user.managementCompanyId);
+                    localStorage.setItem(this.user.userId+'companyId', this.user.managementCompanyId);
                     this.companys.forEach(item=>{
                         if(item.id==this.user.managementCompanyId){
                             this.companyId = item.id;
