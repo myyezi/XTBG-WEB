@@ -129,7 +129,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="ok">确 定</el-button>
+        <el-button type="primary" @click="sure">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 用户选择器 -->
@@ -195,6 +195,8 @@ export default {
         }
       },
       titleImg: require('@/styles/img/add.png'),
+      isAddFirst: false,
+      newList: [],
 
       openCollapse: ["1", "2"],
       isOpen: false,
@@ -216,9 +218,9 @@ export default {
       tempArr: [],
       showSaveDraftBtn: false,
       isEdit: false,
-      addImg : require('@/styles/img/icon-img/add.png'),
-      editImg : require('@/styles/img/icon-img/edit.png'),
-      deletedImg : require('@/styles/img/icon-img/deleted.png'),
+      addImg: require('@/styles/img/icon-img/add.png'),
+      editImg: require('@/styles/img/icon-img/edit.png'),
+      deletedImg: require('@/styles/img/icon-img/deleted.png'),
       rules: {
         name: [
           { required: true, message: '请输入工作内容', trigger: ['change', 'blur'] }
@@ -403,83 +405,14 @@ export default {
       this.onChangeProjectTask();
       this.disabledTaskSelect = true;
     }
-    Bus.$on("task-updated", data => {
-      let _$this = this;
-      let flag = false;
-      this.tasks.data.forEach((item) => {
-        if (item.parent && item.parent == data.id) {
-          flag = true;
-        }
-      });
-      this.clearValidate('ruleForm');
-      if (data.operationType === 'add') {
-        this.powerprojectplanform = {
-          isApproval: 1,
-          isUpload: 1,
-          isPosition: 1
-        };
-        this.dialogVisible = true;
-        this.showContent = true;
-        this.operationType = "add";
-      } else if (data.operationType === 'inserted') {
-        console.log(data)
-        ajax.get('power/powerprojectplan/' + data.id).then(rs => {
-          if (rs.data.level >= 5) {
-            this.$message.error("最多只能添加到三级节点");
-            return false
-          }
-
-          this.powerprojectplanform = {
-            isApproval: 1,
-            isUpload: 1,
-            isPosition: 1
-          };
-          this.dialogVisible = true;
-          this.showContent = false;
-          this.formData.id = data.id;
-          this.operationType = "inserted";
-        });
-
-      } else if (data.operationType === 'updated') {
-        this.operationType = "updated";
-        if (this.tasks.data && this.tasks.data.length > 0) {
-          this.tasks.data.forEach((item) => {
-            if (data.id == item.id) {
-              this.powerprojectplanform = item;
-              // 解除双向绑定，保留原始对象值
-              this.tempplanform = JSON.parse(JSON.stringify(item));
-            }
-          });
-        }
-        if (this.powerprojectplanform.parent == "0") {
-          this.showContent = true;
-        } else {
-          this.showContent = false;
-        }
-        this.dialogVisible = true;
-      } else if (data.operationType === 'deleted') {
-        this.operationType = "deleted";
-        let message = flag ? "确定删除该节点及以下节点?" : "确定删除该节点?";
-        this.$confirm(message, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }).then(function () {
-          _$this.getNodeProcessing(data, _$this.dataArr);
-        }).catch(function () {
-        });
-      }
-    });
-
-    //this.getTaskList();
     this.getPlanTreeList();
     this.getDict();
 
 
   },
   methods: {
-    getPlanTreeList(){
-        ajax.get('power/powerprojectplan/getPlanTreeList/'+this.taskId).then(rs => {
+    getPlanTreeList() {
+      ajax.get('power/powerprojectplan/getPlanTreeList/' + this.taskId).then(rs => {
         if (rs.status === 0) {
           this.treeData.lists = rs.data;
         } else {
@@ -502,29 +435,29 @@ export default {
           onclick: this.onAddFirst,
           actions: [
             {
-                    text: "新增",
-                    onclick: this.onAdd,
-                    formatter: item => {
-                        if(item.level>4){
-                            return "";
-                        }
-                        return "<img src='" + this.addImg + "' title='新增' style='margin-right:15px;vertical-align: middle;'/>";
-                    }
-                },
-                {
-                    text: "编辑",
-                    onclick: this.onEdit,
-                    formatter: item => {
-                        return "<img src='" + this.editImg + "' title='编辑' style='margin-right:15px;vertical-align: middle;'/>";
-                    }
-                },
-                {
-                    text: "删除",
-                    onclick: this.onDelete,
-                    formatter: item => {
-                        return "<img src='" + this.deletedImg + "' title='删除' style='margin-right:15px;vertical-align: middle;'/>";
-                    }
-                },
+              text: "新增",
+              onclick: this.onAddNode,
+              formatter: item => {
+                if (item.level > 4) {
+                  return "";
+                }
+                return "<img src='" + this.addImg + "' title='新增' style='margin-right:15px;vertical-align: middle;'/>";
+              }
+            },
+            {
+              text: "编辑",
+              onclick: this.onEditNode,
+              formatter: item => {
+                return "<img src='" + this.editImg + "' title='编辑' style='margin-right:15px;vertical-align: middle;'/>";
+              }
+            },
+            {
+              text: "删除",
+              onclick: this.onDeleteNode,
+              formatter: item => {
+                return "<img src='" + this.deletedImg + "' title='删除' style='margin-right:15px;vertical-align: middle;'/>";
+              }
+            },
           ]
         },
         {
@@ -535,7 +468,7 @@ export default {
           align: "left"
         },
         {
-          
+
           title: "工期(天)",
           field: "period",
           width: 150,
@@ -599,59 +532,112 @@ export default {
     },
     // 增加一级节点
     onAddFirst() {
-      this.dialogVisible = true;
+      this.onAddNode(1);
       this.showContent = true;
-      this.operationType = "add";
     },
 
     // 增加节点
-    onAdd(data) {
-        this.powerprojectplanform = {
-            isApproval : 1,
-            isUpload : 1,
-            isPosition :1
-        };
-        this.dialogVisible = true;
-        this.showContent = true;
-        this.operationType = "add";
+    onAddNode(data) {
+      this.showContent = false;
+      this.clearValidate('ruleForm')
+      this.powerprojectplanform = {
+        isApproval: 1,
+        isUpload: 1,
+        isPosition: 1
+      };
+      this.isAddFirst = false;
+      if (data === 1) {
+        this.isAddFirst = true;
+      } else {
+        this.formData = data;
+      }
+      this.dialogVisible = true;
+
+      this.operationType = "add";
     },
     // 编辑节点
-    onEdit(data) {
+    onEditNode(data) {
       let _this = this
       _this.operationType = 'edit'
       ajax.get('power/powerprojectplan/' + data.id).then(rs => {
-          debugger
-            if(rs.data.level >= 5) {
-                _this.$message.error("最多只能添加到五级级节点");
-                return false
-            }
-            
-            _this.clearValidate('ruleForm')
-            _this.dialogVisible = true;
-            _this.showContent = false;
-            _this.powerprojectplanform = rs.data;
-            _this.operationType = "inserted";
-        });
+        if (rs.data.level >= 5) {
+          _this.$message.error("最多只能添加到五级级节点");
+          return false
+        }
+
+        _this.clearValidate('ruleForm')
+        _this.dialogVisible = true;
+        _this.showContent = false;
+        _this.powerprojectplanform = rs.data;
+        _this.operationType = "inserted";
+      });
     },
     // 删除节点
-    onDelete(data) {
+    onDeleteNode(data) {
       let _this = this
       let str = ''
       this.operationType = 'delete'
-      if (data.children&&data.children.length>0) {
-          str = '该节点下有子节点，会统一删除，确定要删除吗？'
+      if (data.children && data.children.length > 0) {
+        str = '该节点下有子节点，会统一删除，确定要删除吗？'
       } else {
-          str = '确定要删除该节点吗？'
+        str = '确定要删除该节点吗？'
       }
-      this.$confirm(str ,'提示', {
+      this.$confirm(str, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
-      }).then(function() {
-        _this.deleteProjectevaluatetemplate(data,_this.treeData.lists)
-      }).catch(function() {
+      }).then(function () {
+        _this.isEdit = true;
+        _this.processProjectPlanNode(data, _this.treeData.lists)
+      }).catch(function () {
       });
     },
+    // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
+    processProjectPlanNode(data, node) {
+      if (this.operationType === 'add') {
+        data.id = new Date().getTime()
+        this.$message({
+          message: '新增成功',
+          type: 'success'
+        });
+        this.dialogFormVisible = false;
+        if (this.isAddFirst) {
+          this.treeData.lists.push(data);
+        } else {
+          if (!this.formData.children) {
+            this.$set(this.formData, 'children', []);
+          }
+          this.formData.children.push(data);
+        }
+      } else if (this.operationType === 'delete') {
+        node.forEach((item, index) => {
+          if (item.id === data.id) {
+            node.splice(index, 1);
+          } else {
+            if (item.children && item.children.length > 0) {
+              this.processProjectPlanNode(data, item.children)
+            }
+          }
+        });
+      } else {
+        this.$message({
+          message: '编辑成功',
+          type: 'success'
+        });
+        this.dialogFormVisible = false;
+        // 弹窗表单修改的字段需要给formData中对应的字段附值
+        this.formData.name = data.name;
+        this.formData.nameType = data.nameType;
+        this.formData.period = data.period;
+        this.formData.profession = data.profession;
+        this.formData.stage = data.stage;
+        this.formData.isApproval = data.isApproval;
+        this.formData.isUpload = data.isUpload;
+        this.formData.isPosition = data.isPosition;
+        this.formData.professionText = data.professionText;
+      }
+    },
+
     // 获取字典
     getDict() {
       let type = 'GCJD,GZNR,ZY';
@@ -700,6 +686,13 @@ export default {
       } else {
         this.powerprojecttaskForm = [];
       }
+    },
+    // list:更新后的数据源
+    // from: 当前被拖拽的行
+    // to: 目标拖拽行
+    // where: 拖拽的类型，top（上面）、center（里面）、bottom（下面）
+    onTreeDataChange(list, from, to, where) {
+        this.treeData.lists = list;
     },
     changeOpen() {
       // this._getTasksModel();
@@ -848,7 +841,7 @@ export default {
     },
 
     // 弹框“确定”操作
-    ok() {
+    sure() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
           let newChild = this.powerprojectplanform;
@@ -914,7 +907,7 @@ export default {
               });
             }
           }
-          this.getNodeProcessing(newChild);
+          this.processProjectPlanNode(newChild);
         } else {
           return false;
         }
@@ -945,63 +938,6 @@ export default {
       let maxSortNum = arr[arr.length - 1];
       return maxSortNum + 1;
     },
-
-    // 前端删除和编辑节点时的处理（可以不用调查询接口），增加需调接口
-    getNodeProcessing(data, node) {
-      if (this.operationType === 'add' || this.operationType === 'inserted') {
-        data.id = new Date().getTime()
-        this.$message({
-          message: '新增成功',
-          type: 'success'
-        });
-        this.dialogVisible = false;
-        this.dataArr.push(data);
-        let obj = {};
-        this.isLoading = true;
-        obj.data = this.dataArr;
-        this.tasks = obj;
-      } else if (this.operationType === 'deleted') {
-        this.isEdit = true;
-        var newNodes = this.loopDeleteNode(data, node);
-        this.dataArr = newNodes;
-        let obj = {};
-        this.isLoading = true;
-        obj.data = this.dataArr;
-        this.tasks = obj;
-      } else {
-        this.$message({
-          message: '编辑成功',
-          type: 'success'
-        });
-        this.dialogVisible = false;
-        //this.dataArr.push(data);
-        let obj = {};
-        this.isLoading = true;
-        obj.data = this.dataArr;
-        this.tasks = obj;
-      }
-    },
-    loopDeleteNode(data, nodes) {
-      var deleteArr = [];
-      this.getDeteleNodeArr(data, nodes, deleteArr);
-      for (var i = 0; i < nodes.length; i++) {
-        var item = nodes[i];
-        if (item && deleteArr.indexOf(item.id) > -1) {
-          nodes.splice(i--, 1); // 将使后面的元素依次前移，数组长度减1
-        }
-      }
-      return nodes;
-    },
-    getDeteleNodeArr(data, nodes, deleteArr) {
-      for (var i = 0; i < nodes.length; i++) {
-        var item = nodes[i];
-        if (item && item.id == data.id) {
-          deleteArr.push(item.id);
-        } else if (item && item.parent && item.parent == data.id) {
-          this.getDeteleNodeArr(item, nodes, deleteArr);
-        }
-      }
-    },
     //保存
     submitForm(projectStatus) {
       if (!this.taskId || this.tasks.data.length == 0) {
@@ -1009,18 +945,14 @@ export default {
         return;
       }
       if (this.isEdit) {
-        let newList = [];
-        let obj = {};
-        this.tasks.data.forEach((item) => {
-          obj = item;
-          newList.push(obj);
-        });
+        this.newList = [];
+        this.getNewList(this.treeData.lists);
         ajax.post('power/powerprojectplan', {
           projectStatus: projectStatus,
           tempType: this.tempType,
           taskId: this.taskId,
           projectId: this.projectId,
-          treeDataList: newList
+          treeDataList: this.newList
         }).then(rs => {
           if (rs.status == 0) {
             this.$message.success(rs.msg);
@@ -1041,6 +973,14 @@ export default {
         });
       }
 
+    },
+    getNewList(list) {
+      list.forEach((item) => {
+        this.newList.push(item);
+        if (item.children && item.children.length > 0) {
+          this.getNewList(item.children);
+        }
+      });
     },
 
   },
