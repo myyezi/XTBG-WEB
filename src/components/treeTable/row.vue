@@ -114,7 +114,6 @@
             },
             dragstart(e) {
                 if (navigator.userAgent.indexOf('Firefox') >= 0) {
-                    // Firefox drag have a bug
                     e.dataTransfer.setData('Text', this.id);
                 }
                 window.dragId = e.target.children[0].getAttribute('tree-id')
