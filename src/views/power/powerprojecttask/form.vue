@@ -22,7 +22,7 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="建设单位" prop="proprietorId">
-                <el-select v-model="powerprojecttaskForm.proprietorId"  filterable clearable placeholder="请选择建设单位" @change="loadContact">
+                <el-select v-model="powerprojecttaskForm.proprietorId"  filterable clearable allow-create placeholder="请选择建设单位" @change="loadContact">
                     <el-option
                         v-for="item in ProprietorList"
                         :key="item.value"
@@ -32,7 +32,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="联系人" prop="proprietorContactId">
-                <el-select v-model="powerprojecttaskForm.proprietorContactId"  filterable clearable placeholder="请选择联系人">
+                <el-select v-model="powerprojecttaskForm.proprietorContactId"  filterable clearable allow-create placeholder="请选择联系人">
                     <el-option
                         v-for="item in ContactList"
                         :key="item.value"

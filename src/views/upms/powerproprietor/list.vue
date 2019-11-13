@@ -21,7 +21,7 @@
                     <div class="form-group">
                         <label class="control-label">地区</label>
                         <div class="input-group">
-                            <city-select-panel :value.sync="searchParam.districtId" ref="citySelect"></city-select-panel>
+                            <city-select-panel :value.sync="citySelectArr" ref="citySelect" @change="citySelectOnchange"></city-select-panel>
                         </div>
                     </div>
                 </div>
@@ -91,8 +91,9 @@
                 isShowMore:false,
                 contactDialogVisible: false,
                 contactList: [],
-                listUrl: "upms/powerproprietor",
+                listUrl: "power/powerproprietor",
                 showSearch: false,
+                citySelectArr:[],
                 showAddBtn: this.getCurrentUserAuthority("/powerproprietor/save"),
                 showEditBtn: this.getCurrentUserAuthority("/powerproprietor/edit")
             }
@@ -117,12 +118,33 @@
                     params.districtId = '';
                 }
             },
+            //重置筛选
+            resetList() {
+                this.searchParam = {};
+                this.citySelectArr = [];
+                this.handleCurrentChange(1);
+            },
             showContactList(row) {
                 this.contactDialogVisible = true
-                ajax.get('upms/powerproprietor/getContactListById?id='+ row.id).then(rs => {
+                ajax.get('power/powerproprietor/getContactListById?id='+ row.id).then(rs => {
                     this.contactList = rs.data;
                 });
-            }
+            },
+            citySelectOnchange(){
+                this.searchParam.province = "";
+                this.searchParam.city = "";
+                this.searchParam.district = "";
+                if(this.citySelectArr.length>0){
+                    this.searchParam.province = this.citySelectArr[0];
+                    if(this.citySelectArr.length>1){
+                        this.searchParam.city = this.citySelectArr[1];
+                    }
+                    if(this.citySelectArr.length>2){
+                        this.searchParam.district = this.citySelectArr[2];
+                    }
+                }
+        
+            },
         }
     }
 </script>
