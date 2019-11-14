@@ -486,12 +486,15 @@ export default {
         });
         this.dialogFormVisible = false;
         if (this.isAddFirst) {
-          this.$set(this.treeData, 'lists', []);
+          if(!this.treeData.lists){
+            this.$set(this.treeData, 'lists', []);
+          }
           this.treeData.lists.push(data);
         } else {
           if (!this.formData.children) {
             this.$set(this.formData, 'children', []);
           }
+          data.parentId = this.formData.id;
           this.formData.children.push(data);
         }
       } else if (this.operationType === 'delete') {
