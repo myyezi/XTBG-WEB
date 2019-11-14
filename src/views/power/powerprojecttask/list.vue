@@ -141,7 +141,7 @@
     <div class="table-box" v-show="tableShow">
       <ul class="project_table_statistics clearfix">
         <li v-for="(item,index) in cardList" :key="index" class="clearfix">
-          <el-card class="box-card">
+          <el-card class="box-card" shadow="hover">
             <div slot="header" class="clearfix" @click="toDetail(item)" style="cursor: pointer">
               <p>
                 <img :src="imgList[0]" alt="" v-if="item.typeText=='配电'">
