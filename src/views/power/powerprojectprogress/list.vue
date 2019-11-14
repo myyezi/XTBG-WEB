@@ -4,14 +4,29 @@
         <el-input v-model="searchParam.keyWord" placeholder="请输入项目名称或编号" clearable class="zy_input" style="width:190px"></el-input>
         <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
       <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
-      <el-button type="primary" icon="el-icon-refresh" size="small" @click="approvalTime=[];resetList()">重置</el-button>
+      <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
 <!--      <el-button type="primary" icon="el-icon-refresh" size="small" @click="stopUploadShow = true">测试</el-button>-->
     </div>
     <!-- 展开更多查询开始 -->
     <el-collapse-transition>
       <div class="search-box" v-show="isShowMore">
         <div class="form-box">
-
+            <div class="form-group">
+                <label class="control-label">年份</label>
+                <div class="input-group">
+                    <el-date-picker
+                        v-model="year"
+                        type="year"
+                        placeholder="选择年份" value-format="yyyy">
+                    </el-date-picker>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label">地区</label>
+                <div class="input-group">
+                    <city-select-panel :value.sync="citySelectArr" ref="citySelect" @change="citySelectOnchange"></city-select-panel>
+                </div>
+            </div>
           <div class="form-group">
             <label class="control-label">项目类型</label>
             <div class="input-group">
@@ -32,16 +47,12 @@
 <!--          </div>-->
           <div class="form-group">
             <label class="control-label">任务依据</label>
-            <div class="input-group">
-                <el-select v-model="searchParam.source" clearable placeholder="请选择任务依据">
-                    <el-option  label="委托书" value="1"></el-option>
-                    <el-option  label="招标书" value="2"></el-option>
-                    <el-option  label="电话委托" value="3"></el-option>
-                    <el-option  label="中标通知书" value="4"></el-option>
-                    <el-option  label="合同" value="5"></el-option>
-                    <el-option  label="其他" value="6"></el-option>
-                </el-select>
-            </div>
+              <div class="input-group">
+                  <el-select v-model="searchParam.source"  placeholder="请选择任务依据">
+                      <el-option v-for="item in sourceOptions" :key="item.value" :label="item.text" :value="item.value">
+                      </el-option>
+                  </el-select>
+              </div>
           </div>
           <div class="form-group">
             <label class="control-label">项目状态</label>
@@ -84,7 +95,8 @@
             <el-button @click="getExtensionHis(row)" type="text" size="small">延期记录</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="code" sortable shonpm w-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
+          <el-table-column prop="year" sortable show-overflow-tooltip min-width="50" label="年份"></el-table-column>
+          <el-table-column prop="code" sortable shonpm w-overflow-tooltip min-width="100" label="项目编号"></el-table-column>
         <el-table-column prop="name" sortable show-overflow-tooltip min-width="180" label="项目名称"></el-table-column>
         <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
         <el-table-column prop="managerName" sortable show-overflow-tooltip min-width="100" label="项目经理"></el-table-column>
@@ -137,18 +149,21 @@
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
 import StopUpload from '@/components/StopUpload/index'
+import CitySelectPanel from '@/components/CitySelect/index2'
 
 export default {
   name: 'PowerProjectPlan',
   mixins: [tool],
-  components: {StopUpload},
+  components: {StopUpload,CitySelectPanel},
   data() {
     return {
       searchParam: {
       },
       stopUploadShow:false,
-        showExtensionHisDialogVisible: false,
-        showExtensionHisList: [],
+      showExtensionHisDialogVisible: false,
+      showExtensionHisList: [],
+      citySelectArr:[],
+      year :'',
       extDate:'',
       isShowMore: false,
       listUrl: "power/powerproject",
@@ -160,6 +175,7 @@ export default {
       typeOptions:[],
       coDepartmentOptions:[],
       gcjdOptions:[],
+      sourceOptions : [],
       dialogFormVisible:false,
       extensionForm:{},
       saveForm:{},
@@ -182,17 +198,41 @@ export default {
               this.showExtensionHisList = rs.records;
           });
       },
+      citySelectOnchange(){
+          this.searchParam.province = "";
+          this.searchParam.city = "";
+          this.searchParam.district = "";
+          if(this.citySelectArr.length>0){
+              this.searchParam.province = this.citySelectArr[0];
+              if(this.citySelectArr.length>1){
+                  this.searchParam.city = this.citySelectArr[1];
+              }
+              if(this.citySelectArr.length>2){
+                  this.searchParam.district = this.citySelectArr[2];
+              }
+          }
 
+      },
       getListBefore(params) {
           params.initStatus = 1;
+          if(this.year){
+              params.year = this.year;
+          }
+      },
+      resetList(){
+          this.year ='';
+          this.searchParam = {};
+          this.citySelectArr = [],
+          this.handleCurrentChange(1);
       },
       // 获取字典
       getDict() {
-          let r = 'XMLX,GCJD,XBBM';
+          let r = 'XMLX,GCJD,XBBM,RWYJ';
           ajax.get("upms/dict/allType/"+r).then(rs => {
               this.typeOptions = rs.XMLX;
               this.gcjdOptions = rs.GCJD
               this.coDepartmentOptions = rs.XBBM;
+              this.sourceOptions = rs.RWYJ;
           });
       },
       stop(row){

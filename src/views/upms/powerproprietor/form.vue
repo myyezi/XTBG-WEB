@@ -10,7 +10,7 @@
                             <el-input v-model="powerproprietorForm.name" placeholder="请输入业主名称" maxlength=30 clearable></el-input>
                         </el-form-item>
                         <el-form-item label="地区" prop="districtId">
-                            <city-select-panel :value.sync="powerproprietorForm.districtId" ref="citySelect"></city-select-panel>
+                            <city-select-panel :value.sync="citySelectArr" ref="citySelect"  @change="citySelectOnchange"></city-select-panel>
                         </el-form-item>
                         <el-form-item label="详细位置" prop="address">
                             <el-input v-model="powerproprietorForm.address" @click.native="showDialogPosition()" readonly>
@@ -94,7 +94,7 @@
 
         <!-- 位置选择弹框----------------------->
         <el-dialog title="站点位置" :visible.sync="dialogPositionVisible" :append-to-body="true" width="70%">
-            <baidu-map @selectLocation="selectLocation" v-model="position"></baidu-map>
+            <baidu-map @selectLocation="selectLocation" v-model="position" :addressDetail="powerproprietorForm"></baidu-map>
         </el-dialog>
     </div>
 </template>
@@ -119,6 +119,7 @@
                 position: '',
                 openCollapse: ["1", "2"],//默认打开的面板
                 dialogPositionVisible: false,
+                citySelectArr:[],
                 rules: {
                     name: [
                         {required: true, message: '请输入业主名称', trigger: ['blur']}
@@ -127,7 +128,7 @@
                         {required: true, message: '请输入地区', trigger: ['blur']}
                     ],
                     address: [
-                        {required: true, message: '请输入详细地址', trigger: ['blur']}
+                        {required: true, message: '请输入详细地址', trigger: ['blur','change']}
                     ],
                     adress: [
                         {required: true, message: '请输入详细地址', trigger: ['blur']}
@@ -149,7 +150,7 @@
             //进入编辑页调用 bean为列表页传入数据
             open() {
                 if (this.$route.query.id) {
-                    ajax.get('upms/powerproprietor/' + this.$route.query.id).then(rs => {
+                    ajax.get('power/powerproprietor/' + this.$route.query.id).then(rs => {
                         this.powerproprietorForm = rs.data;
                         if (rs.data.districtId && rs.data.districtId.length > 0) {
                             this.powerproprietorForm.districtId = rs.data.districtId.split(",");
@@ -157,6 +158,7 @@
                         if (rs.data.address && rs.data.address.length > 0) {
                             this.powerproprietorForm.address = rs.data.address;
                         }
+                        this.citySelectArr = [this.powerproprietorForm.province,this.powerproprietorForm.city,this.powerproprietorForm.district]
                     });
                 } else {
                     this.powerproprietorForm.contactList= [];
@@ -174,7 +176,7 @@
                     if (Array.isArray(this.powerproprietorForm.districtId) && this.powerproprietorForm.districtId.length == 3) {
                         data.districtId = this.powerproprietorForm.districtId[2];
                     }
-                    ajax.post('upms/powerproprietor', data).then(rs => {
+                    ajax.post('power/powerproprietor', data).then(rs => {
                         if (rs.status == 0) {
                             this.$message.success(rs.msg);
                             this.close();
@@ -190,9 +192,13 @@
 
             selectLocation(location) {
                 console.log(location)
+                let adcode =  location.adcode;
+                let province = adcode.substring(0,2)+"0000";
+                let city = adcode.substring(0,4)+"00";
                 this.powerproprietorForm.address = location.address;
                 this.powerproprietorForm.longitude = location.lng;
                 this.powerproprietorForm.latitude = location.lat;
+                
                 this.dialogPositionVisible = false;
             },
             addItem() {
@@ -207,6 +213,21 @@
                 });
             },
 
+            citySelectOnchange(){
+                this.powerproprietorForm.province = "";
+                this.powerproprietorForm.city = "";
+                this.powerproprietorForm.district = "";
+                if(this.citySelectArr.length>0){
+                    this.powerproprietorForm.province = this.citySelectArr[0];
+                    if(this.citySelectArr.length>1){
+                        this.powerproprietorForm.city = this.citySelectArr[1];
+                    }
+                    if(this.citySelectArr.length>2){
+                        this.powerproprietorForm.district = this.citySelectArr[2];
+                    }
+                }
+        
+            },
         },
     }
 </script>

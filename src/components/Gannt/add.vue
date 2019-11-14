@@ -45,7 +45,7 @@ export default {
         return;
       gantt.attachEvent("onTaskRowClick", (id, row) => {
           if(row.outerHTML.indexOf('新增')!=-1) {
-              Bus.$emit("task-updated",{id:id,operationType:'inserted'}); 
+              Bus.$emit("task-updated",{id:id,operationType:'inserted'});
           }
           if(row.outerHTML.indexOf('编辑')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'updated'});
@@ -65,24 +65,33 @@ export default {
           if(row.outerHTML.indexOf('完 成')!=-1) {
               Bus.$emit("task-updated",{id:id,operationType:'finish'});
           }
+          if(row.outerHTML.indexOf('位置')!=-1) {
+              Bus.$emit("task-updated",{id:id,operationType:'position'});
+          }
+          if(row.outerHTML.indexOf('列表')!=-1) {
+              Bus.$emit("task-updated",{id:id,operationType:'selectPosition'});
+          }
+          if(row.outerHTML.indexOf('审批记录')!=-1) {
+              Bus.$emit("task-updated",{id:id,operationType:'approvalList'});
+          }
       });
 
       gantt.attachEvent("onGridHeaderClick", (name, e) => {
         if(name === 'addNode') {
-            Bus.$emit("task-updated",{id:0,operationType:'add'}); 
+            Bus.$emit("task-updated",{id:0,operationType:'add'});
         }
       });
 
       gantt.attachEvent('onAfterLinkAdd', (id, link) => {
-        Bus.$emit("link-updated",{id:id,operationType:'inserted',link:link}); 
+        Bus.$emit("link-updated",{id:id,operationType:'inserted',link:link});
       })
 
       gantt.attachEvent('onAfterLinkUpdate', (id, link) => {
-        Bus.$emit("link-updated",{id:id,operationType:'updated',link:link}); 
+        Bus.$emit("link-updated",{id:id,operationType:'updated',link:link});
       })
 
       gantt.attachEvent('onAfterLinkDelete', (id, link) => {
-        Bus.$emit("link-updated",{id:id,operationType:'deleted'}); 
+        Bus.$emit("link-updated",{id:id,operationType:'deleted'});
       })
 
       // gantt.eachParent(function(task){
@@ -112,8 +121,8 @@ export default {
 
         // 允许通过拖拽的方式新增任务依赖的线条
          gantt.config.drag_links = false;
-      //当task的长度改变时，自动调整图表坐标轴区间用于适配task的长度    
-        gantt.config.fit_tasks = true; 
+      //当task的长度改变时，自动调整图表坐标轴区间用于适配task的长度
+        gantt.config.fit_tasks = true;
         // 禁止拖拽
         gantt.config.drag_move = false;
         // 禁止双击
@@ -162,7 +171,7 @@ export default {
 
 <style>
   /* @import "dhtmlx-gantt/codebase/dhtmlxgantt.css";	 */
-  @import "../dhtmlx-gantt/codebase/skins/dhtmlxgantt_skyblue.css";	
+  @import "../dhtmlx-gantt/codebase/skins/dhtmlxgantt_skyblue.css";
   /* .gantt{
       height:100%;
       width: 100%;

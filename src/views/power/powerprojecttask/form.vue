@@ -7,14 +7,22 @@
             <el-form-item label="项目名称" prop="name">
               <el-input v-model="powerprojecttaskForm.name" placeholder="请输入项目名称" maxlength=100 show-word-limit clearable></el-input>
             </el-form-item>
-              <el-form-item label="项目类型" prop="type">
-                  <el-select v-model="powerprojecttaskForm.type" clearable placeholder="请选择项目类型" @change="chickProjectType(powerprojecttaskForm.type)">
-                      <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value" >
-                      </el-option>
-                  </el-select>
-              </el-form-item>
+            <el-form-item label="项目类型" prop="type">
+                <el-select v-model="powerprojecttaskForm.type" clearable placeholder="请选择项目类型" @change="chickProjectType(powerprojecttaskForm.type)">
+                    <el-option v-for="item in typeOptions" :key="item.value" :label="item.text" :value="item.value" >
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="项目年份" prop="year">
+                <el-date-picker
+                  v-model="powerprojecttaskForm.year"
+                  type="year"
+                  value-format="yyyy"
+                  placeholder="请选择项目年份">
+                </el-date-picker>
+            </el-form-item>
             <el-form-item label="建设单位" prop="proprietorId">
-                <el-select v-model="powerprojecttaskForm.proprietorId"  filterable clearable placeholder="请选择建设单位" @change="loadContact">
+                <el-select v-model="powerprojecttaskForm.proprietorId"  filterable clearable allow-create placeholder="请选择建设单位" @change="loadContact">
                     <el-option
                         v-for="item in ProprietorList"
                         :key="item.value"
@@ -24,7 +32,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="联系人" prop="proprietorContactId">
-                <el-select v-model="powerprojecttaskForm.proprietorContactId"  filterable clearable placeholder="请选择联系人">
+                <el-select v-model="powerprojecttaskForm.proprietorContactId"  filterable clearable allow-create placeholder="请选择联系人">
                     <el-option
                         v-for="item in ContactList"
                         :key="item.value"
@@ -34,14 +42,10 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="任务依据" prop="source">
-                  <el-select v-model="powerprojecttaskForm.source" clearable placeholder="请选择任务依据">
-                      <el-option  label="委托书" value="1"></el-option>
-                      <el-option  label="招标书" value="2"></el-option>
-                      <el-option  label="电话委托" value="3"></el-option>
-                      <el-option  label="中标通知书" value="4"></el-option>
-                      <el-option  label="合同" value="5"></el-option>
-                      <el-option  label="其他" value="6"></el-option>
-                  </el-select>
+                <el-select v-model="powerprojecttaskForm.source"  placeholder="请选择任务依据">
+                    <el-option v-for="item in sourceOptions" :key="item.value" :label="item.text" :value="item.value">
+                    </el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="相关设计" prop="relatedDesign">
                 <el-select v-model="powerprojecttaskForm.relatedDesign" multiple filterable default-first-option placeholder="请选择相关设计">
@@ -65,7 +69,7 @@
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="签收人" prop="signer">
+            <!-- <el-form-item label="签收人" prop="signer">
                 <el-select v-model="powerprojecttaskForm.signer"  filterable clearable placeholder="请选择签收人" >
                     <el-option
                         v-for="item in userList"
@@ -74,28 +78,36 @@
                         :value="item.id">
                     </el-option>
                 </el-select>
+            </el-form-item> -->
+            <el-form-item label="归属单位" prop="belongCompany">
+                <el-select v-model="powerprojecttaskForm.belongCompany"  filterable clearable placeholder="请选择归属单位" >
+                    <el-option
+                        v-for="item in belongCompanyList"
+                         :key="item.value" :label="item.text" :value="item.value" >
+                    </el-option>
+                </el-select>
             </el-form-item>
-              <div class="flex-panel" style="padding-left: 10px">
-                  <el-form-item label="项目位置" prop="adress">
-                      <el-input v-model="powerprojecttaskForm.adress" @click.native="showDialogAdress()" readonly>
-                          <el-button slot="append" icon="el-icon-search"></el-button>
-                      </el-input>
-                  </el-form-item>
-                  <el-form-item label="经度">
-                      <el-input v-model="powerprojecttaskForm.longitude" placeholder="请确认位置"
-                                maxlength="10" disabled></el-input>
-                  </el-form-item>
-                  <el-form-item label="纬度">
-                      <el-input v-model="powerprojecttaskForm.latitude" placeholder="请确认位置"
-                                maxlength="10" disabled></el-input>
-                  </el-form-item>
-              </div>
+            <div class="flex-panel" style="padding-left: 10px">
+                <el-form-item label="项目位置" prop="adress">
+                    <el-input v-model="powerprojecttaskForm.adress" @click.native="showDialogAdress()" readonly>
+                        <el-button slot="append" icon="el-icon-search"></el-button>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="经度">
+                    <el-input v-model="powerprojecttaskForm.longitude" placeholder="请确认位置"
+                              maxlength="10" disabled></el-input>
+                </el-form-item>
+                <el-form-item label="纬度">
+                    <el-input v-model="powerprojecttaskForm.latitude" placeholder="请确认位置"
+                              maxlength="10" disabled></el-input>
+                </el-form-item>
+            </div>
             <el-form-item label="设计规模" prop="designScale" class="big">
               <el-input v-model="powerprojecttaskForm.designScale" placeholder="请输入设计规模" maxlength=200 show-word-limit clearable></el-input>
             </el-form-item>
-            <el-form-item label="设计范围" prop="designRange" class="big">
+            <!-- <el-form-item label="设计范围" prop="designRange" class="big">
               <el-input v-model="powerprojecttaskForm.designRange" placeholder="请输入设计范围" maxlength=200 show-word-limit clearable></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="项目进度要求" prop="progress" class="big">
               <el-input v-model="powerprojecttaskForm.progress" placeholder="请输入项目进度要求" maxlength=200 show-word-limit clearable></el-input>
             </el-form-item>
@@ -113,7 +125,6 @@
                   :on-exceed="handleExceed"
                   :file-list="saveList">
                   <el-button size="small" type="primary" >上传附件</el-button>
-<!--                  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
               </el-upload>
           </div>
         </el-collapse-item>
@@ -130,6 +141,7 @@
 </template>
 
 <script>
+import {mapGetters} from 'vuex'
 import ajax from '@/utils/request'
 import { tool, ruleTool } from '@/utils/common'
 import BaiduMap from '@/components/BaiduMap/index'
@@ -138,22 +150,31 @@ import UploadPanel from '@/components/UploadPanel/index'
 export default {
   mixins: [tool, ruleTool],
   components: {BaiduMap,UploadPanel},
+  computed: {
+      ...mapGetters([
+          'user',
+      ])
+    },
   data() {
     return {
       uploadUrl: process.env.BASE_API + "file/upload/multipart",
       saveList: [],
       powerprojecttaskForm: {
+          year: '',
+          belongCompany:'',
           proprietorContactId:'',
           adress:'',
           longitude:'',
           latitude:''
       },
       typeOptions: [],
+      sourceOptions:[],
       designOptions:[],
       ProprietorList:[],
       coDepartmentOptions:[],
       ContactList:[],
       userList:[],
+      belongCompanyList:[],
       dialogAdressVisible:false,
       adress : '',
       file: [],
@@ -168,9 +189,9 @@ export default {
         proprietorId: [
           { required: true, message: '请选择建设单位', trigger: ['blur'] }
         ],
-        // proprietorContactId: [
-        //   { required: true, message: '请选择联系人', trigger: ['blur'] }
-        // ],
+        year: [
+          { required: true, message: '请选择年份', trigger: ['blur'] }
+        ],
         source: [
           { required: true, message: '请选择任务依据', trigger: ['blur'] }
         ],
@@ -183,14 +204,11 @@ export default {
         manager: [
           { required: true, message: '请选择项目经理', trigger: ['blur'] }
         ],
-        signer: [
-          { required: true, message: '请选择签收人', trigger: ['blur'] }
+        belongCompany: [
+          { required: true, message: '请选择归属单位', trigger: ['blur'] }
         ],
         designScale: [
           { required: true, message: '请输入设计规模', trigger: ['blur'] }
-        ],
-        designRange: [
-          { required: true, message: '请输入设计范围', trigger: ['blur'] }
         ],
         progress: [
           { required: true, message: '请输入项目进度要求', trigger: ['blur'] }
@@ -215,7 +233,6 @@ export default {
     this.open();
     this.getProprietor();
     this.getUserList();
-
   },
   methods: {
 
@@ -239,11 +256,14 @@ export default {
 
       // 获取字典
       getDict() {
-       let r = 'XMLX,XBBM';
+       let managementCompanyId = this.user.managementCompanyId;
+       let r = 'XMLX,XBBM,RWYJ,'+managementCompanyId;
           ajax.get("upms/dict/allType/"+r).then(rs => {
               this.typeOptions = rs.XMLX;
               // this.designOptions = rs.XGSJ
               this.coDepartmentOptions = rs.XBBM;
+              this.sourceOptions = rs.RWYJ;
+              this.belongCompanyList = rs[managementCompanyId];
           });
       },
 
@@ -284,7 +304,6 @@ export default {
               this.ContactList = rs.data;
           });
       },
-
       loadContact(){
           this.powerprojecttaskForm.proprietorContactId ='';
           this.getContact();
@@ -294,9 +313,12 @@ export default {
       },
       //加载地图
       selectLocation(location) {
+          console.log(location);
+          let adcode =  location.adcode;
           this.powerprojecttaskForm.adress = location.address;
           this.powerprojecttaskForm.longitude = location.lng;
           this.powerprojecttaskForm.latitude = location.lat;
+          this.powerprojecttaskForm.district = adcode;
           this.dialogAdressVisible = false;
       },
     //保存

@@ -26,8 +26,9 @@
       >
       <div class="uploader-file-progress" :class="progressingClass" :style="progressStyle"></div>
       <div class="uploader-file-info">
-        <div class="uploader-file-node-name" v-if="file.nodeName">{{file.nodeName}}</div>
-        <div class="uploader-file-name" :class="{'uploader-file-names':!file.nodeName}"><i class="uploader-file-icon" :icon="fileCategory"></i>{{file.name}}</div>
+        <div class="uploader-file-project-name" v-if="file.projectName" :title="file.projectName">{{file.projectName}}</div>
+        <div class="uploader-file-node-name" v-if="file.nodeName" :title="file.nodeName">{{file.nodeName}}</div>
+        <div class="uploader-file-name" :class="{'uploader-file-names':!file.nodeName}" :title="file.name"><i class="uploader-file-icon" :icon="fileCategory"></i>{{file.name}}</div>
         <div class="uploader-file-size">{{formatedSize}}</div>
         <div class="uploader-file-meta"></div>
         <div class="uploader-file-status">
@@ -352,6 +353,7 @@
   .uploader-file-info em {
     font-style: normal;
   }
+  .uploader-file-project-name,
   .uploader-file-node-name ,
   .uploader-file-name,
   .uploader-file-size,
@@ -362,15 +364,23 @@
     position: relative;
     height: 100%;
   }
+  .uploader-file-project-name {
+    width: 25%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-indent: 3px;
+  }
   .uploader-file-node-name {
     width: 15%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    text-indent: 14px;
+    /* text-indent: 14px; */
+    text-align: center;
   }
   .uploader-file-name {
-    width: 30%;
+    width: 15%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -411,18 +421,18 @@
     content: "📋";
   }
   .uploader-file-size {
-    width: 13%;
+    width: 9%;
     text-indent: 10px;
   }
   .uploader-file-meta {
     width: 8%;
   }
   .uploader-file-status {
-    width: 24%;
+    width: 22%;
     text-indent: 20px;
   }
   .uploader-file-actions {
-    width: 10%;
+    width: 6%;
   }
   .uploader-file-actions > span {
     display: none;

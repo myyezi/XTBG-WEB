@@ -16,9 +16,9 @@
                 :headerTitle="headerTitle">
             </gantt-add>
         </div>
-        <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
+        <!-- <el-dialog title="文件上传" :visible.sync="uploadShow" :class="{'dialog_animation_in':uploadShow,'dialog_animation_out':!uploadShow}" width="800px">
             <stop-upload @func="getResFile" :sourceId = this.id :projectId = this.projectId :nodeName = projectNodeName ></stop-upload>
-        </el-dialog>
+        </el-dialog> -->
 
         <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="200" height="800px">
             <div>
@@ -35,7 +35,12 @@
                             {{scope.$index+1}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称"></el-table-column>
+                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称" class-name="table_column-left">
+                        <template fixed slot-scope="{ row, column, $index }">
+                            <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                            <span>{{row.name}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="size" sortable show-overflow-tooltip min-width="100" label="文件大小">
                         <template slot-scope="scope">
                             {{bytesToSize(scope.row.size)}}
@@ -45,6 +50,36 @@
                     <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="上传时间"></el-table-column>
                 </el-table>
             </div>
+        </el-dialog>
+
+        <el-dialog title="审批记录" :visible.sync="checkFormVisible" :class="{'dialog_animation_in':checkFormVisible,'dialog_animation_out':!checkFormVisible}" width="200" height="800px">
+            <div>
+                <el-table :data="approvalList" style="width: 100%;height: 500px;">
+                    <el-table-column label="序号" width="70px">
+                        <template slot-scope="scope">
+                            {{scope.$index+1}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="createrName" sortable show-overflow-tooltip min-width="100" label="申请人"></el-table-column>
+                    <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100" label="申请时间"></el-table-column>
+                    <el-table-column prop="approverName" sortable show-overflow-tooltip min-width="100" label="审批人"></el-table-column>
+                    <el-table-column prop="approvalTime" sortable show-overflow-tooltip min-width="100" label="审批时间"></el-table-column>
+                    <el-table-column prop="approvalStatusText" sortable show-overflow-tooltip min-width="100" label="审批状态"></el-table-column>
+                    <el-table-column prop="reason" sortable show-overflow-tooltip min-width="100" label="审批原因"></el-table-column>
+                </el-table>
+            </div>
+        </el-dialog>
+
+
+        <el-dialog title="位置列表" :visible.sync="positionListFormVisible" :class="{'dialog_animation_in':positionListFormVisible,'dialog_animation_out':!positionListFormVisible}" width="800px" style="height:600px" >
+            <dragTreeTable
+                class="table-box"
+                :data="treeData"
+                :fixed="true"
+                :onDrag="onTreeDataChange"
+                :isdraggable="true"
+                :height="250">
+            </dragTreeTable>
         </el-dialog>
 
         <el-dialog title="申请完成" :visible.sync="finishFormVisible" :class="{'dialog_animation_in':finishFormVisible,'dialog_animation_out':!finishFormVisible}" width="80">
@@ -60,11 +95,38 @@
                 <el-button type="primary" @click="ok">确 定</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="添加位置" :visible.sync="positionFormVisible" :class="{'dialog_animation_in':positionFormVisible,'dialog_animation_out':!positionFormVisible}" width="400px" height="800px">
+            <el-form :model="positionForm" :rules="rules" ref="ruleForm" label-width="80px">
+            <div class="flex-panel" style="padding-left: 10px">
+                <el-form-item label="位置名称" prop="positionName">
+                    <el-input v-model="positionForm.positionName" placeholder="请输入位置名称">
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="位置详情 " prop="adress">
+                    <el-input v-model="positionForm.adress" @click.native="showDialogAdress()" readonly  placeholder="请输入位置详情">
+                        <el-button slot="append" icon="el-icon-search"></el-button>
+                    </el-input>
+                </el-form-item>
+                    <el-input v-model="positionForm.longitude" placeholder="请确认位置"
+                              maxlength="10" type="hidden"></el-input>
+
+                    <el-input v-model="positionForm.latitude" placeholder="请确认位置"
+                              maxlength="10" type="hidden"></el-input>
+            </div>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="positionFormVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addPosition">确 定</el-button>
+            </div>
+        </el-dialog>
         <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="800px">
             <stop-upload></stop-upload>
         </el-dialog>
         <!-- 用户选择器 -->
         <EmployeeListSelect :isShow="showEmployeeSelector" @selectedOnchange="selectedOnchangeHandle"></EmployeeListSelect>
+        <el-dialog title="位置" :visible.sync="dialogAdressVisible" :append-to-body="true" width="70%">
+            <baidu-map @selectLocation="selectLocation" v-model="adress"></baidu-map>
+        </el-dialog>
     </div>
 </template>
 
@@ -77,10 +139,13 @@
     import Bus from "@/utils/eventBus.js"
     import StopUpload from '@/components/StopUpload/index'
     import EmployeeListSelect from "@/components/EmployeeListSelect"
+    import BaiduMap from '@/components/BaiduMap/index'
+    import dragTreeTable from "@/components/treeTable/dragTreeTable.vue";
+    import DocIconType from '@/components/DocIconType'
 
     export default {
         mixins: [tool, ruleTool],
-        components: {GanttAdd, StopUpload, EmployeeListSelect},
+        components: {GanttAdd, StopUpload, EmployeeListSelect,BaiduMap,dragTreeTable,DocIconType},
         data() {
             let that = this;
             return {
@@ -88,16 +153,37 @@
                 dialogFormVisible : false,
                 fileFormVisible : false,
                 finishFormVisible : false,
+                positionFormVisible : false,
+                dialogAdressVisible:false,
+                positionListFormVisible :false,
+                checkFormVisible :false,
                 projectTaskList : [],
                 stageList : [],
                 attachmentList : [],
+                approvalList : [],
                 approvalFinishForm : {},
+                positionForm :{
+                    adress:'',
+                    longitude:'',
+                    latitude:'',
+                    positionName:''
+                },
                 id : "",
                 taskId : "",
                 projectId : "",
                 projectName : "",
                 projectNodeName:"",
+                adress : '',
                 tempArr : [],
+                treeData: {
+                    columns: [],
+                    lists: [],
+                    custom_field: {
+                        id: 'id',
+                        parent_id: 'parentId',
+                        order : 'sortNum'
+                    }
+                },
                 isOpen : true,
                 uploadShow : false,
                 stopUploadShow : false,
@@ -106,6 +192,12 @@
                 rules: {
                     name: [
                         { required: true, message: '请选择审批人', trigger: ['change','blur'] }
+                    ],
+                    positionName: [
+                        { required: true, message: '请输入位置名称', trigger: ['change','blur'] }
+                    ],
+                    adress: [
+                        { required: true, message: '请输入位置详情', trigger: ['change','blur'] }
                     ],
                 },
                 tasks: {
@@ -118,17 +210,21 @@
                         name:"action",
                         label:'关联文件',
                         align: "center",
-                        width:'120',
+                        width:'220',
                         template:function(obj){
                             let operateStr = "";
                             this.currentStatus = obj.currentStatus;
                             let uploadStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>上传</a>";
                             let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>查看</a>";
+                            let checkStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>审批记录</a>";
                             if (obj.isUpload == 1 && obj.currentStatus != 4){
                                 operateStr += uploadStr;
                             }
                             if (obj.fileNum > 0){
                                 operateStr += viewStr;
+                            }
+                            if(obj.checkNum>0){
+                                operateStr += checkStr;
                             }
                             return operateStr;
                         }
@@ -153,6 +249,23 @@
                                 if (obj.isApproval == 0){
                                     operateStr += finishStr;
                                 }
+                            }
+                            return operateStr;
+                        }
+                    },
+                    {
+                        name:"action",
+                        label:'获取位置',
+                        align: "center",
+                        width:'120',
+                        template:function(obj){
+                            let operateStr = "";
+                            this.currentStatus = obj.currentStatus;
+                            let positionStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>位置</a>";
+                            let viewStr = "<a style='display:inline-block;width:50px;height:100%;color: #4781fe;'>列表</a>";
+                            if (obj.isPosition == 1){
+                                operateStr += positionStr;
+                                operateStr += viewStr;
                             }
                             return operateStr;
                         }
@@ -211,7 +324,7 @@
                         }
                     },
                     {
-                        name:'profession',
+                        name:'professionText',
                         label:'专业',
                         align: "center",
                         width:'75',
@@ -264,14 +377,31 @@
                     this.getProjectNodeName();
                 }else if (data.operationType === 'view'){
                     this.fileFormVisible = true;
-                    console.log(data)
                     this.getProjectPlanStatus(data.id);
                     // 获取项目文件
                     this.getAttachmentList(data.id);
                 }else if (data.operationType === 'approvefinish'){
                     this.finishFormVisible = true;
                     this.id = data.id;
-                }else if(data.operationType === 'finish') {
+                }else if(data.operationType === 'position'){
+                    this.positionForm ={ adress:'',
+                                         longitude:'',
+                                         latitude:'',
+                                         positionName:''
+                                      };
+                    this.positionFormVisible = true;
+                    this.id = data.id;
+                }else if(data.operationType === 'selectPosition'){
+                    this.positionListFormVisible = true
+                    this.id = data.id;
+                    this.getPositionList(data.id);
+                }else if(data.operationType === 'approvalList'){
+                    //审核记录列表
+                    this.checkFormVisible = true;
+                    this.id = data.id;
+                    this.getApprovalList(data.id);
+                }
+                else if(data.operationType === 'finish') {
                     let that = this;
                     this.$confirm("确定完成该计划节点?" ,'提示', {
                         confirmButtonText: '确定',
@@ -292,8 +422,52 @@
                     });
                 }
             });
+            Bus.$on("upload-success", data => {
+                this.updateCurrentStatus();
+                this._getTasksModel();
+            })
             this.getProjectTask();
             this.getStageList();
+            this.treeData.columns = [
+                {
+                    title: "操作",
+                    type: "action",
+                    width: 200,
+                    align: "left",
+                    actions: [
+                        {
+                            text: "编辑",
+                            onclick: this.onEdit,
+                            formatter: item => {
+                                return "<span style='margin-right:15px'>编辑</span>";
+                            }
+                        },
+                        {
+                            text: "删除",
+                            onclick: this.onDelete,
+                            formatter: item => {
+                                return "<span style='margin-right:15px'>删除</span>";
+                            }
+                        },
+                    ]
+                },
+                {
+                    type: "selection",
+                    title: "位置名称",
+                    field: "name",
+                    img : this.addImg,
+                    onclick: this.onAddFirst,
+                    width: 340,
+                    align: "left",
+                },
+                {
+                    title: "位置详情",
+                    field: "adress",
+                    width: 120,
+                    align: "center",
+                }
+
+            ];
         },
         methods: {
             getAttachmentList(id){
@@ -308,25 +482,25 @@
                     }
                 });
             },
-            // 上传成功回调
-            getResFile(file){
-                console.log(file)
-                ajax.post('power/powerprojectattachment', {
-                    sourceId : file.sourceId,
-                    projectId : file.projectId,
-                    name : file.name,
-                    size : file.size,
-                    path : file.path
-                }).then(rs => {
-                    if (rs.status == 0) {
-                        this.$message.success(rs.msg);
-                        this.updateCurrentStatus();
-                        this._getTasksModel();
-                    } else {
-                        this.$message.error(rs.msg);
-                    }
-                });
-            },
+            // // 上传成功回调
+            // getResFile(file){
+            //     console.log(file)
+            //     ajax.post('power/powerprojectattachment', {
+            //         sourceId : file.sourceId,
+            //         projectId : file.projectId,
+            //         name : file.name,
+            //         size : file.size,
+            //         path : file.path
+            //     }).then(rs => {
+            //         if (rs.status == 0) {
+            //             this.$message.success(rs.msg);
+            //             this.updateCurrentStatus();
+            //             this._getTasksModel();
+            //         } else {
+            //             this.$message.error(rs.msg);
+            //         }
+            //     });
+            // },
 
            //修改项目节点状态
             updateCurrentStatus(){
@@ -340,10 +514,11 @@
             getProjectNodeName(){
                 ajax.get('power/powerprojectplan/'+ this.id
                 ).then(rs => {
-                    this.uploadShow = true;
+                    // this.uploadShow = true;
                     if(rs.data && rs.data.name) {
                         this.projectNodeName = rs.data.name;
-                        this._getTasksModel();
+                        // this._getTasksModel();
+                        Bus.$emit("upload-show",{id:this.id,projectId:this.projectId,projectNodeName:this.projectNodeName,projectName:this.projectName});
                     }
                 });
             },
@@ -420,7 +595,16 @@
                     }
                 });
             },
-
+            showDialogAdress() {
+                this.dialogAdressVisible = true;
+            },
+            //加载地图
+            selectLocation(location) {
+                this.positionForm.adress = location.address;
+                this.positionForm.longitude = location.lng;
+                this.positionForm.latitude = location.lat;
+                this.dialogAdressVisible = false;
+            },
             // 项目任务书信息
            getProjectTask(){
                 if (this.taskId){
@@ -509,6 +693,108 @@
                 });
             },
 
+            //添加位置
+            addPosition(){
+                this.$refs['ruleForm']
+                    .validate((valid) => {
+                            if (!valid) {
+                                this.$message
+                                    .error('校验不通过，请检查输入项');
+                                return;
+                            }
+                let data = this.positionForm;
+                data.projectId = this.projectId;
+                data.projectPlanId = this.id;
+                ajax.post('power/powerprojectposition/savePosition',data).then(rs => {
+                    if (rs.status == 0) {
+                        this.$message.success(rs.msg);
+                        this.positionFormVisible = false;
+                        this.getPositionList();
+                    } else {
+                        this.$message.error(rs.msg);
+                    }
+                });
+                    });
+            },
+            getPositionList(id){
+                // 获取项目节点定位
+                ajax.get('power/powerprojectposition/selectList/' ,{projectId:this.projectId,projectPlanId:this.id}).then(rs => {
+                        this.treeData.lists = rs;
+                });
+
+            },
+            getApprovalList(id){
+                // 获取项目节点定位
+                ajax.get('power/powerprojectapproval/selectList/' ,{projectPlanId:this.id}).then(rs => {
+                    this.approvalList = rs;
+                });
+
+            },
+            onTreeDataChange(list, from, to, where) {
+                this.treeData.lists = list;
+                this.updateNo(list)
+            },
+            //保存
+            submitForm() {
+                this.newList = [];
+                this.getNewList(this.treeData.lists);
+                console.log(this.newList)
+            },
+
+            getNewList(list){
+                list.forEach((item) => {
+                    this.newList.push(item);
+                    if (item.children && item.children.length>0) {
+                        this.getNewList(item.children);
+                    }
+                });
+            },
+            //移动批量修改编号
+            updateNo(data){
+                let _this =  this;
+                ajax.post('power/powerprojectposition/updateNoAll',data).then(rs => {
+                    if (rs.status == 0) {
+                        _this.$message.success(rs.msg);
+                        _this.getPositionList();
+                    } else {
+                        _this.$message.error(rs.msg);
+                    }
+                });
+            },
+
+            // 编辑节点
+            onEdit(data) {
+                this.positionFormVisible = true;
+                this.clearValidate('ruleForm');
+                this.positionForm  ={
+                        adress:data.adress,
+                        longitude : data.longitude,
+                        latitude:data.latitude,
+                        positionName: data.name,
+                        id :data.id,
+                        no: data.no
+                };
+            },
+
+            // 删除位置列表
+            onDelete(data) {
+                let _this =  this;
+                this.$confirm('确定删除吗' ,'提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning',
+                }).then(function() {
+                    ajax.delete('power/powerprojectposition/'+data.id).then(rs => {
+                        if (rs.status == 0) {
+                            _this.$message.success(rs.msg);
+                            _this.getPositionList();
+                        } else {
+                            _this.$message.error(rs.msg);
+                        }
+                    });
+                }).catch(function() {
+                });
+            },
         },
     }
 </script>

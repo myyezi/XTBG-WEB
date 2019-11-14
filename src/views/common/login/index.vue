@@ -31,7 +31,7 @@
                                         <el-checkbox v-model="savePwd">记住密码</el-checkbox>
                                         <span class="forget_password" @click="toPath('/forget')">忘记密码</span>
                                     </div>
-                                    <label class="form-group error-text" style="color:red;" v-html="message"
+                                    <label class="form-group error-text" :style="{'color':message.indexOf('登录成功，正在进入系统')>=0?'#3ca9b7':'red'}" v-html="message"
                                         v-show="message"></label>
                                     <el-button id="btnSubmit" type="button" :disabled="disabled()" :loading="loading"
                                             class="btn btn-primary block" @click="login">立刻登录

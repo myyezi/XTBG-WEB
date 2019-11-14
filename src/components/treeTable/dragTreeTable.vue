@@ -107,11 +107,13 @@
     },
     methods: {
       draging(e) {
+        let div = document.getElementsByClassName('app-main');
+        let scrollTop = div[0].scrollTop
         this.isDraing = true;
         if (e.pageX == this.dragX && e.pageY == this.dragY) return
         this.dragX = e.pageX
         this.dragY = e.pageY
-        this.filter(e.pageX, e.pageY)
+        this.filter(e.pageX, e.pageY+scrollTop)
         if (e.clientY < 100) {
           window.scrollTo(0, scrollY - 6)
         } else if (e.clientY > (document.body.clientHeight - 160)) {

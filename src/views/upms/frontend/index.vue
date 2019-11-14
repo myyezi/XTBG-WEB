@@ -178,27 +178,27 @@
                     {
                         name: "发起人",
                         nodeId: "sid-startevent",
-                        type: "start",
+                        nodeType: 1,
                         properties: {
                             editName:false,
                         },
-                        childNode:[
+                        children:[
                             {
                                 name: "审批人",
                                 nodeId: "702c_daec",
                                 prevId: "",
-                                type: "approver",
+                                nodeType: 2,
                                 properties: {
-                                    editName:true,
+                                    editName:false,
                                 },
-                                childNode:[
+                                children:[
                                     {
                                         name: "抄送人",
                                         nodeId: "f701_e579",
                                         prevId: "",
-                                        type: "notifier",
+                                        nodeType: 3,
                                         properties: {
-                                            editName:true,
+                                            editName:false,
                                         },
                                     }
                                 ]
@@ -514,11 +514,23 @@
         },
         mounted() {
             this.open();
+            this.getWorking();
         },
         methods: {
+            getWorking() {
+                ajax.get('workflow/workflowconfignode/selectConfigNodeTree' ,{
+                    configId:'1'
+                }).then(rs => {
+                    if (rs.status === 0) {
+                        this.workFlowData = rs.data
+                    }
+                });
+            },
             getActiveName() {
                 if(this.activeName == 7) {
-                    this.workDialogVisible = true
+                    if(this.workFlowData&&this.workFlowData.length>0) {
+                        this.workDialogVisible = true
+                    }
                 }
             },
             // 重写日历表显示的内容

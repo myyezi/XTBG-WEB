@@ -3,16 +3,16 @@
         <div class="search">
             <div id="r-result">
                 <!--<p>搜索定位:</p>-->
-                <input type="text" v-model="location.address" id="suggestId" placeholder="请输入位置搜索" maxlength="200"/>
+                <el-input type="text" v-model="location.address" id="suggestId" placeholder="请输入位置搜索" maxlength="200"/>
             </div>
             <div class="lng-lat">
                 <div class="item">
                     <!--<p>当前经度:</p>-->
-                    <input v-model="location.lng"/>
+                    <el-input v-model="location.lng" />
                 </div>
                 <div class="item">
                     <!--<p>当前纬度:</p>-->
-                    <input v-model="location.lat"/>
+                    <el-input v-model="location.lat" />
                 </div>
                 <div class="item btn">
                     <button @click="selectLocation">确定</button>
@@ -28,12 +28,17 @@
     import BMap from 'BMap'
 
     export default {
+        props:['addressDetail'],
         data() {
             return {
                 location: {
                     lng: '',
                     lat: '',
-                    address: ''
+                    address: '',
+                    province:'',
+                    city:'',
+                    district:'',
+                    adcode:''
                 },
                 map: {},
                 ac: {}
@@ -41,114 +46,108 @@
         },
         mounted() {
             this.setMap()
-            this.setSearch()
         },
         methods: {
             // 初始化地图
             setMap() {
-                this.map = new BMap.Map('map-core');
-                this.map.centerAndZoom(new BMap.Point(114.417708, 30.462667), 10);
-                // 地图缩放控件
-                const topLeftControl = new BMap.ScaleControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT});
-                // 城市选择控件
-                const cityListControl = new BMap.CityListControl({anchor: BMAP_ANCHOR_TOP_RIGHT});
-                // 比例尺控件
-                const topLeftNavigation = new BMap.NavigationControl();
-                this.map.addControl(topLeftControl);
-                this.map.addControl(topLeftNavigation);
-                this.map.addControl(cityListControl);
-                const _this = this;
-                // 鼠标缩放
-                setTimeout(function () {
-                    _this.map.setZoom(11)
-                }, 2000);// 2秒后放大到11级
-                this.map.enableScrollWheelZoom(true);
-                var geocoder = new BMap.Geocoder();
-                // 点击获取经纬度
-                this.map.addEventListener('click', function (e) {
-                    _this.location.lng = parseFloat(e.point.lng).toFixed(6);
-                    _this.location.lat = parseFloat(e.point.lat).toFixed(6);
-                    geocoder.getLocation(e.point, function (rs) {
-
-                        console.log(rs.address); //地址描述(string)
-
-                        console.log(rs.addressComponents);//结构化的地址描述(object)
-                        console.log(rs.addressComponents.province); //省
-                        console.log(rs.addressComponents.city); //城市
-                        console.log(rs.addressComponents.district); //区县
-                        console.log(rs.addressComponents.street); //街道
-                        console.log(rs.addressComponents.streetNumber); //门牌号
-
-                        console.log(rs.surroundingPois); //附近的POI点(array)
-
-                        console.log(rs.business); //商圈字段，代表此点所属的商圈(string)
-
-                        if (rs.surroundingPois && rs.surroundingPois.length > 0) {
-                            _this.location.address = rs.addressComponents.city + rs.addressComponents.district + rs.surroundingPois[0].title;
-                        }
-                        else {
-                            _this.location.address = rs.address;
-                        }
-
-                    });
+                this.map = new AMap.Map('map-core', {
+                    zoom: 10,
+                    center: [114.417708, 30.462667]
                 })
+                // 注入插件（定位插件，地理编码插件）
+                this.map.plugin(['AMap.Geolocation', 'AMap.Geocoder'])
+
+                // 绑定地图单击事件
+                this.map.on('click', this.mapOnClick)
+                this.setSearch()
+                if(this.addressDetail.address) {
+                    this.getInitialization(this.addressDetail)
+                }
+            },
+            // 地图点击事件
+            mapOnClick (ev) {
+                let position = [ev.lnglat.lng, ev.lnglat.lat] // 鼠标点击的坐标
+                this.location.lng = parseFloat(ev.lnglat.lng).toFixed(6);
+                this.location.lat = parseFloat(ev.lnglat.lat).toFixed(6);
+                this.updataMap()
             },
             // 根据经纬度绘制地图中的坐标点
             drawLocation() {
                 if (this.location.lng !== "" && this.location.lat !== "") {
-                    this.map.clearOverlays();
-                    const new_point = new BMap.Point(this.location.lng, this.location.lat);
-                    const marker = new BMap.Marker(new_point);
-                    this.map.addOverlay(marker);
-                    this.map.panTo(new_point)
+                    this.updataMap()
                 }
             },
             // 搜索位置功能实现
             setSearch() {
                 const _this = this
                 //建立一个自动完成的对象
-                this.ac = new BMap.Autocomplete({"input": "suggestId", "location": _this.map});
-                //鼠标放在下拉列表上的事件
-                this.ac.addEventListener("onhighlight", function (e) {
-                    let str = "";
-                    let _value = e.fromitem.value;
-                    let value = "";
-                    if (e.fromitem.index > -1) {
-                        value = _value.province + _value.city + _value.district + _value.street + _value.business;
-                    }
-                    value = "";
-                    if (e.toitem.index > -1) {
-                        _value = e.toitem.value;
-                        value = _value.province + _value.city + _value.district + _value.street + _value.business;
+                this.map.plugin('AMap.Autocomplete', () => {
+                    // 实例化Autocomplete
+                    let autoOptions = {
+                        input: "suggestId"
+                    };
+                    let autoComplete = new AMap.Autocomplete(autoOptions);
+                    // 开始搜索
+                    autoComplete.search(this.location.address, (status, result) => {
+                        // 搜索成功时，result即是对应的匹配数据
+                        if(result.info === 'OK') {
+                            
+                        }
+                    })
+                    AMap.event.addListener(autoComplete, 'select', function(e){
+                        console.log(e.poi)
+                        let _value = e.poi
+                        // let myValue = _value.district + _value.address
+                        // _this.location.address = myValue
+                        _this.location.lng = _value.location.lng
+                        _this.location.lat = _value.location.lat
+                        // _this.map.setZoomAndCenter(13,[_this.location.lng,_this.location.lat]);
+                        // _this.addMark(_this.map, [_this.location.lng,_this.location.lat])
+                    })
+                })
+            },
+            // 添加标记
+            addMark (map, points) {
+                map.clearMap();
+                let marker = new AMap.Marker({
+                    map: map,
+                    position: points,
+                    // draggable: true, // 允许拖动
+                    // cursor: 'move',
+                    // raiseOnDrag: true
+                })
+                marker.on('dragend', (e) => {
+                    let position = marker.getPosition()
+                    // 存下坐标与地址
+                    // this.getAddress([position.lng, position.lat])
+                })
+            },
+            // 根据坐标返回地址(逆地理编码)
+            getAddress (points) {
+                let geocoder = new AMap.Geocoder({ radius: 1000 })
+                geocoder.getAddress(points, (status, result) => {
+                    if (status === 'complete' && result.regeocode) {
+                        console.log(result.regeocode)
+                        this.location.address = result.regeocode.formattedAddress
+                        this.location.province = result.regeocode.addressComponent.province
+                        this.location.city = result.regeocode.addressComponent.city
+                        this.location.district = result.regeocode.addressComponent.district
+                        this.location.adcode = result.regeocode.addressComponent.adcode
+                        this.setSearch()
                     }
                 })
-                let myValue;
-                //鼠标点击下拉列表后的事件
-                this.ac.addEventListener("onconfirm", function (e) {
-                    let _value = e.item.value
-                    myValue = _value.province + _value.city + _value.district + _value.street + _value.business;
-                    _this.location.address = myValue;
-                    _this.setPlace(myValue)
-                });
             },
-            setPlace(myValue) {
-                const _this = this;
-                //清除地图上所有覆盖物
-                this.map.clearOverlays();
-                //智能搜索
-                this.local = new BMap.LocalSearch(_this.map, {
-                    onSearchComplete: _this.onSearchComplete
-                });
-                this.local.search(myValue);
+            updataMap() {
+                this.getAddress([this.location.lng, this.location.lat])
+                this.map.setZoomAndCenter(13,[this.location.lng,this.location.lat]);
+                this.addMark(this.map, [this.location.lng,this.location.lat])
             },
-            onSearchComplete() {
-                //获取第一个智能搜索的结果
-                let pp = this.local.getResults().getPoi(0).point;
-                this.location.lng = parseFloat(pp.lng).toFixed(6);
-                this.location.lat = parseFloat(pp.lat).toFixed(6);
-                this.map.centerAndZoom(pp, 18);
-                //添加标注
-                this.map.addOverlay(new BMap.Marker(pp))
+            getInitialization(val) {
+                this.location.address = val.address
+                this.location.lng = val.longitude
+                this.location.lat = val.latitude
+                this.map.setZoomAndCenter(13,[this.location.lng,this.location.lat]);
+                this.addMark(this.map, [this.location.lng,this.location.lat])
             },
             // 向父组件传递经纬度
             selectLocation() {
@@ -156,14 +155,18 @@
             }
         },
         watch: {
-            'location': {
+            'location.lng': {
                 handler() {
                     this.drawLocation()
-                },
-                deep: true
+                }
             },
-            visible() {
-                console.log('ddd')
+            'location.lat': {
+                handler() {
+                    this.drawLocation()
+                }
+            },
+            addressDetail(val) {
+                this.getInitialization(val)
             }
         }
     }
@@ -189,41 +192,41 @@
 
     .map .search #r-result {
         display: flex;
-        width: 50%;
-        height: 20px;
-        line-height: 20px;
+        width: 60%;
+        height: 28px;
+        line-height: 28px;
     }
 
     .map .search #r-result p {
-        height: 20px;
+        height: 28px;
         padding-right: 10px;
     }
 
     .map .search #r-result input {
         width: 100%;
-        height: 20px;
+        height: 28px;
     }
 
     .map .search .lng-lat {
-        width: 50%;
+        width: 40%;
         display: flex;
     }
 
     .map .search .lng-lat .item {
         display: flex;
         padding-left: 10px;
-        height: 20px;
-        line-height: 20px;
+        height: 28px;
+        line-height: 28px;
     }
 
     .map .search .lng-lat .item p {
-        height: 20px;
+        height: 28px;
         padding-right: 10px;
     }
 
     .map .search .lng-lat .item input {
         width: 100%;
-        height: 20px;
+        height: 28px;
     }
 
     .map .search .lng-lat .item button {
@@ -241,7 +244,7 @@
         cursor: pointer;
     }
 
-    .tangram-suggestion-main {
+    .amap-sug-result {
         z-index: 9999999999;
     }
 </style>

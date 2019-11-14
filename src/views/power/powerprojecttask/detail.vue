@@ -21,6 +21,12 @@
                             <span>{{powerprojecttaskForm.typeText}}</span>
                         </div>
                     </div>
+                    <div class="detail-item">
+                        <label class="control-label">项目年份</label>
+                        <div class="input-group">
+                            <span>{{powerprojecttaskForm.year}}</span>
+                        </div>
+                    </div>
                     <div class="detail-item ">
                         <label class="control-label">建设单位</label>
                         <div class="input-group">
@@ -70,17 +76,17 @@
                         </div>
                     </div>
                     <div class="detail-item">
-                        <label class="control-label">签收人</label>
+                        <label class="control-label">归属单位</label>
                         <div class="input-group">
-                            <span>{{powerprojecttaskForm.signerName}}</span>
+                            <span>{{powerprojecttaskForm.belongCompanyName}}</span>
                         </div>
                     </div>
-                    <div class="detail-item">
+                    <!-- <div class="detail-item">
                         <label class="control-label">签收时间</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.signTime}}</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="detail-item">
                         <label class="control-label">项目开始时间</label>
                         <div class="input-group">
@@ -94,23 +100,30 @@
                         </div>
                     </div>
                     <div class="detail-item big">
+                        <label class="control-label">项目地址</label>
+                        <div class="input-group">
+                            <span>{{powerprojecttaskForm.adress}}</span>
+                        </div>
+                    </div>
+                    <div class="detail-item big">
                         <label class="control-label">设计规模</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.designScale}}</span>
                         </div>
                     </div>
-                    <div class="detail-item big">
+                    <!-- <div class="detail-item big">
                         <label class="control-label">设计规范</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.designRange}}</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="detail-item big">
                         <label class="control-label">设计进度要求</label>
                         <div class="input-group">
                             <span>{{powerprojecttaskForm.progress}}</span>
                         </div>
                     </div>
+                    
                     <div class="detail-item big">
                         <label class="control-label">备注</label>
                         <div class="input-group">
@@ -139,8 +152,12 @@
                 </el-tab-pane>
                 <el-tab-pane label="前期阶段" name="projectSzInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
-                                         label="收资名称"></el-table-column>
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="收资名称" class-name="table_column-left">
+                            <template fixed slot-scope="{ row, column, $index }">
+                                <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                                <span>{{row.name}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100"
                                          label="上传人"></el-table-column>
                         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100"
@@ -158,8 +175,12 @@
                 </el-tab-pane>
                 <el-tab-pane label="立项阶段" name="projectJcInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
-                                         label="卷册名称"></el-table-column>
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
+                            <template fixed slot-scope="{ row, column, $index }">
+                                <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                                <span>{{row.name}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100"
                                          label="上传人"></el-table-column>
                         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100"
@@ -177,8 +198,12 @@
                 </el-tab-pane>
                 <el-tab-pane label="初设阶段" name="projectNsInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
-                                         label="卷册名称"></el-table-column>
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
+                            <template fixed slot-scope="{ row, column, $index }">
+                                <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                                <span>{{row.name}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100"
                                          label="上传人"></el-table-column>
                         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100"
@@ -196,8 +221,12 @@
                 </el-tab-pane>
                 <el-tab-pane label="施工图阶段" name="projectScInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
-                                         label="卷册名称"></el-table-column>
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
+                            <template fixed slot-scope="{ row, column, $index }">
+                                <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                                <span>{{row.name}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100"
                                          label="上传人"></el-table-column>
                         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100"
@@ -215,8 +244,12 @@
                 </el-tab-pane>
                 <el-tab-pane label="竣工图阶段" name="projectCbInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
-                                         label="成品名称"></el-table-column>
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="成品名称" class-name="table_column-left">
+                            <template fixed slot-scope="{ row, column, $index }">
+                                <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                                <span>{{row.name}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100"
                                          label="上传人"></el-table-column>
                         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100"
@@ -234,8 +267,12 @@
                 </el-tab-pane>
                 <el-tab-pane label="项目任务书" name="projectTaskInfoTab">
                     <el-table border :data="attachmentTaskList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200"
-                                         label="任务书名称"></el-table-column>
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="任务书名称" class-name="table_column-left">
+                            <template fixed slot-scope="{ row, column, $index }">
+                                <doc-icon-type :iconType="row.suffix"></doc-icon-type>
+                                <span>{{row.name}}</span>
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="creater" sortable show-overflow-tooltip min-width="100"
                                          label="上传人"></el-table-column>
                         <el-table-column prop="createTime" sortable show-overflow-tooltip min-width="100"
@@ -266,6 +303,7 @@
 <script>
     import ajax from '@/utils/request'
     import {tool} from '@/utils/common'
+    import DocIconType from '@/components/DocIconType'
     import GanttAdd from '@/components/Gannt/add'
     import '@/components/dhtmlx-gantt'
     import "@/components/dhtmlx-gantt/codebase/locale/locale_cn"
@@ -273,7 +311,7 @@
     export default {
         name: "PowerProjectTaskDetail",
         mixins: [tool],
-        components: {GanttAdd},
+        components: {GanttAdd,DocIconType},
         data() {
             let that = this;
             return {
@@ -345,7 +383,7 @@
                         }
                     },
                     {
-                        name: 'profession',
+                        name: 'professionText',
                         label: '专业',
                         align: "center",
                         width: '75',

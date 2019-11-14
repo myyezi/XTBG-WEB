@@ -27,7 +27,7 @@
             <el-table :data="list" style="width: 100%">
                 <el-table-column fixed label="操作" width="120">
                     <template fixed slot-scope="{ row, column, $index }">
-                        <el-button v-show="showEditBtn" @click="edit(row.id)" type="text" size="small">编辑</el-button>
+                        <el-button v-show="showEditBtn" @click="editWorking(row.id)" type="text" size="small">编辑</el-button>
                         <el-button v-if="row.enabledStatus == 1" v-show="showStartBtn" @click="onStart(row.configId,0)" type="text" size="small">禁用</el-button>
                         <el-button v-else v-show="showStartBtn" @click="onStart(row.configId,1)" type="text" size="small">启用</el-button>
                     </template>
@@ -47,19 +47,24 @@
                 :total="listCount">
             </el-pagination>
         </div>
-
+        <el-dialog title="流程设置" :visible.sync="workDialogVisible"  :fullscreen="true" :append-to-body="true">
+            <work-flow :workFlowData="workFlowData[0]" v-if="workDialogVisible"></work-flow>
+        </el-dialog>
     </div>
 </template>
 
 <script>
     import ajax from '@/utils/request'
     import {tool} from '@/utils/common'
+    import workFlow from '@/components/workCompent/work'
 
     export default {
         name: 'WorkflowBusiness',
         mixins: [tool],
         data() {
             return {
+                workDialogVisible:false,
+                workFlowData:[],
                 isShowMore:false,
                 listUrl: "workflow/workflowbusiness",
                 showSearch: false,
@@ -67,10 +72,21 @@
                 showEditBtn: this.getCurrentUserAuthority("/workflow/workflowbusiness/edit")
             }
         },
+        components: {workFlow},
         mounted() {
             this.getList();
         },
         methods: {
+            editWorking(id) {
+                ajax.get('workflow/workflowconfignode/selectConfigNodeTree' ,{
+                    configId:id
+                }).then(rs => {
+                    if (rs.status === 0) {
+                        this.workFlowData = rs.data
+                        this.workDialogVisible = true
+                    }
+                });
+            },
             // 启用禁用节点
             onStart(id,type) {
                 let _this = this;

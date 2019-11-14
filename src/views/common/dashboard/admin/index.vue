@@ -68,7 +68,7 @@
                 <div class="el-card box-card is-always-shadow">
                     <div class="el-card__header home-card-heard">
                         <div class="home_title clearfix">
-                            <p class="clearfix"><img src="../../../../styles/img/xm.png" /><span>项目分布一览</span></p> 
+                            <p class="clearfix"><img src="../../../../styles/img/xm.png" /><span>项目分布一览</span></p>
                             <el-dropdown split-button  size="mini" @command="handleClick1" style="float:right;">
                                 {{projectName}}
                                 <el-dropdown-menu slot="dropdown">

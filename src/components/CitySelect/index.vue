@@ -35,7 +35,7 @@
                 options: [],
                 cityId: [],
                 props: {
-                    value: "id",
+                    value: "value",
                     label: "label"
                 }
             };
@@ -50,20 +50,33 @@
                 this.$emit("change", this.cityId);
             },
             loadCitySelect() {
-                ajax.get("upms/dict/cityTreeNodeNow").then(res => {
+                ajax.get("upms/amapdistrict/getAmapDistrictTree").then(res => {
                     var newResult = [];
-                    res.data.forEach(function (bean) {
-                        if (bean.id) {
-                            var data = {
-                                value: bean.id,
-                                label: bean.label,
-                                children: bean.children
-                            }
-                            newResult.push(data);
-                        }
-                    });
-                    this.options = newResult;
+                    // res.data.forEach(function (bean) {
+                    //     if (bean.id) {
+                    //         var data = {
+                    //             value: bean.id,
+                    //             label: bean.label,
+                    //             children: bean.children
+                    //         }
+                    //         newResult.push(data);
+                    //     }
+                    // });
+                    this.options = this.getTreeData(res.data);
                 })
+            },
+            // 递归判断列表，把最后的children设为undefined
+            getTreeData(data){
+                for(var i=0;i<data.length;i++){
+                    if(data[i].children.length<1){
+                        // children若为空数组，则将children设为undefined
+                        data[i].children=undefined;
+                    }else {
+                        // children若不为空数组，则继续 递归调用 本方法
+                        this.getTreeData(data[i].children);
+                    }
+                }
+                return data;
             }
         },
     }

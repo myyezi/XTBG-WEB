@@ -36,7 +36,10 @@
                     <el-input v-model="templateConfigForm.period" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="专业" prop="profession">
-                    <el-input v-model.trim="templateConfigForm.profession" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
+<!--                    <el-input v-model.trim="templateConfigForm.profession" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>-->
+                    <el-select v-model="templateConfigForm.profession" placeholder="请选择专业" clearable>
+                        <el-option v-for="e in professionList"  :key="e.value" :label="e.text" :value="e.value" ></el-option >
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="工程阶段" prop="stage">
                     <el-select v-model="templateConfigForm.stage" placeholder="请选择项目类型" clearable>
@@ -47,9 +50,13 @@
                     <el-radio v-model="templateConfigForm.isApproval" :label="1" @change="changeApproval">是</el-radio>
                     <el-radio v-model="templateConfigForm.isApproval" :label="0" @change="changeApproval">否</el-radio>
                 </el-form-item>
-                <el-form-item label="是否上传文件" prop="indexScore">
+                <el-form-item label="是否上传文件" prop="isUpload">
                     <el-radio v-model="templateConfigForm.isUpload" :label="1" @change="changeUpload">是</el-radio>
                     <el-radio v-model="templateConfigForm.isUpload" :label="0" @change="changeUpload">否</el-radio>
+                </el-form-item>
+                <el-form-item label="是否获取位置" prop="isPosition">
+                    <el-radio v-model="templateConfigForm.isPosition" :label="1" @change="changePosition">是</el-radio>
+                    <el-radio v-model="templateConfigForm.isPosition" :label="0" @change="changePosition">否</el-radio>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -73,6 +80,7 @@ export default {
         templateConfigForm : {
             isApproval : 1,
             isUpload : 1,
+            isPosition : 1
         },
         formData : {
             name : "",
@@ -81,11 +89,13 @@ export default {
             profession : "",
             stage : null,
             isApproval : null,
-            isUpload : null
+            isUpload : null,
+            isPosition :null
         },
         projectTypeList : [],
         stageList : [],
         contentList : [],
+        professionList : [],
         treeData: {
             columns: [],
             lists: [],
@@ -149,7 +159,7 @@ mounted() {
                     text: "新增",
                     onclick: this.onAdd,
                     formatter: item => {
-                        if(item.level>2){
+                        if(item.level>4){
                             return "";
                         }
                         return "<img src='" + this.addImg + "' title='新增' style='margin-right:15px;vertical-align: middle;'/>";
@@ -188,7 +198,7 @@ mounted() {
         },
         {
             title: "专业",
-            field: "profession",
+            field: "professionText",
             width: 180,
             align: "center",
         },
@@ -228,6 +238,16 @@ mounted() {
                 return item.isUpload==1?'是':'否'
             }
         },
+        {
+            title: "是否获取位置",
+            field: "isPosition",
+            width: 120,
+            align: "center",
+            isCutOut:true,
+            formatter: item => {
+                return item.isPosition==1?'是':'否'
+            }
+        }
     ];
     if (this.operateType == 'edit'){
         this.getDragTree();
@@ -237,11 +257,12 @@ mounted() {
 methods: {
     // 获取字典
     getDict() {
-        let type = 'XMLX,GCJD,GZNR';
+        let type = 'XMLX,GCJD,GZNR,ZY';
         ajax.get("upms/dict/allType/"+type).then(rs => {
             this.projectTypeList = rs.XMLX;
             this.stageList = rs.GCJD;
             this.contentList = rs.GZNR;
+            this.professionList = rs.ZY;
             console.info("111111111",this.projectTypeList);
         });
     },
@@ -302,6 +323,12 @@ methods: {
         }
     },
 
+    changePosition(){
+        if (this.templateConfigForm.isPosition == 1){
+            this.templateConfigForm.isPosition = 1;
+        }
+    },
+
     // 增加一级节点
     onAddFirst() {
         this.onAdd(1)
@@ -342,6 +369,7 @@ methods: {
             stage : data.stage,
             isApproval : data.isApproval,
             isUpload : data.isUpload,
+            isPosition :data.isPosition
         };
         this.dialogFormVisible = true;
     },
@@ -387,7 +415,8 @@ methods: {
             profession : "",
             stage : null,
             isApproval : 1,
-            isUpload : 1
+            isUpload : 1,
+            isPosition :1
         }
         if(this.$refs[formName]) {
             this.$refs[formName].clearValidate();
@@ -397,6 +426,13 @@ methods: {
     ok() {
         this.$refs['ruleForm'].validate((valid) => {
             if (valid) {
+                //获取专业名称
+                for (let i = 0; i <this.professionList.length ; i++) {
+                    if (this.professionList[i].value ==  this.templateConfigForm.profession){
+                        this.templateConfigForm.professionText = this.professionList[i].text;
+                        break;
+                    }
+                }
                 let newChild = this.templateConfigForm;
                 if(this.operationType === 'add') {
                     // 新增传父级id
@@ -490,6 +526,8 @@ methods: {
             this.formData.stage = data.stage;
             this.formData.isApproval = data.isApproval;
             this.formData.isUpload = data.isUpload;
+            this.formData.isPosition = data.isPosition;
+            this.formData.professionText = data.professionText;
         }
     },
     //保存
