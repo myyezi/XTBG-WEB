@@ -3,7 +3,7 @@
     <div class="app-container white-bg list-panel" v-cloak>
         <div class="big_data_ring clearfix">
             <div class="big_data_ring_item" v-for="(item,index) in ringList" :key="index"
-                 @click="setSearchParam(index)">
+                 @click="setSearchParam(index)" style="cursor: pointer">
                 <el-progress type="circle" :percentage="100" :width="60" :stroke-width="3" :color="item.color"
                              :format="function() {return item.num}"></el-progress>
                 <div class="big_data_ring_item_title">
@@ -225,6 +225,7 @@
                                 this.dialogVisible = false;
                                 this.leaveForm = {id: "", leaveDate: ""};
                                 this.getList();
+                                this.getTotalCount();
                             } else {
                                 that.$message({message: rs.msg, type: 'error'});
                             }
