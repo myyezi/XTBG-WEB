@@ -137,7 +137,7 @@
             <el-form :model="leaveForm" :rules="rules" ref="leaveForm">
                 <el-form-item label="离职日期" prop="leaveDate">
                     <el-date-picker
-                        v-model="leaveForm.leaveDate" type="date" placeholder="请选择离职日期">
+                        v-model="leaveForm.leaveDate" type="date" placeholder="请选择离职日期" value-format="yyyy-MM-dd">
                     </el-date-picker>
                 </el-form-item>
             </el-form>

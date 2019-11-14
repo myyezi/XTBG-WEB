@@ -35,7 +35,7 @@
                         <el-form-item label="入职日期" prop="entryDate">
                             <el-date-picker
                                 v-model="employeeForm.entryDate" type="date" placeholder="请选择入职日期"
-                                :picker-options="pickerOptions">
+                                :picker-options="pickerOptions" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-form-item>
                     </div>
@@ -105,7 +105,7 @@
                         </el-form-item>
                         <el-form-item label="转正日期" prop="positiveDate">
                             <el-date-picker
-                                v-model="employeeForm.positiveDate" type="date" placeholder="请选择转正日期">
+                                v-model="employeeForm.positiveDate" type="date" placeholder="请选择转正日期" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="岗位职级" prop="postLevel">
@@ -126,7 +126,7 @@
                         <el-form-item label="出生日期" prop="birthday">
                             <el-date-picker
                                 v-model="employeeForm.birthday" type="date" placeholder="请选择出生日期"
-                                :picker-options="pickerOptions">
+                                :picker-options="pickerOptions" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="性别" prop="gender">
@@ -152,7 +152,7 @@
                             <el-col :span="15">
                                 <el-date-picker
                                     v-model="employeeForm.idCardValidity" type="date" placeholder="请选择证件有效期"
-                                    style="width: 100%;" :disabled="employeeForm.idCardLong">
+                                    style="width: 100%;" :disabled="employeeForm.idCardLong" value-format="yyyy-MM-dd">
                                 </el-date-picker>
                             </el-col>
                             <el-col :span="9" style="float: right;text-align: right;">
@@ -189,7 +189,7 @@
                         <el-form-item label="首次参加工作日期" prop="workDate">
                             <el-date-picker
                                 v-model="employeeForm.workDate" type="date" placeholder="请选择工作日期"
-                                :picker-options="pickerOptions">
+                                :picker-options="pickerOptions" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="社保账号" prop="socialSecurity">
@@ -234,7 +234,7 @@
                             <template slot-scope="{row,$index}">
                                 <el-form-item :prop="'educationList.' + $index + '.graduationDate'">
                                     <el-date-picker
-                                        v-model="row.graduationDate" type="date" placeholder="请选择毕业时间">
+                                        v-model="row.graduationDate" type="date" placeholder="请选择毕业时间" value-format="yyyy-MM-dd">
                                     </el-date-picker>
                                 </el-form-item>
                             </template>
@@ -282,22 +282,22 @@
                         </el-form-item>
                         <el-form-item label="首次合同起始日" prop="contractStartDate">
                             <el-date-picker
-                                v-model="employeeForm.contractStartDate" type="date" placeholder="请选择合同起始日">
+                                v-model="employeeForm.contractStartDate" type="date" placeholder="请选择合同起始日" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="首次合同到期日" prop="contractEndDate">
                             <el-date-picker
-                                v-model="employeeForm.contractEndDate" type="date" placeholder="请选择合同到期日">
+                                v-model="employeeForm.contractEndDate" type="date" placeholder="请选择合同到期日" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="现合同起始日" prop="contractCstartDate">
                             <el-date-picker
-                                v-model="employeeForm.contractCstartDate" type="date" placeholder="请选择现合同起始日">
+                                v-model="employeeForm.contractCstartDate" type="date" placeholder="请选择现合同起始日" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="现合同到期日" prop="contractCendDate">
                             <el-date-picker
-                                v-model="employeeForm.contractCendDate" type="date" placeholder="请选择现合同到期日">
+                                v-model="employeeForm.contractCendDate" type="date" placeholder="请选择现合同到期日" value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-form-item>
                         <el-form-item label="合同期限" prop="contractPeriod">
