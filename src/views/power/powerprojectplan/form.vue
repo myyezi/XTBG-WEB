@@ -718,7 +718,6 @@ export default {
     sure() {
       let that =  this;
       that.$refs['ruleForm'].validate((valid) => {
-        
         if (valid) {
           let newChild = that.powerprojectplanform;
           newChild.text = that.powerprojectplanform.name;
@@ -771,7 +770,6 @@ export default {
       if (treeDataList && treeDataList.length > 0) {
           treeDataList.forEach((item) => {
             if (item.id === that.powerprojectplanform.id) {
-              debugger;
               // 编辑操作，先删除，判断对象的值是否发生变化
               if (item.name != that.powerprojectplanform.name ||
                 item.period != that.powerprojectplanform.period ||
@@ -823,7 +821,7 @@ export default {
         this.$message.error('请制定项目计划信息！');
         return;
       }
-      debugger;
+     
       if (this.isEdit) {
         this.newList = [];
         this.getNewList(this.treeData.lists);
