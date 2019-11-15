@@ -124,13 +124,13 @@
                    multiple
                   :on-exceed="handleExceed"
                   :file-list="saveList">
-                  <el-button size="small" type="primary" >上传附件</el-button>
+                  <el-button size="small" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" >上传附件</el-button>
               </el-upload>
           </div>
         </el-collapse-item>
       </el-collapse>
       <div class="left-row">
-        <el-button type="primary" @click="submitForm('powerprojecttaskForm')">保存</el-button>
+        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm('powerprojecttaskForm')">保存</el-button>
         <el-button @click="close">返回</el-button>
       </div>
     </el-form>

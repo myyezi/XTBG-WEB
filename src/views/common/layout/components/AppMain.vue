@@ -12,16 +12,16 @@
     </div>
     <el-drawer
         class="drawer_setting"
-        title="断点上传"
+        title="文件中心"
         :visible.sync="stopUploadShow"
         size="900px">
-        <stop-upload 
-          @func="getResFile" 
-          :sourceId = 'dataObj.id' 
-          :projectId = 'dataObj.projectId' 
-          :nodeName = 'dataObj.projectNodeName' 
-          :projectName = 'dataObj.projectName' 
-          :isShowUploadBut="isShowUploadBut" 
+        <stop-upload
+          @func="getResFile"
+          :sourceId = 'dataObj.id'
+          :projectId = 'dataObj.projectId'
+          :nodeName = 'dataObj.projectNodeName'
+          :projectName = 'dataObj.projectName'
+          :isShowUploadBut="isShowUploadBut"
           style="padding:20px"></stop-upload>
     </el-drawer>
   </section>

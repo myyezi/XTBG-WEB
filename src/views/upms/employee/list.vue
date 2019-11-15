@@ -3,7 +3,7 @@
     <div class="app-container white-bg list-panel" v-cloak>
         <div class="big_data_ring clearfix">
             <div class="big_data_ring_item" v-for="(item,index) in ringList" :key="index"
-                 @click="setSearchParam(index)">
+                 @click="setSearchParam(index)" style="cursor: pointer">
                 <el-progress type="circle" :percentage="100" :width="60" :stroke-width="3" :color="item.color"
                              :format="function() {return item.num}"></el-progress>
                 <div class="big_data_ring_item_title">
@@ -12,16 +12,15 @@
             </div>
         </div>
         <div class="opertion-box">
-            <el-button type="primary" v-show="showAddBtn" icon="el-icon-plus" size="small" @click="add()"
-                       style="margin-right:10px">创建
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;margin-right:10px" v-show="showAddBtn" icon="el-icon-plus" size="small" @click="add()">创建
             </el-button>
             <el-input v-model="searchParam.nameOrPhone" placeholder="请输入姓名或手机号" clearable class="zy_input"
                       style="width:190px"></el-input>
-            <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
-            <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i
                 :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
-            <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
-            <el-button type="primary" v-show="showExportBtn" icon="el-icon-upload" size="small" @click="exportExcel()">
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" v-show="showExportBtn" icon="el-icon-upload" size="small" @click="exportExcel()">
                 导出
             </el-button>
         </div>
@@ -143,7 +142,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="cancel">取 消</el-button>
-                <el-button type="primary" @click="ok('leaveForm')">确 定</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="ok('leaveForm')">确 定</el-button>
             </div>
         </el-dialog>
 
@@ -225,6 +224,7 @@
                                 this.dialogVisible = false;
                                 this.leaveForm = {id: "", leaveDate: ""};
                                 this.getList();
+                                this.getTotalCount();
                             } else {
                                 that.$message({message: rs.msg, type: 'error'});
                             }

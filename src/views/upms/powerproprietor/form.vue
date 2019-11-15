@@ -29,7 +29,7 @@
                     </div>
                 </el-collapse-item>
                 <el-collapse-item title="联系人信息" name="2">
-                    <el-button class="float-btn" type="primary" @click="addItem">新增</el-button>
+                    <el-button class="float-btn" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="addItem">新增</el-button>
                     <el-table border :data="powerproprietorForm.contactList" style="width: 100%">
                         <el-table-column prop="index" label="序号" min-width="50">
                             <template slot-scope="{row,$index}">
@@ -87,7 +87,7 @@
                 </el-collapse-item>
             </el-collapse>
             <div class="left-row">
-                <el-button type="primary" @click="submitForm('powerproprietorForm')">保存</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm('powerproprietorForm')">保存</el-button>
                 <el-button @click="close">返回</el-button>
             </div>
         </el-form>
@@ -198,7 +198,7 @@
                 this.powerproprietorForm.address = location.address;
                 this.powerproprietorForm.longitude = location.lng;
                 this.powerproprietorForm.latitude = location.lat;
-                
+
                 this.dialogPositionVisible = false;
             },
             addItem() {
@@ -226,7 +226,7 @@
                         this.powerproprietorForm.district = this.citySelectArr[2];
                     }
                 }
-        
+
             },
         },
     }

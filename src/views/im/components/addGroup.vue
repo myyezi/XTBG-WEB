@@ -4,8 +4,8 @@
       <div class="clearfix" >
             <div class="im_chat_group_form">
                 <el-form ref="groupForm" :model="groupForm" label-width="80px">
-                  <el-form-item 
-                    label="群名称:" 
+                  <el-form-item
+                    label="群名称:"
                     prop="name"
                     :rules="[
                       { required: true, message: '请输入群名称', trigger: 'blur' },
@@ -46,7 +46,7 @@
       </div>
       <div class="clearfix im_chat_group_footer">
           <el-button size="small" @click="back" style="float:left">取消</el-button>
-          <el-button size="small" type="primary" @click="onSubmit('groupForm')" style="float:left" :disabled="seleteUserList.length<1">创建</el-button>
+          <el-button size="small" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float:left" @click="onSubmit('groupForm')"  :disabled="seleteUserList.length<1">创建</el-button>
       </div>
     </div>
 </template>
