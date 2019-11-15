@@ -21,7 +21,7 @@
       </div>
       <div class="clearfix im_chat_group_footer">
           <el-button size="small" @click="back" style="float:left">取消</el-button>
-          <el-button size="small" type="primary" @click="onSubmit('groupForm')" style="float:left" :disabled="seleteUserList.length<=groupUserListCopy.length">新增</el-button>
+          <el-button size="small" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float:left" @click="onSubmit('groupForm')"  :disabled="seleteUserList.length<=groupUserListCopy.length">新增</el-button>
       </div>
     </div>
 </template>

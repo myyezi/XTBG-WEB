@@ -14,7 +14,7 @@
         </div>
         <div class="clearfix transfer_group_footer">
             <el-button size="small" @click="back" style="float:left">取消</el-button>
-            <el-button size="small" type="primary" @click="onSubmit()" style="float:left" :disabled="checkList.length<1">剔除</el-button>
+            <el-button size="small" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float:left" @click="onSubmit()"  :disabled="checkList.length<1">剔除</el-button>
         </div>
     </div>
 </template>
@@ -50,8 +50,8 @@
             ])
         },
         watch: {
-            userName:function(newvalue,oldvalue) { 
-                if (newvalue) { 
+            userName:function(newvalue,oldvalue) {
+                if (newvalue) {
                     this.groupUserListCopy = this.groupUserLists.filter((item) => {
                         return item.alias.indexOf(newvalue)>-1
                     })

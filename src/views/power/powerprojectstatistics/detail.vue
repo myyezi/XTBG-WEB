@@ -6,7 +6,7 @@
             </ul>
             <div class="swtich_search">
                 <el-input v-model="projectName" placeholder="请输入项目名称"></el-input>
-                <el-button type="primary" icon="el-icon-search" size="medium">搜索</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-search" size="medium">搜索</el-button>
             </div>
         </div>
         <div class="project_statistics">
@@ -41,10 +41,10 @@ import Bus from "@/utils/eventBus.js";
 export default {
     components: {},
     computed: {
-        
+
     },
     watch:{
-        
+
     },
     data() {
         return {
@@ -157,7 +157,7 @@ export default {
         this.companyClick({name:this.companyName},2)
     },
     mounted: function () {
-        
+
     }
 };
 </script>

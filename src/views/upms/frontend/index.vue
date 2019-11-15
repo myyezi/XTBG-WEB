@@ -51,7 +51,7 @@
                         </el-collapse-item>
                     </el-collapse>
                     <div class="left-row">
-                        <el-button type="primary" @click="submitForm('chargeStationForm')">保存</el-button>
+                        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm('chargeStationForm')">保存</el-button>
                         <el-button @click="close">返回</el-button>
                     </div>
                 </el-form>
@@ -113,7 +113,7 @@
         <el-dialog title="收货地址" :visible.sync="dialogFormVisible"  width="80%">
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="dialogFormVisible = false">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -539,11 +539,11 @@
                     return (
                         this.isToday(data.defdate) !== 1?
                         (<div>
-                            <div>{data.defvalue.text}</div> 
-                            <div style="width: 32px;margin: 0 auto;"> 
-                                <img src={ data.defvalue.value?this.correctdate:this.errdate} style="width:32px;height:32px"/> 
+                            <div>{data.defvalue.text}</div>
+                            <div style="width: 32px;margin: 0 auto;">
+                                <img src={ data.defvalue.value?this.correctdate:this.errdate} style="width:32px;height:32px"/>
                             </div>
-                        </div>) : <div>{data.defvalue.text}</div> 
+                        </div>) : <div>{data.defvalue.text}</div>
                     )
                 }
                 return (
@@ -575,7 +575,7 @@
                     } else {
                         console.log("今天之后",date.format("yyyy-MM-dd"))
                     }
-                }             
+                }
             },
             // 判断点击的日期是否在今天之前还是之后还是当天
             isToday(str) {
@@ -595,7 +595,7 @@
             getYear() {
                 if(this.valueYear) {
                     console.log(this.valueYear)
-                } 
+                }
             },
             // 点击周报
             getWeekReport(item) {
@@ -657,7 +657,7 @@
         margin: 20px auto 0;
     }
     .week_report ul {
-        padding-left:20px; 
+        padding-left:20px;
         margin-top:20px;
     }
     .week_report li {

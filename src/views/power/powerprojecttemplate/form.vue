@@ -29,7 +29,7 @@
         </el-collapse-item>
       </el-collapse>
       <div class="left-row">
-        <el-button type="primary" @click="submitForm('powerprojecttemplateForm')">保存</el-button>
+        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm('powerprojecttemplateForm')">保存</el-button>
         <el-button @click="close">返回</el-button>
       </div>
     </el-form>

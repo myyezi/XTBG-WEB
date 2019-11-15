@@ -69,8 +69,8 @@
         </el-collapse-item>
       </el-collapse>
       <div class="left-row">
-        <el-button type="primary" @click="submitForm(2)">提交</el-button>
-        <el-button v-show="showSaveDraftBtn" type="primary" @click="submitForm(1)">保存草稿</el-button>
+        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm(2)">提交</el-button>
+        <el-button v-show="showSaveDraftBtn" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm(1)">保存草稿</el-button>
         <el-button @click="close">返回</el-button>
       </div>
     </el-form>
@@ -129,7 +129,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="sure">确 定</el-button>
+        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="sure">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 用户选择器 -->

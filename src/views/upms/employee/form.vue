@@ -41,7 +41,7 @@
                     </div>
                 </el-collapse-item>
                 <el-collapse-item title="权限信息" name="2" v-if="employeeForm.employeeStatus != 3">
-                    <el-button class="float-btn" type="primary" @click="addItem">新增</el-button>
+                    <el-button class="float-btn" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="addItem">新增</el-button>
                     <el-table border :data="employeeForm.list" style="width: 100%">
                         <el-table-column label="组织" min-width="200" label-class-name="required">
                             <template slot-scope="{row,$index}">
@@ -202,8 +202,7 @@
                         </el-form-item>
                     </div>
                     <el-divider content-position="left">学历信息</el-divider>
-                    <el-button type="primary" @click="addEducationItem" size="small"
-                               style="float: right;margin-bottom: 5px">新增
+                    <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float: right;margin-bottom: 5px" @click="addEducationItem" size="small">新增
                     </el-button>
                     <el-table border :data="employeeForm.educationList" style="width: 100%">
                         <el-table-column prop="index" label="序号" min-width="50">
@@ -313,8 +312,7 @@
                         </el-form-item>
                     </div>
                     <el-divider content-position="left">紧急联系人</el-divider>
-                    <el-button type="primary" @click="addContactItem" size="small"
-                               style="float: right;margin-bottom: 5px">新增
+                    <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float: right;margin-bottom: 5px" @click="addContactItem" size="small">新增
                     </el-button>
                     <el-table border :data="employeeForm.contactList" style="width: 100%">
                         <el-table-column prop="index" label="序号" min-width="50">
@@ -359,8 +357,7 @@
                     </el-table>
 
                     <el-divider content-position="left">个人资料</el-divider>
-                    <el-button type="primary" @click="addAttachmentList" size="small"
-                               style="float: right;margin-bottom: 5px">新增
+                    <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float: right;margin-bottom: 5px" @click="addAttachmentList" size="small">新增
                     </el-button>
                     <div class="avatar-uploader_count clearfix">
                         <div v-for="(attachment,i) in employeeForm.attachmentList" :key="i"
@@ -391,7 +388,7 @@
                 </el-collapse-item>
             </el-collapse>
             <div class="left-row">
-                <el-button type="primary" @click="submitForm('employeeForm')">保存</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm('employeeForm')">保存</el-button>
                 <el-button @click="close">返回</el-button>
             </div>
 
@@ -404,7 +401,7 @@
                 </el-form>
                 <div slot="footer" class="dialog-footer">
                     <el-button @click="cancel">取 消</el-button>
-                    <el-button type="primary" @click="ok">确 定</el-button>
+                    <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="ok">确 定</el-button>
                 </div>
             </el-dialog>
         </el-form>
