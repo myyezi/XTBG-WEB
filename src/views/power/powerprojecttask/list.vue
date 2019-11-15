@@ -203,9 +203,9 @@ import OrganizationSelect from '@/components/OrganizationSelect'
 
 export default {
   name: 'PowerProjectTask',
-  components: {    
-      CitySelectPanel, 
-      OrganizationSelect 
+  components: {
+      CitySelectPanel,
+      OrganizationSelect
     },
    computed: {
       ...mapGetters([
@@ -264,7 +264,7 @@ export default {
       if (scrollTop + clientHeight >= scrollHeight) {
         if (this.tableShow) {
           div[0].scrollTop = div[0].scrollTop - 5;
-          console.log('到底了')
+          console.log(this.cardPage)
           this.cardPage = this.cardPage + 1;
           this.getCardList();
         }
