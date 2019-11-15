@@ -7,9 +7,9 @@
                     <div class="title" :class="{'notifier_title':workData.nodeType ==3}">
                         <i class="el-icon-user-solid" v-if="workData.nodeType == 2"></i>
                         <i class="el-icon-s-promotion" v-if="workData.nodeType == 3"></i>
-                        <span 
-                            :class="{'editable-title':workData.nodeType!=1}" 
-                            v-if="workData.nodeType==1||(!workData.properties||!workData.properties.editName)" 
+                        <span
+                            :class="{'editable-title':workData.nodeType!=1}"
+                            v-if="workData.nodeType==1||(!workData.properties||!workData.properties.editName)"
                             @click.stop="workData.nodeType!=1?showInput(workData):''">
                             {{workData.name}}
                         </span>
@@ -90,16 +90,16 @@
         mounted() {
         },
         destroyed() {
-            // Bus.$off("transfer-station")
-            // Bus.$off("setting-count")
+             // Bus.$off("transfer-station")
+             // Bus.$off("setting-count")
         },
         methods: {
             showInput(data) {
-                Bus.$emit("transfer-station",{workData:data,type:1}); 
+                Bus.$emit("transfer-station",{workData:data,type:1});
                 // this.$emit("transfer-station",{workData:data,type:1})
             },
             addOneRoute(data) {
-                Bus.$emit("work-add-one-route",{workData:data}); 
+                Bus.$emit("work-add-one-route",{workData:data});
                 this.popoverVisible = false
             },
             settingCount(data) {

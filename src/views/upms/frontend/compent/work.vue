@@ -9,7 +9,7 @@
             </div>
             <div class="box-scale" @click="transferStation({workData:workData,type:2})" :style="{ transform: 'scale('+transformSize+')' }" id="workflowDesign">
                 <!-- 流程主体开始 -->
-                <work-item 
+                <work-item
                     :workData="workData"
                 ></work-item>
                 <!-- 流程主体开始 -->
@@ -120,12 +120,12 @@
                 if(data.nodeType == 5) {
                     if(data.conditionList&&data.conditionList.length>0) {
                         data.conditionList.forEach((item,index)=>{
-                            if(item.properties&&JSON.stringify(item.properties) !== '{}') { 
+                            if(item.properties&&JSON.stringify(item.properties) !== '{}') {
                                 if(item.properties.editName) {
                                     this.updateNodeName()
                                 }
                                 item.properties.editName = false
-                            } 
+                            }
                             if(this.workDataType!==2) {
                                 if(item.id == this.oneWorkData.id) {
                                     if(this.workDataType === 1) {
@@ -138,14 +138,14 @@
                     }
                     if(data.children&&data.children.length >0) {
                         this.workDataHandle(data.children[0])
-                    } 
+                    }
                 } else {
-                    if(data.properties&&JSON.stringify(data.properties) !== '{}') { 
+                    if(data.properties&&JSON.stringify(data.properties) !== '{}') {
                         if(data.properties.editName&&data.nodeType != 4) {
                             this.updateNodeName()
                         }
                         data.properties.editName = false
-                    } 
+                    }
                     if(this.workDataType!==2) {
                         if(data.id == this.oneWorkData.id) {
                             if(this.workDataType === 1) {
@@ -155,7 +155,7 @@
                     }
                     if(data.children&&data.children.length >0) {
                         this.workDataHandle(data.children[0])
-                    } 
+                    }
                 }
             },
             // 添加审批人
@@ -182,7 +182,7 @@
                 let obj = {
                     nodeType:type,
                     parentId:data.id,
-                    configId:'1'
+                    configId:this.workData.configId,
                 }
                 ajax.post('workflow/workflowconfignode/saveConfigNodeTree',obj).then(rs => {
                     if (rs.status === 0) {
@@ -335,7 +335,7 @@
         align-items: center;
         flex-wrap: wrap;
         padding: 0 50px;
-        position: relative; 
+        position: relative;
         .node-wrap-box {
             display: inline-flex;
             flex-direction: column;
@@ -351,7 +351,7 @@
                     display:block;
                 }
                 .editable-title {
-                    border-bottom: 1px dashed #fff;      
+                    border-bottom: 1px dashed #fff;
                 }
                 &::after {
                     border: 1px solid #3296fa;
@@ -418,7 +418,7 @@
                 position: relative;
                 font-size: 14px;
                 padding: 16px;
-                padding-right: 30px; 
+                padding-right: 30px;
                 .text {
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -524,7 +524,7 @@
         display: inline-flex;
         flex-direction: column;
         align-items: center;
-        position: relative; 
+        position: relative;
     }
     .add-branch {
         border: none;
@@ -648,7 +648,7 @@
             }
             .title-wrapper {
                 .editable-title {
-                    border-bottom: 1px dashed #15bc83;      
+                    border-bottom: 1px dashed #15bc83;
                 }
             }
             &::after{
@@ -668,7 +668,7 @@
             border-radius: 4px;
             border: 1px solid transparent;
             transition: all .1s ease-out;
-            box-shadow: 0 2px 5px 0 rgba(0,0,0,.1); 
+            box-shadow: 0 2px 5px 0 rgba(0,0,0,.1);
         }
         .title-wrapper {
             position: relative;
@@ -731,7 +731,7 @@
                 color: #979797;
             }
         }
-    } 
+    }
 }
 .work-flow-add-node-body {
     display: flex;
