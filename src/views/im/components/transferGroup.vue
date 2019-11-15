@@ -11,7 +11,7 @@
         </div>
         <div class="clearfix transfer_group_footer">
             <el-button size="small" @click="back" style="float:left">取消</el-button>
-            <el-button size="small" type="primary" @click="onSubmit()" style="float:left" :disabled="checkList.length<1">转移</el-button>
+            <el-button size="small" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float:left" @click="onSubmit()"  :disabled="checkList.length<1">转移</el-button>
         </div>
     </div>
 </template>
@@ -77,7 +77,7 @@
                     let notifyContent = {
                         type:1,
                         content:this.user.name+'将群转移给了' + userNameString,
-                        pushContent:this.user.name+'将群转移给了' + userNameString, 
+                        pushContent:this.user.name+'将群转移给了' + userNameString,
                     }
                     let obj ={
                         groupId:this.chat.targetId,

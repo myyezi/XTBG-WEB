@@ -69,8 +69,8 @@
         </el-collapse-item>
       </el-collapse>
       <div class="left-row">
-        <el-button type="primary" @click="submitForm(2)">提交</el-button>
-        <el-button v-show="showSaveDraftBtn" type="primary" @click="submitForm(1)">保存草稿</el-button>
+        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm(2)">提交</el-button>
+        <el-button v-show="showSaveDraftBtn" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm(1)">保存草稿</el-button>
         <el-button @click="close">返回</el-button>
       </div>
     </el-form>
@@ -129,7 +129,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="sure">确 定</el-button>
+        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="sure">确 定</el-button>
       </div>
     </el-dialog>
     <!-- 用户选择器 -->
@@ -140,9 +140,6 @@
 <script>
 import ajax from '@/utils/request'
 import { tool, ruleTool, formRule } from '@/utils/common'
-import GanttAdd from '@/components/Gannt/add'
-import '@/components/dhtmlx-gantt'
-import "@/components/dhtmlx-gantt/codebase/locale/locale_cn"
 import Bus from "@/utils/eventBus.js"
 import UserSelect from "@/components/UserSelect"
 import dragTreeTable from "@/components/treeTable/dragTreeTable.vue";
@@ -152,7 +149,7 @@ const editImg = require('@/styles/img/icon-img/edit.png')
 const deletedImg = require('@/styles/img/icon-img/deleted.png')
 export default {
   mixins: [tool, ruleTool],
-  components: { GanttAdd, UserSelect, dragTreeTable },
+  components: { UserSelect, dragTreeTable },
   data() {
     let that = this;
     return {
@@ -250,149 +247,6 @@ export default {
         links: []
       },
       isLoading: false,
-      headerTitle: [
-        {
-          name: "action",
-          label: '操作<img src="static/add.png" style="width:16px;height:16px;margin: -2px 5px 0;vertical-align: middle;cursor: pointer;" data-column-id="addNode"/>',
-          align: "center",
-          width: '120',
-          template: function (obj) {
-            let str = "";
-            let addStr = "";
-            if (obj.level > 4) {
-              addStr = "";
-            } else {
-              addStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='" + addImg + "' title='新增' style='vertical-align: middle;'/></a>";
-            }
-            let updateStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='" + editImg + "' title='编辑' style='vertical-align: middle;'/></a>"
-            let delStr = "<a style='display:inline-block;width:40px;height:100%;'><img src='" + deletedImg + "' title='删除' style='vertical-align: middle;'/></a>"
-            if (obj.currentStatus != 4 && obj.currentStatus != 6) {
-              str = addStr + updateStr + delStr;
-            } else {
-              str = addStr
-            }
-            return str;
-          }
-        },
-        {
-          name: 'text',
-          label: '工作内容',
-          tree: true,
-          align: "left",
-          width: '250',
-        },
-        {
-          name: 'period',
-          label: '工期(天)',
-          align: "center",
-          width: '75',
-        },
-        {
-          name: 'start_date',
-          label: '开始时间',
-          align: "center",
-          width: '100',
-        },
-        {
-          name: 'end_date',
-          label: '结束时间',
-          align: "center",
-          width: '100',
-        },
-        {
-          name: 'stage',
-          label: '所属阶段',
-          align: "center",
-          width: '75',
-          template: function (obj) {
-            let str = '';
-            that.stageList.forEach((data) => {
-              if (data.value == obj.stage) {
-                str = data.text;
-              }
-            });
-            return str;
-          }
-        },
-        {
-          name: 'principalText',
-          label: '负责人',
-          align: "center",
-          width: '100',
-          template: function (obj) {
-            if (!obj.principal) {
-              return ""
-            } else {
-              return obj.principalText
-            }
-          }
-        },
-        {
-          name: 'professionText',
-          label: '专业',
-          align: "center",
-          width: '75',
-        },
-        {
-          name: 'isApproval',
-          label: '是否审批',
-          align: "center",
-          width: '75',
-          template: function (obj) {
-            return obj.isApproval == 1 ? '是' : '否'
-          }
-        },
-        {
-          name: 'isUpload',
-          label: '是否上传文件',
-          align: "center",
-          width: '75',
-          template: function (obj) {
-            return obj.isUpload == 1 ? '是' : '否'
-          }
-        },
-        {
-          name: 'isPosition',
-          label: '是否获取位置',
-          align: "center",
-          width: '75',
-          template: function (obj) {
-            return obj.isPosition == 1 ? '是' : '否'
-          }
-        },
-        {
-          name: 'currentStatusText',
-          label: '当前状态',
-          align: "center",
-          width: '75',
-          template: function (obj) {
-            let str = "";
-            switch (obj.currentStatus) {
-              case 1:
-                str = "未开始";
-                break;
-              case 2:
-                str = "进行中";
-                break;
-              case 3:
-                str = "延期";
-                break;
-              case 4:
-                str = "待审核";
-                break;
-              case 5:
-                str = "不合格";
-                break;
-              case 6:
-                str = "已完成";
-                break;
-              default:
-                str = "";
-            }
-            return str;
-          }
-        },
-      ]
     }
   },
   created() {
@@ -489,9 +343,19 @@ export default {
         },
         {
           title: "所属阶段",
-          field: "stageText",
+          field: "stage",
           width: 150,
-          align: "center"
+          align: "center",
+          isCutOut:true,
+            formatter: item => {
+                let str = ''
+                this.stageList.forEach((data) => {
+                    if(data.value==item.stage) {
+                        str = data.text
+                    }
+                })
+                return str
+            }
         },
         {
           title: "负责人",
@@ -507,21 +371,33 @@ export default {
         },
         {
           title: "是否审批",
-          field: "isApprovalText",
+          field: "isApproval",
           width: 100,
-          align: "center"
+          align: "center",
+          isCutOut:true,
+          formatter: item => {
+            return item.isApproval==1?'是':'否'
+          }
         },
         {
           title: "是否上传文件",
-          field: "isUploadText",
+          field: "isUpload",
           width: 100,
-          align: "center"
+          align: "center",
+          isCutOut:true,
+          formatter: item => {
+            return item.isUpload==1?'是':'否'
+          }
         },
         {
           title: "是否获取位置",
-          field: "isPositionText",
+          field: "isPosition",
           width: 100,
-          align: "center"
+          align: "center",
+          isCutOut:true,
+          formatter: item => {
+            return item.isPosition==1?'是':'否'
+          }
         },
         {
           title: "当前状态",
@@ -558,20 +434,28 @@ export default {
     },
     // 编辑节点
     onEditNode(data) {
-      let _this = this
-      _this.operationType = 'edit'
-      ajax.get('power/powerprojectplan/' + data.id).then(rs => {
-        if (rs.data.level >= 5) {
-          _this.$message.error("最多只能添加到五级级节点");
-          return false
-        }
-
-        _this.clearValidate('ruleForm')
-        _this.dialogVisible = true;
-        _this.showContent = false;
-        _this.powerprojectplanform = rs.data;
-        _this.operationType = "inserted";
-      });
+      if (data.parentId == "0"){
+          this.showContent = true;
+      }
+      this.clearValidate('ruleForm');
+      this.formData = data;
+      this.operationType = 'edit';
+      this.powerprojectplanform = {
+          id : data.id,
+          name : data.name,
+          nameType : data.nameType,
+          period : data.period,
+          profession : data.profession,
+          stage : data.stage,
+          isApproval : data.isApproval,
+          isUpload : data.isUpload,
+          isPosition :data.isPosition,
+          planStartDate: data.planStartDate,
+          planEndDate: data.planEndDate,
+          principal: data.principal,
+          principalText: data.principalText
+      };
+      this.dialogVisible = true;
     },
     // 删除节点
     onDeleteNode(data) {
@@ -603,11 +487,15 @@ export default {
         });
         this.dialogFormVisible = false;
         if (this.isAddFirst) {
+          if(!this.treeData.lists){
+            this.$set(this.treeData, 'lists', []);
+          }
           this.treeData.lists.push(data);
         } else {
           if (!this.formData.children) {
             this.$set(this.formData, 'children', []);
           }
+          data.parentId = this.formData.id;
           this.formData.children.push(data);
         }
       } else if (this.operationType === 'delete') {
@@ -631,6 +519,10 @@ export default {
         this.formData.nameType = data.nameType;
         this.formData.period = data.period;
         this.formData.profession = data.profession;
+        this.formData.planStartDate = data.planStartDate;
+        this.formData.planEndDate = data.planEndDate;
+        this.formData.principal = data.principal;
+        this.formData.principalText = data.principalText;
         this.formData.stage = data.stage;
         this.formData.isApproval = data.isApproval;
         this.formData.isUpload = data.isUpload;
@@ -671,6 +563,7 @@ export default {
     // 改变项目任务书下拉框事件
     onChangeProjectTask() {
       if (this.taskId) {
+        this.$set(this.treeData, 'lists', []);
         // 获取项目任务书对象
         ajax.get('power/powerprojecttask/getOneById/' + this.taskId).then(rs => {
           if (rs.status === 0) {
@@ -726,26 +619,15 @@ export default {
     // 项目计划列表
     _getTasksModel() {
       if (this.taskId) {
-        ajax.get('power/powerprojectplan/getPlanTree?taskId=' + this.taskId).then(rs => {
+        ajax.get('power/powerprojectplan/getPlanTreeList/' + this.taskId).then(rs => {
           if (rs.status === 0) {
             if (rs.data) {
               if (rs.data.length > 0) {
                 this.projectId = rs.data[0].projectId;
-                rs.data.forEach((item) => {
-                  item.start_date = item.planStartDate;
-                  item.end_date = item.planEndDate;
-                  item.text = item.name;
-                  item.parent = item.parentId;
-                  item.open = this.isOpen;
-                });
-                let obj = {};
                 this.isLoading = true;
-                obj.data = rs.data;
-                this.tasks = obj;
-                this.dataArr = rs.data;
+                this.treeData.lists = rs.data;
                 this.tempType = "edit";
                 this.showSaveDraftBtn = false;
-                console.log(this.tasks)
               } else {
                 // 根据项目类型复制模板数据到项目计划
                 if (this.powerprojecttaskForm.type) {
@@ -756,18 +638,8 @@ export default {
                     if (rs.status === 0) {
                       if (rs.data) {
                         this.projectId = rs.data[0].projectId;
-                        rs.data.forEach((item) => {
-                          item.start_date = item.planStartDate ? item.planStartDate : "";
-                          item.end_date = item.planEndDate ? item.planEndDate : "";
-                          item.text = item.name;
-                          item.parent = item.parentId;
-                          item.open = this.isOpen;
-                        });
-                        let obj = {};
                         this.isLoading = true;
-                        obj.data = rs.data;
-                        this.tasks = obj;
-                        this.dataArr = rs.data;
+                        this.treeData.lists = rs.data;
                         this.tempType = "edit";
                         this.showSaveDraftBtn = false;
                       } else {
@@ -844,76 +716,74 @@ export default {
 
     // 弹框“确定”操作
     sure() {
-      this.$refs['ruleForm'].validate((valid) => {
+      let that =  this;
+      that.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          let newChild = this.powerprojectplanform;
-          newChild.text = this.powerprojectplanform.name;
-          newChild.start_date = this.powerprojectplanform.planStartDate;
-          newChild.end_date = this.powerprojectplanform.planEndDate;
-          if (this.operationType === 'add') {
-            this.isEdit = true;
+          for (let i = 0; i < that.professionList.length; i++) {
+            if (that.professionList[i].value == that.powerprojectplanform.profession) {
+              that.powerprojectplanform.professionText = that.professionList[i].text;
+              break;
+            }
+          }
+          
+          let newChild = that.powerprojectplanform;
+          newChild.text = that.powerprojectplanform.name;
+          if (that.operationType === 'add') {
+            that.isEdit = true;
             newChild.parent = 0;
             newChild.parentId = 0;
             newChild.level = 1;
-            this.contentList.forEach((item) => {
-              if (item.text == this.powerprojectplanform.name) {
-                newChild.nameType = item.value;
-              }
-            });
-            newChild.sortNum = this.getSortNum(newChild.parentId);
-          } else if (this.operationType === 'inserted') {
-            this.isEdit = true;
-            newChild.parent = this.formData.id;
-            newChild.parentId = this.formData.id;
-            this.dataArr.forEach((item) => {
-              if (item.id == this.formData.id) {
+            newChild.stage = that.powerprojectplanform.stage;
+            newChild.principalText = that.powerprojectplanform.principalText;
+            newChild.isApproval = that.powerprojectplanform.isApproval;
+            newChild.isUpload = that.powerprojectplanform.isUpload;
+            newChild.isPosition = that.powerprojectplanform.isPosition;
+            newChild.sortNum = that.getSortNum(newChild.parentId);
+          } else if (that.operationType === 'inserted') {
+            that.isEdit = true;
+            newChild.parent = that.formData.id;
+            newChild.parentId = that.formData.id;
+            that.dataArr.forEach((item) => {
+              if (item.id == that.formData.id) {
                 newChild.nameType = item.nameType;
                 newChild.level = item.level + 1;
               }
             });
-            newChild.sortNum = this.getSortNum(newChild.parentId);
+            newChild.sortNum = that.getSortNum(newChild.parentId);
           } else {
-            if (this.tasks.data && this.tasks.data.length > 0) {
-              this.dataArr.forEach((item) => {
-                if (item.id === this.powerprojectplanform.id) {
-                  // 编辑操作，先删除，判断对象的值是否发生变化
-                  if (this.tempplanform.name != this.powerprojectplanform.name ||
-                    this.tempplanform.period != this.powerprojectplanform.period ||
-                    this.tempplanform.planStartDate != this.powerprojectplanform.planStartDate ||
-                    this.tempplanform.planEndDate != this.powerprojectplanform.planEndDate ||
-                    this.tempplanform.stage != this.powerprojectplanform.stage ||
-                    this.tempplanform.principal != this.powerprojectplanform.principal ||
-                    this.tempplanform.profession != this.powerprojectplanform.profession ||
-                    this.tempplanform.isApproval != this.powerprojectplanform.isApproval ||
-                    this.tempplanform.isUpload != this.powerprojectplanform.isUpload ||
-                    this.tempplanform.isPosition != this.powerprojectplanform.isPosition) {
-                    item.name = this.powerprojectplanform.name;
-                    item.period = this.powerprojectplanform.period;
-                    item.planStartDate = this.powerprojectplanform.planStartDate;
-                    item.planEndDate = this.powerprojectplanform.planEndDate;
-                    item.stage = this.powerprojectplanform.stage;
-                    item.principal = this.powerprojectplanform.principal;
-                    for (let i = 0; i < this.professionList.length; i++) {
-                      if (this.professionList[i].value == this.powerprojectplanform.profession) {
-                        this.powerprojectplanform.professionText = this.professionList[i].text;
-                        break;
-                      }
-                    }
-                    item.isApproval = this.powerprojectplanform.isApproval;
-                    item.isUpload = this.powerprojectplanform.isUpload;
-                    item.isPosition = this.powerprojectplanform.isPosition;
-                    this.isEdit = true;
-                    // this.dataArr.splice(index, 1);
-                  }
-                }
-              });
-            }
+            that.checkPlanNodeChange(that.treeData.lists);
           }
-          this.processProjectPlanNode(newChild);
+          that.processProjectPlanNode(newChild);
+          that.dialogVisible = false;
         } else {
           return false;
         }
       });
+    },
+    checkPlanNodeChange(treeDataList){
+      let that =  this;
+      if (treeDataList && treeDataList.length > 0) {
+          treeDataList.forEach((item) => {
+            if (item.id === that.powerprojectplanform.id) {
+              // 编辑操作，先删除，判断对象的值是否发生变化
+              if (item.name != that.powerprojectplanform.name ||
+                item.period != that.powerprojectplanform.period ||
+                item.planStartDate != that.powerprojectplanform.planStartDate ||
+                item.planEndDate != that.powerprojectplanform.planEndDate ||
+                item.stage != that.powerprojectplanform.stage ||
+                item.principal != that.powerprojectplanform.principal ||
+                item.profession != that.powerprojectplanform.profession ||
+                item.isApproval != that.powerprojectplanform.isApproval ||
+                item.isUpload != that.powerprojectplanform.isUpload ||
+                item.isPosition != that.powerprojectplanform.isPosition) {
+                that.isEdit = true;
+                return;
+              }
+            }else if(item.children){
+                that.checkPlanNodeChange(item.children)
+            }
+          });
+        }
     },
     cancel() {
       this.dialogVisible = false;
@@ -942,10 +812,11 @@ export default {
     },
     //保存
     submitForm(projectStatus) {
-      if (!this.taskId || this.tasks.data.length == 0) {
+      if (!this.taskId || this.treeData.lists.length == 0) {
         this.$message.error('请制定项目计划信息！');
         return;
       }
+     
       if (this.isEdit) {
         this.newList = [];
         this.getNewList(this.treeData.lists);

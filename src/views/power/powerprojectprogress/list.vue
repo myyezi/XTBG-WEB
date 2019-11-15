@@ -2,10 +2,10 @@
   <div class="app-container white-bg list-panel" v-cloak>
     <div class="opertion-box">
         <el-input v-model="searchParam.keyWord" placeholder="请输入项目名称或编号" clearable class="zy_input" style="width:190px"></el-input>
-        <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
-      <el-button type="primary" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
-      <el-button type="primary" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
-<!--      <el-button type="primary" icon="el-icon-refresh" size="small" @click="stopUploadShow = true">测试</el-button>-->
+        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
+      <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-menu" size="small" @click="isShowMore = !isShowMore">更多查询<i :class="[isShowMore ? 'el-icon-caret-bottom' : 'el-icon-caret-top', 'el-icon--right'] "></i></el-button>
+      <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-refresh" size="small" @click="resetList()">重置</el-button>
+<!--      <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-refresh" size="small" @click="stopUploadShow = true">测试</el-button>-->
     </div>
     <!-- 展开更多查询开始 -->
     <el-collapse-transition>
@@ -123,7 +123,7 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
               <el-button @click="dialogFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="cancel">确 定</el-button>
+              <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="cancel">确 定</el-button>
           </div>
       </el-dialog>
       <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="800px">

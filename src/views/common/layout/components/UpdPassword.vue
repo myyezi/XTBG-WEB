@@ -13,7 +13,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <el-button @click="formShow = false">关 闭</el-button>
-            <el-button type="primary" @click="submitForm">确 定</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm">确 定</el-button>
         </div>
     </el-dialog>
 </template>

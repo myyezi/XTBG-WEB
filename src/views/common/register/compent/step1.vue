@@ -14,10 +14,10 @@
             <el-input type="password" v-model="ruleFormOne.checkPass" autocomplete="new-password" placeholder="请输入确认密码"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleFormOne')" class="selete_button" :class="{'seleted_button':seletedProtocol}">下一步</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitForm('ruleFormOne')" class="selete_button" :class="{'seleted_button':seletedProtocol}">下一步</el-button>
         </el-form-item>
         <div class="protocol clearfix">
-            <i class="selete_protocol" :class="{'seleted_protocol':seletedProtocol}" @click="seletedProtocol=!seletedProtocol"></i><span class="rotocol_text">我已阅读并同意相关服务条款和隐私政策</span> 
+            <i class="selete_protocol" :class="{'seleted_protocol':seletedProtocol}" @click="seletedProtocol=!seletedProtocol"></i><span class="rotocol_text">我已阅读并同意相关服务条款和隐私政策</span>
         </div>
     </el-form>
 </template>
@@ -93,7 +93,7 @@ import { setTimeout } from 'timers';
             }
         },
         watch: {
-            
+
         },
         methods: {
             clickRadio() {
@@ -123,7 +123,7 @@ import { setTimeout } from 'timers';
                                 setTimeout(()=> {
                                     this.$router.push({path: '/login'})
                                 },2000)
-                            } 
+                            }
                         });
 
                         const time = setInterval(() => {
@@ -138,7 +138,7 @@ import { setTimeout } from 'timers';
                         }, 1000);
                     }else {
                         // this.$message.error("请输入11位正确手机号码")
-                        return 
+                        return
                     }
                 }
             },
@@ -169,7 +169,7 @@ import { setTimeout } from 'timers';
                                     this.$message.error(rs.msg)
                                 }
                             });
-                        } 
+                        }
                     });
                 } else {
                     this.$message.warning("请先勾选我已阅读并同意相关服务条款和隐私政策")

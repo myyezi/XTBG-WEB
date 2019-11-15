@@ -23,7 +23,7 @@
         </el-tree>
         <div slot="footer" class="dialog-footer" v-show="showButton">
             <el-button @click="close()">取 消</el-button>
-            <el-button type="primary" @click="save()">确 定</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="save()">确 定</el-button>
         </div>
     </el-dialog>
 

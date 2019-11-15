@@ -1,6 +1,6 @@
 <template>
   <div class="upload-container">
-    <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
+    <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click=" dialogVisible=true">
       上传本地图片
     </el-button>
     <el-dialog :visible.sync="dialogVisible">
@@ -18,7 +18,7 @@
         :action="serverUrl"
         list-type="picture-card"
       >
-        <el-button size="small" type="primary">
+        <el-button size="small" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF">
           上传图片
         </el-button>
         <div class="el-upload__tip" slot="tip">图片只能上传jpg,jpeg,png格式,最大只能上传10M</div>
@@ -26,7 +26,7 @@
       <el-button @click="dialogVisible = false">
         取消
       </el-button>
-      <el-button type="primary" @click="handleSubmit">
+      <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="handleSubmit">
         完成
       </el-button>
     </el-dialog>

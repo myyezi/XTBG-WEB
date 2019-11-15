@@ -1,7 +1,7 @@
 <template>
   <div class="app-container white-bg list-panel" v-cloak>
       <div class="opertion-box">
-        <el-button v-show="showAddBtn" type="primary" icon="el-icon-plus" size="small" @click="toPlanTemplate('add')" style="margin-right:10px">创建</el-button>
+        <el-button v-show="showAddBtn" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;margin-right:10px" icon="el-icon-plus" size="small" @click="toPlanTemplate('add')" >创建</el-button>
       </div>
     <div class="division-line"></div>
     <div class="table-box">

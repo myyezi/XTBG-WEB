@@ -1,5 +1,5 @@
 <template>
-    <el-form :model="ruleFormThree" status-icon ref="ruleFormThree" label-width="100px"> 
+    <el-form :model="ruleFormThree" status-icon ref="ruleFormThree" label-width="100px">
         <el-form-item label="学历：" prop="education">
             <el-select v-model="ruleFormThree.education" placeholder="请选择学历">
                 <el-option :label="item.text" :value="item.value" v-for="(item,index) in educationList" :key="index"></el-option>
@@ -12,7 +12,7 @@
         </el-form-item>
         <el-form-item>
             <el-button @click="lastStep()" style="float:left;width: 125px;">上一步</el-button>
-            <el-button type="primary" @click="submitForm('ruleFormThree')" style="float:left;background:#0aa0a9;width: 130px;">完成</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float:left;background:#0aa0a9;width: 130px;" @click="submitForm('ruleFormThree')">完成</el-button>
             <el-button @click="nextStep()" style="float:left;width: 125px;">跳过</el-button>
         </el-form-item>
     </el-form>
@@ -32,7 +32,7 @@
             }
         },
         watch: {
-            
+
         },
         created() {
             this.getDict()
@@ -63,7 +63,7 @@
                             isLastStep:false
                         }
                         this.$emit("get-form-data",obj)
-                    } 
+                    }
                 });
             },
             nextStep() {

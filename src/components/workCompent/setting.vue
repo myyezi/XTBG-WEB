@@ -21,8 +21,8 @@
                         <el-radio :label="3">表单里的联系人</el-radio>
                     </el-radio-group>
                     <div v-if="approverForm.redio==1">
-                        <el-button type="primary" icon="el-icon-plus" v-if="approverForm.peopleList.length==0" @click="addPeople">添加成员</el-button>
-                        <el-button type="primary" icon="el-icon-edit" v-else @click="dialogFormVisible = true">修改成员</el-button>
+                        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-plus" v-if="approverForm.peopleList.length==0" @click="addPeople">添加成员</el-button>
+                        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-edit" v-else @click="dialogFormVisible = true">修改成员</el-button>
                         <!-- <span class="add_people_tip">不能超过20人</span> -->
                         <div style="padding:10px 0;">
                             <el-tag
@@ -56,12 +56,12 @@
                                 </el-option>
                             </el-select>
                             <div v-if="optionalRangeValue==2" style="margin-top:10px">
-                                <el-button type="primary" icon="el-icon-plus" v-if="approverForm.peopleList.length==0">添加成员</el-button>
-                                <el-button type="primary" icon="el-icon-edit" v-else>修改成员</el-button>
+                                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-plus" v-if="approverForm.peopleList.length==0">添加成员</el-button>
+                                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-edit" v-else>修改成员</el-button>
                             </div>
                             <div v-if="optionalRangeValue==3" style="margin-top:10px">
-                                <el-button type="primary" icon="el-icon-plus" v-if="approverForm.peopleList.length==0">添加角色</el-button>
-                                <el-button type="primary" icon="el-icon-edit" v-else>修改角色</el-button>
+                                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-plus" v-if="approverForm.peopleList.length==0">添加角色</el-button>
+                                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-edit" v-else>修改角色</el-button>
                             </div> -->
                         <!-- </el-form-item> -->
                     <!-- </div> -->
@@ -80,8 +80,8 @@
             <el-tab-pane label="设置抄送人" name="first" v-if="drawerType == 3">
                 <el-form label-width="80px" class="drawer_form" label-position="top">
                     <el-form-item label="抄送人">
-                        <el-button type="primary" icon="el-icon-plus" v-if="approverForm.peopleList.length==0" @click="addPeople">添加成员</el-button>
-                        <el-button type="primary" icon="el-icon-edit" v-else @click="dialogFormVisible = true">修改成员</el-button>
+                        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-plus" v-if="approverForm.peopleList.length==0" @click="addPeople">添加成员</el-button>
+                        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-edit" v-else @click="dialogFormVisible = true">修改成员</el-button>
                         <div style="padding:10px 0;">
                             <el-tag
                                 style="margin:0 10px 10px 0;"
@@ -121,7 +121,7 @@
         </el-tabs>
         <div class="drawer_footer">
             <el-button @click="handleCloseDrawer">取消</el-button>
-            <el-button type="primary" @click="saveData">保存</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="saveData">保存</el-button>
         </div>
         <el-dialog title="人员设置" :visible.sync="dialogFormVisible" :append-to-body="true">
             <el-tree
@@ -137,7 +137,7 @@
             </el-tree>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="seleteData">确 定</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="seleteData">确 定</el-button>
             </div>
         </el-dialog>
     </el-drawer>

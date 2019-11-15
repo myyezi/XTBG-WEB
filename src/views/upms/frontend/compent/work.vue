@@ -5,7 +5,7 @@
                 <i class="el-icon-remove-outline" @click="changeSize('small')"></i>
                 <span>{{zoomSize}}%</span>
                 <i class="el-icon-circle-plus-outline" @click="changeSize('big')"></i>
-                <el-button type="primary" >发布</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" >发布</el-button>
             </div>
             <div class="box-scale" @click="transferStation({workData:workData,type:2})" :style="{ transform: 'scale('+transformSize+')' }" id="workflowDesign">
                 <!-- 流程主体开始 -->

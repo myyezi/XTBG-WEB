@@ -30,7 +30,7 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
               <el-button @click="dialogFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="cancel">确 定</el-button>
+              <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="cancel">确 定</el-button>
           </div>
       </el-dialog>
   </div>
@@ -59,9 +59,9 @@ export default {
       isAddFirst:false,// 是否是增加一级节点
       operationType:'',// 操作类型
       templateForm:{
-        code:'', 
+        code:'',
         title:'',
-        content:'', 
+        content:'',
         indexScore:'',
       },// 弹框内容
       rules: {
@@ -130,9 +130,9 @@ export default {
       this.formData = data
       this.operationType = 'edit'
       this.templateForm = {
-        code:data.code, 
+        code:data.code,
         title:data.title,
-        content:data.content, 
+        content:data.content,
         indexScore:data.indexScore,
       }
       this.dialogFormVisible = true
@@ -175,9 +175,9 @@ export default {
     // 清楚弹窗内容以及警告信息
     clearValidate(formName) {
       this.templateForm = {
-        code:'', 
+        code:'',
         title:'',
-        content:'', 
+        content:'',
         indexScore:'',
       }
       if(this.$refs[formName]) {
@@ -188,7 +188,7 @@ export default {
     cancel() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          let newChild = this.templateForm 
+          let newChild = this.templateForm
           newChild.type = this.tempType
           if(this.operationType === 'add') {
             // 新增传父级id
@@ -335,7 +335,7 @@ export default {
             onclick: this.onPreview,
             formatter: item => {
               return "<i>预览 </i>";
-            } 
+            }
           }
         ]
       },
