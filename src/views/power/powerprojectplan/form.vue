@@ -441,6 +441,7 @@ export default {
       this.formData = data;
       this.operationType = 'edit';
       this.powerprojectplanform = {
+          id : data.id,
           name : data.name,
           nameType : data.nameType,
           period : data.period,
@@ -715,88 +716,79 @@ export default {
 
     // 弹框“确定”操作
     sure() {
-      this.$refs['ruleForm'].validate((valid) => {
+      let that =  this;
+      that.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          let newChild = this.powerprojectplanform;
-          newChild.text = this.powerprojectplanform.name;
-          if (this.operationType === 'add') {
-            this.isEdit = true;
+          let newChild = that.powerprojectplanform;
+          newChild.text = that.powerprojectplanform.name;
+          if (that.operationType === 'add') {
+            that.isEdit = true;
             newChild.parent = 0;
             newChild.parentId = 0;
             newChild.level = 1;
-            newChild.stage = this.powerprojectplanform.stage;
-            newChild.principalText = this.powerprojectplanform.principalText;
-            for (let i = 0; i < this.professionList.length; i++) {
-              if (this.professionList[i].value == this.powerprojectplanform.profession) {
-                this.powerprojectplanform.professionText = this.professionList[i].text;
+            newChild.stage = that.powerprojectplanform.stage;
+            newChild.principalText = that.powerprojectplanform.principalText;
+            for (let i = 0; i < that.professionList.length; i++) {
+              if (that.professionList[i].value == that.powerprojectplanform.profession) {
+                that.powerprojectplanform.professionText = that.professionList[i].text;
                 break;
               }
             }
 
-            this.contentList.forEach((item) => {
-              if (item.text == this.powerprojectplanform.name) {
+            that.contentList.forEach((item) => {
+              if (item.text == that.powerprojectplanform.name) {
                 newChild.nameType = item.value;
               }
             });
-            newChild.isApproval = this.powerprojectplanform.isApproval;
-            newChild.isUpload = this.powerprojectplanform.isUpload;
-            newChild.isPosition = this.powerprojectplanform.isPosition;
-            newChild.sortNum = this.getSortNum(newChild.parentId);
-          } else if (this.operationType === 'inserted') {
-            this.isEdit = true;
-            newChild.parent = this.formData.id;
-            newChild.parentId = this.formData.id;
-            this.dataArr.forEach((item) => {
-              if (item.id == this.formData.id) {
+            newChild.isApproval = that.powerprojectplanform.isApproval;
+            newChild.isUpload = that.powerprojectplanform.isUpload;
+            newChild.isPosition = that.powerprojectplanform.isPosition;
+            newChild.sortNum = that.getSortNum(newChild.parentId);
+          } else if (that.operationType === 'inserted') {
+            that.isEdit = true;
+            newChild.parent = that.formData.id;
+            newChild.parentId = that.formData.id;
+            that.dataArr.forEach((item) => {
+              if (item.id == that.formData.id) {
                 newChild.nameType = item.nameType;
                 newChild.level = item.level + 1;
               }
             });
-            newChild.sortNum = this.getSortNum(newChild.parentId);
+            newChild.sortNum = that.getSortNum(newChild.parentId);
           } else {
-            if (this.tasks.data && this.tasks.data.length > 0) {
-              this.dataArr.forEach((item) => {
-                if (item.id === this.powerprojectplanform.id) {
-                  // 编辑操作，先删除，判断对象的值是否发生变化
-                  if (this.tempplanform.name != this.powerprojectplanform.name ||
-                    this.tempplanform.period != this.powerprojectplanform.period ||
-                    this.tempplanform.planStartDate != this.powerprojectplanform.planStartDate ||
-                    this.tempplanform.planEndDate != this.powerprojectplanform.planEndDate ||
-                    this.tempplanform.stage != this.powerprojectplanform.stage ||
-                    this.tempplanform.principal != this.powerprojectplanform.principal ||
-                    this.tempplanform.profession != this.powerprojectplanform.profession ||
-                    this.tempplanform.isApproval != this.powerprojectplanform.isApproval ||
-                    this.tempplanform.isUpload != this.powerprojectplanform.isUpload ||
-                    this.tempplanform.isPosition != this.powerprojectplanform.isPosition) {
-                    item.name = this.powerprojectplanform.name;
-                    item.period = this.powerprojectplanform.period;
-                    item.planStartDate = this.powerprojectplanform.planStartDate;
-                    item.planEndDate = this.powerprojectplanform.planEndDate;
-                    item.stage = this.powerprojectplanform.stage;
-                    item.principal = this.powerprojectplanform.principal;
-                    item.principalText = this.powerprojectplanform.principalText;
-                    for (let i = 0; i < this.professionList.length; i++) {
-                      if (this.professionList[i].value == this.powerprojectplanform.profession) {
-                        this.powerprojectplanform.professionText = this.professionList[i].text;
-                        break;
-                      }
-                    }
-                    item.isApproval = this.powerprojectplanform.isApproval;
-                    item.isUpload = this.powerprojectplanform.isUpload;
-                    item.isPosition = this.powerprojectplanform.isPosition;
-                    this.isEdit = true;
-                    // this.dataArr.splice(index, 1);
-                  }
-                }
-              });
-            }
+            that.checkPlanNodeChange(that.treeData.lists);
           }
-          this.processProjectPlanNode(newChild);
-          this.dialogVisible = false;
+          that.processProjectPlanNode(newChild);
+          that.dialogVisible = false;
         } else {
           return false;
         }
       });
+    },
+    checkPlanNodeChange(treeDataList){
+      let that =  this;
+      if (treeDataList && treeDataList.length > 0) {
+          treeDataList.forEach((item) => {
+            if (item.id === that.powerprojectplanform.id) {
+              // 编辑操作，先删除，判断对象的值是否发生变化
+              if (item.name != that.powerprojectplanform.name ||
+                item.period != that.powerprojectplanform.period ||
+                item.planStartDate != that.powerprojectplanform.planStartDate ||
+                item.planEndDate != that.powerprojectplanform.planEndDate ||
+                item.stage != that.powerprojectplanform.stage ||
+                item.principal != that.powerprojectplanform.principal ||
+                item.profession != that.powerprojectplanform.profession ||
+                item.isApproval != that.powerprojectplanform.isApproval ||
+                item.isUpload != that.powerprojectplanform.isUpload ||
+                item.isPosition != that.powerprojectplanform.isPosition) {
+                that.isEdit = true;
+                return;
+              }
+            }else if(item.children){
+                that.checkPlanNodeChange(item.children)
+            }
+          });
+        }
     },
     cancel() {
       this.dialogVisible = false;
@@ -829,6 +821,7 @@ export default {
         this.$message.error('请制定项目计划信息！');
         return;
       }
+     
       if (this.isEdit) {
         this.newList = [];
         this.getNewList(this.treeData.lists);
