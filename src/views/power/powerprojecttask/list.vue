@@ -148,7 +148,7 @@
                 <img :src="imgList[1]" alt="" v-else-if="item.typeText=='配网'">
                 <img :src="imgList[2]" alt="" v-else-if="item.typeText=='输电'">
                 <img :src="imgList[3]" alt="" v-else-if="item.typeText=='变电'">
-                <img :src="imgList[4]" alt="" v-else-if="item.typeText=='配电'">
+                <img :src="imgList[4]" alt="" v-else-if="item.typeText=='系统规划设计'">
                 <img :src="imgList[5]" alt="" v-else>
               </p>
               <p>
@@ -264,7 +264,7 @@ export default {
       if (scrollTop + clientHeight >= scrollHeight) {
         if (this.tableShow) {
           div[0].scrollTop = div[0].scrollTop - 5;
-          console.log(this.cardPage)
+          console.log(this.cardPage);
           this.cardPage = this.cardPage + 1;
           this.getCardList();
         }
