@@ -719,6 +719,13 @@ export default {
       let that =  this;
       that.$refs['ruleForm'].validate((valid) => {
         if (valid) {
+          for (let i = 0; i < that.professionList.length; i++) {
+            if (that.professionList[i].value == that.powerprojectplanform.profession) {
+              that.powerprojectplanform.professionText = that.professionList[i].text;
+              break;
+            }
+          }
+          
           let newChild = that.powerprojectplanform;
           newChild.text = that.powerprojectplanform.name;
           if (that.operationType === 'add') {
@@ -728,18 +735,6 @@ export default {
             newChild.level = 1;
             newChild.stage = that.powerprojectplanform.stage;
             newChild.principalText = that.powerprojectplanform.principalText;
-            for (let i = 0; i < that.professionList.length; i++) {
-              if (that.professionList[i].value == that.powerprojectplanform.profession) {
-                that.powerprojectplanform.professionText = that.professionList[i].text;
-                break;
-              }
-            }
-
-            that.contentList.forEach((item) => {
-              if (item.text == that.powerprojectplanform.name) {
-                newChild.nameType = item.value;
-              }
-            });
             newChild.isApproval = that.powerprojectplanform.isApproval;
             newChild.isUpload = that.powerprojectplanform.isUpload;
             newChild.isPosition = that.powerprojectplanform.isPosition;
