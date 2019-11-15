@@ -148,9 +148,10 @@ import {mapGetters} from 'vuex'
 import ajax from '@/utils/request'
 import Bus from "@/utils/eventBus.js";
 export default {
-    props: ['drawerTitle','drawerType','drawerId','typeCondition','timeCondition'],
+    props: ['drawerTitle','drawerId','typeCondition','timeCondition'],
     data () {
         return {
+            drawerType:'',
             dialogFormVisible:false,
             defaultProps: {
                 children: 'children',
@@ -215,9 +216,58 @@ export default {
         this.getAllPeople()
     },
     methods: {
-        open () {
+        open (data) {
             this.drawerShow = true
+            this.drawerType = data.workData.nodeType;
+            this.showSelectListData(data);
         },
+
+        //审批人，抄送人，条件回显
+        showSelectListData(data){
+             this.seleteUserList = []
+             this.seleteListName = []
+             this.approverForm = {
+                 redio:1,
+                 peopleList:[]
+             }
+             this.conditionObj = {  name:'',
+                 checkList:[],
+                 time:'',
+                 timeConditionValue:''}
+             this.defaultChecked = []
+             if(this.drawerType == 1) {
+                 if(data.workData.nodeText!=null) {
+                     this.seleteListName.push(data.workData.nodeText);
+                 }
+                 this.initiatorForm.name =  this.seleteListName.join()
+                 data.workData.sourceNodes.forEach((item)=>{
+                    this.defaultChecked.push(item.sourceId)
+                 })
+             } else if(this.drawerType == 2 || this.drawerType == 3) {
+                 if(data.workData.nodeText!=null) {
+                     this.seleteListName.push(data.workData.nodeText);
+                 }
+                 data.workData.sourceNodes.forEach((item)=>{
+                     this.defaultChecked.push(item.sourceId)
+                 })
+                 this.approverForm.peopleList =  this.seleteListName
+                 this.approverForm.redio = data.workData.approver;
+             } else if(this.drawerType == 4) {
+                 this.conditionObj.name =  data.workData.sourceName
+                 data.workData.conditionNodes.forEach((item)=>{
+                     if(item.conditionField =='type'){
+                         this.conditionObj.checkList = item.conditionValue.split(',');
+                     }else if(item.conditionField =='day'){
+                         this.conditionObj.timeConditionValue =  item.conditionType
+                         this.conditionObj.time =  item.conditionValue
+                     }
+                 })
+                 data.workData.sourceNodes.forEach((item)=>{
+                     this.defaultChecked.push(item.sourceId)
+                 })
+             }
+         },
+
         handleCloseDrawer() {
             this.drawerShow = false
             if(this.$refs.tree) {

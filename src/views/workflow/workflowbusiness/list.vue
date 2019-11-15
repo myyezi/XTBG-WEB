@@ -27,9 +27,9 @@
             <el-table :data="list" style="width: 100%">
                 <el-table-column fixed label="操作" width="120">
                     <template fixed slot-scope="{ row, column, $index }">
-                        <el-button v-show="showEditBtn" @click="editWorking(row.id)" type="text" size="small">编辑</el-button>
-                        <el-button v-if="row.enabledStatus == 1" v-show="showStartBtn" @click="onStart(row.configId,0)" type="text" size="small">禁用</el-button>
-                        <el-button v-else v-show="showStartBtn" @click="onStart(row.configId,1)" type="text" size="small">启用</el-button>
+                        <el-button v-show="showEditBtn" @click="editWorking(row.configId)" type="text" size="small">编辑</el-button>
+                        <el-button v-if="row.enabledStatus == 1" v-show="showStartBtn" @click="onStart(row,0)" type="text" size="small">禁用</el-button>
+                        <el-button v-else v-show="showStartBtn" @click="onStart(row,1)" type="text" size="small">启用</el-button>
                     </template>
                 </el-table-column>
                                 <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="审批名称"></el-table-column>
@@ -47,7 +47,7 @@
                 :total="listCount">
             </el-pagination>
         </div>
-        <el-dialog title="流程设置" :visible.sync="workDialogVisible"  :fullscreen="true" :append-to-body="true">
+        <el-dialog title="流程设置" :visible.sync="workDialogVisible"  :fullscreen="true"  :destroy-on-close="true" >
             <work-flow :workFlowData="workFlowData[0]" v-if="workDialogVisible"></work-flow>
         </el-dialog>
     </div>
@@ -88,7 +88,7 @@
                 });
             },
             // 启用禁用节点
-            onStart(id,type) {
+            onStart(row,type) {
                 let _this = this;
                 let str = ''
                 this.operationType = 'delete';
@@ -102,16 +102,18 @@
                     cancelButtonText: '取消',
                     type: 'warning',
                 }).then(function() {
-                    _this.updateStatus(id,type)
+                    _this.updateStatus(row,type)
                 }).catch(function() {
                 });
             },
 
             //（启用/禁用）流程配置
-            updateStatus(configId,type){
+            updateStatus(row,type){
                 var data ={};
-                data.id=configId;
-                data.enabledStatus=type;
+                data.id = row.configId;
+                data.enabledStatus = type;
+                data.businessId = row.id;
+                data.detail = row.name;
                 ajax.post('workflow/workflowconfig/updateStatus', data).then(rs => {
                     if (rs.status == 0) {
                         this.$message
