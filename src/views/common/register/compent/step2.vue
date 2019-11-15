@@ -1,5 +1,5 @@
 <template>
-    <el-form :model="ruleFormTwo" status-icon :rules="rulesTwo" ref="ruleFormTwo" label-width="100px"> 
+    <el-form :model="ruleFormTwo" status-icon :rules="rulesTwo" ref="ruleFormTwo" label-width="100px">
         <el-form-item label="姓名：" prop="name" >
             <el-input v-model="ruleFormTwo.name" placeholder="请输入姓名"></el-input>
         </el-form-item>
@@ -14,7 +14,7 @@
         </el-form-item>
         <el-form-item>
             <el-button @click="lastStep()" style="float:left;width: 195px;">上一步</el-button>
-            <el-button type="primary" @click="submitForm('ruleFormTwo')" style="float:left;background:#0aa0a9;width: 195px;">下一步</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float:left;background:#0aa0a9;width: 195px;" @click="submitForm('ruleFormTwo')">下一步</el-button>
         </el-form-item>
     </el-form>
 </template>
@@ -48,7 +48,7 @@
             }
         },
         watch: {
-            
+
         },
         methods: {
             lastStep() {
@@ -69,7 +69,7 @@
                             isLastStep:false
                         }
                         this.$emit("get-form-data",obj)
-                    } 
+                    }
                 });
             },
         }

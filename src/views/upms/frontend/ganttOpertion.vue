@@ -2,7 +2,7 @@
   <div class="app-container white-bg list-panel" v-cloak style="height: calc(100vh - 120px);padding:10px">
     <div class="container">
       <gantt-add ref="gantt" class="left-container" v-if="isLoading" @task-updated="logTaskUpdate" @link-updated="logLinkUpdate" @task-selected="selectTask"></gantt-add>
-      <div style="margin-top:5px;float:right"><el-button type="primary" size="small" @click="determine">确定</el-button></div>
+      <div style="margin-top:5px;float:right"><el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" size="small" @click="determine">确定</el-button></div>
     </div>
   </div>
 </template>
@@ -137,7 +137,7 @@ export default {
   .gantt-selected-info h2 {
     border-bottom: 1px solid #cecece;
   }
-  
+
   .select-task-prompt h2{
     color: #d9d9d9;
   }

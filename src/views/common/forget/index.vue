@@ -17,7 +17,7 @@
                     <el-input type="password" v-model="ruleFormOne.checkPass" autocomplete="new-password" placeholder="请输入确认密码"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitForm('ruleFormOne')" style="background:#0aa0a9;width: 400px;">确定</el-button>
+                    <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;background:#0aa0a9;width: 400px;" @click="submitForm('ruleFormOne')">确定</el-button>
                 </el-form-item>
             </el-form>
             <!-- <el-form :model="ruleFormTwo" status-icon :rules="rulesTwo" ref="ruleFormTwo" label-width="100px" v-show="!checkCode">
@@ -28,7 +28,7 @@
                     <el-input type="password" v-model="ruleFormTwo.checkPass"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="updateForm('ruleFormTwo')" style="background:#0aa0a9;width: 400px;">修改</el-button>
+                    <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="updateForm('ruleFormTwo')" style="background:#0aa0a9;width: 400px;">修改</el-button>
                 </el-form-item>
             </el-form> -->
         </div>

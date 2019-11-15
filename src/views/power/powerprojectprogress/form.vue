@@ -92,7 +92,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="finishFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="ok">确 定</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="ok">确 定</el-button>
             </div>
         </el-dialog>
         <el-dialog title="添加位置" :visible.sync="positionFormVisible" :class="{'dialog_animation_in':positionFormVisible,'dialog_animation_out':!positionFormVisible}" width="400px" height="800px">
@@ -116,7 +116,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="positionFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="addPosition">确 定</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="addPosition">确 定</el-button>
             </div>
         </el-dialog>
         <el-dialog title="断点上传" :visible.sync="stopUploadShow" :class="{'dialog_animation_in':dialogFormVisible,'dialog_animation_out':!dialogFormVisible}" width="800px">
