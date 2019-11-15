@@ -23,7 +23,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="add">保存</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="add">保存</el-button>
                 <el-button @click="close">返回</el-button>
             </div>
         </el-dialog>

@@ -200,7 +200,7 @@
       </el-upload>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="dialogVisible = false">确 定</el-button>
       </span>
     </el-dialog>
   </div>

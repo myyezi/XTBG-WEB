@@ -4,11 +4,11 @@
             <span>{{ chatObj.name }}</span>
         </div>
         <div v-if="chatObj.type === 0" v-loading="loading">
-            <el-tree 
-                :data="userFriendList" 
-                :props="defaultProps" 
+            <el-tree
+                :data="userFriendList"
+                :props="defaultProps"
                 default-expand-all
-                @node-click="handleNodeClick" 
+                @node-click="handleNodeClick"
                 :filter-node-method="filterNode"
                 ref="tree"
                 class="user_tree">
@@ -32,7 +32,7 @@
                 </el-form-item> -->
                 <el-form-item label-width="30px" class="clearfix">
                   <el-button size="small" @click="back" style="margin:0 10px 0 0;float:left">返回</el-button>
-                  <el-button size="small" type="primary" @click="onSubmit" style="float:left">发消息</el-button>
+                  <el-button size="small" style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF;float:left" @click="onSubmit" >发消息</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -110,7 +110,7 @@ export default {
             },
         };
         this.$store.commit('addSession', currentSession);
-        Bus.$emit("sessione-updata",{targetId:this.chatObj.id}); 
+        Bus.$emit("sessione-updata",{targetId:this.chatObj.id});
     },
     // 根据组织得到用户
     getOrganization() {

@@ -165,7 +165,7 @@
                 }
                 &.active {
                     background: transparent;
-                    color: #4a91ff;
+                    color: #29c9bb;
                     font-weight: bold;
                     &::before {
                         content: '';

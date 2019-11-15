@@ -1,13 +1,13 @@
 <template>
     <div class="app-container white-bg list-panel" v-cloak>
         <div class="opertion-box">
-            <el-button type="primary" icon="el-icon-apple" size="small" @click="batchCodegen()">批量生成</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-apple" size="small" @click="batchCodegen()">批量生成</el-button>
             <el-input v-model="searchParam.tableName" placeholder="请输入表名称" clearable class="zy_input" style="width:190px"></el-input>
-            <el-button type="primary" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
-            <el-button type="primary" icon="el-icon-refresh" size="small" @click="createTime=[];resetList()">重置</el-button>
-            <!-- <el-button type="primary" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button> -->
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-search" size="small" @click="handleCurrentChange(1)">查询</el-button>
+            <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-refresh" size="small" @click="createTime=[];resetList()">重置</el-button>
+            <!-- <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-upload" size="small" @click="exportExcel()">导出</el-button> -->
         </div>
- 
+
         <div class="division-line"></div>
         <div class="table-box">
             <el-table  ref="multipleTable" :data="list" style="width: 100%" @selection-change="handleSelectionChange">
@@ -42,32 +42,32 @@
                     v-for="tag in tableNameList"
                     :key="tag"
                     closable @close="handleTagClose(tag)">
-                    {{tag}}    
+                    {{tag}}
                     </el-tag>
                 </el-form-item>
                 <el-form-item label="包名" label-width="120px" prop="packageName">
                     <el-input v-model="codegenForm.packageName" clearable maxlength="200" placeholder="包名(可为空默认com.zdhr)"></el-input>
                 </el-form-item>
-                
+
                 <el-form-item label="作者" label-width="120px" prop="author">
                     <el-input v-model="codegenForm.author" clearable maxlength="100" placeholder="作者(可为空默认作者)"></el-input>
                 </el-form-item>
-                
+
                 <el-form-item label="模块" label-width="120px" prop="moduleName">
                     <el-input v-model="codegenForm.moduleName" clearable maxlength="100" placeholder="模块(可为空默认generator)"></el-input>
                 </el-form-item>
-                
+
                 <el-form-item label="表前缀" label-width="120px" prop="tablePrefix">
                     <el-input v-model="codegenForm.tablePrefix" clearable maxlength="100" placeholder="表前缀(可为空默认tb_)"></el-input>
                 </el-form-item>
-                
+
                 <el-form-item label="注释" label-width="120px" prop="comments">
                     <el-input v-model="codegenForm.comments" clearable maxlength="200" placeholder="注释(可为空默认表注释)"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="close('codegenForm')">取 消</el-button>
-                <el-button type="primary" @click="submit('codegenForm')">确 定</el-button>
+                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submit('codegenForm')">确 定</el-button>
             </div>
         </el-dialog>
 
@@ -93,7 +93,7 @@
                 multipleSelection: [],
                 tableNameList:[],
                 rules: {
-                    
+
                 }
             }
         },
@@ -146,7 +146,7 @@
                     if (valid) {
 
                         ajax({
-                            url:"codegen/generator/code", 
+                            url:"codegen/generator/code",
                             data: this.codegenForm,
                             method: 'post',
                             responseType: 'arraybuffer'
