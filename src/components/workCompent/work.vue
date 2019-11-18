@@ -5,7 +5,7 @@
                 <i class="el-icon-remove-outline" @click="changeSize('small')"></i>
                 <span>{{zoomSize}}%</span>
                 <i class="el-icon-circle-plus-outline" @click="changeSize('big')"></i>
-                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" >发布</el-button>
+                <el-button type="primary" @click="release" >发布</el-button>
             </div>
             <div class="box-scale" @click="transferStation({workData:workData,type:2})" :style="{ transform: 'scale('+transformSize+')' }" id="workflowDesign">
                 <!-- 流程主体开始 -->
@@ -17,7 +17,7 @@
                 <div class="workflow-end-node">
                     <div class="end-node-text">流程结束</div>
                 </div>
-                <work-setting ref="setting" :drawerTitle="drawerTitle" :drawerType="drawerType" :drawerId="drawerId" :typeCondition="typeCondition" :timeCondition="timeCondition" @updata_working_data="updataWorkingData" @updata_loading="isLoading=true"></work-setting>
+                <work-setting ref="setting" :drawerTitle="drawerTitle" :drawerType="this.drawerType" :drawerId="drawerId" :typeCondition="typeCondition" :timeCondition="timeCondition" @updata_working_data="updataWorkingData" @updata_loading="isLoading=true"></work-setting>
                 <!-- 流程结束结束 -->
             </div>
         </div>
@@ -68,11 +68,11 @@
                 this.workAddRoute(data,4)
             })
             Bus.$on("setting-count",data=>{
-                console.log(data)
-                this.$refs.setting.open()
-                this.drawerTitle = data.workData.name
-                this.drawerType = data.workData.nodeType
-                this.drawerId = data.workData.id
+                 console.log(data)
+                 this.$refs.setting.open(data)
+                 this.drawerTitle = data.workData.name
+                 this.drawerType = data.workData.nodeType
+                 this.drawerId = data.workData.id
             })
             Bus.$on("delete-node",data=>{
                 this.workDeleteNode(data)
@@ -179,10 +179,11 @@
             },
             // 添加节点请求
             addNode(data,type) {
+                console.log(data)
                 let obj = {
                     nodeType:type,
                     parentId:data.id,
-                    configId:'1'
+                    configId:this.workData.configId,
                 }
                 ajax.post('workflow/workflowconfignode/saveConfigNodeTree',obj).then(rs => {
                     if (rs.status === 0) {
@@ -235,6 +236,25 @@
                     this.initLocation()
                 }
                 this.isLoading = false
+            },
+            //发布
+            release(){
+                let _this = this;
+                ajax.get('workflow/workflowconfignode/releaseConfigNode',{configId :this.workData.configId}).then(rs => {
+                    if (rs.status === 0) {
+                        ajax.get('workflow/workflowconfignode/selectConfigNodeTree' ,{
+                            configId:this.workData.configId
+                        }).then(rse => {
+                            if (rse.status === 0) {
+                                _this.workData = rse.data[0]
+                                this.$message.success("发布成功");
+                            }
+                        });
+                    } else {
+                        this.$message.error(rs.msg);
+                    }
+                })
+                console.log("发布")
             },
             // 得到唯一流程id标示
             generateUUID() {

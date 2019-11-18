@@ -114,19 +114,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /* WEBPACK VAR INJECTION */(function(process, global, setImmediate) {/* @preserve
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2013-2018 Petka Antonov
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
@@ -134,7 +134,7 @@ return /******/ (function(modules) { // webpackBootstrap
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  */
 /**
  * bluebird build version 3.5.4
@@ -3448,28 +3448,28 @@ _dereq_('./some.js')(Promise, PromiseArray, apiRejection);
 _dereq_('./filter.js')(Promise, INTERNAL);
 _dereq_('./each.js')(Promise, INTERNAL);
 _dereq_('./any.js')(Promise);
-                                                         
-    util.toFastProperties(Promise);                                          
-    util.toFastProperties(Promise.prototype);                                
-    function fillTypes(value) {                                              
-        var p = new Promise(INTERNAL);                                       
-        p._fulfillmentHandler0 = value;                                      
-        p._rejectionHandler0 = value;                                        
-        p._promise0 = value;                                                 
-        p._receiver0 = value;                                                
-    }                                                                        
-    // Complete slack tracking, opt out of field-type tracking and           
-    // stabilize map                                                         
-    fillTypes({a: 1});                                                       
-    fillTypes({b: 2});                                                       
-    fillTypes({c: 3});                                                       
-    fillTypes(1);                                                            
-    fillTypes(function(){});                                                 
-    fillTypes(undefined);                                                    
-    fillTypes(false);                                                        
-    fillTypes(new Promise(INTERNAL));                                        
-    debug.setBounds(Async.firstLineError, util.lastLineError);               
-    return Promise;                                                          
+
+    util.toFastProperties(Promise);
+    util.toFastProperties(Promise.prototype);
+    function fillTypes(value) {
+        var p = new Promise(INTERNAL);
+        p._fulfillmentHandler0 = value;
+        p._rejectionHandler0 = value;
+        p._promise0 = value;
+        p._receiver0 = value;
+    }
+    // Complete slack tracking, opt out of field-type tracking and
+    // stabilize map
+    fillTypes({a: 1});
+    fillTypes({b: 2});
+    fillTypes({c: 3});
+    fillTypes(1);
+    fillTypes(function(){});
+    fillTypes(undefined);
+    fillTypes(false);
+    fillTypes(new Promise(INTERNAL));
+    debug.setBounds(Async.firstLineError, util.lastLineError);
+    return Promise;
 
 };
 
@@ -4137,8 +4137,8 @@ function ReductionPromiseArray(promises, fn, initialValue, _each) {
 util.inherits(ReductionPromiseArray, PromiseArray);
 
 ReductionPromiseArray.prototype._gotAccum = function(accum) {
-    if (this._eachValues !== undefined && 
-        this._eachValues !== null && 
+    if (this._eachValues !== undefined &&
+        this._eachValues !== null &&
         accum !== INTERNAL) {
         this._eachValues.push(accum);
     }
@@ -5428,7 +5428,7 @@ var ret = {
 };
 ret.isRecentNode = ret.isNode && (function() {
     var version;
-    if (process.versions && process.versions.node) {    
+    if (process.versions && process.versions.node) {
         version = process.versions.node.split(".").map(Number);
     } else if (process.version) {
         version = process.version.split(".").map(Number);
@@ -6402,7 +6402,6 @@ module.exports = function(gantt){
 				gantt.message({type: "error", text: message, expire: -1});
 
 				// eslint-disable-next-line no-debugger
-				debugger;
 			}
 		}
 	};
@@ -9663,7 +9662,7 @@ DataStore.prototype = {
 			code.call(this, item);
 		}
 	},
-	
+
 	filter: function(rule){
 		var filteredOrder = powerArray.$create();
 		this.eachItem(function(item){
@@ -10275,7 +10274,7 @@ function createDataStoreSelectMixin(store){
 	var selectedId = null;
 
 	var deleteItem = store._removeItemInner;
-	
+
 	function unselect(id){
 		selectedId = null;
 		this.callEvent("onAfterUnselect", [id]);
@@ -12255,7 +12254,7 @@ module.exports = function(gantt) {
 
 function dummy() {
 	// eslint-disable-next-line
-	console.log("Method is not implemented."); 
+	console.log("Method is not implemented.");
 }
 function BaseControl() {
 }
@@ -12288,7 +12287,7 @@ module.exports = function(gantt) {
 	function CheckboxControl() {
 		var self = _super.apply(this, arguments) || this;
 
-		return self; 
+		return self;
 	}
 
 	__extends(CheckboxControl, _super);
@@ -12449,9 +12448,9 @@ module.exports = function(gantt) {
 	var _super = __webpack_require__(/*! ./base_control */ "./sources/core/lightbox/controls/base_control.js")(gantt);
 
 	function DurationControl() {
-		var self = _super.apply(this, arguments) || this; 
+		var self = _super.apply(this, arguments) || this;
 
-		return self; 
+		return self;
 	}
 
 	__extends(DurationControl, _super);
@@ -12516,11 +12515,11 @@ module.exports = function(gantt) {
 		if (s[3]) s[3].onchange = _calc_date;
 
 		duration.onkeydown = gantt.bind(function(e) {
-			var code; 
+			var code;
 
 			e = e || window.event;
 			code = (e.charCode || e.keyCode || e.which);
-			
+
 			if (code == gantt.constants.KEY_CODES.DOWN) {
 				_change_duration(-1 * gantt.config.duration_step);
 				return false;
@@ -12605,7 +12604,7 @@ module.exports = function(gantt) {
 	}
 
 
-	return DurationControl; 
+	return DurationControl;
 };
 
 /***/ }),
@@ -12623,9 +12622,9 @@ module.exports = function(gantt) {
 	var _super = __webpack_require__(/*! ./select_control */ "./sources/core/lightbox/controls/select_control.js")(gantt);
 
 	function ParentControl() {
-		var self = _super.apply(this, arguments) || this; 
+		var self = _super.apply(this, arguments) || this;
 
-		return self; 
+		return self;
 	}
 
 	__extends(ParentControl, _super);
@@ -12710,7 +12709,7 @@ module.exports = function(gantt) {
 	function RadioControl() {
 		var self = _super.apply(this, arguments) || this;
 
-		return self; 
+		return self;
 	}
 
 	__extends(RadioControl, _super);
@@ -12777,12 +12776,12 @@ module.exports = function(gantt) {
 
 	function SelectControl() {
 		var self = _super.apply(this, arguments) || this;
-	
-		return self; 
+
+		return self;
 	}
-	
+
 	__extends(SelectControl, _super);
-	
+
 	SelectControl.prototype.render = function(sns) {
 		var height = (sns.height || "23") + "px";
 		var html = "<div class='gantt_cal_ltext' style='height:" + height + ";'>";
@@ -12802,16 +12801,16 @@ module.exports = function(gantt) {
 			value = (select.options[0] || {}).value;
 		select.value = value || "";
 	};
-	
+
 	SelectControl.prototype.get_value = function(node) {
 		return node.firstChild.value;
 	};
-	
+
 	SelectControl.prototype.focus = function(node) {
 		var a = node.firstChild;
 		gantt._focus(a, true);
 	};
-	
+
 	return SelectControl;
 };
 
@@ -12830,8 +12829,8 @@ module.exports = function(gantt) {
 	var _super = __webpack_require__(/*! ./base_control */ "./sources/core/lightbox/controls/base_control.js")(gantt);
 
 	function TemplateControl() {
-		var self = _super.apply(this, arguments) || this; 
-		return self; 
+		var self = _super.apply(this, arguments) || this;
+		return self;
 	}
 
 	__extends(TemplateControl, _super);
@@ -12872,7 +12871,7 @@ module.exports = function(gantt) {
 	function TextareaControl() {
 		var self = _super.apply(this, arguments) || this;
 
-		return self; 
+		return self;
 	}
 
 	__extends(TextareaControl, _super);
@@ -14895,7 +14894,7 @@ module.exports = function(gantt){
 		}
 		if (state) {
 			var speed = gantt.config.autoscroll_speed;
-			if (speed && speed < 10) // limit speed value to 10 
+			if (speed && speed < 10) // limit speed value to 10
 				speed = 10;
 
 			delayTimeout = setTimeout(function() {
@@ -14926,7 +14925,7 @@ module.exports = function(gantt){
 
 		var isScroll = isScrollState();
 
-		if ((interval || delayTimeout) && !isScroll) { 
+		if ((interval || delayTimeout) && !isScroll) {
 			defineScrollInterval(false);
 		}
 
@@ -14952,7 +14951,7 @@ module.exports = function(gantt){
 		}
 
 		var box = domHelpers.getNodePosition(getAutoscrollContainer());
-		var posX = eventPos.x - box.x; 
+		var posX = eventPos.x - box.x;
 		var posY = eventPos.y - box.y;
 
 		var scrollLeft = isMove ? 0 : need_scroll(posX, box.width, startPos.x - box.x);
@@ -14994,7 +14993,7 @@ module.exports = function(gantt){
 
 		if (scrollLeft || scrollTop) {
 			scroll(scrollLeft, scrollTop);
-		} 
+		}
 
 	}
 
@@ -15356,7 +15355,7 @@ module.exports = function addPlaceholder(gantt){
 			}
 
 			gantt.addTask(placeholder);
-			
+
 		}
 	}
 
@@ -15985,7 +15984,7 @@ function _get_skin(force, gantt) {
 		config[1].width = skinset._second_column_width;
 	if (config[2] && !gantt.defined(config[2].width))
 		config[2].width = skinset._third_column_width;
-	
+
 	for (var i=0; i<config.length; i++) {
 		var column = config[i];
 		if (column.name == "add") {
@@ -16009,7 +16008,7 @@ function _get_skin(force, gantt) {
 	}
 
 	if (skinset.config.task_height)
-		gantt.config.task_height = skinset.config.task_height || "full"; 
+		gantt.config.task_height = skinset.config.task_height || "full";
 
 	if (skinset._lightbox_template)
 		gantt._lightbox_template = skinset._lightbox_template;
@@ -20229,7 +20228,7 @@ var Layout = (function (_super) {
 			self.minHeight += this.$config.margin * (this.$cells.length) || 0;
 			self.minHeight += (this.$config.padding * 2) || 0;
 		}
-		
+
 		return self;
 	};
 	// calc total gravity and free space
@@ -20782,7 +20781,7 @@ var ScrollbarCell = (function (_super) {
 			this.show();
 		}
 	};
-	
+
 	ScrollbarCell.prototype._getScaleOffset = function(view){
 		var offset = 0;
 		if(view && (view.$config.view == "timeline" || view.$config.view == "grid")){
@@ -23173,7 +23172,7 @@ var initLinksDND = function(timeline, gantt) {
 
 		var targ = gantt.locate(e),
 			to_start = true;
-		
+
 		// can drag and drop link to another gantt on the page, such links are not supported
 		var sameGantt = domHelpers.isChildOf(e.target || e.srcElement, gantt.$root);
 		if(!sameGantt){
@@ -25189,7 +25188,7 @@ var uiFactory = function createFactory(gantt){
 		content = createView.call(this, view, null, cell, parentView);
 		return content;
 	}
-	
+
 	var createdViews = {};
 
 	function createView(name, parent, config, parentView) {
@@ -27120,7 +27119,7 @@ gantt.skins.terrace = {
 		lightbox_additional_height:75
 	},
 	_second_column_width:90,
-	_third_column_width:70		
+	_third_column_width:70
 };
 
 };
@@ -27438,7 +27437,7 @@ function removeClassName(node, name) {
 function hasClass(element, className){
 	if ('classList' in element) {
 		return element.classList.contains(className);
-	} else { 
+	} else {
 		return new RegExp("\\b" + className + "\\b").test(element.className);
 	}
 }
@@ -27572,7 +27571,7 @@ function closest(element, selector){
 
 			if (method.call(el, selector)) return el;
 			el = el.parentElement || el.parentNode;
-		} while (el !== null && el.nodeType === 1); 
+		} while (el !== null && el.nodeType === 1);
 		return null;
 	}else{
 		// eslint-disable-next-line no-console
@@ -27900,7 +27899,7 @@ function delay (callback, timeout){
 			result.$pending = false;
 		}, timeout);
 	};
-	
+
 	result.$pending = false;
 	result.$cancelTimeout = function(){
 		clearTimeout(timer);
@@ -27977,7 +27976,7 @@ var htmlHelpers = {
 		var _this = this;
 
 		options = options || [];
-		
+
 		helpers.forEach(options, function(entry) {
 			var _attributes = [{ key: "value", value: entry.key }];
 
@@ -28005,7 +28004,7 @@ function _getHtmlContainer(tag, options, attributes) {
 	var html;
 
 	options = options || [];
-	
+
 	html = "<" + tag + _getHtmlAttributes(attributes || []) + ">" + (options.innerHTML || "") + "</" + tag +">";
 	return html;
 
@@ -28096,10 +28095,10 @@ module.exports = {
 function checkTimeout(host, updPerSecond){
 	if (!updPerSecond)
 		return true;
-	
+
 	if (host._on_timeout)
 		return false;
-	
+
 	var timeout = Math.ceil(1000/updPerSecond);
 	if (timeout < 2) return true;
 
