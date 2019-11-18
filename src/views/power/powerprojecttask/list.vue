@@ -331,7 +331,6 @@ export default {
     },
     // 获取字典
     getDict() {
-        debugger
       let managementCompanyId = this.user.managementCompanyId;
       let r = 'XMLX,XBBM,RWYJ,' + managementCompanyId;
       ajax.get("upms/dict/allType/" + r).then(rs => {

@@ -168,6 +168,7 @@
             //保存
             submitForm(form) {
                 var data = this.powerproprietorForm;
+                console.log(this.powerproprietorForm)
                 this.$refs[form].validate((valid) => {
                     if (!valid) {
                         this.$message.error('校验不通过，请检查输入项');
