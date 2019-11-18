@@ -394,7 +394,6 @@ export const formRule = {
      * @param callBack
      */
     validatePlate(rule,value,callBack){
-        debugger
         if(!value){
             callBack();
         }else if(value.length>=7){
