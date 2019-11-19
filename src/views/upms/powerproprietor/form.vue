@@ -9,7 +9,7 @@
                         <el-form-item label="业主名称" prop="name">
                             <el-input v-model="powerproprietorForm.name" placeholder="请输入业主名称" maxlength=30 clearable></el-input>
                         </el-form-item>
-                        <el-form-item label="地区" prop="districtId" >
+                        <el-form-item label="地区" prop="district" >
                             <city-select-panel :value.sync="citySelectArr" ref="citySelect"  @change="citySelectOnchange"></city-select-panel>
                         </el-form-item>
                         <el-form-item label="详细位置" prop="address">
@@ -124,14 +124,11 @@
                     name: [
                         {required: true, message: '请输入业主名称', trigger: ['blur']}
                     ],
-                    districtId: [
+                    district: [
                          {required: true, message: '请输入地区', trigger: ['blur','change']}
                     ],
                     address: [
                         {required: true, message: '请输入详细地址', trigger: ['blur','change']}
-                    ],
-                    adress: [
-                        {required: true, message: '请输入详细地址', trigger: ['blur']}
                     ],
                     longitude: [
                         {required: true, message: '请输入经度', trigger: ['blur']}
