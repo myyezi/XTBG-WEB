@@ -150,7 +150,7 @@
                     </template>
 
                 </el-tab-pane>
-                <el-tab-pane label="前期阶段" name="projectSzInfoTab">
+                <el-tab-pane label="项目前期" name="projectSzInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="收资名称" class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
@@ -173,7 +173,7 @@
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="立项阶段" name="projectJcInfoTab">
+                <el-tab-pane label="可研" name="projectJcInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
@@ -196,7 +196,7 @@
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="初设阶段" name="projectNsInfoTab">
+                <el-tab-pane label="初设" name="projectNsInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
@@ -219,7 +219,7 @@
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="施工图阶段" name="projectScInfoTab">
+                <el-tab-pane label="施工" name="projectScInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
@@ -242,7 +242,7 @@
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
-                <el-tab-pane label="竣工图阶段" name="projectCbInfoTab">
+                <el-tab-pane label="竣工" name="projectCbInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
                         <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="成品名称" class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
@@ -468,7 +468,7 @@
                     }
                 });
             },
-            getMemberList() {
+            getMemberList: function () {
                 ajax.get('power/powerprojecttask/getProjectMemberList/' + this.$route.params.id).then(rs => {
                     this.memberList = rs.data
                 });
@@ -480,7 +480,9 @@
             },
             getAttachmentList() {
                 ajax.get('power/powerprojectattachment/getAttachmentList/' + this.$route.params.id).then(rs => {
+                    console.log(rs.data)
                     this.attachmentTaskList = rs.data;
+                    console.log(this.attachmentTaskList)
                 });
             },
 
