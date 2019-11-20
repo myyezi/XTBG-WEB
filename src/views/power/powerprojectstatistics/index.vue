@@ -10,7 +10,7 @@
             <ul class="clearfix">
                 <li v-for="(item,index) in typeStatisticsList" :key="index"  :class="{'company_statistics_active':item.active}" @click="companyClick(item)" @mouseover="selectStyle(item)" @mouseout="outStyle(item)">
                     <img :src="item.img" alt="">
-                    <p class="company_statistics_title">{{item.name}}</p>
+                    <p class="company_statistics_title">{{item.text}}</p>
                 </li>
             </ul>
         </div>
@@ -18,6 +18,8 @@
 </template>
 <script>
 import Bus from "@/utils/eventBus.js";
+import ajax from '@/utils/request'
+
 
 export default {
     components: {},
@@ -47,12 +49,29 @@ export default {
         };
     },
     methods: {
+        getCompany(){
+            ajax.get('power/powerproject/getBelongCompanyList').then(rs => {
+                    rs.data.forEach((item)=>{
+                        switch (item.text) {
+                            case '能源公司' : item.img = require('@/styles/img/zodiac/company_nengyuan.png');
+                                break;
+                            case '建筑公司' : item.img = require('@/styles/img/zodiac/company_jianzhu.png');
+                                break;
+                            case '科技公司':  item.img = require('@/styles/img/zodiac/company_keji.png');
+                                break;
+                            case '运营公司' : item.img = require('@/styles/img/zodiac/company_yunying.png');
+                                break;
+                        }
+                    })
+                    this.typeStatisticsList = rs.data;
+                })
+        },
         // 切换公司事件
         companyClick(item) {
             this.typeStatisticsList.forEach(items => {
                 this.$set(items,'active',false);
             });
-            this.$router.push({path: '/power/powerprojectstatistics/detail', query: {name: item.name}});
+            this.$router.push({path: '/power/powerprojectstatistics/detail', query: {items: item}});
         },
         selectStyle (item) {
             let _this=this;
@@ -70,7 +89,7 @@ export default {
     created: function () {
     },
     mounted: function () {
-
+       this.getCompany();
     }
 };
 </script>
