@@ -319,9 +319,11 @@
                 params.size = this.pageSize;
                 params.current = this.cardPage;
                 this.getListBefore(params);
+                console.log(this.cardList);
                 ajax.get(this.listUrl, params).then(res => {
                     this.cardList.push.apply(this.cardList, res.records);
                 })
+                console.log(this.cardList);
             },
             swtichData() {
                 this.tableShow = !this.tableShow

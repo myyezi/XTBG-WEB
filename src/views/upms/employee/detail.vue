@@ -317,7 +317,7 @@
                     <div v-for="(attachment,i) in employeeForm.attachmentList" :key="i"
                          class="avatar-uploader_count_item" @click="attachmentType = i">
                         <span class="avatar-uploader_name">{{attachment.name}}</span>
-                        <div  class="avatar_img">
+                        <div class="avatar_img">
                             <img :src="employeeForm.fileDomain + attachment.path" alt=""
                                  @click="showBigImg($event)">
                         </div>
@@ -341,6 +341,7 @@
         data() {
             return {
                 employeeForm: {
+                    fileDomain: process.env.URL_API,
                 },
                 openCollapse: ["1", "2"],//默认打开的面板
                 show: false,//编辑页显示状态
@@ -353,6 +354,7 @@
                 rs.data.userType += '';
                 rs.data.userStatus += '';
                 this.employeeForm = rs.data;
+                this.employeeForm.fileDomain = process.env.URL_API;
                 if (null != rs.data.attachment && rs.data.attachment.length > 0) {
                     this.attachment = JSON.parse(rs.data.attachment);
                 }

@@ -3,10 +3,10 @@
     <div class="map_count">
         <div class="map_title"><span>湖北省</span></div>
         <div class="map">
-            <div id="container"></div>
+            <div :id="mapId"></div>
         </div>
         <div class="echarts">
-            <div id="map" style="height:400px"></div>
+            <div :id="echartsId" style="height:400px"></div>
         </div>
     </div>
 </template>
@@ -15,7 +15,20 @@
     import echarts from 'echarts'
     export default {
         components: {},
-        props:['vMapData'],
+        props:{
+            vMapData:{
+                type: Array,
+                required: true
+            }, 
+            mapId:{
+                type: String,
+                default: 'mapId'
+            }, 
+            echartsId:{
+                type: String,
+                default: 'echartsId'
+            }
+        },
         data() {
             return {
                 cityName: '',
@@ -42,6 +55,7 @@
         },
         mounted() {
             this.initMap()
+
         },
         watch: {
             'vMapData':function(newValue,oldValue) {
@@ -54,7 +68,8 @@
         methods: {
             initMap() {
                 this.$nextTick(()=> {
-                    this.map = new AMap.Map('container', {
+            
+                    this.map = new AMap.Map(this.mapId, {
                         resizeEnable: true,
                         center: [116.30946, 39.937629],
                         zoom: 3
@@ -111,8 +126,8 @@
                 });
             },
             loadMap(mapName, data) {
-                echarts.init(document.getElementById('map')).dispose()
-                this.echartsMap = echarts.init(document.getElementById('map'));
+                echarts.init(document.getElementById(this.echartsId)).dispose()
+                this.echartsMap = echarts.init(document.getElementById(this.echartsId));
                 this.echartsMap.clear();
                 this.echartsMap.on('click', this.echartsMapClick);
                 let that = this

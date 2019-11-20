@@ -9,7 +9,7 @@
                         <el-form-item label="业主名称" prop="name">
                             <el-input v-model="powerproprietorForm.name" placeholder="请输入业主名称" maxlength=30 clearable></el-input>
                         </el-form-item>
-                        <el-form-item label="地区" prop="districtId">
+                        <el-form-item label="地区" prop="district" >
                             <city-select-panel :value.sync="citySelectArr" ref="citySelect"  @change="citySelectOnchange"></city-select-panel>
                         </el-form-item>
                         <el-form-item label="详细位置" prop="address">
@@ -124,14 +124,11 @@
                     name: [
                         {required: true, message: '请输入业主名称', trigger: ['blur']}
                     ],
-                    districtId: [
-                        {required: true, message: '请输入地区', trigger: ['blur']}
+                    district: [
+                         {required: true, message: '请输入地区', trigger: ['blur','change']}
                     ],
                     address: [
                         {required: true, message: '请输入详细地址', trigger: ['blur','change']}
-                    ],
-                    adress: [
-                        {required: true, message: '请输入详细地址', trigger: ['blur']}
                     ],
                     longitude: [
                         {required: true, message: '请输入经度', trigger: ['blur']}
@@ -168,14 +165,15 @@
             //保存
             submitForm(form) {
                 var data = this.powerproprietorForm;
+                console.log(this.powerproprietorForm)
                 this.$refs[form].validate((valid) => {
                     if (!valid) {
                         this.$message.error('校验不通过，请检查输入项');
                         return;
                     }
-                    if (Array.isArray(this.powerproprietorForm.districtId) && this.powerproprietorForm.districtId.length == 3) {
-                        data.districtId = this.powerproprietorForm.districtId[2];
-                    }
+                    // if (Array.isArray(this.powerproprietorForm.districtId) && this.powerproprietorForm.districtId.length == 3) {
+                    //     data.districtId = this.powerproprietorForm.districtId[2];
+                    // }
                     ajax.post('power/powerproprietor', data).then(rs => {
                         if (rs.status == 0) {
                             this.$message.success(rs.msg);
@@ -217,6 +215,7 @@
                 this.powerproprietorForm.province = "";
                 this.powerproprietorForm.city = "";
                 this.powerproprietorForm.district = "";
+                this.powerproprietorForm.districtId = "";
                 if(this.citySelectArr.length>0){
                     this.powerproprietorForm.province = this.citySelectArr[0];
                     if(this.citySelectArr.length>1){
@@ -224,6 +223,7 @@
                     }
                     if(this.citySelectArr.length>2){
                         this.powerproprietorForm.district = this.citySelectArr[2];
+                        this.powerproprietorForm.districtId = this.citySelectArr[2];
                     }
                 }
 
