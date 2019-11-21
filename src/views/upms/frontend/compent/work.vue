@@ -182,7 +182,7 @@
                 let obj = {
                     nodeType:type,
                     parentId:data.id,
-                    configId:'1'
+                    configId:this.workData.configId,
                 }
                 ajax.post('workflow/workflowconfignode/saveConfigNodeTree',obj).then(rs => {
                     if (rs.status === 0) {

@@ -78,10 +78,8 @@
     <el-dialog title="项目计划信息" v-dialogDrag :visible.sync="dialogVisible" :before-close="beforeClose" width="35%" top="100px">
       <el-form :model="powerprojectplanform" :rules="rules" ref="ruleForm" label-width="120px">
         <el-form-item label="工作内容" prop="name">
-          <el-input v-show="!showContent" v-model.trim="powerprojectplanform.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
-          <el-select v-show="showContent" v-model="powerprojectplanform.name" placeholder="请选择工作内容" clearable>
-            <el-option v-for="e in contentList" :key="e.value" :label="e.text" :value="e.text"></el-option>
-          </el-select>
+          <el-input v-model.trim="powerprojectplanform.name" placeholder="请输入工作内容" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
+         
         </el-form-item>
         <el-form-item label="所属阶段" prop="stage">
           <el-select v-model="powerprojectplanform.stage" placeholder="请选择所属阶段" clearable>

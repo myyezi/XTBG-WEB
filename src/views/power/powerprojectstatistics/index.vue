@@ -1,16 +1,11 @@
 <template>
-    <div class="app-container white-bg list-panel" v-cloak>
-        <div class="project_company_swtich">
-            <div class="swtich_search">
-                <el-input v-model="projectName" placeholder="请输入项目名称"></el-input>
-                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-search" size="medium">搜索</el-button>
-            </div>
-        </div>
+    <div class="app-container white-bg list-panel" :style="{backgroundImage:'url('+require('@/styles/img/zodiac/projectbg.png')+')'}" v-cloak>
+        
         <div class="project_company_statistics">
             <ul class="clearfix">
                 <li v-for="(item,index) in typeStatisticsList" :key="index"  :class="{'company_statistics_active':item.active}" @click="companyClick(item)" @mouseover="selectStyle(item)" @mouseout="outStyle(item)">
                     <img :src="item.img" alt="">
-                    <p class="company_statistics_title">{{item.name}}</p>
+                    <p class="company_statistics_title">{{item.text}}</p>
                 </li>
             </ul>
         </div>
@@ -18,6 +13,8 @@
 </template>
 <script>
 import Bus from "@/utils/eventBus.js";
+import ajax from '@/utils/request'
+
 
 export default {
     components: {},
@@ -47,12 +44,29 @@ export default {
         };
     },
     methods: {
+        getCompany(){
+            ajax.get('power/powerproject/getBelongCompanyList').then(rs => {
+                    rs.data.forEach((item)=>{
+                        switch (item.text) {
+                            case '能源公司' : item.img = require('@/styles/img/zodiac/company_nengyuan.png');
+                                break;
+                            case '建筑公司' : item.img = require('@/styles/img/zodiac/company_jianzhu.png');
+                                break;
+                            case '科技公司':  item.img = require('@/styles/img/zodiac/company_keji.png');
+                                break;
+                            case '运营公司' : item.img = require('@/styles/img/zodiac/company_yunying.png');
+                                break;
+                        }
+                    })
+                    this.typeStatisticsList = rs.data;
+                })
+        },
         // 切换公司事件
         companyClick(item) {
             this.typeStatisticsList.forEach(items => {
                 this.$set(items,'active',false);
             });
-            this.$router.push({path: '/power/powerprojectstatistics/detail', query: {name: item.name}});
+            this.$router.push({path: '/power/powerprojectstatistics/detail', query: {items: item}});
         },
         selectStyle (item) {
             let _this=this;
@@ -70,7 +84,7 @@ export default {
     created: function () {
     },
     mounted: function () {
-
+       this.getCompany();
     }
 };
 </script>
@@ -90,6 +104,10 @@ export default {
                 background:#29c9bb;
             }
         }
+    }
+    .list-panel {
+        background-position: center;
+        background-repeat: inherit;
     }
     .project_company_statistics {
         padding:0 20%;
