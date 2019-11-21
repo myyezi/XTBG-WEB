@@ -11,10 +11,40 @@
         </div>
         <div class="project_statistics">
             <div class="statistics_title">年度统计</div>
-            <ul class="project_year_statistics clearfix">
+            <ul v-if="value ==4 " class="project_year_statistics clearfix">
+                <li v-for="(item,index) in yearStatisticsList" :key="index" >
+                    <img :src="item.img" alt="">
+                    <span class="year_statistics_title">{{item.year}}年</span>
+                    <span class="year_statistics_num">{{item.num}}</span>
+                </li>
+            </ul>
+            <ul v-if="value ==3 " class="project_year_statistics clearfix">
                 <li v-for="(item,index) in yearStatisticsList" :key="index" >
                     <img :src="item.img" alt="">
                     <span class="year_statistics_title">{{item.year}}</span>
+                    <span class="year_statistics_num">{{item.num}}</span>
+                </li>
+            </ul>
+
+            <ul v-if="value ==2 " class="project_year_statistics_2 clearfix">
+<!--                <el-row v-if="value ==2 " class="project_year_statistics_2">-->
+<!--                    <el-col :span="6"v-for="(item,index) in yearStatisticsList" :key="index">-->
+<!--                        <img :src="item.img" alt="">-->
+<!--                        <span class="year_statistics_title_2">{{item.year}}年</span>-->
+<!--                        <span class="year_statistics_num_2">{{item.num}}</span>-->
+<!--                    </el-col>-->
+<!--                </el-row>-->
+                <li v-for="(item,index) in yearStatisticsList" :key="index" >
+                    <img :src="item.img" alt="">
+                    <span class="year_statistics_title_2">{{item.year}}</span>
+                    <span class="year_statistics_num_2">{{item.num}}</span>
+                </li>
+            </ul>
+
+            <ul v-if="value ==1 " class="project_year_statistics clearfix">
+                <li v-for="(item,index) in yearStatisticsList" :key="index" >
+                    <img :src="item.img" alt="">
+                    <span class="year_statistics_title">{{item.year}}年</span>
                     <span class="year_statistics_num">{{item.num}}</span>
                 </li>
             </ul>
@@ -54,7 +84,8 @@ export default {
             yearStatisticsList:[],
             typeStatisticsList:[],
             projectName:'',
-            companyName:'能源公司'
+            companyName:'能源公司',
+            value:''
         };
     },
 
@@ -76,34 +107,37 @@ export default {
             this.getProjectTypeStatistics(item.value)
         },
         getProjectYearStatistics(value){
+            this.value = value;
                 ajax.get('power/powerproject/getProjectYearStatistics',{value:value}).then(rs => {
                     rs.data.forEach((item)=>{
                         switch (item.zodiac) {
-                            case 1 : item.img = require('@/styles/img/zodiac/zodiac_shu.png');
+                            case 1 : item.img = require('@/styles/img/zodiac/zodiac_shu_'+this.value+'.png');
                                      break;
-                            case 2 : item.img = require('@/styles/img/zodiac/zodiac_niu.png');
+                            case 2 : item.img = require('@/styles/img/zodiac/zodiac_niu_'+this.value+'.png');
                                      break;
-                            case 3 : item.img = require('@/styles/img/zodiac/zodiac_hu.png');
+                            case 3 : item.img = require('@/styles/img/zodiac/zodiac_hu_'+this.value+'.png');
                                 break;
-                            case 4 : item.img = require('@/styles/img/zodiac/zodiac_tu.png');
+                            case 4 : item.img = require('@/styles/img/zodiac/zodiac_tu_'+this.value+'.png');
                                 break;
-                            case 5 : item.img = require('@/styles/img/zodiac/zodiac_long.png');
+                            case 5 : item.img = require('@/styles/img/zodiac/zodiac_long_'+this.value+'.png');
                                 break;
-                            case 6 : item.img = require('@/styles/img/zodiac/zodiac_she.png');
+                            case 6 : item.img = require('@/styles/img/zodiac/zodiac_she_'+this.value+'.png');
                                 break;
-                            case 7 : item.img = require('@/styles/img/zodiac/zodiac_ma.png');
+                            case 7 : item.img = require('@/styles/img/zodiac/zodiac_ma_'+this.value+'.png');
                                 break;
-                            case 8 : item.img = require('@/styles/img/zodiac/zodiac_yang.png');
+                            case 8 : item.img = require('@/styles/img/zodiac/zodiac_yang_'+this.value+'.png');
                                 break;
-                            case 9 : item.img = require('@/styles/img/zodiac/zodiac_hou.png');
+                            case 9 : item.img = require('@/styles/img/zodiac/zodiac_hou_'+this.value+'.png');
                                 break;
-                            case 10 : item.img = require('@/styles/img/zodiac/zodiac_ji.png');
+                            case 10 : item.img = require('@/styles/img/zodiac/zodiac_ji_'+this.value+'.png');
                                 break;
-                            case 11 : item.img = require('@/styles/img/zodiac/zodiac_gou.png');
+                            case 11 : item.img = require('@/styles/img/zodiac/zodiac_gou_'+this.value+'.png');
                                 break;
-                            case 12 : item.img = require('@/styles/img/zodiac/zodiac_zhu.png');
+                            case 12 : item.img = require('@/styles/img/zodiac/zodiac_zhu_'+this.value+'.png');
                                 break;
-
+                            // default :
+                            //         item.img = require('@/styles/img/zodiac/zodiac_yang_'+this.value+'.png');
+                            //         break
                         }
 
                     })
@@ -233,6 +267,40 @@ export default {
                 color: #333;
             }
             .year_statistics_num {
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                width: 50px;
+                margin-left: -25px;
+                font-size: 15px;
+                color: #333;
+            }
+        }
+    }
+
+    .project_year_statistics_2 {
+        width:100%;
+        li {
+            position: relative;
+            width:25%;
+            // min-width:228px;
+            float: left;
+            text-align: center;
+            img {
+                width: 100%;
+                max-width:334px;
+                height:284px;
+            }
+            .year_statistics_title_2 {
+                position: absolute;
+                top: 20px;
+                left: 50%;
+                width: 50px;
+                margin-left: -25px;
+                font-size: 15px;
+                color: #333;
+            }
+            .year_statistics_num_2 {
                 position: absolute;
                 bottom: 30px;
                 left: 50%;
