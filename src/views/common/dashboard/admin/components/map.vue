@@ -61,9 +61,7 @@
         watch: {
             'vMapData':function(newValue,oldValue) {
                 this.mapData = newValue
-                if(this.mapJson.features) {
-                    this.loadMap(this.cityName, this.mapJson);
-                }
+                this.loadMap();
             }
         },
         methods: {
@@ -80,7 +78,7 @@
                         buildingAnimation:true,//楼块出现是否带动画
                         expandZoomRange:true,
                         zooms:[3,20],
-                        center: [116.30946, 39.937629],
+                        center: [114.298572,30.584355],
                         layers: [
                             // 卫星
                             new AMap.TileLayer.Satellite(),
@@ -110,17 +108,19 @@
                     this.map.clearMap();  // 清除地图覆盖物
                     
                     this.mapData.forEach(marker => {
-                        console.log(marker)
-                        new AMap.Marker({
-                            map: this.map,
-                            icon: new AMap.Icon({            
-                                    image: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-                                    size: new AMap.Size(52, 52),  //图标大小
-                                    imageSize: new AMap.Size(26,26)
-                                }),
-                            position: [marker.longitude, marker.latitude],
-                            offset: new AMap.Pixel(-13, -30)
-                        });
+                        if(marker.longitude && marker.latitude){
+                            new AMap.Marker({
+                                map: this.map,
+                                icon: new AMap.Icon({            
+                                        image: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+                                        size: new AMap.Size(52, 52),  //图标大小
+                                        imageSize: new AMap.Size(26,26)
+                                    }),
+                                position: [marker.longitude, marker.latitude],
+                                offset: new AMap.Pixel(-13, -30)
+                            });
+                        }
+                        
                     });
                     
                     this.district = new AMap.DistrictSearch(this.opts);//注意：需要使用插件同步下发功能才能这样直接使用
@@ -164,10 +164,12 @@
                     });
                 });
             },
-            loadMap(mapName, data) {
+            loadMap() {
                 if(this.map){
                     this.map.clearMap();  // 清除地图覆盖物
+                    
                     this.mapData.forEach(marker => {
+                        if(marker.longitude && marker.latitude){
                         console.log(marker)
                         new AMap.Marker({
                             map: this.map,
@@ -179,6 +181,7 @@
                             position: [marker.longitude, marker.latitude],
                             offset: new AMap.Pixel(-13, -30)
                         });
+                        }
                     });
                     this.map.setFitView();
                 }
