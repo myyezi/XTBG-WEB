@@ -2,7 +2,7 @@
     <div class="app-container white-bg list-panel" v-cloak>
         <div class="project_statistics_swtich clearfix">
             <ul class="clearfix">
-                <li v-for="(item,index) in companyList" :key="index" :class="{'company_active':item.active}" @click="companyClick(item,1)">{{item.name}}</li>
+                <li v-for="(item,index) in companyList" :key="index" :class="{'company_active':item.active}" @click="companyClick(item,1)">{{item.text}}</li>
             </ul>
             <div class="swtich_search">
                 <el-input v-model="projectName" placeholder="请输入项目名称"></el-input>
@@ -37,6 +37,7 @@
 </template>
 <script>
 import Bus from "@/utils/eventBus.js";
+import ajax from '@/utils/request'
 
 export default {
     components: {},
@@ -49,97 +50,18 @@ export default {
     data() {
         return {
             defaultPic:require('@/styles/img/morentx.png'),
-            companyList:[{
-                name:'能源公司',
-                active:true
-            },{
-                name:'科技公司'
-            },{
-                name:'运营公司'
-            },{
-                name:'建筑公司'
-            },],
-            yearStatisticsList:[{
-                img:require('@/styles/img/zodiac/zodiac_zhu.png'),
-                year:2019,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_gou.png'),
-                year:2018,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_ji.png'),
-                year:2017,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_hou.png'),
-                year:2016,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_yang.png'),
-                year:2015,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_ma.png'),
-                year:2014,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_she.png'),
-                year:2013,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_long.png'),
-                year:2012,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_tu.png'),
-                year:2011,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_hu.png'),
-                year:2010,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_niu.png'),
-                year:2009,
-                num:1000
-            },{
-                img:require('@/styles/img/zodiac/zodiac_shu.png'),
-                year:2008,
-                num:1000
-            }],
-            typeStatisticsList:[{
-                img:require('@/styles/img/zodiac/peidian.png'),
-                name:'配电',
-                num:123414234
-            },{
-                img:require('@/styles/img/zodiac/peiwang.png'),
-                name:'配网',
-                num:123414234
-            },{
-                img:require('@/styles/img/zodiac/shudian.png'),
-                name:'输电',
-                num:123414234
-            },{
-                img:require('@/styles/img/zodiac/biandian.png'),
-                name:'变电',
-                num:123414234
-            },{
-                img:require('@/styles/img/zodiac/xitongguihua.png'),
-                name:'系统规划统计',
-                num:123414234
-            },{
-                img:require('@/styles/img/zodiac/qita.png'),
-                name:'其它',
-                num:123414234
-            }],
+            companyList:[],
+            yearStatisticsList:[],
+            typeStatisticsList:[],
             projectName:'',
             companyName:'能源公司'
         };
     },
+
     methods: {
         // 切换公司事件
         companyClick(item,type) {
+            console.log(item,type)
             this.companyList.forEach(items => {
                 if(type == 2&&items.name == item.name) {
                     this.$set(items,'active',true);
@@ -150,14 +72,89 @@ export default {
             if(type == 1) {
                 this.$set(item,'active',true);
             }
+            this.getProjectYearStatistics(item.value)
+            this.getProjectTypeStatistics(item.value)
         },
+        getProjectYearStatistics(value){
+                ajax.get('power/powerproject/getProjectYearStatistics',{value:value}).then(rs => {
+                    rs.data.forEach((item)=>{
+                        switch (item.zodiac) {
+                            case 1 : item.img = require('@/styles/img/zodiac/zodiac_shu.png');
+                                     break;
+                            case 2 : item.img = require('@/styles/img/zodiac/zodiac_niu.png');
+                                     break;
+                            case 3 : item.img = require('@/styles/img/zodiac/zodiac_hu.png');
+                                break;
+                            case 4 : item.img = require('@/styles/img/zodiac/zodiac_tu.png');
+                                break;
+                            case 5 : item.img = require('@/styles/img/zodiac/zodiac_long.png');
+                                break;
+                            case 6 : item.img = require('@/styles/img/zodiac/zodiac_she.png');
+                                break;
+                            case 7 : item.img = require('@/styles/img/zodiac/zodiac_ma.png');
+                                break;
+                            case 8 : item.img = require('@/styles/img/zodiac/zodiac_yang.png');
+                                break;
+                            case 9 : item.img = require('@/styles/img/zodiac/zodiac_hou.png');
+                                break;
+                            case 10 : item.img = require('@/styles/img/zodiac/zodiac_ji.png');
+                                break;
+                            case 11 : item.img = require('@/styles/img/zodiac/zodiac_gou.png');
+                                break;
+                            case 12 : item.img = require('@/styles/img/zodiac/zodiac_zhu.png');
+                                break;
+
+                        }
+
+                    })
+                    this.yearStatisticsList = rs.data;
+                });
+            },
+        getProjectTypeStatistics(value){
+            ajax.get('power/powerproject/getProjectTypeStatistics',{value:value}).then(rs => {
+                rs.data.forEach((item)=>{
+                    switch (item.type) {
+                        case 'B' : item.img = require('@/styles/img/zodiac/biandian.png');
+                            break;
+                        case 'P' : item.img = require('@/styles/img/zodiac/peidian.png');
+                            break;
+                        case 'PW': item.img = require('@/styles/img/zodiac/peiwang.png');
+                            break;
+                        case 'Q' : item.img = require('@/styles/img/zodiac/qita.png');
+                            break;
+                        case 'S' : item.img = require('@/styles/img/zodiac/shudian.png');
+                            break;
+                        case 'X' : item.img = require('@/styles/img/zodiac/xitongguihua.png');
+                            break;
+                    }
+
+                })
+                this.typeStatisticsList = rs.data;
+            });
+        },
+        getCompany(){
+            ajax.get('power/powerproject/getBelongCompanyList').then(rs => {
+                this.companyList = rs.data;
+                rs.data.forEach((item)=>{
+                    if(item.text == this.companyName){
+                        item.active = true
+                    }
+                })
+            });
+
+        }
     },
     created: function () {
-        this.companyName = this.$route.query.name?this.$route.query.name:'能源公司'
-        this.companyClick({name:this.companyName},2)
+         console.log(this.$route.query.items)
+         let data = this.$route.query.items;
+         this.companyName = data.text?data.text:'能源公司'
+         this.companyClick(data,2)
     },
     mounted: function () {
-
+        // this.getProjectYearStatistics()
+        // this.getProjectTypeStatistics()
+        //获取归属公司
+        this.getCompany();
     }
 };
 </script>
