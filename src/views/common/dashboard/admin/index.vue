@@ -1,7 +1,45 @@
 <template>
     <div class="app-container white-bg list-panel" v-cloak style="background: #ecf0f1;">
         <div class="el-row">
-            <div class="el-col el-col-15">
+            <div class="el-col el-col-12">
+                <div class="el-card box-card is-always-shadow">
+                    <div class="el-card__header home-card-heard">
+                        <div class="home_title clearfix">
+                            <p class="clearfix"><img src="../../../../styles/img/xm.png" /><span>项目分布一览</span></p> 
+                        </div>
+                    </div>
+                    <div class="el-card__body" style="height:500px;padding-top:0">
+                        <div class="project_statistics_swtich clearfix">
+                            <ul class="clearfix">
+                                <li v-for="(item,index) in companyList" :key="index" :class="{'company_active':item.active}" @click="companyClick(item)">{{item.name}}</li>
+                            </ul>
+                            <el-dropdown split-button  size="mini" @command="handleClick1" style="float:right;margin-top: 6px;">
+                                {{projectName}}
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item :disabled="projectName==='全部'" command="1">全部</el-dropdown-item>
+                                    <el-dropdown-item :disabled="projectName==='进行中'" command="2">进行中</el-dropdown-item>
+                                    <el-dropdown-item :disabled="projectName==='已暂停'" command="3">已暂停</el-dropdown-item>
+                                    <el-dropdown-item :disabled="projectName==='已完成'" command="4">已完成</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                        <ve-map :vMapData="vMapData" mapId="map1" echartsId="echarts1" mapStyle="width:100%; height:440px;resize:both;"></ve-map>
+                    </div>
+                </div>
+            </div>
+            <div class="el-col el-col-12" style="width: calc(50% - 10px);margin: 0 0 10px 10px;">
+                <div class="el-card box-card is-always-shadow">
+                    <div class="el-card__header home-card-heard">
+                        <div class="home_title clearfix">
+                            <p class="clearfix"><img src="../../../../styles/img/xm.png" /><span>业主分布一览</span></p> 
+                        </div>
+                    </div>
+                    <div class="el-card__body" style="height:500px;">
+                        <ve-map :vMapData="powerProprietorList" mapId="map2" echartsId="echarts2" mapStyle="width:100%; height:480px;resize:both;"></ve-map>
+                    </div>
+                </div>
+            </div>
+            <div class="el-col el-col-12">
                 <div class="el-card box-card is-always-shadow">
                     <div class="el-card__body home-card-body">
                         <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -46,7 +84,26 @@
                     </div>
                 </div>
             </div>
-
+            <div class="el-col el-col-12" style="width: calc(50% - 10px);margin: 0 0 10px 10px;">
+                <div class="el-card box-card is-always-shadow">
+                    <div class="el-card__header home-card-heard">
+                        <div class="home_title clearfix">
+                            <p class="clearfix"><img src="../../../../styles/img/xm.png" /><span>项目数量统计</span></p> 
+                        </div>
+                    </div>
+                    <div class="el-card__body">
+                        <ve-histogram 
+                            :data="chartDataCarApply"
+                            height="400px" 
+                            style="padding-top:10px" 
+                            :legend="legendPie"
+                            :textStyle="textStyle"
+                            :yAxis="yAxisStore"
+                            :extend="xAxis"
+                        ></ve-histogram>
+                    </div>
+                </div>
+            </div>
             <el-dialog title="待办-审批" width="400px" :visible.sync="approvalDialogVisible" :append-to-body="true" class="el-dialog__body">
                 <el-form :model="approvalForm" :rules="rules" ref="approvalForm" label-position="top" label-width="100px">
                     <el-form-item label="是否通过" prop="approvalStatus">
@@ -59,35 +116,12 @@
                     </el-form-item>
                 </el-form>
                 <div slot="footer" class="dialog-footer">
-                    <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" @click="submitApprovalForm('approvalForm')">保存</el-button>
+                    <el-button type="primary" @click="submitApprovalForm('approvalForm')">保存</el-button>
                     <el-button @click="approvalDialogVisible = false">返回</el-button>
                 </div>
             </el-dialog>
-
-            <div class="el-col el-col-9" style="width: calc(37.5% - 10px);margin: 0 0 10px 10px;">
-                <div class="el-card box-card is-always-shadow">
-                    <div class="el-card__header home-card-heard">
-                        <div class="home_title clearfix">
-                            <p class="clearfix"><img src="../../../../styles/img/xm.png" /><span>项目分布一览</span></p>
-                            <el-dropdown split-button  size="mini" @command="handleClick1" style="float:right;">
-                                {{projectName}}
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item :disabled="projectName==='全部'" command="1">全部</el-dropdown-item>
-                                    <el-dropdown-item :disabled="projectName==='进行中'" command="2">进行中</el-dropdown-item>
-                                    <el-dropdown-item :disabled="projectName==='已暂停'" command="3">已暂停</el-dropdown-item>
-                                    <el-dropdown-item :disabled="projectName==='已完成'" command="4">已完成</el-dropdown-item>
-                                </el-dropdown-menu>
-                            </el-dropdown>
-                        </div>
-                    </div>
-                    <div class="el-card__body">
-                        <ve-map :vMapData="vMapData"></ve-map>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <div class="el-row">
+        <!-- <div class="el-row">
             <div class="el-col el-col-24">
                 <div class="el-card box-card is-always-shadow">
                     <div class="el-card__header home-card-heard">
@@ -138,18 +172,8 @@
                             </el-table-column>
                             <el-table-column prop="typeText" sortable show-overflow-tooltip min-width="100" label="项目类型"></el-table-column>
                             <el-table-column prop="startTime" sortable show-overflow-tooltip min-width="100" label="计划开工日期"></el-table-column>
-                            <!--<el-table-column prop="planEndDate" sortable show-overflow-tooltip min-width="100" label="计划完工日期"></el-table-column>-->
                             <el-table-column prop="endTime" sortable show-overflow-tooltip min-width="100" label="计划完工日期"></el-table-column>
                         </el-table>
-                        <!--<el-pagination
-                            @size-change="handleSizeChange"
-                            @current-change="handleCurrentChange"
-                            :current-page="page"
-                            :page-sizes="pageSizeSetting"
-                            :page-size="pageSize"
-                            :layout="pageLayout"
-                            :total="listCount">
-                        </el-pagination>-->
                         <el-pagination
                             @size-change="handleSizeChange2"
                             @current-change="handleCurrentChange2"
@@ -160,25 +184,76 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 <script>
     import ajax from '@/utils/request'
     import {tool, ruleTool} from '@/utils/common'
     import VeMap from './components/map'
+    import {VeHistogram} from 'v-charts'
 
     export default {
         name: 'DashboardAdmin',
         mixins: [tool, ruleTool],
         components: {
-            VeMap
+            VeMap,VeHistogram
         },
         data() {
+            this.legendPie = {
+                itemWidth:30,
+                itemGap:20,
+                textStyle:{
+                    color:"#333"
+                }
+            }
+            this.textStyle = {
+                // color:"#2bb6ff",
+                // fontWeight:'bold',
+                fontSize:14
+            }
+            this.yAxisStore = [{
+                name:'个',
+                splitLine:{
+                    lineStyle:{
+                        color:"#1e265c"
+                    }
+                }
+            }]
+            this.xAxis = {
+                'xAxis.0.axisLabel.interval': 0,//x轴显示全
+                'xAxis.0.axisTick.show': false,
+                // 'xAxis.0.axisLabel.rotate': 10,//x轴文本倾斜
+                series: {
+                    label: { show: true, position: "top" },
+                    itemStyle:{
+                        barBorderRadius: [30, 30, 0, 0],
+                    }
+                },
+                color:['#a9abe8','#98d4d2','#e8cdba','#a3d6a9']
+            }
             this.chartSettings = {
-                area: true
+                area: true,
             }
             return {
+                companyList:[{
+                    name:'能源公司',
+                    value:1,
+                    active:true
+                },{
+                    name:'科技公司',
+                    value:3,
+                },{
+                    name:'运营公司',
+                    value:4,
+                },{
+                    name:'建筑公司',
+                    value:2,
+                },],
+                chartDataCarApply: {
+                    columns: ['日期', '能源公司','科技公司','运营公司','建筑公司'],
+                    rows: []
+                },
                 pageList:[],
 
                 approvalForm: {},
@@ -199,6 +274,11 @@
                 projectNum4:0,
                 tableData: [],
                 vMapData:[],
+                powerProprietorList:[],
+                mapProjectParam:{
+                    projectStatus:"",
+                    belongCompany:1,
+                },
                 projectStatus:'',
                 projectNameArr:['全部', '进行中','已暂停','已完成'],
 
@@ -228,12 +308,32 @@
             this.getMapProjectList();
             this.getProjectCountByStatus();
             this.loadProjectNameList();
+            this.getProjectStatistics();
+            this.getPowerProprietorList();
         },
         methods: {
-
+            // 切换公司事件
+            companyClick(item) {
+                this.companyList.forEach(items => {
+                    this.$set(items,'active',false);
+                });
+                this.$set(item,'active',true);
+                this.mapProjectParam.belongCompany = item.value;
+                this.getMapProjectList();
+            },
             getMessageList() {
                 ajax.get('/power/powerprojectapproval/getDoTaskList?size=9').then(rs => {
                     this.doTaskList = rs;
+                });
+            },
+            getProjectStatistics() {
+                ajax.get('/power/powerproject/getProjectStatistics').then(rs => {
+                    this.$set(this.chartDataCarApply,'rows',rs.data);
+                });
+            },
+            getPowerProprietorList(){
+                ajax.get('/power/powerproprietor/getPowerProprietorList').then(rs => {
+                    this.powerProprietorList = rs.data;
                 });
             },
             handleClick(tab, event) {
@@ -305,9 +405,7 @@
 
             // 根据项目状态获取所有项目(2-进行中，3-已暂停，4-已完成)
             getMapProjectList() {
-                ajax.get('/power/powerproject/getProjectList',{
-                    projectStatus:this.projectStatus
-                }).then(rs => {
+                ajax.get('/power/powerproject/getProjectList',this.mapProjectParam).then(rs => {
                     this.vMapData = rs.data
                 });
             },
@@ -349,6 +447,7 @@
 
             handleClick1(data) {
                 this.projectStatus = parseInt(data)
+                this.mapProjectParam.projectStatus = this.projectStatus;
                 this.projectName = this.projectNameArr[(this.projectStatus - 1)]
                 this.getMapProjectList()
             },
@@ -394,6 +493,24 @@
     }
 </script>
 <style lang="scss">
+    .project_statistics_swtich {
+        padding-bottom:20px;
+        ul {
+            float: left;
+            li {
+                float: left;
+                text-align: center;
+                height: 40px;
+                line-height: 40px;
+                margin: 0 10px;
+                cursor: pointer;
+            }
+            .company_active {
+                color:#29c9bb;
+                border-bottom: 2px solid #29c9bb;
+            }
+        }
+    }
     .home-card-heard {
         border-bottom: 1px solid #fff;
         height: 60px;
