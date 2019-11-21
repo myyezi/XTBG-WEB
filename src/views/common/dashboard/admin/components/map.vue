@@ -1,13 +1,10 @@
 
 <template>
     <div class="map_count">
-        <div class="map_title"><span>湖北省</span></div>
         <div class="map">
-            <div :id="mapId"></div>
+            <div :id="mapId" :style="mapStyle"></div>
         </div>
-        <div class="echarts">
-            <div :id="echartsId" style="height:400px"></div>
-        </div>
+        
     </div>
 </template>
 
@@ -27,6 +24,10 @@
             echartsId:{
                 type: String,
                 default: 'echartsId'
+            },
+            mapStyle:{
+                type: String,
+                default: 'width:800px; height:450px;resize:both;'
             }
         },
         data() {
@@ -68,29 +69,67 @@
         methods: {
             initMap() {
                 this.$nextTick(()=> {
-            
                     this.map = new AMap.Map(this.mapId, {
                         resizeEnable: true,
+                        rotateEnable:true,
+                        pitchEnable:true,
+                        zoom: 10,
+                        pitch:50,
+                        rotation:-15,
+                        viewMode:'3D',//开启3D视图,默认为关闭
+                        buildingAnimation:true,//楼块出现是否带动画
+                        expandZoomRange:true,
+                        zooms:[3,20],
                         center: [116.30946, 39.937629],
-                        zoom: 3
+                        layers: [
+                            // 卫星
+                            new AMap.TileLayer.Satellite(),
+                            // 路网
+                            new AMap.TileLayer.RoadNet()
+                        ],
                     });
+                    this.map.addControl(new AMap.ControlBar({
+                        showZoomBar:true,
+                        showControlButton:true,
+                        position:{
+                        right:'1px',
+                        top:'100px'
+                        }
+                    }));
+                    this.map.addControl(new AMap.Geolocation());
+
+                    let mapType = new AMap.MapType({
+                        defaultType:1, //使用2D地图
+                        showRoad:true
+                        });
+                    this.map.addControl(mapType);
                     this.opts = {
                         subdistrict: 1,   //返回下一级行政区
                         showbiz: false  //最后一级返回街道信息
                     };
+                    this.map.clearMap();  // 清除地图覆盖物
+                    
+                    this.mapData.forEach(marker => {
+                        console.log(marker)
+                        new AMap.Marker({
+                            map: this.map,
+                            icon: new AMap.Icon({            
+                                    image: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+                                    size: new AMap.Size(52, 52),  //图标大小
+                                    imageSize: new AMap.Size(26,26)
+                                }),
+                            position: [marker.longitude, marker.latitude],
+                            offset: new AMap.Pixel(-13, -30)
+                        });
+                    });
+                    
                     this.district = new AMap.DistrictSearch(this.opts);//注意：需要使用插件同步下发功能才能这样直接使用
-                    /*this.district.search('中国', (status, result) => {
-                        if (status == 'complete') {
-                            console.log("#################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                            console.log(result)
-                            this.getData(result.districtList[0], '', 100000);
-                        }
-                    });*/
                     this.district.search('湖北省', (status, result) => {
                         if (status == 'complete') {
-                            this.getData(result.districtList[0], '', 420000);
+                           this.getData(result.districtList[0], '', 420000);
                         }
                     });
+                    this.map.setFitView();
                 });
             },
             echartsMapClick(params) {//地图点击事件
@@ -126,114 +165,22 @@
                 });
             },
             loadMap(mapName, data) {
-                echarts.init(document.getElementById(this.echartsId)).dispose()
-                this.echartsMap = echarts.init(document.getElementById(this.echartsId));
-                this.echartsMap.clear();
-                this.echartsMap.on('click', this.echartsMapClick);
-                let that = this
-                if (data) {
-                    echarts.registerMap(mapName, data);
-                    var option = {
-                        tooltip : {
-                            trigger: 'item', 
-                            formatter:function(params, ticket, callback){
-                                if(params.seriesType=="effectScatter") {
-                                    return params.data.name;
-                                }
-                            } 
-                        },
-                        geo: {
-                            show: true,
-                            map: mapName,
-                            roam:true,
-                            zoom:1.3,
-                            aspectScale:1,
-                            label: {
-                                normal: {
-                                    show: true
-                                },
-                                emphasis: {
-                                    show: true,
-                                }
-                            },
-                            itemStyle: {
-                                normal: {
-                                    areaColor: '#ebebeb',
-                                    borderColor: '#fff',
-                                },
-                                emphasis: {
-                                    areaColor: '#caf1ef',
-                                }
-                            }
-                        },
-                        series: [
-                            {
-                                type: 'scatter',
-                                coordinateSystem: 'geo',
-                                data: that.convertData(that.mapData),
-                                symbolSize: function(val) {
-                                    return val[2] / 10;
-                                },
-                                label: {
-                                    normal: {
-                                        formatter: '{b}',
-                                        position: 'right',
-                                        show: false
-                                    },
-                                    emphasis: {
-                                        show: false
-                                    }
-                                },
-                                itemStyle: {
-                                    normal: {
-                                        color: '#05C3F9'
-                                    }
-                                }
-                            },
-                            {
-                                type: 'map',
-                                mapType: mapName,
-                                geoIndex: 0,
-                                zoom:1,
-                                // roam:true,
-                                
-                                data: this.mapData,
-                            },
-                            {
-                                name: '',
-                                type: 'effectScatter',
-                                coordinateSystem: 'geo',
-                                data: this.convertData(this.mapData.slice().sort(function(a, b) {
-                                    return b.value - a.value;
-                                })),
-                                symbolSize: function(val) {
-                                    return 8;
-                                },
-                                showEffectOn: 'render',
-                                rippleEffect: {
-                                    brushType: 'stroke'
-                                },
-                                hoverAnimation: true,
-                                label: {
-                                    normal: {
-                                        formatter: '{b}',
-                                        position: 'right',
-                                        show: false
-                                    }
-                                },
-                                itemStyle: {
-                                    normal: {
-                                        color: '#246a73',
-                                        shadowBlur: 10,
-                                        shadowColor: '#246a73'
-                                    }
-                                },
-                                zlevel: 1
-                            },
-                        ]
-                    };
-                    this.optionMap = option
-                    this.echartsMap.setOption(option);
+                if(this.map){
+                    this.map.clearMap();  // 清除地图覆盖物
+                    this.mapData.forEach(marker => {
+                        console.log(marker)
+                        new AMap.Marker({
+                            map: this.map,
+                            icon: new AMap.Icon({            
+                                    image: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+                                    size: new AMap.Size(52, 52),  //图标大小
+                                    imageSize: new AMap.Size(26,26)
+                                }),
+                            position: [marker.longitude, marker.latitude],
+                            offset: new AMap.Pixel(-13, -30)
+                        });
+                    });
+                    this.map.setFitView();
                 }
             },
             convertData(data) {
