@@ -11,32 +11,25 @@
         </div>
         <div class="project_statistics">
             <div class="statistics_title">年度统计</div>
-            <ul v-if="value ==4 " class="project_year_statistics clearfix">
+            <ul v-if="value ==4 " class="project_year_statistics4 clearfix">
                 <li v-for="(item,index) in yearStatisticsList" :key="index" >
                     <img :src="item.img" alt="">
-                    <span class="year_statistics_title">{{item.year}}年</span>
-                    <span class="year_statistics_num">{{item.num}}</span>
+                    <span class="year_statistics_title4">{{item.year+'年'}}</span>
+                    <span class="year_statistics_num4">{{item.num}}</span>
                 </li>
             </ul>
-            <ul v-if="value ==3 " class="project_year_statistics clearfix">
+            <ul v-if="value ==3 " class="project_year_statistics3 clearfix">
                 <li v-for="(item,index) in yearStatisticsList" :key="index" >
                     <img :src="item.img" alt="">
-                    <span class="year_statistics_title">{{item.year}}</span>
-                    <span class="year_statistics_num">{{item.num}}</span>
+                    <span class="year_statistics_title3">{{item.year+'年'}}</span>
+                    <span class="year_statistics_num3">{{item.num}}</span>
                 </li>
             </ul>
 
             <ul v-if="value ==2 " class="project_year_statistics_2 clearfix">
-<!--                <el-row v-if="value ==2 " class="project_year_statistics_2">-->
-<!--                    <el-col :span="6"v-for="(item,index) in yearStatisticsList" :key="index">-->
-<!--                        <img :src="item.img" alt="">-->
-<!--                        <span class="year_statistics_title_2">{{item.year}}年</span>-->
-<!--                        <span class="year_statistics_num_2">{{item.num}}</span>-->
-<!--                    </el-col>-->
-<!--                </el-row>-->
                 <li v-for="(item,index) in yearStatisticsList" :key="index" >
                     <img :src="item.img" alt="">
-                    <span class="year_statistics_title_2">{{item.year}}</span>
+                    <span class="year_statistics_title_2">{{item.year+'年'}}</span>
                     <span class="year_statistics_num_2">{{item.num}}</span>
                 </li>
             </ul>
@@ -44,7 +37,7 @@
             <ul v-if="value ==1 " class="project_year_statistics clearfix">
                 <li v-for="(item,index) in yearStatisticsList" :key="index" >
                     <img :src="item.img" alt="">
-                    <span class="year_statistics_title">{{item.year}}年</span>
+                    <span class="year_statistics_title">{{item.year+'年'}}</span>
                     <span class="year_statistics_num">{{item.num}}</span>
                 </li>
             </ul>
@@ -259,14 +252,126 @@ export default {
             }
             .year_statistics_title {
                 position: absolute;
+                top: -5px;
+                left: 50%;
+                width: 50px;
+                margin-left: -25px;
+                font-size: 15px;
+                font-weight: bold;
+                color: #333;
+            }
+            .year_statistics_num {
+                position: absolute;
+                bottom: 30px;
+                width: 50px;
+                margin-left: -25px;
+                font-size: 15px;
+                color: #333;
+                right: 30px;
+                float: right;
+            }
+        }
+    }
+
+    .project_year_statistics_2 {
+        width:100%;
+        li {
+            position: relative;
+            width:25%;
+            float: left;
+            text-align: center;
+            padding: 30px 0;
+            img {
+                width: 318px;
+                padding: 0 10px;
+                max-width: 80%;
+                max-height: 80%;
+                height: 215px;
+            }
+            .year_statistics_title_2 {
+                position: absolute;
+                top: 5px;
+                left: 50%;
+                width: 50px;
+                margin-left: -25px;
+                font-size: 15px;
+                font-weight: bold;
+                color: #333;
+            }
+            .year_statistics_num_2 {
+                position: absolute;
+                bottom: 30px;
+                width: 50px;
+                margin-left: -25px;
+                font-size: 15px;
+                color: #333;
+                padding-right: 30px;
+                float: right;
+            }
+        }
+    }
+
+
+    .project_year_statistics3 {
+        width:100%;
+        li {
+            position: relative;
+            width:16.666%;
+            // min-width:228px;
+            float: left;
+            text-align: center;
+            img {
+                width: 100%;
+                max-width:228px;
+                // height:284px;
+            }
+            .year_statistics_title3 {
+                position: absolute;
+                bottom: 88px;
+                left: 50%;
+                width: 50px;
+                margin-left: -25px;
+                font-size: 15px;
+                font-weight: bold;
+                color: #333;
+            }
+            .year_statistics_num3 {
+                position: absolute;
+                bottom: 30px;
+                width: 50px;
+                margin-left: -25px;
+                font-size: 15px;
+                color: #333;
+                right: 30px;
+                float: right;
+            }
+        }
+    }
+
+    .project_year_statistics4 {
+        width:100%;
+        li {
+            position: relative;
+            width:16.666%;
+            // min-width:228px;
+            float: left;
+            text-align: center;
+            img {
+                width: 100%;
+                max-width:228px;
+                // height:284px;
+            }
+            .year_statistics_title4 {
+                position: absolute;
                 top: 20px;
                 left: 50%;
                 width: 50px;
                 margin-left: -25px;
                 font-size: 15px;
+                font-weight: bold;
                 color: #333;
             }
-            .year_statistics_num {
+            .year_statistics_num4 {
                 position: absolute;
                 bottom: 30px;
                 left: 50%;
@@ -278,39 +383,6 @@ export default {
         }
     }
 
-    .project_year_statistics_2 {
-        width:100%;
-        li {
-            position: relative;
-            width:25%;
-            // min-width:228px;
-            float: left;
-            text-align: center;
-            img {
-                width: 100%;
-                max-width:334px;
-                height:284px;
-            }
-            .year_statistics_title_2 {
-                position: absolute;
-                top: 20px;
-                left: 50%;
-                width: 50px;
-                margin-left: -25px;
-                font-size: 15px;
-                color: #333;
-            }
-            .year_statistics_num_2 {
-                position: absolute;
-                bottom: 30px;
-                left: 50%;
-                width: 50px;
-                margin-left: -25px;
-                font-size: 15px;
-                color: #333;
-            }
-        }
-    }
     .project_type_statistics {
         width:100%;
         padding:0 40px;
