@@ -1,11 +1,6 @@
 <template>
-    <div class="app-container white-bg list-panel" v-cloak>
-        <div class="project_company_swtich">
-            <div class="swtich_search">
-                <el-input v-model="projectName" placeholder="请输入项目名称"></el-input>
-                <el-button style="background-color: #29c9bb;border-color: #29c9bb;color: #FFF" icon="el-icon-search" size="medium">搜索</el-button>
-            </div>
-        </div>
+    <div class="app-container white-bg list-panel" :style="{backgroundImage:'url('+require('@/styles/img/zodiac/projectbg.png')+')'}" v-cloak>
+        
         <div class="project_company_statistics">
             <ul class="clearfix">
                 <li v-for="(item,index) in typeStatisticsList" :key="index"  :class="{'company_statistics_active':item.active}" @click="companyClick(item)" @mouseover="selectStyle(item)" @mouseout="outStyle(item)">
@@ -109,6 +104,10 @@ export default {
                 background:#29c9bb;
             }
         }
+    }
+    .list-panel {
+        background-position: center;
+        background-repeat: inherit;
     }
     .project_company_statistics {
         padding:0 20%;
