@@ -27,11 +27,7 @@
         <el-dialog title="项目计划模板" :visible.sync="dialogFormVisible" width="35%">
             <el-form :model="templateConfigForm" :rules="rules" ref="ruleForm" label-width="120px">
                 <el-form-item label="工作内容" prop="name">
-                    <el-input v-show="!showContent" v-model.trim="templateConfigForm.name" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
-                    <el-input v-show="showContent" v-model="templateConfigForm.name" placeholder="请输入工作内容" clearable>
-                        <el-option v-for="e in contentList"  :key="e.value" :label="e.text" :value="e.text" ></el-option >
-                    </el-input>
-
+                    <el-input v-model.trim="templateConfigForm.name" placeholder="请输入工作内容" autocomplete="off" maxlength="50" class="overall_situation_input_icon" clearable show-word-limit></el-input>
                 </el-form-item>
                 <el-form-item label="工期" prop="period">
                     <el-input v-model="templateConfigForm.period" autocomplete="off"></el-input>
