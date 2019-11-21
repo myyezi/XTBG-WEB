@@ -94,7 +94,7 @@
                         top:'100px'
                         }
                     }));
-                    this.map.addControl(new AMap.Geolocation());
+                    
 
                     let mapType = new AMap.MapType({
                         defaultType:1, //使用2D地图
