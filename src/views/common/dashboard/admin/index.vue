@@ -6,24 +6,24 @@
                     <div class="el-card__header home-card-heard">
                         <div class="home_title clearfix">
                             <p class="clearfix"><img src="../../../../styles/img/xm.png" /><span>项目分布一览</span></p> 
+                            <div class="project_statistics_swtich clearfix">
+                                <ul class="clearfix" style="margin-left: 25px;">
+                                    <li v-for="(item,index) in companyList" :key="index" :class="{'company_active':item.active}" @click="companyClick(item)">{{item.name}}</li>
+                                </ul>
+                                <el-dropdown split-button  size="mini" @command="handleClick1" style="float:right;margin-top: 6px;">
+                                    {{projectName}}
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item :disabled="projectName==='全部'" command="1">全部</el-dropdown-item>
+                                        <el-dropdown-item :disabled="projectName==='进行中'" command="2">进行中</el-dropdown-item>
+                                        <el-dropdown-item :disabled="projectName==='已暂停'" command="3">已暂停</el-dropdown-item>
+                                        <el-dropdown-item :disabled="projectName==='已完成'" command="4">已完成</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                            </div>
                         </div>
                     </div>
-                    <div class="el-card__body" style="height:500px;padding-top:0">
-                        <div class="project_statistics_swtich clearfix">
-                            <ul class="clearfix">
-                                <li v-for="(item,index) in companyList" :key="index" :class="{'company_active':item.active}" @click="companyClick(item)">{{item.name}}</li>
-                            </ul>
-                            <el-dropdown split-button  size="mini" @command="handleClick1" style="float:right;margin-top: 6px;">
-                                {{projectName}}
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item :disabled="projectName==='全部'" command="1">全部</el-dropdown-item>
-                                    <el-dropdown-item :disabled="projectName==='进行中'" command="2">进行中</el-dropdown-item>
-                                    <el-dropdown-item :disabled="projectName==='已暂停'" command="3">已暂停</el-dropdown-item>
-                                    <el-dropdown-item :disabled="projectName==='已完成'" command="4">已完成</el-dropdown-item>
-                                </el-dropdown-menu>
-                            </el-dropdown>
-                        </div>
-                        <ve-map :vMapData="vMapData" mapId="map1" echartsId="echarts1" mapStyle="width:100%; height:440px;resize:both;"></ve-map>
+                    <div class="el-card__body" style="height:500px; padding:5px">
+                        <ve-map :vMapData="vMapData" mapId="map1" echartsId="echarts1" mapStyle="width:100%; height:490px;resize:both;"></ve-map>
                     </div>
                 </div>
             </div>
@@ -34,8 +34,8 @@
                             <p class="clearfix"><img src="../../../../styles/img/xm.png" /><span>业主分布一览</span></p> 
                         </div>
                     </div>
-                    <div class="el-card__body" style="height:500px;">
-                        <ve-map :vMapData="powerProprietorList" mapId="map2" echartsId="echarts2" mapStyle="width:100%; height:480px;resize:both;"></ve-map>
+                    <div class="el-card__body" style="height:500px; padding:5px">
+                        <ve-map :vMapData="powerProprietorList" mapId="map2" echartsId="echarts2" mapStyle="width:100%; height:490px;resize:both;"></ve-map>
                     </div>
                 </div>
             </div>
