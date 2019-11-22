@@ -45,7 +45,7 @@
                     <div class="form-group">
                         <label class="control-label">状态</label>
                         <div class="input-group input-groups">
-                            <el-select v-model="searchParam.employeeStatus" placeholder="全部">
+                            <el-select v-model="searchParam.employeeStatus"  clearable placeholder="全部">
                                 <el-option label="试用期" value="1"></el-option>
                                 <el-option label="正式员工" value="2"></el-option>
                                 <el-option label="离职" value="3"></el-option>
@@ -271,6 +271,9 @@
                 } else if (index == 5) {
                     this.searchParam.employeeStatus = "3";
                 }
+                //点击事件后默认初始化分页
+                this.page =1;
+                this.pageSize =10;
                 this.getList();
             }
         }
