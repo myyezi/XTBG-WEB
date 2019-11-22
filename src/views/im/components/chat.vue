@@ -111,7 +111,8 @@
                     </div>
                     <textarea v-model="messageContent" class="textarea"  @keyup.enter.exact="mineSend(1)" @keyup.ctrl.enter="lineFeed()" @keyup.alt.enter="lineFeed()" autofocus></textarea>
                     <div class="im-chat-send">
-                        <el-button size="mini" @click="mineSend(1)">发送</el-button>
+                        <el-button size="mini" @click="mineSend(1)">(Enter)发送</el-button><br>
+                        <em style="font-size:10px;">(Alt + Enter)换行</em>
                     </div>
                 </div>
             </div>
