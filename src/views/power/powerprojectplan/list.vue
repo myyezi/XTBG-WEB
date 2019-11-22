@@ -15,7 +15,7 @@
                   <label class="control-label">年份</label>
                   <div class="input-group">
                       <el-date-picker
-                      v-model="year"
+                      v-model="searchParam.year"
                       type="year"
                       placeholder="选择年份" value-format="yyyy">
                   </el-date-picker>
@@ -41,6 +41,16 @@
                   <div class="input-group">
                       <el-select v-model="searchParam.source"  placeholder="请选择任务依据">
                           <el-option v-for="item in sourceOptions" :key="item.value" :label="item.text" :value="item.value">
+                          </el-option>
+                      </el-select>
+                  </div>
+              </div>
+              <div class="form-group">
+                  <label class="control-label">归属单位</label>
+                  <div class="input-group">
+                      <el-select v-model="searchParam.belongCompany" filterable clearable placeholder="请选择归属单位">
+                          <el-option v-for="item in belongCompanyList" :key="item.value" :label="item.text"
+                                     :value="item.value">
                           </el-option>
                       </el-select>
                   </div>
@@ -175,6 +185,8 @@
 </template>
 
 <script>
+
+import {mapGetters} from 'vuex'
 import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
 import CitySelectPanel from '@/components/CitySelect/index2'
@@ -184,6 +196,11 @@ export default {
   name: 'PowerProjectPlan',
   mixins: [tool],
   components: {CitySelectPanel},
+  computed: {
+        ...mapGetters([
+            'user',
+        ])
+    },
   data() {
     return {
         isShowMore: false,
@@ -195,6 +212,7 @@ export default {
         showRecordBtn: this.getCurrentUserAuthority("/power/powerprojectplan/record"),
         projectTypeList : [],
         coDepartmentList : [],
+        searchParam:{year: ''},
         recordList:[],
         pageList:[],
         dialogVisible:false,
@@ -206,13 +224,25 @@ export default {
         year:'',
         sourceOptions:[],
         citySelectArr:[],
+        belongCompanyList:[]
+
     }
   },
   mounted() {
+      if (this.$route.query.year) {
+          this.searchParam.year = this.$route.query.year+'';
+      };
+      if (this.$route.query.value) {
+          this.searchParam.belongCompany = this.$route.query.value+'';
+      };
+      if (this.$route.query.type) {
+          this.searchParam.projectType = this.$route.query.type+'';
+      };
       this.getList();
       this.getDict();
   },
   methods: {
+
       getListBefore(params) {
           if (this.startTime) {
               params.startTimeStart = this.startTime[0];
@@ -229,7 +259,7 @@ export default {
               params.endTimeEnd = '';
           }
           if(this.year){
-              params.year = this.year;
+              params.year = this.searchParam.year;
           }
       },
       citySelectOnchange(){
@@ -249,11 +279,13 @@ export default {
       },
       // 获取字典
       getDict() {
-          let types = 'XMLX,XBBM,RWYJ';
+          let managementCompanyId = this.user.managementCompanyId;
+          let types = 'XMLX,XBBM,RWYJ,' + managementCompanyId;
           ajax.get("upms/dict/allType/"+types).then(rs => {
               this.projectTypeList = rs.XMLX;
               this.coDepartmentList = rs.XBBM;
               this.sourceOptions = rs.RWYJ;
+              this.belongCompanyList = rs[managementCompanyId];
           });
       },
       finish(projectId){
