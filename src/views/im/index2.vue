@@ -161,7 +161,7 @@ export default {
 .v-im {
   flex-direction: row;
   .left-bar {
-    background-color: #1c2438;
+    background-color: #29c9bb;
     width: 6rem;
     height: 100%;
     ul {
