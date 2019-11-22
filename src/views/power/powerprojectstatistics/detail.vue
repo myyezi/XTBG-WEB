@@ -12,14 +12,14 @@
         <div class="project_statistics">
             <div class="statistics_title">年度统计</div>
             <ul v-if="value ==4 " class="project_year_statistics4 clearfix">
-                <li v-for="(item,index) in yearStatisticsList" :key="index"  @click="toProjectPlan(item)">
+                <li v-for="(item,index) in yearStatisticsList" :key="index"  @click="toProjectPlanByYear(item)">
                     <img :src="item.img" alt="" >
                     <span class="year_statistics_title4">{{item.year+'年'}}</span>
                     <span class="year_statistics_num4">{{item.num}}</span>
                 </li>
             </ul>
             <ul v-if="value ==3 " class="project_year_statistics3 clearfix">
-                <li v-for="(item,index) in yearStatisticsList" :key="index" @click="toProjectPlan(item)" >
+                <li v-for="(item,index) in yearStatisticsList" :key="index" @click="toProjectPlanByYear(item)" >
                     <img :src="item.img" alt="">
                     <span class="year_statistics_title3">{{item.year+'年'}}</span>
                     <span class="year_statistics_num3">{{item.num}}</span>
@@ -27,7 +27,7 @@
             </ul>
 
             <ul v-if="value ==2 " class="project_year_statistics_2 clearfix">
-                <li v-for="(item,index) in yearStatisticsList" :key="index" @click="toProjectPlan(item)">
+                <li v-for="(item,index) in yearStatisticsList" :key="index" @click="toProjectPlanByYear(item)">
                     <img :src="item.img" alt="" >
                     <span class="year_statistics_title_2">{{item.year+'年'}}</span>
                     <span class="year_statistics_num_2">{{item.num}}</span>
