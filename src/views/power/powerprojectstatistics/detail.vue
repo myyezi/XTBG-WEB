@@ -285,16 +285,16 @@ export default {
         width:100%;
         li {
             position: relative;
-            width:25%;
+            width:16.666%;
             float: left;
             text-align: center;
             padding: 30px 0;
             img {
-                width: 318px;
+                width: 80%;
                 padding: 0 10px;
                 max-width: 80%;
                 max-height: 80%;
-                height: 215px;
+                height: 80%;
             }
             .year_statistics_title_2 {
                 position: absolute;
@@ -360,18 +360,18 @@ export default {
         width:100%;
         li {
             position: relative;
-            width:16.666%;
-            // min-width:228px;
+            width: 16.666%;
             float: left;
             text-align: center;
+            padding: 30px 0;
             img {
-                width: 100%;
+                width: 70%;
                 max-width:228px;
                 // height:284px;
             }
             .year_statistics_title4 {
                 position: absolute;
-                top: 20px;
+                top: 5px;
                 left: 50%;
                 width: 50px;
                 margin-left: -25px;
@@ -380,13 +380,14 @@ export default {
                 color: #333;
             }
             .year_statistics_num4 {
-                position: absolute;
-                bottom: 30px;
-                left: 50%;
-                width: 50px;
-                margin-left: -25px;
-                font-size: 15px;
-                color: #333;
+                    position: absolute;
+                    bottom: 30px;
+                    width: 50px;
+                    margin-left: -25px;
+                    font-size: 15px;
+                    color: #333;
+                    padding-right: 30px;
+                    float: right;
             }
         }
     }
