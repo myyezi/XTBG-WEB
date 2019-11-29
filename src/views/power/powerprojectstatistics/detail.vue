@@ -85,7 +85,7 @@ export default {
     methods: {
         // 切换公司事件
         companyClick(item,type) {
-            console.log(item,type)
+            // console.log(item,type)
             this.companyList.forEach(items => {
                 if(type == 2&&items.name == item.name) {
                     this.$set(items,'active',true);
@@ -180,14 +180,14 @@ export default {
         }
     },
     created: function () {
-         console.log(this.$route.query.items)
+        //  console.log(this.$route.query.items)
          let data = this.$route.query.items;
-         this.companyName = data.text?data.text:'能源公司'
+         this.companyName = data.name?data.name:'能源公司'
          this.companyClick(data,2)
     },
     mounted: function () {
-        // this.getProjectYearStatistics()
-        // this.getProjectTypeStatistics()
+        this.getProjectYearStatistics(1)
+        this.getProjectTypeStatistics(1)
         //获取归属公司
         this.getCompany();
     }
@@ -227,6 +227,7 @@ export default {
         }
     }
     .project_statistics {
+        
         .statistics_title {
             position: relative;
             padding:30px 20px 30px 30px;
@@ -285,16 +286,16 @@ export default {
         width:100%;
         li {
             position: relative;
-            width:25%;
+            width:16.666%;
             float: left;
             text-align: center;
             padding: 30px 0;
             img {
-                width: 318px;
+                width: 80%;
                 padding: 0 10px;
                 max-width: 80%;
                 max-height: 80%;
-                height: 215px;
+                height: 80%;
             }
             .year_statistics_title_2 {
                 position: absolute;
@@ -360,18 +361,18 @@ export default {
         width:100%;
         li {
             position: relative;
-            width:16.666%;
-            // min-width:228px;
+            width: 16.666%;
             float: left;
             text-align: center;
+            padding: 30px 0;
             img {
-                width: 100%;
+                width: 70%;
                 max-width:228px;
                 // height:284px;
             }
             .year_statistics_title4 {
                 position: absolute;
-                top: 20px;
+                top: 5px;
                 left: 50%;
                 width: 50px;
                 margin-left: -25px;
@@ -380,13 +381,14 @@ export default {
                 color: #333;
             }
             .year_statistics_num4 {
-                position: absolute;
-                bottom: 30px;
-                left: 50%;
-                width: 50px;
-                margin-left: -25px;
-                font-size: 15px;
-                color: #333;
+                    position: absolute;
+                    bottom: 30px;
+                    width: 50px;
+                    margin-left: -25px;
+                    font-size: 15px;
+                    color: #333;
+                    padding-right: 30px;
+                    float: right;
             }
         }
     }

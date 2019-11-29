@@ -30,7 +30,7 @@ import ajax from '@/utils/request'
 import { tool } from '@/utils/common'
 
 export default {
-  name: "ProjectSelect",
+  name: "UserSelect",
   mixins: [tool],
   props: {
     isShow: Boolean

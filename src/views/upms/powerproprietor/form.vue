@@ -149,9 +149,6 @@
                 if (this.$route.query.id) {
                     ajax.get('power/powerproprietor/' + this.$route.query.id).then(rs => {
                         this.powerproprietorForm = rs.data;
-                        if (rs.data.districtId && rs.data.districtId.length > 0) {
-                            this.powerproprietorForm.districtId = rs.data.districtId.split(",");
-                        }
                         if (rs.data.address && rs.data.address.length > 0) {
                             this.powerproprietorForm.address = rs.data.address;
                         }

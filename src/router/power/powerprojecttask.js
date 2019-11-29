@@ -25,6 +25,13 @@ const index = [
         hidden: true,
         component: () => import('@/views/power/powerprojecttask/detail'),
         meta: {title: '查看'}
+    },
+    {
+        path: '/power/powerprojecttask/viewFile',
+        name: 'viewFile',
+        hidden: true,
+        component: () => import('@/views/power/powerprojecttask/viewFile'),
+        meta: {title: '文件预览'}
     }
 ];
 

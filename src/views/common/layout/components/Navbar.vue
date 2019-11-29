@@ -73,8 +73,8 @@
                     {sidebarColor:'#061c46',navbarColor:'#5c66d4',logColor:'#444eb5',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img4.png')},
                     {sidebarColor:'#3b4966',navbarColor:'#45c8dc',logColor:'#34a2b3',sizeColor:'#fff',backgroundImg:require('@/styles/img/skin_img5.png')},
                 ],
-                navbarColor:'#29c9bb',
-                sizeColor:'#fff'
+                navbarColor:'#fff',
+                sizeColor:'#606266'
             }
         },
         components: { UpdPassword, Breadcrumb, Hamburger ,IMChat},
