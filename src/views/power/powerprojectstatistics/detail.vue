@@ -182,7 +182,7 @@ export default {
     created: function () {
         //  console.log(this.$route.query.items)
          let data = this.$route.query.items;
-         this.companyName = data.text?data.text:'能源公司'
+         this.companyName = data.name?data.name:'能源公司'
          this.companyClick(data,2)
     },
     mounted: function () {
