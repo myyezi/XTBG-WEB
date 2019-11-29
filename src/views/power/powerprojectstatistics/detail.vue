@@ -85,7 +85,7 @@ export default {
     methods: {
         // 切换公司事件
         companyClick(item,type) {
-            console.log(item,type)
+            // console.log(item,type)
             this.companyList.forEach(items => {
                 if(type == 2&&items.name == item.name) {
                     this.$set(items,'active',true);
@@ -180,14 +180,14 @@ export default {
         }
     },
     created: function () {
-         console.log(this.$route.query.items)
+        //  console.log(this.$route.query.items)
          let data = this.$route.query.items;
          this.companyName = data.text?data.text:'能源公司'
          this.companyClick(data,2)
     },
     mounted: function () {
-        // this.getProjectYearStatistics()
-        // this.getProjectTypeStatistics()
+        this.getProjectYearStatistics(1)
+        this.getProjectTypeStatistics(1)
         //获取归属公司
         this.getCompany();
     }
@@ -227,6 +227,7 @@ export default {
         }
     }
     .project_statistics {
+        
         .statistics_title {
             position: relative;
             padding:30px 20px 30px 30px;
