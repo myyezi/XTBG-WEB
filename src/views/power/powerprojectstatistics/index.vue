@@ -66,6 +66,7 @@ export default {
             this.typeStatisticsList.forEach(items => {
                 this.$set(items,'active',false);
             });
+            console.log(item);
             this.$router.push({path: '/power/powerprojectstatistics/detail', query: {items: item}});
         },
         // getList(){
