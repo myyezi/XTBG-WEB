@@ -20,8 +20,11 @@ import VueQuillEditor from 'vue-quill-editor'
 import { dateStr, formatDateTime } from '@/utils/imUtils/ChatUtils.js';
 // import uploader from 'vue-simple-uploader'
 import uploader from '@/components/StopUpload/big-uploader'
+import * as WPS from '@/utils/jwps.es6'
+
 Vue.prototype.formatDateTime = formatDateTime;
 Vue.prototype.dateStr = dateStr;
+Vue.prototype.wps = WPS;
 Vue.use(uploader)
 Vue.use(VueQuillEditor);
 
