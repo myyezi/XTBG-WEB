@@ -123,7 +123,7 @@
                             <span>{{powerprojecttaskForm.progress}}</span>
                         </div>
                     </div>
-                    
+
                     <div class="detail-item big">
                         <label class="control-label">备注</label>
                         <div class="input-group">
@@ -152,7 +152,8 @@
                 </el-tab-pane>
                 <el-tab-pane label="项目前期" name="projectSzInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="收资名称" class-name="table_column-left">
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="收资名称"
+                                         class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                                 <span>{{row.name}}</span>
@@ -169,13 +170,16 @@
                         <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <el-button @click="download(row)" type="text" size="small">下载</el-button>
+                                <el-button @click="handleRead(row.id)" type="text" size="small">预览</el-button>
+                                <el-button @click="handleEdit(row.id)" type="text" size="small">编辑</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="可研" name="projectJcInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称"
+                                         class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                                 <span>{{row.name}}</span>
@@ -192,13 +196,16 @@
                         <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <el-button @click="download(row)" type="text" size="small">下载</el-button>
+                                <el-button @click="handleRead(row.id)" type="text" size="small">预览</el-button>
+                                <el-button @click="handleEdit(row.id)" type="text" size="small">编辑</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="初设" name="projectNsInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称"
+                                         class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                                 <span>{{row.name}}</span>
@@ -215,13 +222,16 @@
                         <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <el-button @click="download(row)" type="text" size="small">下载</el-button>
+                                <el-button @click="handleRead(row.id)" type="text" size="small">预览</el-button>
+                                <el-button @click="handleEdit(row.id)" type="text" size="small">编辑</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="施工" name="projectScInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称" class-name="table_column-left">
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="卷册名称"
+                                         class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                                 <span>{{row.name}}</span>
@@ -238,13 +248,16 @@
                         <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <el-button @click="download(row)" type="text" size="small">下载</el-button>
+                                <el-button @click="handleRead(row.id)" type="text" size="small">预览</el-button>
+                                <el-button @click="handleEdit(row.id)" type="text" size="small">编辑</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="竣工" name="projectCbInfoTab">
                     <el-table border :data="achmentList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="成品名称" class-name="table_column-left">
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="成品名称"
+                                         class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                                 <span>{{row.name}}</span>
@@ -261,13 +274,16 @@
                         <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <el-button @click="download(row)" type="text" size="small">下载</el-button>
+                                <el-button @click="handleRead(row.id)" type="text" size="small">预览</el-button>
+                                <el-button @click="handleEdit(row.id)" type="text" size="small">编辑</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="项目任务书" name="projectTaskInfoTab">
                     <el-table border :data="attachmentTaskList" style="width: 100%">
-                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="任务书名称" class-name="table_column-left">
+                        <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="任务书名称"
+                                         class-name="table_column-left">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                                 <span>{{row.name}}</span>
@@ -280,6 +296,8 @@
                         <el-table-column prop="description" sortable show-overflow-tooltip min-width="100" label="操作">
                             <template fixed slot-scope="{ row, column, $index }">
                                 <el-button @click="download(row)" type="text" size="small">下载</el-button>
+                                <el-button @click="handleRead(row.id)" type="text" size="small">预览</el-button>
+                                <el-button @click="handleEdit(row.id)" type="text" size="small">编辑</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -311,7 +329,7 @@
     export default {
         name: "PowerProjectTaskDetail",
         mixins: [tool],
-        components: {GanttAdd,DocIconType},
+        components: {GanttAdd, DocIconType},
         data() {
             let that = this;
             return {
@@ -416,7 +434,7 @@
                 }
                 else if (tab.name == 'projectCbInfoTab') {
                     this.getProjectAttachmentList(5)
-                }  else if (tab.name == 'projectTaskInfoTab') {
+                } else if (tab.name == 'projectTaskInfoTab') {
                     this.getAttachmentList();
                 }
             },
@@ -492,6 +510,27 @@
                 let filePath = data.path;
                 let param = "fileName=" + fileName + "&" + "filePath=" + filePath;
                 location.href = encodeURI(this.exportUrl("file/download/downloadFile?" + param));
+            },
+
+            getWpsUrlPath(fileId, type) {
+                ajax.get('/file/getViewUrl?fileId=' + fileId + "&type=" + type).then((res) => {
+                    if (res.data) {
+                        let r = res.data;
+                        sessionStorage.wpsUrl = r.wpsUrl;
+                        this.$router.push({path: '/power/powerprojecttask/viewFile'});
+                    } else {
+                        this.$message({
+                            message: rs.msg,
+                            type: 'error'
+                        });
+                    }
+                })
+            },
+            handleEdit(fileId) {
+                this.getWpsUrlPath(fileId, "write");
+            },
+            handleRead(fileId) {
+                this.getWpsUrlPath(fileId, "read");
             }
         },
 
