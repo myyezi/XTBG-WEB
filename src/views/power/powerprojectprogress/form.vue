@@ -20,9 +20,9 @@
             <stop-upload @func="getResFile" :sourceId = this.id :projectId = this.projectId :nodeName = projectNodeName ></stop-upload>
         </el-dialog> -->
 
-        <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="200" height="800px">
+        <el-dialog title="文件管理" :visible.sync="fileFormVisible" :class="{'dialog_animation_in':fileFormVisible,'dialog_animation_out':!fileFormVisible}" width="70%">
             <div>
-                <el-table :data="attachmentList" style="width: 100%;height: 500px;">
+                <el-table :data="attachmentList" style="width: 100%; overflow-y: auto;" height= '500'>
                     <el-table-column fixed label="操作" width="120">
                         <template fixed slot-scope="{ row, column, $index }">
 <!--                            状态为待审批转态不能删除-->
@@ -35,7 +35,7 @@
                             {{scope.$index+1}}
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="100" label="文件名称" class-name="table_column-left">
+                    <el-table-column prop="name" sortable show-overflow-tooltip min-width="200" label="文件名称" class-name="table_column-left">
                         <template fixed slot-scope="{ row, column, $index }">
                             <doc-icon-type :iconType="row.suffix"></doc-icon-type>
                             <span>{{row.name}}</span>

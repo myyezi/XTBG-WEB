@@ -19,7 +19,8 @@
         data(){
             return {
                 sidebarColor:'#1d9389',
-                logColor:'#24bbae '
+                // logColor:'#24bbae '
+                logColor:'#1d9389'
             }
         },
         components: {
