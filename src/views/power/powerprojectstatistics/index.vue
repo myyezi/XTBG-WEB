@@ -115,7 +115,7 @@ export default {
         background-position: center;
         background-repeat: inherit;
     }
-    .project_company_statistics {
+    .project_company_statistics{
         padding:0 9%;
         ul {
             padding: 4% 0 0 0;
