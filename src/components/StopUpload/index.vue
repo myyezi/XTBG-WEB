@@ -13,12 +13,12 @@
             <uploader-unsupport></uploader-unsupport>
             <uploader-btn :attrs="attrs" v-if="isShowUploadBut">选择文件</uploader-btn>
             <uploader-list>
-                <div class="file-panel" slot-scope="props">
+                <div class="file-panel" slot-scope="props" style="height: 800px">
                     <div class="file-title">
                         <h2>文件列表</h2>
                     </div>
 
-                    <ul class="file-list">
+                    <ul class="file-list" style="height: 700px; overflow-y: auto;">
                         <li v-for="file in props.fileList" :key="file.id">
                             <uploader-file :class="'file_' + file.id" ref="files" :file="file" :list="true"></uploader-file>
                         </li>
