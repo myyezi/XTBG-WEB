@@ -29,7 +29,7 @@
     "quill-image-resize-module": "^3.0.0",
     "simple-uploader.js": "^0.5.2",
     "v-charts": "^1.17.10",
-    "vue": "2.5.17",
+    "vue": "3.0.0",
     "vue-count-to": "1.0.13",
     "vue-quill-editor": "3.0.6",
     "vue-router": "3.0.1",
